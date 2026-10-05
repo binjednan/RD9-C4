@@ -144,6 +144,6 @@ def make():
     return out
 
 RULES = [{"c": "A.wall", "t": t, "s": t} for t in ("wall_blk100", "wall_blk200", "wall_blk_t", "wall_lintel")] + [{"c": "A.floor", "t": f"floor_{c}", "s": f"floor_{c}"} for c in ("F1", "F2", "F4", "F6", "F8", "F16")] + \
-        [{"c": "A.ceil", "t": "ceil_C1", "s": "ceil_C1"}, {"c": "A.ceil", "t": "ceil_C3", "s": "ceil_C3"}, {"c": "A.clad", "t": "clad_porcelain", "s": "clad_porcelain"}, {"c": "A.clad", "t": "clad_edge", "s": "clad_edge"},
+        [{"c": "A.ceil", "t": "ceil_C1", "s": "ceil_C1"}, {"c": "A.ceil", "t": "ceil_C3", "s": "ceil_C3"}, {"c": "A.ceil", "t": "ceil_inferred", "s": "ceil_C1"}, {"c": "A.clad", "t": "clad_porcelain", "s": "clad_porcelain"}, {"c": "A.clad", "t": "clad_edge", "s": "clad_edge"},
          {"c": "A.rail", "t": "parapet_top", "s": "parapet_top"}, {"c": "A.rail", "t": "parapet_roof", "s": "parapet_roof"}, {"c": "A.rail", "t": "fence_roof", "s": "fence_roof"}, {"c": "A.rail", "t": "barrier_post", "s": "barrier_post"}, {"c": "A.rail", "t": "barrier_boom", "s": "barrier_boom"},
          {"c": "A.site", "t": "wall_boundary", "s": "wall_boundary"}, {"c": "S.stair", "t": "stair_step", "s": "stair_step"}, {"c": "S.stair", "t": "stair_landing", "s": "stair_landing"}, {"c": "A.fix", "t": "lift_car", "s": "lift_car"}]

@@ -3,7 +3,8 @@
 Variables: L (segment length, cm), Dp (pipe diameter, cm) or W,H (duct cross-section, cm). 'vparts' are placed at inner vertices (bends)."""
 from .lib import *
 
-def _pipe(c, Dp="Dp", jacket=None, jc="#2a2a2a", coupling=None, cc="#d62828", hanger_every=300, joint_every=600, rod=12, stripe=None, name="أنبوب"):
+def _pipe(c, Dp="Dp", jacket=None, jc="#2a2a2a", coupling=None, cc="#d62828", hanger_every=300, joint_every=600, rod="Hg", stripe=None, name="أنبوب"):
+    rod = "Hg"   # hanger rod length = real distance to the soffit (element attribute hang_cm), 12 cm by default
     R = f"({Dp}/2)"
     P = [cyl((0, 0, 0), f"{Dp}/2", "L", c, "gloss", ax="x", seg=16, n=f"{name} (جسم الأنبوب)")]
     if stripe: P.append(cyl((0, 0, 0), f"{Dp}/2+0.04", "L", stripe, "gloss", ax="x", seg=16, caps=False, n="خط تمييز على الأنبوب"))
@@ -12,9 +13,11 @@ def _pipe(c, Dp="Dp", jacket=None, jc="#2a2a2a", coupling=None, cc="#d62828", ha
     top = f"({Dp}/2+{jacket or 0})"
     # hangers
     n_h = f"max(1,ceil(L/{hanger_every}))"
-    P += [rep(tor((f"L/(2*{n_h})", 0, 0), f"{top}+0.35", 0.28, "#8e949c", m="metal", ax="x", seg=14, n="طوق التعليق (Clevis hanger ring)"), n_h, (f"L/{n_h}", 0, 0)),
-          rep(cyl((f"L/(2*{n_h})", f"{top}+0.6", 0), 0.5, rod, "#aab0b8", "metal", n="قضيب تعليق مسنن M10"), n_h, (f"L/{n_h}", 0, 0)),
-          rep(box((f"L/(2*{n_h})-3", f"{top}+0.6+{rod}", -3), (f"L/(2*{n_h})+3", f"{top}+0.6+{rod}+0.5", 3), "#8e949c", "metal", n="لوح تثبيت بالبلاطة (Anchor plate)"), n_h, (f"L/{n_h}", 0, 0))]
+    P += [rep(tor((f"L/(2*{n_h})", 0, 0), f"{top}+0.35", 0.28, "#8e949c", m="metal", ax="x", seg=14, n="طوق التعليق (Clevis hanger ring)"), f"Hg>0?{n_h}:0", (f"L/{n_h}", 0, 0)),
+          rep(cyl((f"L/(2*{n_h})", f"{top}+0.6", 0), 0.5, rod, "#aab0b8", "metal", n="قضيب تعليق مسنن M10"), f"Hg>0?{n_h}:0", (f"L/{n_h}", 0, 0)),
+          rep(box((f"L/(2*{n_h})-3", f"{top}+0.6+{rod}", -3), (f"L/(2*{n_h})+3", f"{top}+0.6+{rod}+0.5", 3), "#8e949c", "metal", n="لوح تثبيت بالبلاطة (Anchor plate)"), f"Hg>0?{n_h}:0", (f"L/{n_h}", 0, 0))]
+    P += [rep(cyl((f"L/(2*{n_h})", f"-{top}-St", 0), 1.0, "St", "#6f757c", "metal", seg=10, n="قائم دعم أنبوب على السطح (Pipe stand — AC D-32)"), f"St>0?{n_h}:0", (f"L/{n_h}", 0, 0)),
+          rep(cyl((f"L/(2*{n_h})", f"-{top}-St-0.6", 0), 4.0, 0.6, "#8e949c", "metal", seg=12, n="لوحة قاعدة القائم"), f"St>0?{n_h}:0", (f"L/{n_h}", 0, 0))]
     if coupling:
         n_j = f"floor(L/{joint_every})"
         P += [rep(cyl((f"{joint_every}", 0, 0), f"{top}+0.9", 5.5, coupling, "gloss", ax="x", seg=18, n="وصلة مجرّزة (Grooved coupling)"), n_j, (f"{joint_every}", 0, 0)),
@@ -29,7 +32,7 @@ def make():
     out = {}
     def add(t): out[t[0]] = t[1]
     def P(id_, name, en, cat, parts, vparts=None, conf="derived", facts=None, asm=None, src=None, dims=None, lod=7.0):
-        t = sample(id_, name, en, cat, parts, kind="path", place={"mode": "path"}, lod=lod, conf=conf, src=src or [], facts=facts or [], asm=asm or [], dims=dims or {})
+        t = sample(id_, name, en, cat, parts, kind="path", place={"mode": "path"}, lod=lod, conf=conf, src=src or [], facts=facts or [], asm=asm or [], dims=dims or {}, defaults={"Hg": 12, "St": 0})
         if vparts: t[1]["vparts"] = vparts
         add(t)
     A_H = "منسوب التمديد وطول قضبان التعليق (12 سم) وتباعد المعلّقات: افتراض (تفصيل تنفيذي قياسي، غير مرسوم)"
@@ -68,9 +71,11 @@ def make():
             box((0, "-H/2-2.5", "-W/2"), ("L", "-H/2", "W/2"), "#dcd7c8", "matte"),
             box((0, "-H/2", "W/2"), ("L", "H/2", "W/2+2.5"), "#dcd7c8", "matte"), box((0, "-H/2", "-W/2-2.5"), ("L", "H/2", "-W/2"), "#dcd7c8", "matte"),
             rep(box(("120-0.0", "-H/2-3.2", "-W/2-3.2"), ("120+3", "H/2+3.2", "W/2+3.2"), "#8e949c", "metal", n="شفة وصل عرضية (TDC flange) كل 1.2 م"), "floor(L/120)", ("120", 0, 0)),
-            rep(box(("150/2*0+L/(2*max(1,ceil(L/150)))-2", "-H/2-3.2", "-W/2-6"), ("L/(2*max(1,ceil(L/150)))+2", "-H/2-1.2", "W/2+6"), "#6f757c", "metal", n="عارضة تعليق زاوية (Trapeze angle 40×40)"), "max(1,ceil(L/150))", ("L/max(1,ceil(L/150))", 0, 0)),
-            rep(cyl(("L/(2*max(1,ceil(L/150)))", "H/2+2.6", "-W/2-5.2"), 0.5, 12, "#aab0b8", "metal", n="قضيب تعليق M10"), "max(1,ceil(L/150))", ("L/max(1,ceil(L/150))", 0, 0)),
-            rep(cyl(("L/(2*max(1,ceil(L/150)))", "H/2+2.6", "W/2+5.2"), 0.5, 12, "#aab0b8", "metal"), "max(1,ceil(L/150))", ("L/max(1,ceil(L/150))", 0, 0))]
+            rep(box(("150/2*0+L/(2*max(1,ceil(L/150)))-2", "-H/2-3.2", "-W/2-6"), ("L/(2*max(1,ceil(L/150)))+2", "-H/2-1.2", "W/2+6"), "#6f757c", "metal", n="عارضة تعليق زاوية (Trapeze angle 40×40)"), "Hg>0?max(1,ceil(L/150)):0", ("L/max(1,ceil(L/150))", 0, 0)),
+            rep(cyl(("L/(2*max(1,ceil(L/150)))", "H/2+2.6", "-W/2-5.2"), 0.5, "Hg", "#aab0b8", "metal", n="قضيب تعليق M10 — الطول = المسافة إلى البلاطة"), "Hg>0?max(1,ceil(L/150)):0", ("L/max(1,ceil(L/150))", 0, 0)),
+            rep(cyl(("L/(2*max(1,ceil(L/150)))", "H/2+2.6", "W/2+5.2"), 0.5, "Hg", "#aab0b8", "metal"), "Hg>0?max(1,ceil(L/150)):0", ("L/max(1,ceil(L/150))", 0, 0)),
+            rep(cyl(("L/(2*max(1,ceil(L/150)))", "-H/2-3.2-St", "-W/2-5.2"), 1.0, "St", "#6f757c", "metal", seg=10, n="قائم دعم مجرى على السطح"), "St>0?max(1,ceil(L/150)):0", ("L/max(1,ceil(L/150))", 0, 0)),
+            rep(cyl(("L/(2*max(1,ceil(L/150)))", "-H/2-3.2-St", "W/2+5.2"), 1.0, "St", "#6f757c", "metal", seg=10), "St>0?max(1,ceil(L/150)):0", ("L/max(1,ceil(L/150))", 0, 0))]
     P("duct_supply", "مجرى هواء تغذية معزول (صاج مجلفن)", "Insulated supply air duct (GI)", "mechanical", duct, vparts=[box(("-W/2-3.5", "-H/2-3.5", "-W/2-3.5"), ("W/2+3.5", "H/2+3.5", "W/2+3.5"), "#b9c2ca", "metal", n="كوع المجرى (Duct elbow)")],
       conf="derived", facts=[["المقاس", "من وسم المخطط (W×H مم → سم)"], ["الوصلات", "شفة TDC كل 1.2 م"]], asm=["منسوب المجرى (القمة عند 3.10 م) وتباعد المعلّقات 1.5 م وسماكة العزل 25 مم: افتراض"], src=["MECH1: مخططات AC-100..105 (طبقة M_HVAC_SAD)"], dims={"L": 300, "W": 40, "H": 25})
     return out

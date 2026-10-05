@@ -146,6 +146,8 @@ SITE_MATS = {
     "site_asphalt": {"name": "أسفلت الممر والمواقف الخارجية — التشطيب غير محدد على A102", "color": "#4b5057", "code": "A102"},
     "site_mark": {"name": "علامات مرورية وخطوط مواقف (طلاء)", "color": "#f2f2ee", "code": "A102"},
     "site_shade": {"name": "مظلة ظل دائرية — مادة غير محددة (افتراض)", "color": "#d8cdb6", "code": "A102 LINEA"},
+    "site_sand": {"name": "رمل/تربة برتقالية — أحواض ومسطحات غير مزروعة (كما في صور الموقع 7 أغسطس)", "color": "#c98a55", "code": "A102 L1-THIN / صور"},
+    "granite_curb": {"name": "جرانيت داكن بعروق بيضاء — جدران أحواض الزراعة (من الصور؛ النوع غير محدد في المخططات)", "color": "#3b3e44", "code": "A102 / صور"},
 }
 for L_ in M["layers"]:
     if L_["id"] == "A" and not any(s_[0] == "A.stage" for s_ in L_["subs"]):
@@ -163,7 +165,44 @@ if os.path.exists(SITE_JSON):
     for k, e in enumerate(S_["els"], 1):
         ne = {"id": f"A.site-G-S{k:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx(t) for t in e["src"]]}
         if e.get("stage"): ne["stage"] = e["stage"]
+        if e["t"] == "site_grass":
+            # the A102 'grass' hatch is NOT lawn on site (photos 7 Aug: orange sand/soil, nothing planted yet). Small serpentine strips are planter beds with a
+            # dark-granite curb (photos 15, 19, 25-27, 30, 36, 42-45, 49-51); large areas are open sand beds. Sand = the documented F.L. level; curb height is NOT documented.
+            from shapely.geometry import Polygon as _P
+            _g = e["g"]; _poly = _P(_g[1], _g[4] if len(_g) > 4 and _g[4] else None).buffer(0); _top = _g[3]; _small = _poly.area / 1e4 < 40
+            def _rings(pg):
+                out_ = []
+                for q in (list(pg.geoms) if hasattr(pg, "geoms") else [pg]):
+                    if q.is_empty or q.area < 50: continue
+                    out_.append(([[round(x, 1), round(y, 1)] for x, y in list(q.exterior.coords)[:-1]], [[[round(x, 1), round(y, 1)] for x, y in list(h.coords)[:-1]] for h in q.interiors]))
+                return out_
+            CW = 15
+            _inner = _poly.buffer(-CW) if _small else _poly
+            if _inner.is_empty: _inner = _poly.buffer(-4)
+            ne["m"] = "site_sand"; ne["t"] = "site_planter_bed" if _small else "site_sand_bed"
+            _ra = _rings(_inner)
+            if _ra: ne["g"] = ["p", _ra[0][0], -0.1, _top] + ([_ra[0][1]] if _ra[0][1] else [])
+            ne["a"] = dict(ne["a"], kind="planter_sand" if _small else "sand_bed", sand_top_m=_top,
+                           fill_note="رمل/تربة برتقالية غير مزروعة كما في صور الموقع (طبقة A102 L1-THIN = «عشب» مصمَّم)؛ المنسوب من نقاط F.L. على المخطط")
+            els.append(ne)
+            for _j, (_o, _h) in enumerate(_ra[1:], 1):
+                els.append(dict(ne, id=f"A.site-G-S{k:03d}F{_j}", g=["p", _o, -0.1, _top] + ([_h] if _h else [])))
+            for _j, (_o, _h) in enumerate(_rings(_poly.difference(_inner)) if _small else [], 1):
+                _ct = round(_top + 0.08, 2)
+                els.append({"id": f"A.site-G-S{k:03d}W{_j}", "c": "A.site", "l": "G", "g": ["p", _o, -0.1, _ct] + ([_h] if _h else []), "mark": "PLANTER-CURB", "t": "site_planter_wall", "m": "granite_curb",
+                            "a": {"kind": "planter_wall", "thick_cm": CW, "top_m": _ct, "level_note": "جدار حوض جرانيت داكن — شكله من مخطط A102 (حدّ طبقة L1-THIN) ولونه من الصور",
+                                  "assumed": "السماكة 15 سم وارتفاع الحافة +8 سم فوق منسوب الرمل: افتراض بصري من الصور — يحتاج تأكيد من المخططات التنفيذية/المقاول"}, "s": ne["s"]})
+            continue
         els.append(ne)
+    # surrounding ground outside the plot / street: bare sand, as in photos 1, 5, 10, 21 (desert plots around the site). Inferred - no drawing covers it.
+    from shapely.geometry import box as _bx
+    from shapely.ops import unary_union as _uu0
+    _roads = [r_ for r_ in (_bx(min(p_[0] for p_ in _e["g"][1]), min(p_[1] for p_ in _e["g"][1]), max(p_[0] for p_ in _e["g"][1]), max(p_[1] for p_ in _e["g"][1])) for _e in els if _e["id"].startswith("A.site-G-S") and _e.get("mark", "").startswith("STREET"))]
+    _sand = _bx(-5500, -5500, 10000, 9000).difference(_uu0(_roads + [_bx(-90, -70, 4485, 4485)]))
+    for _j, _q in enumerate(list(_sand.geoms) if hasattr(_sand, "geoms") else [_sand], 1):
+        els.append({"id": f"A.site-G-S{900 + _j}", "c": "A.site", "l": "G", "g": ["p", [[round(x), round(y)] for x, y in list(_q.exterior.coords)[:-1]], -0.5, -0.1] + ([[[[round(x), round(y)] for x, y in list(h.coords)[:-1]] for h in _q.interiors]] if list(_q.interiors) else []),
+                    "mark": "GROUND-SAND", "t": "site_sand_bed", "m": "site_sand",
+                    "a": {"kind": "ground_sand", "level_note": "رمل الأرض خارج حدود القطعة والشارع — من الصور (أراضٍ رملية مجاورة)", "assumed": "المنسوب -0.10 م وحدود المنطقة افتراض؛ لا يوجد مخطط يغطي ما حول القطعة"}, "s": []})
     M["els"] = els
     print("site elements merged:", len(S_["els"]))
 
@@ -316,7 +355,7 @@ if os.path.exists(MEPBG_JSON):
         if t not in pidx:
             pidx[t] = len(pool); pool.append(t)
         return pidx[t]
-    els[:] = [e for e in els if not re.search(r"-M\d+$", e["id"])]
+    els[:] = [e for e in els if not re.search(r"-M\d+(c\d+)?$", e["id"])]
     cnt_ = collections.Counter()
     for e in Mb["els"]:
         cnt_[(e["c"], e["l"])] += 1
@@ -386,7 +425,7 @@ if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re
         W_ = cache[e["l"]]
         if W_ is None: continue
         bp = _bbox_poly(e["g"]); d = W_.distance(bp)
-        tol = 60 if (e["t"] in BIG or (e["l"] == "G" and STAIR03[0] <= e["g"][1] <= STAIR03[2] and STAIR03[1] <= e["g"][2] <= STAIR03[3])) else 25
+        tol = 120 if (e["t"] in BIG or (e["l"] == "G" and STAIR03[0] <= e["g"][1] <= STAIR03[2] and STAIR03[1] <= e["g"][2] <= STAIR03[3])) else 80
         if d <= 0.5: continue
         if d > tol:
             far.append((e["id"], e["t"], e["l"], round(d))); continue
@@ -464,6 +503,166 @@ if True:      # stateless: roof.json / mep_bg.json are re-merged on every run, s
             n += 1
     if "zero_depth_grille_v1" not in FIXES: FIXES.append("zero_depth_grille_v1")
     print("zero-depth grilles fixed:", n)
+
+# ------------------------------------------------------------------ physical consistency fixes found by the support audit
+# (1) basement services drawn inside the open ramp well: nothing can hang in the air above a ramp that is open to the sky -> removed (logged)
+_hole = None
+for _e in els:
+    if _e["c"] == "S.slab" and _e["l"] == "G" and _e["g"][0] == "p":
+        for _h in (_e["g"][4] or []):
+            if len(_h) > 20 and max(p_[1] for p_ in _h) > 4000: _hole = Polygon(_h).buffer(0)
+if _hole is not None:
+    _gone, _keep = [], []
+    for _e in els:
+        if _e["l"] == "B" and _e["c"][0] in "EMP" and _e["g"][0] in ("b", "cyl", "t", "d", "r"):
+            _pp = plan_pts(_e["g"])
+            if _pp and all(_hole.contains(Point(q)) for q in _pp):
+                _gone.append({"id": _e["id"], "c": _e["c"], "t": _e.get("t"), "xy": [round(_pp[0][0]), round(_pp[0][1])]}); continue
+        _keep.append(_e)
+    # pipes / ducts that only PARTLY cross the open ramp well: cut them at the opening edge (they would hang over the roadway)
+    from shapely.geometry import LineString as _LS
+    _trim = 0; _extra = []
+    for _e in _keep:
+        if _e["l"] != "B" or _e["c"][0] not in "EMP" or _e["g"][0] not in ("t", "d"): continue
+        _pts = _e["g"][1]
+        if len(_pts) < 2 or not _LS([(q[0], q[1]) for q in _pts]).intersects(_hole): continue
+        _runs = []
+        for _a, _b in zip(_pts[:-1], _pts[1:]):
+            _sg = _LS([(_a[0], _a[1]), (_b[0], _b[1])]); _L = _sg.length
+            if _L < 1e-6: continue
+            _df = _sg.difference(_hole)
+            for _pc in (list(_df.geoms) if hasattr(_df, "geoms") else [_df]):
+                if _pc.is_empty or _pc.length < 8: continue
+                _c = list(_pc.coords); _ends = []
+                for _xy in (_c[0], _c[-1]):
+                    _t = _sg.project(Point(_xy)) / _L; _ends.append([round(_xy[0], 1), round(_xy[1], 1), round(_a[2] + (_b[2] - _a[2]) * _t, 3)])
+                if _runs and abs(_runs[-1][-1][0] - _ends[0][0]) < 0.6 and abs(_runs[-1][-1][1] - _ends[0][1]) < 0.6: _runs[-1].append(_ends[1])
+                else: _runs.append(_ends)
+        if len(_runs) == 1 and len(_runs[0]) == len(_pts) and all(abs(u[0] - v[0]) < 0.6 and abs(u[1] - v[1]) < 0.6 for u, v in zip(_runs[0], _pts)): continue
+        _trim += 1
+        if not _runs: _e["g"] = None; continue
+        _e["a"] = dict(_e.get("a") or {}, mount_note="قُصّ الأنبوب/المجرى عند حافة فتحة المنحدر المفتوحة (لا يمكن أن يمرّ فوق الطريق) — تصحيح تعارض مكاني")
+        _g0 = _e["g"]; _e["g"] = [_g0[0], _runs[0]] + list(_g0[2:])
+        for _j, _rn in enumerate(_runs[1:], 1):
+            _x = dict(_e); _x["id"] = f"{_e['id']}c{_j}"; _x["g"] = [_g0[0], _rn] + list(_g0[2:]); _extra.append(_x)
+    _keep = [_e for _e in _keep if _e["g"] is not None] + _extra
+    _gone_n = len(_gone)
+    els[:] = _keep; M["els"] = els
+    print("pipes/ducts trimmed at the ramp opening:", _trim)
+    if _gone: json.dump(_gone, open(os.path.join(HERE, "data", "removed_ramp_zone_b.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    M["meta"]["removed_ramp_zone_b"] = max(M["meta"].get("removed_ramp_zone_b", 0), len(_gone))
+    print("basement services inside the ramp well removed:", len(_gone))
+# (2) roof build-up: the R floor level (+23.35) is 20 cm above the top of the roof slab (+23.15); the open roof had nothing in between, so every machine stood 20 cm above it
+els[:] = [e for e in els if e["id"] != "A.floor-R-BU1"]
+for _e in list(els):
+    if _e["c"] == "S.slab" and _e["l"] == "R" and _e["g"][0] == "p":
+        _lv = LV["R"]; _top = _e["g"][3]
+        if _lv["ffl"] - _top > 0.05:
+            M["mats"].setdefault("roof_buildup", {"name": "طبقات سطح الدور R (عزل مائي/حراري + مونة + تشطيب) — غير محدّدة في المستندات", "color": "#d3d2cb", "code": "A105"})
+            els.append({"id": "A.floor-R-BU1", "c": "A.floor", "l": "R", "g": ["p", _e["g"][1], _top, _lv["ffl"], _e["g"][4] if len(_e["g"]) > 4 else None], "mark": "ROOF-BUILDUP", "t": "roof_buildup", "m": "roof_buildup",
+                         "a": {"kind": "roof_buildup", "thick_cm": round((_lv["ffl"] - _top) * 100), "note": "الفرق بين منسوب بلاطة السطح (+23.15) وF.F.L. (+23.35)؛ مكوّنات الطبقات غير مذكورة — افتراض"}, "s": []})
+            print("roof build-up layer added:", round((_lv["ffl"] - _top) * 100), "cm")
+M["els"] = els
+
+# (3) ground floor: only 31 % of the building footprint had a floor finish (the other ~450 m2 - lobby, corridors, retail - showed the bare slab, 45 cm
+#     BELOW the finished floor level +0.35 on which walls, doors, sockets and pipes were modelled, so they all seemed to hover). Fill the gaps with the floor build-up.
+els[:] = [e for e in els if not e["id"].startswith("A.floor-G-BU")]
+import support as _SUP
+from shapely.ops import unary_union as _uu2
+_slabG = [_e for _e in els if _e["c"] == "S.slab" and _e["l"] == "G" and _e["g"][0] == "p"]
+if _slabG:
+    _sg = _slabG[0]["g"]; _slab_poly = Polygon(_sg[1], _sg[4] if len(_sg) > 4 and _sg[4] else None).buffer(0)
+    _zone = _slab_poly.intersection(box(-80, -80, 3330, 2000))
+    _cov = []
+    for _e in els:
+        if _e["l"] == "G" and _e["c"] in ("A.floor", "A.site") and _e["g"][0] in ("p", "r"):
+            if _e["c"] == "A.site" and not (_e["g"][2 if _e["g"][0] == "p" else 5] > -0.2): continue
+            _pp = _SUP.poly_of(_e["g"])
+            if _pp is not None and not _pp.is_empty: _cov.append(_pp)
+    _gap = _zone.difference(_uu2(_cov).buffer(1.0)) if _cov else _zone
+    _top0, _ffl = _sg[3], LV["G"]["ffl"]
+    M["mats"].setdefault("floor_fill", {"name": "أرضية الدور الأرضي — طبقة التسوية/التشطيب للمناطق غير المسمّاة (ردهة، ممرات، محلات)", "color": "#cfccc2", "code": "A102/A500"})
+    _geoms = list(_gap.geoms) if hasattr(_gap, "geoms") else [_gap]; _n = 0
+    for _g in _geoms:
+        if _g.is_empty or _g.area < 900: continue
+        _n += 1
+        _ext = [[round(x, 1), round(y, 1)] for x, y in list(_g.exterior.coords)[:-1]]
+        _holes = [[[round(x, 1), round(y, 1)] for x, y in list(h.coords)[:-1]] for h in _g.interiors if Polygon(h).area > 200]
+        els.append({"id": f"A.floor-G-BU{_n}", "c": "A.floor", "l": "G", "g": ["p", _ext, _top0, _ffl, _holes or None], "mark": "G-FLOOR-FILL", "t": "floor_fill", "m": "floor_fill",
+                    "a": {"kind": "floor_fill", "thick_cm": round((_ffl - _top0) * 100), "area_m2": round(_g.area / 1e4, 1), "note": "منطقة بلا تشطيب أرضية مسمّى في النموذج؛ أُكملت إلى F.F.L. +0.35 م — نوع التشطيب افتراض"}, "s": []})
+    print("ground-floor fill added:", _n, "areas,", round(sum(g.area for g in _geoms if g.area >= 900) / 1e4), "m2")
+M["els"] = els
+
+# ------------------------------------------------------------------ support analysis (pipeline/support.py): what carries every MEP / electrical element?
+_wt = set()
+try:
+    for _k, _v in json.load(open(os.path.join(os.path.dirname(HERE), "src", "samples.json"), encoding="utf-8"))["samples"].items():
+        if (_v.get("place") or {}).get("mount") == "wall": _wt.add(_k)
+except Exception: pass
+_wt.discard("fhc")
+# (4) ground-floor ceilings: the typical floors carry a false ceiling over 98 % of their floor area, the ground floor only 15 % (the A1401 reflected-ceiling plan of the
+#     ground floor could not be read), so ~80 lights / diffusers / detectors hung on 2.4 m rods from the first-floor slab. Where ceiling devices exist but no ceiling,
+#     infer a plain ceiling at the typical height (F.F.L. + 2.70 m) over the floor area (room) that contains them. Flagged as an assumption.
+els[:] = [e for e in els if not e["id"].startswith("A.ceil-G-INF")]
+_S0 = _SUP.Support(els, M["levels"], set())
+_gfl = [(_i, _SUP.poly_of(_e["g"])) for _i, _e in enumerate(els) if _e["l"] == "G" and _e["c"] == "A.floor" and _e["g"][0] in ("p", "r")]
+_used = {}; _loose = []
+_zc = LV["G"]["ffl"] + 2.70
+for _i, _e in enumerate(els):
+    if _e["l"] != "G" or _e["c"][0] in "SA": continue
+    _z0, _z1 = _SUP.zr(_e["g"])
+    if _z1 is None or not (_zc - 0.25 <= _z1 <= _zc + 0.05): continue          # sits at / just under the ceiling line
+    _r = _S0.analyse(_i)
+    if _r["kind"] not in ("rod", "float", "hang"): continue
+    _pp = _SUP.poly_of(_e["g"])
+    if _pp is None: continue
+    _c = _pp.centroid; _hit = False
+    for _fi, _fp in _gfl:
+        if _fp is not None and _fp.contains(_c): _used[_fi] = _used.get(_fi, 0) + 1; _hit = True; break
+    if not _hit: _loose.append(_c)
+_nin = 0; _ain = 0
+for _fi, _cnt_dev in sorted(_used.items()):
+    _fp = _SUP.poly_of(els[_fi]["g"])
+    for _q in (list(_fp.geoms) if hasattr(_fp, "geoms") else [_fp]):
+        if _q.is_empty or _q.area < 900: continue
+        _nin += 1; _ain += _q.area
+        els.append({"id": f"A.ceil-G-INF{_nin:03d}", "c": "A.ceil", "l": "G", "g": ["p", [[round(x, 1), round(y, 1)] for x, y in list(_q.exterior.coords)[:-1]], round(_zc, 2), round(_zc + 0.02, 2)] + ([[[[round(x, 1), round(y, 1)] for x, y in list(h.coords)[:-1]] for h in _q.interiors]] if list(_q.interiors) else []),
+                    "mark": "G-CEIL-INFERRED", "t": "ceil_inferred", "m": "fin_C1", "a": {"kind": "ceil_inferred", "fin": ["C1"], "assumed_h": 2.7, "devices": _cnt_dev, "note": "سقف مستنتج: أجهزة سقفية بلا سقف في الدور الأرضي؛ الارتفاع F.F.L.+2.70 (كالأدوار المتكررة) والتشطيب C1 — افتراض يحتاج مخطط A1401"}, "s": []})
+# ceiling lights over the covered entrance band (no A.floor there - exterior paving): a rectangular soffit strip 3.2 m wide around each row of them
+if _loose:
+    from shapely.ops import unary_union as _uu3
+    _soff = _uu3([_c.buffer(160, cap_style=3, join_style=2) for _c in _loose]).intersection(box(-80, 20, 3330, 2000))
+    for _q in (list(_soff.geoms) if hasattr(_soff, "geoms") else [_soff]):
+        if _q.is_empty or _q.area < 900: continue
+        _nin += 1; _ain += _q.area
+        els.append({"id": f"A.ceil-G-INF{_nin:03d}", "c": "A.ceil", "l": "G", "g": ["p", [[round(x, 1), round(y, 1)] for x, y in list(_q.exterior.coords)[:-1]], round(_zc, 2), round(_zc + 0.02, 2)],
+                    "mark": "G-SOFFIT-INFERRED", "t": "ceil_inferred", "m": "fin_C1", "a": {"kind": "soffit_inferred", "fin": ["C1"], "assumed_h": 2.7, "note": "سقف/سوفيت مستنتج فوق الممر المغطى: إنارة سقفية بلا سقف؛ الارتفاع F.F.L.+2.70 — افتراض يحتاج مخطط A1401 والواجهات"}, "s": []})
+print("ground-floor inferred ceilings:", _nin, "areas,", round(_ain / 1e4), "m2")
+M["els"] = els
+
+_S = _SUP.Support(els, M["levels"], _wt)
+_cnt = collections.Counter()
+for _i, _e in enumerate(els):
+    _a = _e.setdefault("a", {})
+    for _k in ("rod_cm", "hang_cm", "stand_cm", "unsupported"): _a.pop(_k, None)
+    if _e["c"][0] in "SA": continue
+    _r = _S.analyse(_i); _k = _r["kind"]; _cnt[_k] += 1
+    if _k == "lower":                                                  # wall device above the top of its (lower) host wall: bring it down onto the wall
+        _z0, _z1 = _SUP.zr(_e["g"]); _dz = round((_r["wall_top"] - 0.12) - _z1, 3); shift_z(_e, _dz)
+        _a["mount_note"] = f"الجدار المضيف أخفض من ارتفاع التركيب الافتراضي؛ خُفض الجهاز {abs(round(_dz*100))} سم ليكون على الجدار — افتراض هندسي يحتاج تأكيد"
+        _r = _S.analyse(_i); _k = _r["kind"]
+    if _k == "rod": _a["rod_cm"] = max(8, _r["gap_cm"])
+    elif _k == "hang": _a["hang_cm"] = max(8, _r["gap_cm"])
+    elif _k == "stand": _a["stand_cm"] = max(8, _r["gap_cm"])
+    elif _k == "float" and _e["l"] == "T" and _e["g"][0] in ("b", "cyl"):
+        _dz = LV["R"]["ffl"] - LV["T"]["ffl"]; shift_z(_e, _dz); _e["l"] = "R"; _r2 = _S.analyse(_i)
+        if _r2["kind"] in ("ok", "rod"):
+            _a["mount_note"] = "لا بلاطة علوية T تحته؛ نُقل إلى سطح الدور R (قائم على السطح) — افتراض هندسي يحتاج تأكيد"; _cnt["rehomed_T_to_R"] += 1
+        else:
+            shift_z(_e, -_dz); _e["l"] = "T"; _a["unsupported"] = 1; _a.setdefault("mount_note", "لا يوجد جدار/سقف/أرضية مضيف قريب في النموذج — موضع الرمز على المخطط يحتاج مراجعة (مدقّق الدعم: غير محمول)")
+    elif _k == "float": _a["unsupported"] = 1; _a.setdefault("mount_note", "لا يوجد جدار/سقف/أرضية مضيف قريب في النموذج — موضع الرمز على المخطط يحتاج مراجعة (مدقّق الدعم: غير محمول)")
+M["meta"]["support"] = dict(_cnt)
+print("support analysis:", dict(_cnt))
 
 # ------------------------------------------------------------------ types
 types = {}

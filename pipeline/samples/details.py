@@ -684,10 +684,19 @@ def make():
     D("det_air_terminal", "قضيب صاعقة حر الوقوف بقاعدة خرسانية وحامل ثلاثي", "Free-standing air terminal", E_, air_terminal_free_standing(), {"W": 60, "D": 60, "H": 305}, ["ELEC2 ص17: LPT-106 (تفصيلا F وH)"],
       [["الحامل الثلاثي", "ATS 001 على قاعدة خرسانية"], ["الرأس", "نقاط متعددة MPC 16 على قضيب ASGL 16M"], ["الزاوية الواقية (LPS III)", "76.3° عند ارتفاع 1 م — نصف قطر 4.0 م؛ 74.1° عند 3 م — 10.3 م"]], ["ارتفاع القضيب (3 م): افتراض من الجدول (ارتفاع القضيب عن مستوى المرجع)"], conf="derived")
     D("det_dc_tape_clip", "تثبيت شريط النحاس على السور: مشابك DC معدنية ومشبك مربّع", "Metallic DC tape clip on parapet", E_, dc_tape_clip(), {"W": 80, "D": 20, "H": 46}, ["ELEC2 ص17: LPT-106 (تفصيلا I وM)"], [["الموصل", "شريط نحاس 25×3 مم"], ["المشابك", "DC tape clip معدني + Square tape clamp (JG 253) + شريط TC253"]], ["تباعد المشابك: افتراض"], conf="doc")
+    out["roof_buildup"] = sample("roof_buildup", "طبقات سطح الدور R فوق بلاطة الخرسانة (20 سم)", "Roof build-up", "architecture",
+        [box(("-W/2", -25, "-D/2"), ("W/2", 0, "D/2"), "#b4b4ae", "ghost", n="بلاطة السطح الخرسانية (الأعلى +23.15 م)"), box(("-W/2", 0, "-D/2"), ("W/2", 1, "D/2"), "#1c1c1c", "matte", n="عزل مائي أسفلتي/غشاء (Waterproofing membrane)"),
+         box(("-W/2", 1, "-D/2"), ("W/2", 9, "D/2"), "#e6e2b6", "matte", n="عزل حراري (Thermal insulation)"), box(("-W/2", 9, "-D/2"), ("W/2", 12, "D/2"), "#9a978f", "matte", n="مونة ميل التصريف (Screed to falls)"),
+         box(("-W/2", 12, "-D/2"), ("W/2", "H", "D/2"), "#d3d2cb", "gloss", n="طبقة التشطيب العلوية (Finish)")], place=NONE, lod=8.0, conf="derived", src=["ARCH1 ص8 (A105): F.F.L. +23.35 م", "STR ص23: بلاطة السطح (أعلى +23.15 م)"],
+        facts=[["F.F.L.", "+23.35 م"], ["أعلى البلاطة الإنشائية", "+23.15 م"], ["سماكة الطبقات", "20 سم (الفرق)"]], asm=["تكوين الطبقات وسماكاتها وتشطيب السطح غير مذكورة — افتراض"] + [A_COL], dims={"W": 120, "D": 120, "H": 20})[1]
+    out["floor_fill"] = sample("floor_fill", "أرضية الدور الأرضي للمناطق غير المسمّاة: تسوية 45 سم + تشطيب", "Ground floor fill", "architecture",
+        [box(("-W/2", -45, "-D/2"), ("W/2", 0, "D/2"), "#b4b4ae", "ghost", n="بلاطة الدور الأرضي (الأعلى -0.10 م)"), box(("-W/2", 0, "-D/2"), ("W/2", 40, "D/2"), "#bdb9ad", "matte", n="فرشة تسوية/ردم 40 سم (Fill & screed bed)"),
+         box(("-W/2", 40, "-D/2"), ("W/2", "H", "D/2"), "#cfccc2", "gloss", n="طبقة التشطيب العلوية (Finish) — النوع غير محدد")], place=NONE, lod=8.0, conf="assumed", src=["ARCH1 ص5 (A102): F.F.L. +0.35 م", "STR ص20: بلاطة الدور الأرضي (الأعلى −0.10 م)"],
+        facts=[["F.F.L.", "+0.35 م"], ["أعلى البلاطة الإنشائية", "−0.10 م"], ["الفرق", "45 سم"]], asm=["نوع التشطيب ومكوّنات الطبقات للردهة والممرات والمحلات — غير محددة في المستندات المتاحة"] + [A_COL], dims={"W": 120, "D": 120, "H": 45})[1]
     # main electrical equipment is also modelled in the ground-floor rooms (pipeline/elec_rooms.py): these samples replace the box when the camera comes close
     for sid in ELEC_ROOM_SAMPLES:
         out[sid]["place"] = {"mode": "box", "anchor": "bottom"}
     return out
 
 ELEC_ROOM_SAMPLES = {"det_transformer_dry": "E.panel", "det_hv_switchgear": "E.panel", "det_mdb_2000a": "E.panel", "det_generator": "E.gen", "det_lv_metering": "E.panel", "det_dms_rtu": "E.panel", "det_battery_rack": "E.panel", "det_dc_supply": "E.panel"}
-RULES = [{"c": c, "t": sid, "s": sid} for sid, c in ELEC_ROOM_SAMPLES.items()]
+RULES = [{"c": c, "t": sid, "s": sid} for sid, c in ELEC_ROOM_SAMPLES.items()] + [{"c": "A.floor", "t": "roof_buildup", "s": "roof_buildup"}, {"c": "A.floor", "t": "floor_fill", "s": "floor_fill"}]

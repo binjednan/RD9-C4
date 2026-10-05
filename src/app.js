@@ -61,6 +61,28 @@ const grpMap={}; // grp -> [element idx]
 const stageCount={}; let stageTotal=0;
 function gkey(e){const st=stageKind(e);return e.c+'|'+e.l+'|'+(e.m||'conc')+(st?'|st:'+st:'')+(e.t==='lift_car'?'|'+e.id:'');}
 function uidx(u){return (u==null)?-1:(unitIndex[u]!==undefined?unitIndex[u]:-1);}
+
+/* ---------- supports: what carries every element (pipeline/support.py wrote rod_cm / hang_cm / stand_cm on the elements that need one) ---------- */
+function addSupports(g,e,geo,u1,u2,mi){
+  const a=e.a; if(!a||(!a.rod_cm&&!a.hang_cm&&!a.stand_cm)) return; const k=geo[0];
+  if(a.rod_cm&&(k==='b'||k==='cyl'||k==='r')){
+    let x,y,z1; if(k==='b'){x=geo[1];y=geo[2];z1=geo[7];} else if(k==='cyl'){x=geo[1];y=geo[2];z1=geo[5];} else {x=(geo[1]+geo[3])/2;y=(geo[2]+geo[4])/2;z1=geo[6];}
+    const gap=a.rod_cm/100; cylinder(g,x,y,0.45,z1,z1+gap,u1,u2,mi,8); cylinder(g,x,y,3,z1+gap-0.006,z1+gap,u1,u2,mi,10); return;
+  }
+  if((k==='t'||k==='d')&&(a.hang_cm||a.stand_cm)){
+    const pts=geo[1]; const isT=k==='t'; const half=isT?geo[2]/200:geo[3]/200; const wid=isT?0:geo[2]/2;
+    for(let i=0;i<pts.length-1;i++){
+      const p=pts[i],q=pts[i+1]; const dx=q[0]-p[0],dy=q[1]-p[1]; const L=Math.hypot(dx,dy); if(L<20) continue; const n=Math.max(1,Math.round(L/240)); const nx=-dy/L,ny=dx/L;
+      for(let j=0;j<n;j++){
+        const t=(j+0.5)/n,x=p[0]+dx*t,y=p[1]+dy*t,z=p[2]+(q[2]-p[2])*t;
+        if(a.hang_cm){const gap=a.hang_cm/100,zt=z+half+(isT?0:0.025); const offs=isT?[0]:[wid+4,-wid-4];
+          for(const o of offs){cylinder(g,x+nx*o,y+ny*o,0.5,zt,zt+gap,u1,u2,mi,8); cylinder(g,x+nx*o,y+ny*o,3,zt+gap-0.006,zt+gap,u1,u2,mi,10);} 
+          if(!isT){ orientedBox(g,x,y,wid*2+10,4,Math.atan2(dy,dx)*180/Math.PI+90,zt-0.04,zt-0.0,u1,u2,mi); }
+        } else {const gap=a.stand_cm/100,zb=z-half-(isT?0:0.025); cylinder(g,x,y,2,zb-gap,zb,u1,u2,mi,8); cylinder(g,x,y,8,zb-gap-0.01,zb-gap,u1,u2,mi,12); if(!isT) orientedBox(g,x,y,wid*2+10,5,Math.atan2(dy,dx)*180/Math.PI+90,zb-0.04,zb,u1,u2,mi);}
+      }
+    }
+  }
+}
 function buildAll(){
   const t0=performance.now();
   M.els.forEach((e,ei)=>{
@@ -78,6 +100,7 @@ function buildAll(){
       case 'rs': rampStrip(g,geo[1],geo[2],geo[3],u1,u2,mi); break;
       default: break;
     }
+    addSupports(g,e,geo,u1,u2,mi);
     elRange[ei]={gk:k,start:n0,count:g.n-n0};
     let mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
     for(let i=n0*9;i<g.n*9;i+=3){const x=g.pos[i],y=g.pos[i+1],z=g.pos[i+2]; if(x<mn[0])mn[0]=x;if(y<mn[1])mn[1]=y;if(z<mn[2])mn[2]=z;if(x>mx[0])mx[0]=x;if(y>mx[1])mx[1]=y;if(z>mx[2])mx[2]=z;}

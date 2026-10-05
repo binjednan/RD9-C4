@@ -174,7 +174,7 @@ class SampleLOD{
     M.els.forEach((e,ei)=>{
       const key=e.c+'|'+e.t; const sid=typeCache.get(key); if(!sid||!lib.samples[sid]) return; const smp=lib.samples[sid]; if(smp.kind!=='path') return;
       const g=e.g; if(g[0]!=='t'&&g[0]!=='d') return; const pts=g[1]; if(pts.length<2) return;
-      const vars={}; if(g[0]==='t'){vars.Dp=Math.round(g[2]*10)/10;} else {vars.W=g[2]; vars.H=g[3];}
+      const vars={}; if(g[0]==='t'){vars.Dp=Math.round(g[2]*10)/10;} else {vars.W=g[2]; vars.H=g[3];} const aa=e.a||{}; vars.Hg=aa.hang_cm?Math.max(8,Math.round(aa.hang_cm/10)*10):((aa.stand_cm||aa.unsupported)?0:12); vars.St=aa.stand_cm?Math.max(10,Math.round(aa.stand_cm/10)*10):0;
       this.units.push({sid,eis:[ei],mode:'path',pts,vars,lvl:e.l,a:e.a||{},key:sid+'|'+Object.keys(vars).sort().map(k=>k+vars[k]).join(',')});types.add(sid);
     });
     // finish units: world centre, bbox, radius, orientation for wall mounts, variables
