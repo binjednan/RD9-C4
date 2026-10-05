@@ -684,6 +684,10 @@ def make():
     D("det_air_terminal", "قضيب صاعقة حر الوقوف بقاعدة خرسانية وحامل ثلاثي", "Free-standing air terminal", E_, air_terminal_free_standing(), {"W": 60, "D": 60, "H": 305}, ["ELEC2 ص17: LPT-106 (تفصيلا F وH)"],
       [["الحامل الثلاثي", "ATS 001 على قاعدة خرسانية"], ["الرأس", "نقاط متعددة MPC 16 على قضيب ASGL 16M"], ["الزاوية الواقية (LPS III)", "76.3° عند ارتفاع 1 م — نصف قطر 4.0 م؛ 74.1° عند 3 م — 10.3 م"]], ["ارتفاع القضيب (3 م): افتراض من الجدول (ارتفاع القضيب عن مستوى المرجع)"], conf="derived")
     D("det_dc_tape_clip", "تثبيت شريط النحاس على السور: مشابك DC معدنية ومشبك مربّع", "Metallic DC tape clip on parapet", E_, dc_tape_clip(), {"W": 80, "D": 20, "H": 46}, ["ELEC2 ص17: LPT-106 (تفصيلا I وM)"], [["الموصل", "شريط نحاس 25×3 مم"], ["المشابك", "DC tape clip معدني + Square tape clamp (JG 253) + شريط TC253"]], ["تباعد المشابك: افتراض"], conf="doc")
+    # main electrical equipment is also modelled in the ground-floor rooms (pipeline/elec_rooms.py): these samples replace the box when the camera comes close
+    for sid in ELEC_ROOM_SAMPLES:
+        out[sid]["place"] = {"mode": "box", "anchor": "bottom"}
     return out
 
-RULES = []
+ELEC_ROOM_SAMPLES = {"det_transformer_dry": "E.panel", "det_hv_switchgear": "E.panel", "det_mdb_2000a": "E.panel", "det_generator": "E.gen", "det_lv_metering": "E.panel", "det_dms_rtu": "E.panel", "det_battery_rack": "E.panel", "det_dc_supply": "E.panel"}
+RULES = [{"c": c, "t": sid, "s": sid} for sid, c in ELEC_ROOM_SAMPLES.items()]

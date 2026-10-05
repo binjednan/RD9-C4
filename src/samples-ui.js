@@ -66,12 +66,14 @@ function initSamplesUI(ctx){
   function goTo(id){
     const us=LOD.units.filter(u=>u.sid===id); if(!us.length) return; const cam=camera.position; let best=null,bd=1e18;
     us.forEach(u=>{const d=(u.cx-cam.x)**2+(u.cy-cam.y)**2+(u.cz-cam.z)**2; if(d<bd){bd=d;best=u;}}); const u=best; ctx.ensureVisible(u.eis[0]);
-    const smp=lib.samples[id]; const lv=M.levels.find(l=>l.id===u.lvl); const size=Math.max(u.W||50,u.H||50,u.D||50)/100; const dist=Math.max(1.0,Math.min(4,size*1.5+0.8));
+    const smp=lib.samples[id]; const lv=M.levels.find(l=>l.id===u.lvl); const size=Math.max(u.W||50,u.H||50,u.D||50)/100; const dist=Math.max(1.0,Math.min(9,size*1.6+0.8));
     const c=new THREE.Vector3(u.cx,(u.bb[1]+u.bb[4])/2,u.cz);
     const hung=lv&&(u.bb[1]-lv.ffl)>2.2; // above ceiling height: in the ceiling void → look from below, level ghosted
     let dir; if(u.n) dir=new THREE.Vector3(u.n[0],hung?-0.2:0.15,-u.n[1]).normalize(); else if(hung||(smp.place&&smp.place.anchor==='top')) dir=new THREE.Vector3(0.55,-0.3,0.8).normalize(); else dir=new THREE.Vector3(0.6,0.3,0.75).normalize();
     closePreview(); document.body.classList.remove('panel-open');
-    const occl=/^(ceil_|floor_|slab|raft|site_paving)/; LOD.skipSids=occl.test(id)?null:new Set(Object.keys(lib.samples).filter(k=>occl.test(k))); // ceilings/floors would hide what is above/below them
+    // near-inspection: samples of the building shell (walls, doors, windows, cladding, structure) are not swapped in, otherwise they stand between the camera and the target
+    const occl=/^(ceil_|floor_|slab|raft|site_paving)/; const shell=c=>c==='architecture'||c==='structure';
+    LOD.skipSids=shell(smp.cat)?(occl.test(id)?null:new Set(Object.keys(lib.samples).filter(k=>occl.test(k)))):new Set(Object.keys(lib.samples).filter(k=>shell(lib.samples[k].cat)&&k!==id));
     setGhost(true,0.10,[u.lvl],true);
     if(!chip){chip=document.createElement('button'); chip.textContent='إنهاء الفحص القريب ✕'; chip.style.cssText='position:fixed;z-index:30;bottom:78px;left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:20px;border:1px solid #888;background:#fff;color:#111;font:600 13px system-ui;box-shadow:0 2px 8px #0004;cursor:pointer'; chip.onclick=endNear; document.body.appendChild(chip);}
     flyTo(c.clone().addScaledVector(dir,dist),c,1100); toast('اقتربت من '+(smp.name)+' — باقي المبنى شفّاف؛ اضغط «إنهاء الفحص القريب» للعودة',4200); LOD.setEnabled(true); LOD.invalidate(); wake(3000);

@@ -227,6 +227,45 @@ if os.path.exists(RS_JSON):
     M["els"] = els
     print("ramp/stair elements merged:", len(Rs["els"]))
 
+# ------------------------------------------------------------------ electrical rooms equipment (pipeline/elec_rooms.py -> data/elec_rooms.json)
+ER_JSON = os.path.join(HERE, "data", "elec_rooms.json")
+ER_TYPES = {}
+if os.path.exists(ER_JSON):
+    Er = json.load(open(ER_JSON, encoding="utf-8"))
+    for k, v in Er.get("mats", {}).items():
+        M["mats"].setdefault(k, v)
+    ER_TYPES = Er["types"]
+    pool = M["sp"]; pidx = {t: i for i, t in enumerate(pool)}
+    def sp_idx5(t):
+        if t not in pidx:
+            pidx[t] = len(pool); pool.append(t)
+        return pidx[t]
+    els[:] = [e for e in els if not re.search(r"-ER\d+$", e["id"])]
+    cnt_er = collections.Counter()
+    for e in Er["els"]:
+        cnt_er[(e["c"], e["l"])] += 1
+        els.append({"id": f"{e['c']}-{e['l']}-ER{cnt_er[(e['c'], e['l'])]:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx5(t) for t in e["src"]]})
+    M["els"] = els
+    # the HV / transformer / LV rooms are F.F.L. +0.90 (A102): lift their floor finishes, drop the 3.05 m ceilings that the 3.2 m transformer and 2.35 m switchgear would pierce
+    ROOMS_UP = [box(2635, 240, 3185, 1185), box(2376, 1270, 2856, 1620)]
+    ROOMS_NOCEIL = [box(2635, 240, 3185, 1185)]
+    n_fl = n_ce = 0; kept = []
+    for e in els:
+        if e["l"] == "G" and e["c"] in ("A.floor", "A.ceil") and e["g"][0] in ("p", "r"):
+            P = plan_pts(e["g"]); cx = sum(p[0] for p in P) / len(P); cy = sum(p[1] for p in P) / len(P)
+            if e["c"] == "A.floor" and e["g"][0] == "p" and any(r.contains(Point(cx, cy)) for r in ROOMS_UP) and abs(e["g"][2] - 0.35) < 0.01:
+                e["g"][2], e["g"][3] = 0.90, 0.912; n_fl += 1
+                e.setdefault("a", {})["floor_note"] = "F.F.L. +0.90 م لغرف الكهرباء (A102) — رُفع من +0.35"
+            if e["c"] == "A.floor" and e["g"][0] == "r" and any(r.contains(Point(cx, cy)) for r in ROOMS_UP) and abs(e["g"][5] - 0.35) < 0.01:
+                e["g"][5], e["g"][6] = 0.90, 0.912; n_fl += 1
+                e.setdefault("a", {})["floor_note"] = "F.F.L. +0.90 م لغرف الكهرباء (A102) — رُفع من +0.35"
+            if e["c"] == "A.ceil" and any(r.contains(Point(cx, cy)) for r in ROOMS_NOCEIL):
+                n_ce += 1; continue
+        kept.append(e)
+    els[:] = kept; M["els"] = els
+    if n_ce: json.dump(["ceilings of the HV / transformer rooms (3.05 m) removed: equipment is taller"], open(os.path.join(HERE, "data", "removed_elec_room_ceilings.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    print("electrical rooms: equipment", len(Er["els"]), "| floors lifted to +0.90:", n_fl, "| ceilings removed:", n_ce)
+
 if "r_open_roof_finishes_removed" not in FIXES:
     # the generic builder gave the OPEN roof (chillers, FAHU, open terraces) floors (F2 ceramic) and ceilings (C3) as if it were a bathroom
     # ('BATH A:4.8M2' text matched to every cell). Rooms of the roof are exactly the footprint of the top slabs (S.slab T): keep finishes only there.
@@ -455,6 +494,7 @@ M["types"] = types
 M["types"].update(ROOF_TYPES)
 M["types"].update(MEPBG_TYPES)
 M["types"].update(RS_TYPES)
+M["types"].update(ER_TYPES)
 
 # ------------------------------------------------------------------ finishes + areas
 def poly_area_cm2(g):
