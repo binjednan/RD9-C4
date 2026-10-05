@@ -3,7 +3,8 @@
      so external animations (flyTo) can overwrite them freely.
    - mode ('rotate'|'pan'|'zoom') decides what a one-finger / left-button drag does.
    - mouse: left = mode action, right / Shift+left = pan, middle = zoom, wheel = zoom to cursor.
-   - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = rotate (pan with Shift / pan mode).
+   - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = pan; rotate = three-finger drag (macOS turns it into a
+     mouse drag) or Alt + two-finger scroll.
    - touch: one finger = mode action, two fingers = pinch zoom + pan.
    - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.        */
 class CameraRig extends THREE.EventDispatcher{
@@ -124,9 +125,9 @@ class CameraRig extends THREE.EventDispatcher{
     const u=e.deltaMode===1?16:e.deltaMode===2?100:1,dx=e.deltaX*u,dy=e.deltaY*u,kind=this._wheelKind(e);
     if(kind==='pinch') this.dolly(Math.exp(dy*0.01*this.zoomSpeed),e.clientX,e.clientY);
     else if(kind==='mouse') this.dolly(Math.exp(dy*0.0012*this.zoomSpeed),e.clientX,e.clientY);
-    else if(e.shiftKey||this.mode==='pan') this.pan(-dx*this.padSpeed,-dy*this.padSpeed);
+    else if(e.altKey){const h=Math.max(this.dom.clientHeight,300),k=2*Math.PI/h*this.rotateSpeed*this.padSpeed; this.rotate(dx*k,dy*k);}   // Alt + two-finger scroll = rotate (fallback for 3-finger drag)
     else if(this.mode==='zoom') this.dolly(Math.exp(dy*0.004*this.zoomSpeed),e.clientX,e.clientY);
-    else {const h=Math.max(this.dom.clientHeight,300),k=2*Math.PI/h*this.rotateSpeed*this.padSpeed; this.rotate(dx*k,dy*k);}
+    else this.pan(-dx*this.padSpeed,-dy*this.padSpeed);                                                                                        // two-finger scroll = pan
     clearTimeout(this._wheelTimer); this._wheelTimer=setTimeout(()=>this._end(),180);
   }
   /* ---- keyboard ---- */

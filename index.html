@@ -113,13 +113,13 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 <div class="pane" id="pClash"><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div>
 <div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnAll">إظهار الكل</button><button id="btnFs" title="ملء الشاشة">⛶</button><button id="btnPerf" title="وضع الأداء" aria-pressed="false">أداء</button><button id="btnHelp" title="دليل التحكم">؟</button></div>
 <div id="viewMenu"><button data-v="persp">منظور (الافتراضي)</button><button data-v="top">علوي</button><button data-v="front">أمامي</button><button data-v="back">خلفي</button><button data-v="right">جانبي (يمين)</button><button data-v="left">جانبي (يسار)</button></div>
-<div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">v2026.10.05-1251</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div>
+<div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">v2026.10.05-1254</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div>
 <div id="modes"><button data-m="rotate" class="on">تدوير</button><button data-m="pan">تحريك</button><button data-m="zoom">تقريب</button></div><div id="toast"></div></div></div>
 <button id="fab">☰ الأقسام والوحدات</button>
 <div id="help"><div class="hb"><div class="hh"><span>دليل التحكم بالنموذج</span><button id="helpClose" aria-label="إغلاق">✕</button></div>
 <h4>اللمس (جوال / لوح)</h4><ul><li>إصبع واحد: حسب الزر السفلي (تدوير / تحريك / تقريب).</li><li>إصبعان: قرص للتقريب والتبعيد، وتحريك الإصبعين لتحريك المشهد.</li><li>نقرة على عنصر: بطاقة الأصل. نقرتان سريعتان: تركيز الكاميرا عليه.</li></ul>
 <h4>الماوس</h4><ul><li>الزر الأيسر: تدوير. الزر الأيمن أو <kbd>Shift</kbd> + السحب: تحريك. الأوسط: تقريب.</li><li>العجلة: تقريب نحو مؤشر الماوس. نقرتان على عنصر: تركيز عليه.</li></ul>
-<h4>التراك باد</h4><ul><li>قرص بإصبعين: تقريب / تبعيد. تمرير بإصبعين: تدوير (مع <kbd>Shift</kbd> أو وضع «تحريك»: تحريك).</li></ul>
+<h4>التراك باد</h4><ul><li>قرص بإصبعين: تقريب / تبعيد. تمرير بإصبعين: تحريك المشهد.</li><li>التدوير: السحب بثلاثة أصابع (على ماك: الإعدادات ← إمكانية الوصول ← التحكم بالمؤشر ← خيارات التراك باد ← «السحب بثلاثة أصابع»)، أو <kbd>Alt</kbd> مع تمرير الإصبعين، أو زر «تدوير» مع السحب.</li></ul>
 <h4>لوحة المفاتيح</h4><ul><li><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd>: تدوير. <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>: تحريك. <kbd>Q</kbd> <kbd>E</kbd>: خفض / رفع.</li><li><kbd>+</kbd> <kbd>−</kbd>: تقريب / تبعيد. <kbd>Home</kbd>: العرض الكامل. <kbd>F</kbd>: تركيز على العنصر المحدد. <kbd>Esc</kbd>: إلغاء التحديد. <kbd>Shift</kbd>: أسرع.</li></ul></div></div>
 <script>/**
  * @license
@@ -223,7 +223,8 @@ function rampStrip(g,pts,width,thick,u1,u2,mi){
      so external animations (flyTo) can overwrite them freely.
    - mode ('rotate'|'pan'|'zoom') decides what a one-finger / left-button drag does.
    - mouse: left = mode action, right / Shift+left = pan, middle = zoom, wheel = zoom to cursor.
-   - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = rotate (pan with Shift / pan mode).
+   - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = pan; rotate = three-finger drag (macOS turns it into a
+     mouse drag) or Alt + two-finger scroll.
    - touch: one finger = mode action, two fingers = pinch zoom + pan.
    - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.        */
 class CameraRig extends THREE.EventDispatcher{
@@ -344,9 +345,9 @@ class CameraRig extends THREE.EventDispatcher{
     const u=e.deltaMode===1?16:e.deltaMode===2?100:1,dx=e.deltaX*u,dy=e.deltaY*u,kind=this._wheelKind(e);
     if(kind==='pinch') this.dolly(Math.exp(dy*0.01*this.zoomSpeed),e.clientX,e.clientY);
     else if(kind==='mouse') this.dolly(Math.exp(dy*0.0012*this.zoomSpeed),e.clientX,e.clientY);
-    else if(e.shiftKey||this.mode==='pan') this.pan(-dx*this.padSpeed,-dy*this.padSpeed);
+    else if(e.altKey){const h=Math.max(this.dom.clientHeight,300),k=2*Math.PI/h*this.rotateSpeed*this.padSpeed; this.rotate(dx*k,dy*k);}   // Alt + two-finger scroll = rotate (fallback for 3-finger drag)
     else if(this.mode==='zoom') this.dolly(Math.exp(dy*0.004*this.zoomSpeed),e.clientX,e.clientY);
-    else {const h=Math.max(this.dom.clientHeight,300),k=2*Math.PI/h*this.rotateSpeed*this.padSpeed; this.rotate(dx*k,dy*k);}
+    else this.pan(-dx*this.padSpeed,-dy*this.padSpeed);                                                                                        // two-finger scroll = pan
     clearTimeout(this._wheelTimer); this._wheelTimer=setTimeout(()=>this._end(),180);
   }
   /* ---- keyboard ---- */
