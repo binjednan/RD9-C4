@@ -137,6 +137,32 @@ if "piles_30cm_display" not in FIXES:
             n += 1
     FIXES.append("piles_30cm_display"); print("piles shortened for display:", n)
 
+# ------------------------------------------------------------------ site / ground-floor landscape (pipeline/site.py -> data/site.json)
+SITE_JSON = os.path.join(HERE, "data", "site.json")
+SITE_MATS = {
+    "site_grass": {"name": "عشب / مسطحات خضراء (A102 طبقة L1-THIN)", "color": "#7fae5f", "code": "A102"},
+    "site_paving": {"name": "رصف ممرات وساحات — النوع غير محدد على A102 (A500: F12/F13/F14)", "color": "#c9b99c", "code": "A102 LAND - TILE"},
+    "site_rubber": {"name": "بلاط مطاطي خارجي 100 مم — منطقة ألعاب الأطفال", "color": "#6e7a6a", "code": "F15"},
+    "site_asphalt": {"name": "أسفلت الممر والمواقف الخارجية — التشطيب غير محدد على A102", "color": "#4b5057", "code": "A102"},
+    "site_mark": {"name": "علامات مرورية وخطوط مواقف (طلاء)", "color": "#f2f2ee", "code": "A102"},
+}
+if os.path.exists(SITE_JSON):
+    S_ = json.load(open(SITE_JSON, encoding="utf-8"))
+    for k, v in SITE_MATS.items():
+        M["mats"].setdefault(k, v)
+    pool = M["sp"]; pidx = {t: i for i, t in enumerate(pool)}
+    def sp_idx(t):
+        if t not in pidx:
+            pidx[t] = len(pool); pool.append(t)
+        return pidx[t]
+    els[:] = [e for e in els if not e["id"].startswith("A.site-G-S")]
+    for k, e in enumerate(S_["els"], 1):
+        ne = {"id": f"A.site-G-S{k:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx(t) for t in e["src"]]}
+        if e.get("stage"): ne["stage"] = e["stage"]
+        els.append(ne)
+    M["els"] = els
+    print("site elements merged:", len(S_["els"]))
+
 # ------------------------------------------------------------------ types
 types = {}
 for k, d in kb.DOORS.items():
@@ -180,7 +206,7 @@ for e in els:
     fl = (e.get("a") or {}).get("fin") or []
     for f in fl:
         finq[f]["n"] += 1
-    if e["c"] in ("A.floor", "A.ceil") and len(fl) == 1:
+    if e["c"] in ("A.floor", "A.ceil", "A.site") and len(fl) == 1:
         a = poly_area_cm2(e["g"])
         if a is not None:
             finq[fl[0]]["area"] += a / 1e4
