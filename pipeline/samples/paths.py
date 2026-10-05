@@ -50,6 +50,13 @@ def make():
     P("pipe_waste", "أنبوب صرف (Waste) UPVC", "Waste pipe UPVC", "plumbing", _pipe("#b79a64", hanger_every=120, joint_every=300, rod=8, coupling="#a8895a"), vparts=_vparts(c="#a8895a"), facts=[["المادة", "UPVC (M_DR_WP)"]], asm=[A_H, "القطر افتراضي حسب نوع الخط (التسميات بالبوصة عند الأعمدة فقط)"], src=["MECH2: مخططات الصرف DR"], dims={"L": 300, "Dp": 8})
     P("pipe_soil", "أنبوب صرف (Soil) UPVC", "Soil pipe UPVC", "plumbing", _pipe("#8a6a3a", hanger_every=120, joint_every=300, rod=8, coupling="#7a5a2f"), vparts=_vparts(c="#7a5a2f"), facts=[["المادة", "UPVC (M_DR_SP)"]], asm=[A_H, "القطر افتراضي حسب نوع الخط"], src=["MECH2: مخططات الصرف DR"], dims={"L": 300, "Dp": 11})
     P("pipe_vent", "أنبوب تهوية UPVC", "Vent pipe UPVC", "plumbing", _pipe("#c4b885", hanger_every=150, joint_every=300, rod=8, coupling="#b0a470"), vparts=_vparts(c="#b0a470"), facts=[["المادة", "UPVC (M_DR_VP)"]], asm=[A_H], src=["MECH2: مخططات الصرف DR"], dims={"L": 300, "Dp": 5})
+    # ---- stair hand rail (A604): stainless tube + wall-stub brackets (assumed spec)
+    hr = [cyl((0, 0, 0), "Dp/2", "L", "#c9ced4", "metal", ax="x", seg=14, n="أنبوب الدرابزين ستانلس ⌀48 مم (افتراض)"),
+          cyl((0, 0, 0), "Dp/2+0.05", 0.4, "#aab0b8", "metal", ax="x", seg=14, n="غطاء طرف الأنبوب"),
+          rep(cyl(("L/(2*max(1,ceil(L/120)))", "-Dp/2-3", 0), 0.8, 6, "#aab0b8", "metal", n="ذراع تثبيت (Bracket) — افتراض"), "max(1,ceil(L/120))", ("L/max(1,ceil(L/120))", 0, 0)),
+          rep(cyl(("L/(2*max(1,ceil(L/120)))", "-Dp/2-3.5", 0), 2.0, 0.8, "#8e949c", "metal", n="لوحة تثبيت دائرية"), "max(1,ceil(L/120))", ("L/max(1,ceil(L/120))", 0, 0))]
+    P("stair_handrail", "درابزين ستانلس للدرج الخارجي 03", "Stair hand rail (stainless)", "architecture", hr, vparts=_vparts(Dp="Dp", c="#aab0b8"), conf="assumed",
+      facts=[["الارتفاع", "قمة الجدار H.L +1.40 م (A604)"], ["الأنبوب", "ستانلس ⌀48 مم (افتراض)"]], asm=["مواصفات الدرابزين وارتفاعه غير مذكورة — افتراض يحتاج تأكيد"], src=["ARCH2 ص5 (A604)", "ARCH2: تفاصيل الدرابزين A605"], dims={"L": 300, "Dp": 4.8})
     # ---- chilled water (insulated)
     P("pipe_chws", "أنبوب مياه مبردة — تغذية (معزول)", "Chilled water supply pipe (insulated)", "mechanical", _pipe("#2d8bd6", jacket=2.5, jc="#2b2e33", hanger_every=200, joint_every=600, rod=10) + [rep(cyl(("200", 0, 0), "Dp/2+2.55", 3.0, "#b8bcc2", "metal", ax="x", seg=14, n="شريط حاجز بخار / وصلة عزل"), "floor(L/200)", ("200", 0, 0))],
       vparts=_vparts(jacket=2.5, c="#2b2e33"), facts=[["الاتجاه", "تغذية 7 م°"], ["العزل", "مطاطي مغلق الخلايا 25 مم"]], asm=[A_H, "سماكة العزل 25 مم: افتراض"], src=["MECH1: مخططات CHW-100..104", "MECH1 ص16: مخطط CHW-105"], dims={"L": 300, "Dp": 3.2})
@@ -69,4 +76,4 @@ def make():
     return out
 
 RULES = [{"c": c, "t": t, "s": t} for c, t in (("P.ff", "pipe_ff"), ("P.ff", "pipe_ffc"), ("P.ff", "riser_spr"), ("P.ff", "riser_ffc"), ("P.ff", "pipe_suction"), ("P.cold", "pipe_cold"), ("P.hot", "pipe_hot"),
-         ("P.drain", "pipe_waste"), ("P.drain", "pipe_soil"), ("P.drain", "pipe_vent"), ("M.pipe", "pipe_chws"), ("M.pipe", "pipe_chwr"), ("M.duct", "duct_supply"))]
+         ("P.drain", "pipe_waste"), ("P.drain", "pipe_soil"), ("P.drain", "pipe_vent"), ("M.pipe", "pipe_chws"), ("M.pipe", "pipe_chwr"), ("M.duct", "duct_supply"), ("A.rail", "stair_handrail"))]

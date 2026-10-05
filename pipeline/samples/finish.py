@@ -68,11 +68,25 @@ def fence_roof():
          rep(box(("-W/2", "22", "-0.15"), ("W/2", "22.4", "0.15"), "#7b858f", "metal", n="سلك أفقي"), "floor((H-30)/5)", (0, 5, 0))]
     return P
 
-def barrier_gate():
-    # barrier boom (W long): painted aluminium arm with red/white stripes, housing at one end
-    return [box(("-W/2", 0, "-D/2"), ("-W/2+30", 100, "D/2"), "#c9ced4", "gloss", n="جسم البوابة الآلية (Barrier housing)"), box(("-W/2+2", 40, "D/2"), ("-W/2+28", 80, "D/2+0.3"), "#1f2226", "matte", n="لوحة وحدة التحكم"),
-            box(("-W/2+30", "H-8", "-3"), ("W/2", "H", "3"), "#f2f2ee", "gloss", n="ذراع البوابة (Boom) — ألمنيوم")] + \
-           [rep(box(("-W/2+36", "H-8", "-3.05"), ("-W/2+51", "H", "3.05"), "#c0392b", "gloss", n="شريط تحذير أحمر"), "floor((W-36)/60)", (60, 0, 0))]
+def barrier_post():
+    # housing of the automatic barrier (post element 30 x 18 cm in plan, 1.1 m high): cabinet, hinged service door, control plate, pivot cover, LED strip
+    return [box(("-W/2-3", 0, "-D/2-3"), ("W/2+3", 1.5, "D/2+3"), "#7b858f", "metal", n="لوح القاعدة المثبّت بالأرضية (Base plate) + 4 مسامير تثبيت"),
+            box(("-W/2", 1.5, "-D/2"), ("W/2", "H-2", "D/2"), "#d9dde1", "gloss", n="جسم الخزانة المعدني (Housing) — دهان بودرة"),
+            box(("-W/2-0.1", "H-2", "-D/2-0.1"), ("W/2+0.1", "H", "D/2+0.1"), "#aab0b8", "metal", n="غطاء علوي (Cap)"),
+            box(("-W/2+3", 30, "D/2"), ("W/2-3", "H-30", "D/2+0.4"), "#c0c6cc", "metal", n="باب الصيانة (Service door) مع قفل"),
+            cyl((0, 45, "D/2+0.4"), 1.2, 0.8, "#1f2226", "metal", ax="z", n="قفل الباب"),
+            box(("-W/2+4", "H-26", "D/2"), ("W/2-4", "H-16", "D/2+0.3"), "#1f2226", "matte", n="لوحة بيانات/إشارة"),
+            rep(box(("-W/2+1", "H-14", "D/2"), ("W/2-1", "H-12", "D/2+0.4"), "#2ecc40", "emit", n="شريط LED حالة (أخضر/أحمر)"), 1, (0, 0, 0)),
+            cyl(("W/2", "H-12", 0), 4, 2.5, "#8e949c", "metal", ax="x", n="غطاء محور الذراع (Pivot cover)")]
+
+def barrier_boom():
+    # boom of the barrier (element: 300 x 9 cm plan, 8 cm high): painted aluminium arm with red/white warning stripes, rubber edge, end cap
+    return [box(("-W/2", 0, "-D/2"), ("W/2", "H", "D/2"), "#f2f2ee", "gloss", n="ذراع البوابة (Boom) — ألمنيوم مدهون أبيض"),
+            rep(box(("-W/2+6", -0.05, "-D/2-0.1"), ("-W/2+36", "H+0.05", "D/2+0.1"), "#c0392b", "gloss", n="شريط تحذير أحمر (Warning stripe)"), "floor((W-6)/60)", (60, 0, 0)),
+            box(("-W/2-0.8", 0, "-D/2-0.3"), ("-W/2", "H", "D/2+0.3"), "#1f2226", "rubber", n="غطاء طرف مطاطي"),
+            box(("W/2", 0, "-D/2-0.3"), ("W/2+0.8", "H", "D/2+0.3"), "#1f2226", "rubber", n="غطاء طرف مطاطي"),
+            box(("-W/2", -0.1, "-D/2+1"), ("W/2", 0.5, "D/2-1"), "#1f2226", "rubber", n="حافة سفلية مطاطية (Safety edge)"),
+            rep(box(("-W/2+30", "H", "-0.5"), ("-W/2+34", "H+0.3", "0.5"), "#f5c518", "gloss", n="عاكس ضوء (Reflector)"), "floor((W-60)/100)", (100, 0, 0))]
 
 def boundary_wall():
     return [box(("-W/2", 0, "-D/2"), ("W/2", "H-12", "D/2"), "#cfc6b2", "matte", n="جدار سور بلوك 200 مم مع لياسة ودهان خارجي"), box(("-W/2-3", "H-12", "-D/2-3"), ("W/2+3", "H", "D/2+3"), "#b9b3a2", "matte", n="كمرة غطاء (Coping beam) خرسانية"),
@@ -113,15 +127,16 @@ def make():
           asm=(["قياس بلاطة الجرانيت 60×60 سم وعرض المونة: افتراض (غير مذكور)"] if code == "F16" else ["عرض فاصل المونة 3 مم: افتراض"]), dims={"W": 300, "D": 250, "H": 1.5})
     S("floor_F6", "أرضية إيبوكسي على سكريد", "Epoxy floor on screed", floor_tiles(60, "#93a8a2", plain=True, shine="gloss", name="إيبوكسي"), facts=[["الكود", "F6"], ["النوع", "إيبوكسي أحادي اللون بلا فواصل"]], dims={"W": 300, "D": 250, "H": 0.3})
     S("floor_F1", "أرضية سيراميك غير زلقة 300×300 (F1)", "Ceramic non-slip F1", floor_tiles(30, "#c9b99c"), dims={"W": 300, "D": 250, "H": 1.0})
-    S("ceil_C1", "سقف مستعار جبس 12 مم + دهان إيمولشن (C1)", "Gypsum board suspended ceiling C1", ceiling_board(), place={"mode": "rect", "anchor": "top"}, facts=[["الكود", "C1"], ["اللوح", "جبس 12 مم + دهان إيمولشن"], ["الألواح", "120×240 سم (قياسي)"]], asm=["تفصيل الهيكل المعدني (باعدة 60 سم، قطاعات رئيسية 120 سم): قياسي"], dims={"W": 300, "D": 250, "H": 1.2})
-    S("ceil_C3", "سقف مستعار بلاط ألمنيوم 600×600×7 مم (C3)", "Aluminium lay-in tile ceiling C3", ceiling_tiles(), place={"mode": "rect", "anchor": "top"}, facts=[["الكود", "C3"], ["البلاط", "ألمنيوم 600×600×7 مم"]], dims={"W": 300, "D": 250, "H": 1.3})
+    S("ceil_C1", "سقف مستعار جبس 12 مم + دهان إيمولشن (C1)", "Gypsum board suspended ceiling C1", ceiling_board(), place={"mode": "rect", "anchor": "top"}, clip=True, facts=[["الكود", "C1"], ["اللوح", "جبس 12 مم + دهان إيمولشن"], ["الألواح", "120×240 سم (قياسي)"]], asm=["تفصيل الهيكل المعدني (باعدة 60 سم، قطاعات رئيسية 120 سم): قياسي"], dims={"W": 300, "D": 250, "H": 1.2})
+    S("ceil_C3", "سقف مستعار بلاط ألمنيوم 600×600×7 مم (C3)", "Aluminium lay-in tile ceiling C3", ceiling_tiles(), place={"mode": "rect", "anchor": "top"}, clip=True, facts=[["الكود", "C3"], ["البلاط", "ألمنيوم 600×600×7 مم"]], dims={"W": 300, "D": 250, "H": 1.3})
     S("clad_porcelain", "كسوة بورسلين 60×120 سم — 2 سم (W12)", "Porcelain cladding W12 (ventilated)", cladding_porcelain(), facts=[["الكود", "W12"], ["الألواح", "60×120 سم، 2 سم"], ["النظام", "واجهة مهوّاة بهيكل ألمنيوم"]], asm=["نظام التثبيت (هيكل T وأكتاف) قياسي لهذا النوع من الكسوة"], dims={"W": 240, "D": 12, "H": 300})
     S("clad_edge", "حافة كسوة بورسلين (Return)", "Porcelain cladding edge return", cladding_porcelain(), dims={"W": 60, "D": 12, "H": 300})
     S("parapet_top", "حاجز (Parapet) السطح العلوي — كسوة بورسلين مع غطاء ألمنيوم", "Parapet with porcelain cladding & aluminium coping", parapet(), lod=8, dims={"W": 500, "D": 20, "H": 60}, asm=["سماكة الغطاء الألمنيوم وبروزه: قياسية"])
     S("parapet_roof", "حاجز السطح 1.9 م — كسوة بورسلين", "Roof parapet 1.9 m", parapet(True), lod=8, dims={"W": 500, "D": 30, "H": 190})
     S("fence_roof", "سياج السطح 1.8 م مع أساس", "Roof fence 1.8 m with foundation", fence_roof(), lod=8, conf="doc", src=["MECH1 ص15: «1.8m HEIGHT FENCING WITH FOUNDATION»"], facts=[["الارتفاع", "1.8 م (نص المخطط)"]],
       asm=["الاسم في الطبقة يذكر 2 م — بانتظار تأكيدك", "نوع الشبك (سلك مجلفن) والأعمدة 50×50: افتراض"], dims={"W": 400, "D": 6, "H": 180})
-    S("barrier_gate", "بوابة حاجز آلية (Barrier)", "Automatic barrier gate", barrier_gate(), lod=10, src=["ARCH1 ص3 (A100/A102): طبقة Appliances"], asm=["الارتفاعات والأبعاد افتراض (غير مذكورة)"], dims={"W": 300, "D": 19, "H": 110})
+    S("barrier_post", "عمود بوابة الحاجز الآلي (خزانة المحرك)", "Automatic barrier housing (post)", barrier_post(), lod=10, src=["ARCH1 ص3 (A100/A102): طبقة Appliances"], asm=["الارتفاعات والأبعاد التفصيلية افتراض (غير مذكورة)", "الطراز التجاري غير مذكور"], dims={"W": 30, "D": 18, "H": 110})
+    S("barrier_boom", "ذراع بوابة الحاجز الآلي (Boom)", "Automatic barrier boom", barrier_boom(), lod=10, src=["ARCH1 ص3 (A100/A102): طبقة Appliances"], asm=["الارتفاعات والأبعاد التفصيلية افتراض (غير مذكورة)", "طول الذراع من الرسم (3 م)"], dims={"W": 300, "D": 9, "H": 8})
     S("wall_boundary", "سور الموقع — بلوك 200 مم مع كمرة غطاء", "Boundary wall", boundary_wall(), lod=10, src=["ARCH1 ص16-17: A400/A401 تفاصيل السور"], facts=[["النوع", "سور بلوك مع كمرة غطاء"]], asm=["الارتفاع وتفصيل الكمرة من مخطط A400 — يلزم تحديث العينة منه"], dims={"W": 600, "D": 20, "H": 200})
     S("stair_step", "درجة سلم خرسانية بوجه جرانيت (F10)", "Concrete stair step with granite finish", stair_step(), lod=5, src=["ARCH2 ص1-5: تفاصيل السلالم A600-A604", "جدول A500: F10"], facts=[["التشطيب", "جرانيت أورو برازيل 3 سم (F10)"]], asm=["شريط مانع الانزلاق وحافة الدرجة: قياسية"], dims={"W": 120, "D": 28, "H": 17})
     S("stair_landing", "بسطة سلم خرسانية بجرانيت", "Stair landing", stair_step(), lod=6, src=["ARCH2 ص1-5"], dims={"W": 250, "D": 120, "H": 17})
@@ -130,5 +145,5 @@ def make():
 
 RULES = [{"c": "A.wall", "t": t, "s": t} for t in ("wall_blk100", "wall_blk200", "wall_blk_t", "wall_lintel")] + [{"c": "A.floor", "t": f"floor_{c}", "s": f"floor_{c}"} for c in ("F1", "F2", "F4", "F6", "F8", "F16")] + \
         [{"c": "A.ceil", "t": "ceil_C1", "s": "ceil_C1"}, {"c": "A.ceil", "t": "ceil_C3", "s": "ceil_C3"}, {"c": "A.clad", "t": "clad_porcelain", "s": "clad_porcelain"}, {"c": "A.clad", "t": "clad_edge", "s": "clad_edge"},
-         {"c": "A.rail", "t": "parapet_top", "s": "parapet_top"}, {"c": "A.rail", "t": "parapet_roof", "s": "parapet_roof"}, {"c": "A.rail", "t": "fence_roof", "s": "fence_roof"}, {"c": "A.rail", "t": "barrier_gate", "s": "barrier_gate"},
+         {"c": "A.rail", "t": "parapet_top", "s": "parapet_top"}, {"c": "A.rail", "t": "parapet_roof", "s": "parapet_roof"}, {"c": "A.rail", "t": "fence_roof", "s": "fence_roof"}, {"c": "A.rail", "t": "barrier_post", "s": "barrier_post"}, {"c": "A.rail", "t": "barrier_boom", "s": "barrier_boom"},
          {"c": "A.site", "t": "wall_boundary", "s": "wall_boundary"}, {"c": "S.stair", "t": "stair_step", "s": "stair_step"}, {"c": "S.stair", "t": "stair_landing", "s": "stair_landing"}, {"c": "A.fix", "t": "lift_car", "s": "lift_car"}]

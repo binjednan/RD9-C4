@@ -205,6 +205,28 @@ if os.path.exists(ROOF_JSON):
     M["els"] = els
     print("roof elements merged:", len(Rf["els"]))
 
+# ------------------------------------------------------------------ vehicle ramp + external stair 03 (pipeline/ramp_stair.py -> data/ramp_stair.json)
+RS_JSON = os.path.join(HERE, "data", "ramp_stair.json")
+RS_TYPES = {}
+if os.path.exists(RS_JSON):
+    import re as _re2
+    Rs = json.load(open(RS_JSON, encoding="utf-8"))
+    for k, v in Rs.get("mats", {}).items():
+        M["mats"].setdefault(k, v)
+    RS_TYPES = Rs["types"]
+    pool = M["sp"]; pidx = {t: i for i, t in enumerate(pool)}
+    def sp_idx4(t):
+        if t not in pidx:
+            pidx[t] = len(pool); pool.append(t)
+        return pidx[t]
+    els[:] = [e for e in els if not _re2.search(r"-RS\d+$", e["id"])]
+    cnt_rs = collections.Counter()
+    for e in Rs["els"]:
+        cnt_rs[(e["c"], e["l"])] += 1
+        els.append({"id": f"{e['c']}-{e['l']}-RS{cnt_rs[(e['c'], e['l'])]:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx4(t) for t in e["src"]]})
+    M["els"] = els
+    print("ramp/stair elements merged:", len(Rs["els"]))
+
 if "r_open_roof_finishes_removed" not in FIXES:
     # the generic builder gave the OPEN roof (chillers, FAHU, open terraces) floors (F2 ceramic) and ceilings (C3) as if it were a bathroom
     # ('BATH A:4.8M2' text matched to every cell). Rooms of the roof are exactly the footprint of the top slabs (S.slab T): keep finishes only there.
@@ -265,6 +287,145 @@ if os.path.exists(MEPBG_JSON):
     M["els"] = els
     print("mep_bg elements merged:", len(Mb["els"]))
 
+# ------------------------------------------------------------------ placement fixes (audit: devices floating next to the wall they belong to)
+def _wall_geoms(level):
+    from shapely.ops import unary_union as _u
+    G = []
+    for e in els:
+        if e["l"] != level or e["c"] not in ("A.wall", "S.wall", "S.col", "A.rail"): continue
+        g = e["g"]
+        try:
+            if g[0] == "r": G.append(box(min(g[1], g[3]), min(g[2], g[4]), max(g[1], g[3]), max(g[2], g[4])))
+            elif g[0] == "p": G.append(Polygon(g[1], g[4] if len(g) > 4 and g[4] else None).buffer(0))
+        except Exception: pass
+    return _u(G) if G else None
+
+def _bbox_poly(g):
+    import math as _m
+    if g[0] == "b":
+        hw, hd = g[3] / 2, g[4] / 2; a = _m.radians(g[5]); c, s_ = abs(_m.cos(a)), abs(_m.sin(a)); ex, ey = hw * c + hd * s_, hw * s_ + hd * c
+        return box(g[1] - ex, g[2] - ey, g[1] + ex, g[2] + ey)
+    if g[0] == "cyl": return box(g[1] - g[3], g[2] - g[3], g[1] + g[3], g[2] + g[3])
+    if g[0] == "r": return box(min(g[1], g[3]), min(g[2], g[4]), max(g[1], g[3]), max(g[2], g[4]))
+    return None
+
+STAIR03 = (3985.0, 1100.0, 4305.0, 1700.0)      # external stair 03 footprint (A604)
+if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re-merged on every run
+    # the ground-floor sheets repeat the devices of the external stair 03; at G the stair is an open well (no ceiling, upstand walls up to +1.40 m),
+    # so ceiling devices hover and wall devices float above the wall top. Remove the ceiling ones, bring the wall ones down to the upstand wall.
+    gone, lowered = [], 0
+    kept = []
+    for e in els:
+        g = e["g"]
+        if e["l"] == "G" and e["c"][0] == "E" and g[0] in ("b", "cyl") and STAIR03[0] <= g[1] <= STAIR03[2] and STAIR03[1] <= g[2] <= STAIR03[3]:
+            z0, z1 = (g[6], g[7]) if g[0] == "b" else (g[4], g[5])
+            if z0 > 2.8:                                  # ceiling-mounted (3.0-3.05): there is no ceiling over the open stair
+                gone.append({"id": e["id"], "t": e["t"], "xy": [round(g[1]), round(g[2])], "z": [z0, z1]}); continue
+            if z1 > 1.38:
+                dz = round(1.38 - z1, 3); shift_z(e, dz); lowered += 1
+                e.setdefault("a", {})["mount_note"] = "جدار بئر الدرج الخارجي 03 يرتفع حتى +1.40 م فقط عند الدور الأرضي (A604)؛ خُفض الجهاز ليكون على الجدار — افتراض هندسي يحتاج تأكيد"
+        kept.append(e)
+    els[:] = kept; M["els"] = els
+    if gone: json.dump(gone, open(os.path.join(HERE, "data", "removed_stair03_g_ceiling.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    (FIXES.append("stair03_devices_v1") if "stair03_devices_v1" not in FIXES else None); print("stair 03: ceiling devices removed at G:", len(gone), "| wall devices lowered:", lowered)
+
+if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re-merged on every run
+    # wall-mounted devices (sockets, panels, thermostats, speakers ...) are drawn as small symbols a few centimetres off the wall face; the 3-D plate then hovers.
+    # Slide every one of them along the axis of the nearest wall until its back touches the wall (only when the wall is within the tolerance).
+    from shapely.ops import nearest_points
+    SJ = os.path.join(os.path.dirname(HERE), "src", "samples.json")
+    wall_types = {"thermostat"}
+    if os.path.exists(SJ):
+        for k, v in json.load(open(SJ, encoding="utf-8"))["samples"].items():
+            if (v.get("place") or {}).get("mount") == "wall": wall_types.add(k)
+    wall_types.discard("fhc"); wall_types.discard("e_P5")                                  # FHC boxes already sit in the wall recess
+    BIG = {"e_P18", "e_F8", "e_F9", "e_T20", "e_P14", "e_P16", "e_F19"}   # panels: wider tolerance
+    cache = {}; moved = collections.Counter(); far = []
+    for e in els:
+        if e.get("t") not in wall_types or e["g"][0] not in ("b", "cyl", "r"): continue
+        if e["l"] not in cache: cache[e["l"]] = _wall_geoms(e["l"])
+        W_ = cache[e["l"]]
+        if W_ is None: continue
+        bp = _bbox_poly(e["g"]); d = W_.distance(bp)
+        tol = 60 if (e["t"] in BIG or (e["l"] == "G" and STAIR03[0] <= e["g"][1] <= STAIR03[2] and STAIR03[1] <= e["g"][2] <= STAIR03[3])) else 25
+        if d <= 0.5: continue
+        if d > tol:
+            far.append((e["id"], e["t"], e["l"], round(d))); continue
+        pa, pb = nearest_points(bp, W_); dx, dy = pb.x - pa.x, pb.y - pa.y
+        if abs(dx) >= abs(dy): dy = 0.0
+        else: dx = 0.0
+        g = e["g"]; g[1] = round(g[1] + dx, 1); g[2] = round(g[2] + dy, 1)
+        a = e.setdefault("a", {}); a["snap_cm"] = round(d, 1)
+        a["snap_note"] = f"سُحب {round(d,1)} سم إلى وجه الجدار — رمز المخطط يبعد عن الجدار؛ الجهاز مركّب على الجدار فعليًا (تصحيح مطابقة)"
+        moved[e["t"]] += 1
+    M["meta"]["wall_snap_far"] = far
+    (FIXES.append("wall_snap_v1") if "wall_snap_v1" not in FIXES else None); print("wall devices snapped:", sum(moved.values()), "| still off any wall:", len(far))
+
+if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re-merged on every run
+    # EP-103: "15A switch socket for FCU (double-pole switch with neon)" is drawn beside each FCU, which hangs in the ceiling void; the generic 1.30 m
+    # wall height left 98 of the 106 switches floating in mid-air below the unit. Mount them on the casing of the FCU they serve (nearest unit on the level).
+    fc = collections.defaultdict(list)
+    for e in els:
+        if e["c"] == "M.equip" and e.get("t") == "fcu" and e["g"][0] == "b": fc[e["l"]].append(e)
+    n_ok = n_far = 0
+    for e in els:
+        if e.get("t") != "e_P5" or e["g"][0] != "b": continue
+        cand = fc.get(e["l"], [])
+        if not cand: continue
+        gx, gy = e["g"][1], e["g"][2]
+        f = min(cand, key=lambda u: math.hypot(u["g"][1] - gx, u["g"][2] - gy))
+        fg = f["g"]; dist = math.hypot(fg[1] - gx, fg[2] - gy)
+        if dist > 130: n_far += 1; continue
+        # lateral side of the unit facing the symbol (FCU long axis = x when ang is 0/180, y when 90)
+        horiz = abs(math.cos(math.radians(fg[5]))) > 0.7
+        L, Wd = (fg[3], fg[4]) if True else (fg[3], fg[4])
+        ux, uy = (1, 0) if horiz else (0, 1)           # unit axis in plan
+        lx, ly = -uy, ux                                   # lateral axis
+        along = (gx - fg[1]) * ux + (gy - fg[2]) * uy; lat = (gx - fg[1]) * lx + (gy - fg[2]) * ly
+        sgn = 1 if lat >= 0 else -1
+        half_l = fg[3] / 2; half_w = fg[4] / 2
+        along = max(-half_l + 12, min(half_l - 12, along))
+        cx = fg[1] + along * ux + sgn * (half_w + 2.3) * lx; cy = fg[2] + along * uy + sgn * (half_w + 2.3) * ly
+        z_mid = (fg[6] + fg[7]) / 2
+        g = e["g"]; g[1], g[2] = round(cx, 1), round(cy, 1); g[3], g[4] = 9, 4.0
+        g[5] = 0.0 if abs(lx) < 0.5 else 90.0
+        g[6], g[7] = round(z_mid - 0.045, 3), round(z_mid + 0.045, 3)
+        a = e.setdefault("a", {})
+        a["side"] = ("E" if lx * sgn > 0 else "W") if abs(lx) > 0.5 else ("N" if ly * sgn > 0 else "S")
+        a["mount_note"] = "مفتاح FCU مركّب على غلاف الوحدة في فراغ السقف المستعار (EP-103) — الارتفاع 1.30 م الافتراضي كان يتركه معلّقًا في الهواء؛ الموضع على الوحدة افتراض هندسي يحتاج تأكيد"
+        n_ok += 1
+    # the ones whose unit is further than 130 cm (technical rooms): slide them onto the nearest wall (<= 100 cm) at the 1.30 m EP-109 height
+    from shapely.ops import nearest_points as _np
+    wc = {}; n_w = n_still = 0
+    for e in els:
+        if e.get("t") != "e_P5" or e["g"][0] != "b" or "FCU" in (e.get("a") or {}).get("mount_note", ""): continue
+        if e["l"] not in wc: wc[e["l"]] = _wall_geoms(e["l"])
+        W_ = wc[e["l"]]
+        if W_ is None: n_still += 1; continue
+        bp = _bbox_poly(e["g"]); d = W_.distance(bp)
+        if d <= 0.5: continue
+        if d > 100: n_still += 1; continue
+        pa, pb = _np(bp, W_); dx, dy = pb.x - pa.x, pb.y - pa.y
+        if abs(dx) >= abs(dy): dy = 0.0
+        else: dx = 0.0
+        e["g"][1] = round(e["g"][1] + dx, 1); e["g"][2] = round(e["g"][2] + dy, 1)
+        e.setdefault("a", {})["snap_note"] = f"سُحب {round(d)} سم إلى أقرب جدار (لا توجد وحدة FCU قريبة) — تصحيح مطابقة"
+        n_w += 1
+    (FIXES.append("fcu_switch_to_unit_v1") if "fcu_switch_to_unit_v1" not in FIXES else None); print("FCU switches mounted on their unit:", n_ok, "| no unit within 130 cm:", n_far, "| slid to wall:", n_w, "| still free:", n_still)
+
+if True:      # stateless: roof.json / mep_bg.json are re-merged on every run, so this must be re-applied every run
+    n = 0
+    for e in els:
+        if e["c"] == "M.outlet" and e["g"][0] == "b" and (e["g"][3] < 1.5 or e["g"][4] < 1.5):
+            g = e["g"]
+            if g[4] < 1.5: g[4] = 12.0
+            if g[3] < 1.5: g[3] = 12.0
+            a = e.setdefault("a", {}); a["size_cm"] = f"{round(max(g[3], g[4]))}×{round(min(g[3], g[4]))}"
+            a["size_note"] = "الرمز مرسوم كخط (بلا عمق)؛ أُعطي عمق 12 سم لشبكة خطية — افتراض هندسي يحتاج تأكيد"
+            n += 1
+    if "zero_depth_grille_v1" not in FIXES: FIXES.append("zero_depth_grille_v1")
+    print("zero-depth grilles fixed:", n)
+
 # ------------------------------------------------------------------ types
 types = {}
 for k, d in kb.DOORS.items():
@@ -293,6 +454,7 @@ types = {k: v for k, v in types.items() if k in used}
 M["types"] = types
 M["types"].update(ROOF_TYPES)
 M["types"].update(MEPBG_TYPES)
+M["types"].update(RS_TYPES)
 
 # ------------------------------------------------------------------ finishes + areas
 def poly_area_cm2(g):

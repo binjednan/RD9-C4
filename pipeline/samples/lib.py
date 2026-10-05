@@ -44,13 +44,14 @@ def mx(part):
     part = dict(part); part["mx"] = True; return part
 
 def sample(id_, name, en, cat, parts, *, kind="object", place=None, dims=None, lod=4.5, conf="derived", src=None, facts=None, asm=None,
-           varmap=None, defaults=None, vars=None, notes=None):
+           varmap=None, defaults=None, vars=None, notes=None, clip=False):
     s = {"name": name, "en": en, "cat": cat, "kind": kind, "place": place or {"mode": "box", "anchor": "bottom"}, "dims": dims or {},
          "lod": {"r": lod}, "conf": conf, "src": src or [], "facts": facts or [], "asm": asm or [], "parts": parts}
     if varmap: s["varmap"] = varmap
     if defaults: s["defaults"] = defaults
     if vars: s["vars"] = vars
     if notes: s["notes"] = notes
+    if clip: s["clip"] = True      # engine clamps every vertex to the unit's W x D footprint (ceilings / finishes must not spill over the room)
     return id_, s
 
 # palette (sRGB hex)

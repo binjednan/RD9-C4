@@ -182,7 +182,7 @@ def main():
     # ---- automatic barrier gate: two posts and two booms across the drive way (layer 'Appliances' of A102)
     for nm, (x0, y0, x1, y1, z0, z1) in (("عمود البوابة الأيسر", (3292, 1624, 3310, 1654, TOP_DW, 1.2)), ("عمود البوابة الأيمن", (3930, 1624, 3949, 1654, TOP_DW, 1.2)),
                                           ("ذراع الحاجز الأيسر", (3310, 1634, 3610, 1643, 1.0, 1.08)), ("ذراع الحاجز الأيمن", (3631, 1634, 3930, 1643, 1.0, 1.08))):
-        add_el("A.rail", nm + " (بوابة الحاجز الآلي AUTOMATIC BARRIER GATE)", ["r", x0, y0, x1, y1, z0, z1], "frame_alu", "BARRIER-GATE", "barrier_gate",
+        add_el("A.rail", nm + " (بوابة الحاجز الآلي AUTOMATIC BARRIER GATE)", ["r", x0, y0, x1, y1, z0, z1], "frame_alu", "BARRIER-GATE", "barrier_post" if "عمود" in nm else "barrier_boom",
                {"kind": "barrier_gate", "h_m": z1, "dim_note": "الأرتفاعات افتراضية — غير مذكورة على A102 (الموضع والأطوال من الرسم)"})
     # ---- circular shade (gazebo): octagon of layers LINEA-1/LINEA-2; heights are NOT in the documents -> stage item flagged as assumed
     xs = []; ys_ = []

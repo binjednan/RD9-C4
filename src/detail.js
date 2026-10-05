@@ -116,6 +116,10 @@ function buildBufs(sample,vars,classesOut){
       } else { run(part,v); if(part.mx) run(mirrorPart(part,v,'x'),v); if(part.mz) run(mirrorPart(part,v,'z'),v); }
     }
   }
+  if(sample.clip){ // finishes / ceilings must stay inside the footprint of the unit they replace
+    const hx=ev('W/2',V)+0.01,hz=ev('D/2',V)+0.01;
+    for(const B of Object.values(bufs)){const p=B.pos; for(let i=0;i<p.length;i+=3){ if(p[i]>hx)p[i]=hx; else if(p[i]<-hx)p[i]=-hx; if(p[i+2]>hz)p[i+2]=hz; else if(p[i+2]<-hz)p[i+2]=-hz; }}
+  }
   return bufs;
 }
 function shiftPart(p,off,v){const q=Object.assign({},p); const sh=(a)=>a?a.map((x,k)=>`(${typeof x==='number'?x:x})+${off[k]}`):a; if(q.p) q.p=sh(q.p); if(q.a){q.a=sh(q.a);q.b=sh(q.b);} q.rep=null; return q;}
@@ -184,7 +188,7 @@ class SampleLOD{
       u.cx=u.x*S; u.cz=-u.y*S; u.cy=(u.z0+u.z1)/2;
       let ang=u.ang;
       if(pl.mount==='wall'){const n=this.hostNormal(u); if(n){ang=Math.atan2(n[0],-n[1])*180/Math.PI;u.n=n;}}
-      else if(pl.orient==='side'){const sd=(u.a&&u.a.side)||''; const nm={S:[0,-1],N:[0,1],E:[1,0],W:[-1,0]}[sd]; if(nm){ang=Math.atan2(nm[0],-nm[1])*180/Math.PI;u.n=nm;}}
+      if(!u.n&&(pl.orient==='side'||pl.mount==='wall')){const sd=(u.a&&u.a.side)||''; const nm={S:[0,-1],N:[0,1],E:[1,0],W:[-1,0]}[sd]; if(nm){ang=Math.atan2(nm[0],-nm[1])*180/Math.PI;u.n=nm;}}
       u.th=ang*Math.PI/180;
       const vars={W:Math.round(u.W*2)/2,D:Math.round(u.D*2)/2,H:Math.round(H*2)/2};
       const a=u.a||{}; if(smp.varmap){for(const k of Object.keys(smp.varmap)){const v=a[smp.varmap[k]];if(typeof v==='number') vars[k]=v;}}

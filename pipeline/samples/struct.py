@@ -100,10 +100,21 @@ def make():
                     rep(cyl(("-W/2+6", 9, "-D/2+6"), 0.8, "W-12", REBAR, "metal", ax="x", seg=8, n="قضيب سفلي T16 كل 20 سم — الاتجاه الآخر"), "floor((D-12)/20)+1", (0, 0, 20))],
                    place={"mode": "none"}, lod=8.0, conf="derived", src=["STR ص12: تفاصيل الأساسات S-8 (قطاعات 1-A و1-B و1-C)", "STR ص11: مخطط الأساسات"], facts=[["السماكة", f"{thk} سم"], ["التسليح السفلي", "T16 @200"], ["الخرسانة", "Fcu 40 N/mm²"], ["العزل", "Polybit-Polyprime SB على خرسانة نظافة 10 سم + بولي إيثيلين"]],
                    asm=["التسليح العلوي والتقوية: «refer to raft reinf. plan» — غير مفصّل", "العينة قطاع 1.2×1.2 م فقط (اللبشة كاملها كبيرة جدًا للاستبدال التلقائي)"], dims={"W": 120, "D": 120, "H": thk}))
+    add(sample("ramp_slab", "بلاطة منحدر السيارات 35 سم — Y16@15 و Y12@15 (قطاع S-23)", "Vehicle ramp slab 35 cm (section)", "structure",
+               [box(("-W/2", 0, "-D/2"), ("W/2", 35, "D/2"), "#b4b4ae", "ghost", n="بلاطة المنحدر خرسانة مسلّحة Fcu 40، سماكة 35 سم"),
+                box(("-W/2", 35, "-D/2"), ("W/2", 36.5, "D/2"), "#3c3f44", "matte", n="طبقة تشطيب سطح المنحدر — غير محددة في المستندات (أسفلت/خرسانة مخشّنة) — افتراض"),
+                box(("-W/2", -0.6, "-D/2"), ("W/2", 0, "D/2"), "#1c1c1c", "matte", n="عزل مائي بيتوميني (WATERPROOFING POLYBIT / BITU PLUS E-4180 كما في S-23)")] +
+               [rep(cyl(("-W/2+4", 5, "-D/2+4"), 0.8, "D-8", REBAR, "metal", ax="z", seg=8, n="قضيب رئيسي سفلي Y16 كل 15 سم (S-23)"), "floor((W-8)/15)+1", (15, 0, 0)),
+                rep(cyl(("-W/2+4", 7.2, "-D/2+4"), 0.6, "W-8", REBAR, "metal", ax="x", seg=8, n="قضيب توزيع سفلي Y12 كل 15 سم"), "floor((D-8)/15)+1", (0, 0, 15)),
+                rep(cyl(("-W/2+4", 28, "-D/2+4"), 0.8, "D-8", REBAR, "metal", ax="z", seg=8, n="قضيب رئيسي علوي Y16 كل 15 سم (T&B في S-23)"), "floor((W-8)/15)+1", (15, 0, 0)),
+                rep(cyl(("-W/2+4", 26.2, "-D/2+4"), 0.6, "W-8", REBAR, "metal", ax="x", seg=8, n="قضيب توزيع علوي Y12 كل 20 سم"), "floor((D-8)/20)+1", (0, 0, 20))],
+               place={"mode": "none"}, lod=8.0, conf="derived", src=["STR ص28: تفاصيل المنحدر S-23 (TH=35 سم، Y16@15 و Y12@15/20 علوي وسفلي)", "ARCH2 ص7: A606 — ميل 16.5% ومنحدر انتقالي 8%"],
+               facts=[["السماكة", "35 سم"], ["التسليح", "Y16@150 + Y12@150 (T&B) — الخرسانة Fcu 40 N/mm²"], ["العرض", "6 م بين الجدران"], ["الميل", "16.5% + انتقالي 8% × 3 م"]],
+               asm=["العينة قطاع 1.2×1.2 م (المنحدر كامله منحنٍ وطويل)", "تشطيب السطح غير محدد في المستندات", "الغطاء 25 مم للبلاطات المصمتة: من ملاحظات STR"], dims={"W": 120, "D": 120, "H": 35}))
     add(sample("slab_floor", "بلاطة أرضية/سقف طابق (قطاع نموذجي)", "Floor slab typical section", "structure", slab_plain(), place={"mode": "none"}, lod=8.0, conf="derived", src=["STR ص20-24: مخططات البلاطات"], asm=["البلاطات الكبيرة متعددة الأضلاع لا تُستبدل تلقائيًا؛ تُعرض كعينة كتالوج"], dims={"W": 200, "D": 150, "H": 28}))
     return out
 
 RULES = [{"c": "S.col", "t": f"col_{k}", "s": f"col_{k}"} for k in list(COLS) + ["column"]] + [{"c": "S.wall", "t": f"col_{k}", "s": f"col_{k}"} for k in list(WALLS) + ["W3*"]] + \
         [{"c": "S.beam", "t": f"beam_{k}", "s": f"beam_{k}"} for k in ("B1", "B2", "B3", "B4", "B5", "B6", "B7", "None", "B1*")] + [{"c": "S.slab", "t": "slab_T", "s": "slab_T"}, {"c": "S.pile", "t": "pile", "s": "pile"},
          {"c": "S.raft", "t": "raft80", "s": "raft80"}, {"c": "S.raft", "t": "raft150", "s": "raft150"}, {"c": "S.slab", "t": "slab_G", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_1", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_2", "s": "slab_floor"},
-         {"c": "S.slab", "t": "slab_3", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_4", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_5", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_R", "s": "slab_floor"}]
+         {"c": "S.slab", "t": "slab_3", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_4", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_5", "s": "slab_floor"}, {"c": "S.slab", "t": "slab_R", "s": "slab_floor"}, {"c": "S.ramp", "t": "ramp_slab", "s": "ramp_slab"}]
