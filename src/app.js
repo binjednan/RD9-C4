@@ -270,18 +270,20 @@ function select(ei,fit=false){
   const e=M.els[ei]; selSet=(e.grp&&grpMap[e.grp])?grpMap[e.grp]:[ei];
   highlight(selSet); showInfo(ei); if(fit) flyToBox(bboxOf(selSet));
 }
-let downXY=null, lastTap={t:0,x:0,y:0}, touchDbl=0;
+let downXY=null, lastTap={t:0,x:0,y:0}, touchDbl=0, lastClick={t:0,ei:-2};
 const cv=renderer.domElement;
 cv.addEventListener('pointerdown',ev=>{downXY=[ev.clientX,ev.clientY,ev.button];});
 cv.addEventListener('pointerup',ev=>{
   if(!downXY) return; const d=downXY; downXY=null;
   if(d[2]!==0||Math.hypot(ev.clientX-d[0],ev.clientY-d[1])>6||controls.lastGestureMulti) return;
-  const ei=pick(ev.clientX,ev.clientY);
+  const ei=pick(ev.clientX,ev.clientY); const now=performance.now();
   if(ev.pointerType!=='mouse'){ // touch / pen: manual double-tap = focus on the element
-    const now=performance.now();
-    if(now-lastTap.t<380&&Math.hypot(ev.clientX-lastTap.x,ev.clientY-lastTap.y)<28){touchDbl=now;lastTap.t=0; if(ei>=0) select(ei,true); return;}
+    if(now-lastTap.t<380&&Math.hypot(ev.clientX-lastTap.x,ev.clientY-lastTap.y)<28){touchDbl=now;lastTap.t=0; lastClick={t:now,ei}; if(ei>=0) select(ei,true); return;}
     lastTap={t:now,x:ev.clientX,y:ev.clientY};
   }
+  // a single press on what is already selected (the element or any part of its group) clears the selection; a quick second press stays a double-click/tap = focus
+  const quick=now-lastClick.t<380&&lastClick.ei===ei; lastClick={t:now,ei};
+  if(ei>=0&&!quick&&selSet.includes(ei)){select(-1);return;}
   select(ei);
 });
 cv.addEventListener('dblclick',ev=>{if(performance.now()-touchDbl<700) return; const ei=pick(ev.clientX,ev.clientY); if(ei>=0) select(ei,true);});
