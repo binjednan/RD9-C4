@@ -4,7 +4,7 @@
 import json, os, sys, importlib, collections
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 ROOT = os.path.dirname(HERE)
-MODS = ["arch", "windows", "elec", "mep", "plumb_fire", "paths", "finish", "struct", "site"]
+MODS = ["arch", "windows", "elec", "mep", "plumb_fire", "paths", "finish", "struct", "site", "details"]
 CLASSES = {
     "matte": {"rough": 0.85, "metal": 0.0}, "metal": {"rough": 0.4, "metal": 0.3}, "gloss": {"rough": 0.18, "metal": 0.05}, "rubber": {"rough": 0.95, "metal": 0.0},
     "glass": {"rough": 0.05, "metal": 0.0, "opacity": 0.30}, "ghost": {"rough": 0.9, "metal": 0.0, "opacity": 0.22}, "emit": {"basic": True},
