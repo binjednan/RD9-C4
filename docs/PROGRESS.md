@@ -1,26 +1,37 @@
-# C4 3D model — progress notes (scratchpad SP = /private/tmp/claude-501/-Users-binqdair/9a1652f3-ec18-4d97-b6e3-2745ee0d2f2c/scratchpad)
+# C4 3D model — progress notes
 
-## How to rebuild
-cd ~/Downloads && python3 SP/work/make_model.py     -> SP/www/model.json   (viewer dev server: http://127.0.0.1:8765/viewer.html , python http.server in SP/www, still running as bg task)
-Electrical symbol extraction (slow, ~2 min): python3 SP/work/elec.py -> SP/work/data/elec_inst.json (ras.py raster matching vs sheet legends)
-Overlay QA: python3 SP/work/ovl.py <fam> <TY|1|G|B|R|T> <ELEC1|ELEC2> out.png [x0,y0,x1,y1]
+## الدفعة 2 (جلسة سحابية) — ما أُنجز
+**إصلاحات صحة العرض (الأولوية)**
+- **مجاري الهواء كانت أكبر 10 مرات**: `hvac.py` قرأ وسم المقاس «450x250» (مليمتر) كأنه سنتيمتر. صُحّح المصدر (`pipeline/hvac.py`) والنموذج الحالي (إصلاح `duct_mm_to_cm` في `pipeline/post_model.py`، يُطبَّق مرة واحدة ويُسجَّل في `meta.fixes`). كانت الألواح الزرقاء الضخمة البارزة من الواجهة هي هذه المجاري.
+- **حذف 245 عنصرًا جاءت من هوامش اللوحات** (قطاعات رأسية، مفاتيح الرموز، مخططات الأعمدة الرأسية) ووقعت خارج مسقط المبنى في طوابقها: أنابيب إطفاء/صرف/مياه باردة وناشرات هواء شمال الجدار الشمالي في الطوابق 1–5، رموز لوحة MDB من مفتاح اللوحة عند x≈50 م في B/G/R/T، و3 أعمدة غير موسومة عند x≈39 م في الطوابق 1–5 والسطح. القائمة الكاملة: `pipeline/data/removed_offplan.json` (قابلة للتدقيق). القاعدة: كل رؤوس العنصر خارج حدود بلاطات طابقه (+60 سم)؛ يُستثنى الموقع والخوازيق واللبشة والأرضيات والأسقف والبلاطات ومقصورات المصاعد.
+- **عناصر كهربائية في «سطح الغرف العلوي T» كانت على ارتفاع 28–29 م فوق السقف**: كشافات جدارية TYPE-11 (6) نُقلت إلى الطابق R وارتفاعها من أرضية R؛ وعناصر T الواقعة داخل المبنى لكن خارج بلاطة T نُقلت إلى R. موسومة بـ`mount_note` («افتراض هندسي — يحتاج تأكيد»).
+- **انطباق الأقسام**: فُحص بمسقط الطابق الثالث (إنشائي + معماري + ميكانيكي + كهرباء + صحي)، منطبقة دون انزياح. الذي كان «طايرًا» هو ما ذُكر أعلاه لا انزياح تسجيل.
 
-## Done (in model.json)
-structure (raft, piles, cols, walls, slabs, beams, stairs), architecture (walls/doors/windows/finishes/facade/stairs/lifts/parapets), HVAC levels 1-5 (FCU, ducts, diffusers, dampers, thermostats),
-plumbing levels 1-5 (cold/hot/soil/waste/vent/FF pipes+heads+heaters+valves), electrical devices (light/power/FA/LC/TEL/LTG) all levels via elec_emit.emit_family.
-Modules: kb_elec.py (class catalogue, heights from EP-109: sockets 0.40, switches 1.30, FA break glass 1.30, bell 2.20, isolator 1.30, DB top 1.80, tel/tv 0.40, SMDB 80x100, DB 40x60 cm),
-elec.py (extraction), elec_emit.py (geometry + wall snapping), ras.py (raster symbol matcher), ovl.py (QA overlay).
+**المُعرِض (`src/`)**
+- `controls.js` متحكم كاميرا جديد بدل OrbitControls: لمس (إصبع = حسب الوضع، إصبعان = قرص + تحريك، نقرتان = تركيز)، ماوس (يسار تدوير، يمين/Shift تحريك، أوسط تقريب، عجلة نحو المؤشر)، تراك باد (قرص = تقريب بـ`wheel+ctrlKey` وأحداث `gesture*` في Safari؛ تمرير إصبعين = تدوير، مع Shift أو وضع «تحريك» = تحريك)، لوحة مفاتيح (الأسهم تدوير، WASD تحريك، Q/E خفض/رفع، +/− تقريب، Home، F، Esc). أزرار وضع صريحة (تدوير/تحريك/تقريب)، عروض جاهزة (علوي/أمامي/خلفي/يمين/يسار)، ملء الشاشة، وضع أداء (تلقائي عند أقل من 18 إطارًا/ث ويُحفظ في المتصفح)، رسم عند الحاجة فقط (يوفر البطارية).
+- شفافية لكل قسم رئيسي ولكل فرع (5–100%) مع «إعادة ضبط»، تعمل مع عزل الوحدة والقص؛ النقر يمرّ عبر ما شفافيته أقل من 20%.
+- تبويبات: **بحث** بالـTag/ID/الاسم/الغرفة (مع إبراز الكل)، **المواد** (دليل المواد + رموز التشطيب A500 ومطابقة الكميات مع BOQ + جدول RAL)، **التعارضات** (قائمة، نقر = تحديد العنصرين والتحليق إليهما).
+- آلية «الكماليات الإخراجية»: أي عنصر بعلم `stage` (أو فئة `*.stage`) يدخل تحت مفتاح عام واحد ومفاتيح فرعية بالنوع؛ تظهر اللوحة فقط حين توجد عناصر (لا توجد عناصر إخراجية بعد).
+- محاكاة حركة المصعدين (اختيارية) — السرعة وزمن التوقف **ليست من المستندات** (موسومة في الواجهة).
+- بطاقة العنصر: كتلة «افتراضات هندسية — تحتاج تأكيد» منفصلة عن المواصفات.
 
-## Key doc data found (for the type KB / info cards)
-- Light legend TYPE-1..13 (wattage/lumen/IP) in kb_elec.py. Power legend 19 rows. FA/LC/TEL/LTG legends in kb_elec.py.
-- SLD (ELEC1 p16): MDB 2000A 4P tinned Cu busbar, 12-way Form-4 Type-6, IP54, 50kA, ACB 2000A TPN; transformer 1000kVA dry 22/0.4kV; ATS 200kVA (generator); capacitor bank 220kVAr;
-  MCC-CHILLER 600A busbar: Chiller-1/2 L=120kW each (600A TP), FAHU-1, CHWP 2 duty+1 standby VFD 10kW; SMDB-SR L=157kW (L(ad)=89.6), SMDB-SH L=16.2 (9.4), DB-SH1/2 8.1 (4.7);
-  SMDB-1..5 each L=144.8kW (L(ad)=78.4) with DB-F1..F6 (25.6/13.9 for F1.., 21.2/11.4 for F3,F5..), DB-GF 25.2/15.7, DB-SR 15.5/10.0, DB-RF 31.3/16.6, DB-G 14.4/6.8, DB-BF 35.6/21.0, CCU-UPS 5.0 (UPS 7kVA), SMDB-LIFT 30kW (2 lifts 15kW);
-  F.F pumps: main 93kW, jockey 5kW (FP-400 fire-rated cable); totals: A/C 285.0kW, other 970.2kW, total 1255.2kW, after diversity 729.5kW. HV panel 11x[1C 630mm2 XLPE] from ADDC.
-- Room details EP-108 (ELEC1 p17): 22kV switchgear 2500x900x2350; LV metering panel 600x800x1800; transformer dry 4000x1700x3200; DMS RTU 1000x300x1000; battery rack 1200x500x1290; 48V DC 820x600x2082; doors D1 2300x3500 (steel louvre), D2/D3 2300x3000 aluminium louvre.
-- Equipment tag positions: data/equip_tags.json (roof chillers/CHWP etc; ground MDB/GENERATOR/TRANSFORMER; FF pump set; basement tanks).
+**البيانات (`pipeline/post_model.py`)**: يعالج `src/model.json` بلا حاجة إلى الـPDF وهو قابل لإعادة التشغيل: `types` (92 نوعًا: أبواب ونوافذ من `kb.py` وأجهزة كهربائية من `kb_elec.py` مع فصل الافتراضات)، `fin`/`finq` (جدول A500 + مساحات محسوبة)، `ral` (RAL.xlsx)، `clashes`.
+
+## نتائج التحقق التي تحتاج قرارك
+1. **تشطيبات البدروم والسطح** (مطابقة BOQ): F16 في البدروم 1640 م² و F2 على السطح 498 م² في النموذج، بينما BOQ: F16 = 233 م² (ردهات) وF2 = 340 م². الطوابق 1–5 قريبة من BOQ (F16 ≈ 255 م²). السبب: `build_level_generic` يُسند تشطيبًا افتراضيًا حسب نوع الغرفة لـB/G/R. المواقف في BOQ طلاء CSP (1190 م²). **لم يُصحَّح** لأنه يحتاج قرارًا (أي تشطيب لأي غرفة في B/G/R).
+2. **تعارض RAL.xlsx مع A500 المستخرج**: W5 و W10 معكوسان (RAL.xlsx: W5 = أكريليك مضاد للكربنة، W10 = شبه إيبوكسي؛ A500 المستخرج: العكس)، وW12 في RAL.xlsx دهان أكريليك خارجي بينما A500 المستخرج W12 = كسوة بورسلين (والأكريليك الخارجي W11). كل قيم RAL = «RAL xxxx» (غير محددة) وتبقى كذلك.
+3. التعارضات الهندسية مبنية على **مناسيب افتراضية** لشبكات فراغ السقف؛ هي مرشّحات للمراجعة لا حكم نهائي.
+
+## الملفات المصدرية (PDF) — حالة الاستيعاب
+وصلت كل الملفات إلى مستودع خاص (`binjednan/c4-docs-privet`، لا تُنسخ إلى المستودع العام). خط الاستخراج في `pipeline/` ما زال بمسارات جهاز المالك (`lib.py: DL`, `CACHE`)؛ يلزم تعديلها قبل إعادة التشغيل. لم يُعَد الاستخراج بعد.
 
 ## Remaining (priority order)
-1 string pool for element sources (model.json too big: 9 MB) ; 2 plant equipment + DB/SMDB/MDB panels from tags; 3 cable routes (E.tray: CONNE layers + trays + risers);
-4 HVAC B/G/R + CHW + risers; plumbing G/B/R + risers + tanks + storm; 5 lightning; 6 type KB (model.types); 7 clash detection; 8 material legend + audit panels;
-9 UI polish (search, legend/clash panes) + single-file build to ~/Downloads/C4-3D-MODEL/ + QA + final Arabic summary.
+1 الأرضي والموقع (ARCH1 ص5: شارع، مواقف، سياج، ألعاب، حديقة، مظلات) ؛ 2 الأثاث والتجهيزات (طبقات furrniture/A-FURNITURE) كـ`stage`؛ 3 معدات الأسطح والأرضي والبدروم (مبردات، مضخات، خزانات، مولد، محول، MDB/SMDB/DB) ؛ 4 مسارات الكابلات ؛ 5 ميكانيكا/سباكة B/G/R + الأعمدة الرأسية ؛ 6 صواعق وتأريض ؛ 7 أبواب هبوط المصاعد (تحتاج جهة فتحة البئر من ARCH1) ؛ 8 إصلاح تشطيبات B/G/R بعد قرارك.
+
+## How to rebuild (viewer)
+`python3 pipeline/post_model.py && python3 src/build.py` → `index.html` (4.4 MB). المتصفح: افتح `index.html` مباشرة.
+
+## Previous batch notes (kept)
+Rebuild of the model itself (`pipeline/make_model.py`) كان على جهاز المالك (مسارات `/private/tmp/claude-501/...` و`~/Downloads`).
+Done in model.json: structure (raft, piles, cols, walls, slabs, beams, stairs), architecture (walls/doors/windows/finishes/facade/stairs/lifts/parapets), HVAC levels 1-5 (FCU, ducts, diffusers, dampers, thermostats), plumbing levels 1-5, electrical devices (light/power/FA/LC/TEL/LTG) all levels via elec_emit.emit_family.
+Key doc data found: Light legend TYPE-1..13, Power legend 19 rows, SLD (ELEC1 p16): MDB 2000A 4P, transformer 1000kVA dry 22/0.4kV, ATS 200kVA, capacitor bank 220kVAr, MCC-CHILLER 600A (Chiller-1/2 120kW each), SMDB-SR/SH, SMDB-1..5 (144.8kW each), F.F pumps (main 93kW, jockey 5kW), totals A/C 285.0kW, other 970.2kW, total 1255.2kW, after diversity 729.5kW. Room details EP-108: 22kV switchgear 2500x900x2350; LV metering 600x800x1800; transformer dry 4000x1700x3200; DMS RTU 1000x300x1000; battery rack 1200x500x1290; 48V DC 820x600x2082. Equipment tag positions: `data/equip_tags.json`.

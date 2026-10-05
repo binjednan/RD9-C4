@@ -8,13 +8,13 @@ tpl=rd("template.html")
 ver=datetime.datetime.now().strftime("v%Y.%m.%d-%H%M")
 tpl=tpl.replace("{{VERSION}}",ver)
 # ---- dev
-dev=tpl.replace("{{SCRIPTS}}","""<script src="three.min.js"></script><script src="OrbitControls.js"></script><script src="engine.js"></script>
+dev=tpl.replace("{{SCRIPTS}}","""<script src="three.min.js"></script><script src="engine.js"></script><script src="controls.js"></script>
 <script>fetch('model.json').then(r=>r.json()).then(m=>{window.__MODEL__=m;const s=document.createElement('script');s.src='app.js?'+Date.now();document.body.appendChild(s);});</script>""")
 open(os.path.join(WWW,"viewer.html"),"w",encoding="utf-8").write(dev)
 # ---- single file
-three=rd("three.min.js"); orbit=rd("OrbitControls.js"); eng=rd("engine.js"); app=rd("app.js")
+three=rd("three.min.js"); eng=rd("engine.js"); ctl=rd("controls.js"); app=rd("app.js")
 model=open(os.path.join(WWW,"model.json"),encoding="utf-8").read()
-for name,src in (("three",three),("orbit",orbit),("engine",eng),("app",app)):
+for name,src in (("three",three),("engine",eng),("controls",ctl),("app",app)):
     assert "</script" not in src.lower(), name
 model_safe=model.replace("</","<\\/")
 boot="""<script id="appsrc" type="text/plain">%s</script>
@@ -27,7 +27,7 @@ requestAnimationFrame(function(){setTimeout(function(){
   }catch(e){ var m=document.getElementById('lmsg'); if(m) m.textContent='تعذّر تشغيل النموذج: '+e.message; console.error(e); }
 },40);});
 </script>""" % (app,model_safe)
-single=tpl.replace("{{SCRIPTS}}","<script>"+three+"</script>\n<script>"+orbit+"</script>\n<script>"+eng+"</script>\n"+boot)
+single=tpl.replace("{{SCRIPTS}}","<script>"+three+"</script>\n<script>"+eng+"</script>\n<script>"+ctl+"</script>\n"+boot)
 os.makedirs(OUT_DIR,exist_ok=True)
 p=os.path.join(OUT_DIR,"index.html")
 open(p,"w",encoding="utf-8").write(single)

@@ -104,7 +104,7 @@ def emit_ac(add, level, R, fm, ffl, tagmap=None, floor_label=None, src_extra="")
         add("M.equip",level,_B(f["x"],f["y"],f["w"],f["h"],f["ang"],ffl+2.78,ffl+3.08),mark=tag,typ="fcu",mat="m_fcu",attrs={"tag_floor":floor_label or level},u=u,u2=u2,src=[f"{sheet} طبقة M_HVAC_EQP + وسم {tag}","AC-106: جدول وحدات FCU (سعات وتدفقات)","ارتفاع التركيب فوق السقف المستعار: افتراض هندسي (غير مذكور)"]); n+=1
     for d in R["duct_segs"]:
         a,b=d["a"],d["b"]
-        w=d["w"] or 200; h=d["h"] or 150
+        w=(d["w"] or 200)/10.0; h=(d["h"] or 150)/10.0   # tag "450x250" is in millimetres; the model unit is cm
         mid=((a[0]+b[0])/2,(a[1]+b[1])/2)
         u,u2=unit_of(*mid)
         zc=ffl+SOFFIT_REL-h/200.0
