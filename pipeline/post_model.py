@@ -14,7 +14,7 @@ Adds / replaces these keys:
              MEP elevations above the ceiling are assumptions (see element cards), so these are candidates only.
 Nothing here is invented: whatever is not in the documents stays out or is explicitly flagged.
 """
-import json, os, sys, collections, math
+import json, os, sys, collections, math, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import kb, kb_elec, finishes
@@ -226,6 +226,45 @@ if "r_open_roof_finishes_removed" not in FIXES:
     M["meta"]["removed_open_roof_finishes"] = len(gone)
     FIXES.append("r_open_roof_finishes_removed"); print("open-roof floors/ceilings removed:", len(gone))
 
+# ------------------------------------------------------------------ B/G/R fire-fighting + FFC line + risers (pipeline/mep_bg.py -> data/mep_bg.json)
+MEPBG_JSON = os.path.join(HERE, "data", "mep_bg.json")
+MEPBG_TYPES = {}
+if "pipe_glyphs_removed" not in FIXES:
+    # flow-arrow heads, valve bow-ties and leader ticks on the pipe layers were extracted as tubes (hundreds of 8-15 cm fragments)
+    import glyphs as _G
+    groups = collections.defaultdict(list)
+    for e in els:
+        if e["c"] in ("P.ff", "P.cold", "P.hot", "P.drain") and e["g"][0] == "t" and not re.search(r"-M\d+$", e["id"]):
+            groups[(e["c"], e["l"])].append(e)
+    gone = []
+    for k, es in groups.items():
+        fl = _G.flags([[(p[0], p[1]) for p in e["g"][1]] for e in es])
+        gone += [e["id"] for e, f in zip(es, fl) if f]
+    gs = set(gone)
+    els[:] = [e for e in els if e["id"] not in gs]; M["els"] = els
+    M["meta"]["removed_pipe_glyphs"] = len(gone)
+    FIXES.append("pipe_glyphs_removed"); print("pipe glyph fragments removed:", len(gone))
+
+if os.path.exists(MEPBG_JSON):
+    Mb = json.load(open(MEPBG_JSON, encoding="utf-8"))
+    for k, v in Mb["mats"].items():
+        M["mats"].setdefault(k, v)
+    MEPBG_TYPES = Mb["types"]
+    pool = M["sp"]; pidx = {t: i for i, t in enumerate(pool)}
+    def sp_idx3(t):
+        if t not in pidx:
+            pidx[t] = len(pool); pool.append(t)
+        return pidx[t]
+    els[:] = [e for e in els if not re.search(r"-M\d+$", e["id"])]
+    cnt_ = collections.Counter()
+    for e in Mb["els"]:
+        cnt_[(e["c"], e["l"])] += 1
+        ne = {"id": f"{e['c']}-{e['l']}-M{cnt_[(e['c'], e['l'])]:04d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx3(t) for t in e["src"]]}
+        if e.get("grp"): ne["grp"] = e["grp"]
+        els.append(ne)
+    M["els"] = els
+    print("mep_bg elements merged:", len(Mb["els"]))
+
 # ------------------------------------------------------------------ types
 types = {}
 for k, d in kb.DOORS.items():
@@ -253,6 +292,7 @@ used = {e["t"] for e in els}
 types = {k: v for k, v in types.items() if k in used}
 M["types"] = types
 M["types"].update(ROOF_TYPES)
+M["types"].update(MEPBG_TYPES)
 
 # ------------------------------------------------------------------ finishes + areas
 def poly_area_cm2(g):

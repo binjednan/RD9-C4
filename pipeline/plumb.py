@@ -62,6 +62,11 @@ def extract_dr(page, ref_page):
     R["co"]=[{"x":sp["X"],"y":sp["Y"]} for sp in MC.spans(sh,"M_DR_TEXT") if sp["s"] in("CO","FCO")]
     return R
 
+def drop_short_diag(segs, minlen=80.0):
+    """flow-arrow heads, valve bow-ties and leader ticks live on the pipe layers as short diagonal strokes; real sprinkler pipes are orthogonal
+    (the few long diagonals, >= 80 cm, are kept)"""
+    return [(a,b) for a,b in segs if not (abs(a[0]-b[0])>0.8 and abs(a[1]-b[1])>0.8 and math.hypot(a[0]-b[0],a[1]-b[1])<minlen)]
+
 def extract_ff(page, ref_page):
     ref=lib.Sheet("ARCH1",ref_page); sh=lib.Sheet("MECH2",page,ref=ref)
     R={"page":page}
@@ -69,7 +74,7 @@ def extract_ff(page, ref_page):
     for sp in MC.spans(sh,("M_FF_TEXT","WS TEXT")):
         mm=inch_to_mm(sp["s"]) if re.match(r'^\d',sp["s"]) else None
         if mm: labs.append({"v":(mm,),"x":sp["X"],"y":sp["Y"],"s":sp["s"]})
-    segs=PP.axis_merge(PP.layer_segments(sh,("M_FF_PIPE","SPR_MAIN_LINE")),gap=6)
+    segs=drop_short_diag(PP.axis_merge(PP.layer_segments(sh,("M_FF_PIPE","SPR_MAIN_LINE")),gap=6))
     sized=PP.assign_sizes(segs,labs)
     R["pipes"]=[{"d":d,"pl":pl} for d,pl,_ in _polys_from_segs(sized,32)]
     lg=[w for w in sh.WD if w["s"]=="LEGEND"]
