@@ -26,6 +26,10 @@ SRC = os.path.join(os.path.dirname(HERE), "src", "model.json")
 M = json.load(open(SRC, encoding="utf-8"))
 els = M["els"]
 els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]      # accessories of pipeline/extras.py are rebuilt below (keep them out of every earlier pass)
+# the apartment windows are rebuilt from the approved schedule (A801/A802 + A1500): keep the old single-slab modules (saved once to data/win_modules.json) out of every pass
+import arch_windows as _AW
+_AW.modules(M)
+els[:] = [e for e in els if not _AW.is_old(e)]
 
 # ------------------------------------------------------------------ corrections to the extracted model (applied once, logged in meta.fixes)
 FIXES = M.setdefault("meta", {}).setdefault("fixes", [])
@@ -746,6 +750,7 @@ els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]
 EXT = _EXT.build(M)
 els[:] = [e for e in els if e["t"] not in ("lift_car", "shed_sail")]                      # the two solid boxes are replaced by the detailed cars of extras.lifts()
 for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
+M["mats"].update(_AW.MATS)                                              # approved window colours replace the earlier grey/blue placeholders
 _pool = M["sp"]; _pidx = {t: i for i, t in enumerate(_pool)}
 def _spx(t):
     if t not in _pidx:
