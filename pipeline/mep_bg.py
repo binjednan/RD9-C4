@@ -136,6 +136,98 @@ def emit_risers(groups):
                 src=src, grp=grp); n += 1
     return n
 
+
+# ------------------------------------------------------------------------------------------------------------------ cabinets (FHC) from the architectural recess layer
+def fhc_cabinets(level):
+    """fire-hose cabinets: the filled U-shaped recess (~32 x 88 cm) on the xref layer '...$FHC' of the FF sheets (the plan symbol has no size of its own)"""
+    pg, ref = PAGE[level]
+    sh = lib.Sheet("MECH2", pg, ref=lib.Sheet("ARCH1", ref))
+    out = []
+    for d in sh.D:
+        if not (d["layer"] or "").endswith("FHC") or not d.get("fill"): continue
+        pts = [sh.T(x, y) for pl in d["polys"] for x, y in pl]
+        if len(pts) < 8: continue
+        xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+        w, h = max(xs) - min(xs), max(ys) - min(ys)
+        if 25 <= min(w, h) <= 40 and 70 <= max(w, h) <= 100:
+            out.append(((min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2, w, h))
+    return out
+
+# ------------------------------------------------------------------------------------------------------------------ ventilation / AC (B, G)
+def ac_level(level, pg, ref):
+    import hvac
+    R = hvac.extract_ac(pg, ref)
+    fx0, fy0, fx1, fy1 = FOOT[level]
+    inb = lambda x, y: fx0 <= x <= fx1 and fy0 <= y <= fy1
+    R["fcus"] = [f for f in R["fcus"] if inb(f["x"], f["y"])]
+    R["duct_segs"] = [d for d in R["duct_segs"] if inb(*d["a"]) and inb(*d["b"])]
+    for k in ("sad", "rad", "sag", "rag", "dam", "therm"):
+        R[k] = [s for s in R[k] if inb(s["x"], s["y"])]
+    n = hvac.emit_ac(lambda c, lv, g, **kw: add(c, lv, g, mark=kw.get("mark"), typ=kw.get("typ"), mat=kw.get("mat"), attrs=kw.get("attrs"), src=kw.get("src")),
+                     level, R, None, FFL[level], floor_label=level)
+    print(f"  AC layout {level}: {n} elements ({len(R['fcus'])} FCU)")
+
+# ------------------------------------------------------------------------------------------------------------------ chilled water pipes (B, G, 1, typical)
+def chw_level(level, pg, ref):
+    sh = lib.Sheet("MECH1", pg, ref=lib.Sheet("ARCH1", ref))
+    labs = []
+    for sp in MC.spans(sh, "M_HVAC_TEXT"):
+        m = re.search(r"(\d{2,3})\s*mm", sp["s"])
+        if m: labs.append({"v": (int(m.group(1)),), "x": sp["X"], "y": sp["Y"], "s": sp["s"]})
+    n = 0; dropped = 0
+    for name, layers, typ, mat, dz, nm, gp in (("S", ("M_CHI_S",), "pipe_chws", "m_chws", 2.80, "تغذية", 8), ("R", ("M_CHI_R",), "pipe_chwr", "m_chwr", 2.74, "رجوع", 14)):   # the return line is drawn dashed (25 cm dash, 12.5 cm gap)
+        segs = plumb.drop_short_diag(PP.axis_merge(PP.layer_segments(sh, layers), gap=gp))
+        sized = PP.assign_sizes(segs, labs)
+        pls = [(d, pl, lab) for d, pl, lab in plumb._polys_from_segs(sized, 20) if geo.polyline_len(pl) >= 6 and inside(level, pl)]
+        fl = G.flags([pl for d, pl, lab in pls]); dropped += sum(fl)
+        for (d, pl, labeled), f in zip(pls, fl):
+            if f: continue
+            add("M.pipe", level, ["t", [[round(p[0], 1), round(p[1], 1), round(FFL[level] + dz, 3)] for p in pl], round(max(d / 10.0, 2.2), 1)], typ=typ, mat=mat,
+                attrs={"dia_mm": d, "length_m": round(geo.polyline_len(pl) / 100, 2), "dia_note": "من وسم المخطط" if labeled else "افتراضي 20 مم (قطر فروع FCU في جدول التكييف)", "kind": nm},
+                src=[f"MECH1 ص{pg} طبقة {layers[0]} (مياه مبردة — {nm})", "منسوب الأنابيب في فراغ السقف المستعار: افتراض"]); n += 1
+    print(f"  CHW pipes {level}: {n} (glyphs dropped {dropped})")
+
+# ------------------------------------------------------------------------------------------------------------------ cold/hot water supply (B, G, R)
+def ws_level(level, pg, ref):
+    R = plumb.extract_ws(pg, ref)
+    nd = 0
+    for key in ("cold", "hot"):
+        P = [p for p in R[key] if inside(level, p["pl"])]
+        fl = G.flags([p["pl"] for p in P]); nd += sum(fl)
+        R[key] = [p for p, f in zip(P, fl) if not f]
+    R["heaters"] = [h for h in R["heaters"] if FOOT[level][0] <= h["x"] <= FOOT[level][2] and FOOT[level][1] <= h["y"] <= FOOT[level][3]]
+    R["valves"] = [v for v in R["valves"] if FOOT[level][0] <= v["x"] <= FOOT[level][2] and FOOT[level][1] <= v["y"] <= FOOT[level][3]]
+    ffl = FFL[level]; dz = R_DZ if level == "R" else 0.0
+    def add_(cat, lv, g, mark=None, typ=None, mat="conc", attrs=None, u=None, u2=None, src=None):
+        if dz and g[0] == "t":
+            for p_ in g[1]: p_[2] = round(p_[2] + dz, 3)
+        add(cat, lv, g, mark=mark, typ=typ, mat=mat, attrs=attrs, src=src)
+    n = plumb.emit_ws(add_, level, R, None, ffl)
+    print(f"  water supply {level}: {n} elements (glyphs dropped {nd})")
+
+# ------------------------------------------------------------------------------------------------------------------ drainage (B, G low + high level, R)
+DR_Z = {  # level/page -> (soil z, waste z, vent z) relative to the floor — assumptions: B pipes buried in the 20 cm screed above the raft, G low-level pipes hung under the 35 cm G slab
+    "B": (-0.12, -0.09, 2.90), "G": (-0.98, -0.93, 2.95), "G-high": (2.78, 2.82, 2.95), "R": (-0.50, -0.46, 2.85)}
+def dr_level(level, pg, ref, tag=None):
+    R = plumb.extract_dr(pg, ref)
+    key_z = DR_Z[tag or level]
+    nd = 0; n = 0
+    sheet = f"MECH2 ص{pg}"
+    ffl = FFL[level]
+    for key, typ, mat, z, ly in (("soil", "pipe_soil", "p_soil", ffl + key_z[0], "M_DR_SP"), ("waste", "pipe_waste", "p_waste", ffl + key_z[1], "M_DR_WP"), ("vent", "pipe_vent", "p_vent", ffl + key_z[2], "M_DR_VP")):
+        P = [p for p in R[key] if inside(level, p["pl"])]
+        fl = G.flags([p["pl"] for p in P]); nd += sum(fl)
+        for p, f in zip(P, fl):
+            if f: continue
+            add("P.drain", level, plumb._tube(p["pl"], z, p["d"]), typ=typ, mat=mat,
+                attrs={"dia_mm": p["d"], "length_m": round(geo.polyline_len(p["pl"]) / 100, 2), "dia_note": "افتراضي حسب نوع الخط (التسميات بالبوصة عند الأعمدة فقط)"},
+                src=[f"{sheet} طبقة {ly}", "منسوب الصرف: افتراض" + (" (مخطط «المستوى العالي» — داخل فراغ سقف الأرضي)" if tag == "G-high" else "")]); n += 1
+    for key, typ, txt in (("ft", "floor_trap", "FT"), ("co", "cleanout", "CO")):
+        for s in R[key]:
+            if not (FOOT[level][0] <= s["x"] <= FOOT[level][2] and FOOT[level][1] <= s["y"] <= FOOT[level][3]): continue
+            add("P.drain", level, ["cyl", round(s["x"], 1), round(s["y"], 1), 6, round(ffl - 0.02, 3), round(ffl + 0.01, 3)], mark=txt, typ=typ, mat="p_waste", src=[f"{sheet} وسم {txt} (M_DR_TEXT)"]); n += 1
+    print(f"  drainage {level}{'/' + tag if tag else ''}: {n} elements (glyphs dropped {nd})")
+
 def main():
     circles = {}
     for lv in ("B", "G", "1", "2", "R"):
@@ -154,6 +246,21 @@ def main():
                 attrs={"dia_mm": 150, "length_m": round(geo.polyline_len(p["pl"]) / 100, 2), "dia_note": "6″ من مخطط الأعمدة الرأسية FF-105 («6″Ø FFC LINE»)؛ لا وسم قطر على المخططات الأفقية"},
                 src=[f"{SHEET(PAGE[lv][0])} طبقة M_FF_FFC (خط صناديق الإطفاء)", "منسوب التمديد فوق الأرضية: افتراض"], grp=None)
         print(f"  FFC line {lv}: {len(ps)} pipes (glyphs dropped {bad})")
+    # hose cabinets
+    for lv in ORDER:
+        for (x, y, w, h) in fhc_cabinets(lv):
+            if not (FOOT[lv][0] <= x <= FOOT[lv][2] and FOOT[lv][1] <= y <= FOOT[lv][3]): continue
+            z0 = FFL[lv] + 0.50
+            add("P.ff", lv, ["b", round(x, 1), round(y, 1), round(max(w, h), 1), round(min(w, h), 1), 0 if w >= h else 90, round(z0, 3), round(z0 + 1.40, 3)], mark="FHC", typ="fhc", mat="p_ffc",
+                attrs={"dim_note": "المسقط 32×88 سم من تجويف الصندوق على المخطط؛ الارتفاع 1.4 م وبدايته 0.5 م: افتراض"},
+                src=[f"{SHEET(PAGE[lv][0])} طبقة FHC (تجويف صندوق الإطفاء) ووسم FFC", "الارتفاعات: افتراض هندسي يحتاج تأكيد"])
+    # AC layout B/G
+    for lv, pg, ref in (("B", 1, 4), ("G", 2, 5)): ac_level(lv, pg, ref)
+    # chilled-water pipes B, G, 1, typical
+    for lv, pg, ref in (("B", 11, 4), ("G", 12, 5), ("1", 13, 6), ("2", 14, 7), ("3", 14, 7), ("4", 14, 7), ("5", 14, 7)): chw_level(lv, pg, ref)
+    # water supply and drainage
+    for lv, pg, ref in (("B", 18, 4), ("G", 19, 5), ("R", 22, 8)): ws_level(lv, pg, ref)
+    dr_level("B", 2, 4); dr_level("G", 4, 5); dr_level("G", 3, 5, tag="G-high"); dr_level("R", 7, 8)
     n = emit_risers(build_risers(circles))
     print("risers:", n)
     types = {
