@@ -25,6 +25,7 @@ from shapely.strtree import STRtree
 SRC = os.path.join(os.path.dirname(HERE), "src", "model.json")
 M = json.load(open(SRC, encoding="utf-8"))
 els = M["els"]
+els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]      # accessories of pipeline/extras.py are rebuilt below (keep them out of every earlier pass)
 
 # ------------------------------------------------------------------ corrections to the extracted model (applied once, logged in meta.fixes)
 FIXES = M.setdefault("meta", {}).setdefault("fixes", [])
@@ -739,6 +740,26 @@ for _i, _e in enumerate(els):
 M["meta"]["support"] = dict(_cnt)
 print("support analysis:", dict(_cnt))
 
+# ------------------------------------------------------------------ accessories added after the GitHub hand-off (pipeline/extras.py): cornices, ramp fence, site lights, parking canopies
+import extras as _EXT
+els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]
+EXT = _EXT.build(M)
+for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
+_pool = M["sp"]; _pidx = {t: i for i, t in enumerate(_pool)}
+def _spx(t):
+    if t not in _pidx:
+        _pidx[t] = len(_pool); _pool.append(t)
+    return _pidx[t]
+_cx = collections.Counter()
+for _e in EXT["els"]:
+    _cx[(_e["c"], _e["l"])] += 1
+    _ne = {"id": f"{_e['c']}-{_e['l']}-X{sum(_cx.values()):04d}", "c": _e["c"], "l": _e["l"], "g": _e["g"], "mark": _e["mark"], "t": _e["t"], "m": _e["m"], "a": _e["a"], "s": [_spx(t) for t in _e["src"]]}
+    if _e.get("grp"): _ne["grp"] = _e["grp"]
+    if _e.get("stage"): _ne["stage"] = _e["stage"]
+    els.append(_ne)
+M["els"] = els
+print("extras merged:", len(EXT["els"]), dict(collections.Counter(e["t"] for e in EXT["els"])))
+
 # ------------------------------------------------------------------ types
 types = {}
 for k, d in kb.DOORS.items():
@@ -769,6 +790,7 @@ M["types"].update(ROOF_TYPES)
 M["types"].update(MEPBG_TYPES)
 M["types"].update(RS_TYPES)
 M["types"].update(ER_TYPES)
+M["types"].update(EXT["types"])
 
 # ------------------------------------------------------------------ finishes + areas
 def poly_area_cm2(g):
