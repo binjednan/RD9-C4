@@ -1,3 +1,13 @@
 tools/
 .claude/
 .DS_Store
+
+# client documents must never be committed to this public repo
+*.pdf
+*.xlsx
+*.xls
+*.numbers
+*.jpeg
+*.jpg
+__pycache__/
+src/viewer.html
