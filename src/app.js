@@ -8,7 +8,7 @@ const MATS=M.mats; const TYPES=M.types||{};
 const matIndex={}; Object.keys(MATS).forEach((k,i)=>matIndex[k]=i);
 const UNITS=M.units||[]; const unitIndex={}; UNITS.forEach((u,i)=>unitIndex[u.id]=i);
 const ATTR={thk_cm:'السماكة (سم)',w_cm:'العرض (سم)',h_cm:'الارتفاع (سم)',d_cm:'العمق (سم)',dia_cm:'القطر (سم)',len_m:'الطول (م)',kind:'النوع',loc:'الموقع',side:'الجهة',room:'الغرفة',wall_cm:'سماكة الجدار (سم)',step:'رقم الدرجة',rise_cm:'ارتفاع الدرجة (سم)',tread_cm:'عرض الدرجة (سم)',flight:'الجناح',stops:'المحطات',cab_cm:'مقصورة (سم)',h_m:'الارتفاع (م)',top:'منسوب القمة',part:'الجزء',assumed_h:'ارتفاع السقف المستعار (م) — افتراضي',
-    hang_cm:'طول التعليقة (سم)',base_z_m:'منسوب القاعدة (م)',name_ar:'الاسم',note:'ملاحظة',snap_note:'ملاحظة السحب إلى الجدار',snap_cm:'مسافة السحب إلى الجدار (سم)',stand_cm:'ارتفاع الحامل (سم)',species:'النوع النباتي (رمز)',canopy_diam_cm:'قطر التاج (سم)',total_h_m:'الارتفاع الكلي (م)',pole_h_m:'ارتفاع العمود (م)',bays:'المواقف (أرقام)',block:'الكتلة',ribs:'عدد الأضلاع',span_cm:'الفتحة (سم)',top_of_beam_m:'قمة الحزمة (م)',rod_cm:'طول القضيب (سم)',height_m:'الارتفاع (م)',power_w:'القدرة (واط)',mount_h_m:'ارتفاع التركيب (م)',unsupported:'غير محمول',top_m:'منسوب القمة (م)',dim_note:'ملاحظة الأبعاد',level_note:'ملاحظة المنسوب',area_m2:'المساحة (م²)',height_cm:'الارتفاع (سم)',thick_cm:'السماكة (سم)',n:'العدد',from_level:'من الطابق',to_level:'إلى الطابق',x_cm:'الإحداثي x (سم)',y_cm:'الإحداثي y (سم)',riser_note:'ملاحظة الرايزر',where:'الموضع',floor_note:'ملاحظة الأرضية',finish_note:'ملاحظة التشطيب',top_of_seat_m:'منسوب سطح المقعد (م)',face_note:'ملاحظة اتجاه الواجهة',devices:'عدد الأجهزة',dims_mm:'الأبعاد (مم)',sand_top_m:'منسوب الرمل (م)',fl_m:'المنسوب النهائي F.L. (م)',fill_note:'ملاحظة الردم',duty:'الخدمة',ffl_m:'منسوب الأرضية (م)',width_cm:'العرض (سم)',slope_pct:'الميل (%)',transition_pct:'ميل الانتقال (%)',transition_cm:'طول الانتقال (سم)',z_note:'ملاحظة المنسوب',level_m:'المنسوب (م)',height_note:'ملاحظة الارتفاع',cladding:'الكسوة',kva:'القدرة (ك.ف.أ)',hv_kv:'الجهد العالي (ك.ف)',lv_kv:'الجهد المنخفض (ك.ف)',amps:'التيار (أمبير)',dims_cm:'الأبعاد (سم)',dims_note:'ملاحظة الأبعاد',
+    hang_cm:'طول التعليقة (سم)',car:'المصعد',level:'الطابق',clear_w_cm:'العرض الصافي (سم)',clear_h_cm:'الارتفاع الصافي (سم)',door_clear_cm:'فتحة الباب الصافية (سم)',cab_h_m:'ارتفاع المقصورة (م)',bay:'رقم الموقف',accessible:'موقف ذوي الإعاقة',base_z_m:'منسوب القاعدة (م)',name_ar:'الاسم',note:'ملاحظة',snap_note:'ملاحظة السحب إلى الجدار',snap_cm:'مسافة السحب إلى الجدار (سم)',stand_cm:'ارتفاع الحامل (سم)',species:'النوع النباتي (رمز)',canopy_diam_cm:'قطر التاج (سم)',total_h_m:'الارتفاع الكلي (م)',pole_h_m:'ارتفاع العمود (م)',bays:'المواقف (أرقام)',block:'الكتلة',ribs:'عدد الأضلاع',span_cm:'الفتحة (سم)',top_of_beam_m:'قمة الحزمة (م)',rod_cm:'طول القضيب (سم)',height_m:'الارتفاع (م)',power_w:'القدرة (واط)',mount_h_m:'ارتفاع التركيب (م)',unsupported:'غير محمول',top_m:'منسوب القمة (م)',dim_note:'ملاحظة الأبعاد',level_note:'ملاحظة المنسوب',area_m2:'المساحة (م²)',height_cm:'الارتفاع (سم)',thick_cm:'السماكة (سم)',n:'العدد',from_level:'من الطابق',to_level:'إلى الطابق',x_cm:'الإحداثي x (سم)',y_cm:'الإحداثي y (سم)',riser_note:'ملاحظة الرايزر',where:'الموضع',floor_note:'ملاحظة الأرضية',finish_note:'ملاحظة التشطيب',top_of_seat_m:'منسوب سطح المقعد (م)',face_note:'ملاحظة اتجاه الواجهة',devices:'عدد الأجهزة',dims_mm:'الأبعاد (مم)',sand_top_m:'منسوب الرمل (م)',fl_m:'المنسوب النهائي F.L. (م)',fill_note:'ملاحظة الردم',duty:'الخدمة',ffl_m:'منسوب الأرضية (م)',width_cm:'العرض (سم)',slope_pct:'الميل (%)',transition_pct:'ميل الانتقال (%)',transition_cm:'طول الانتقال (سم)',z_note:'ملاحظة المنسوب',level_m:'المنسوب (م)',height_note:'ملاحظة الارتفاع',cladding:'الكسوة',kva:'القدرة (ك.ف.أ)',hv_kv:'الجهد العالي (ك.ف)',lv_kv:'الجهد المنخفض (ك.ف)',amps:'التيار (أمبير)',dims_cm:'الأبعاد (سم)',dims_note:'ملاحظة الأبعاد',
   dia_mm:'القطر (مم)',length_m:'الطول (م)',size_cm:'المقاس (سم)',dia_note:'ملاحظة القطر',size_note:'ملاحظة المقاس',cls:'رمز الفئة (من المفتاح)',match:'درجة مطابقة الرمز',derived_type:'النوع مشتق من المخطط',tag_floor:'الطابق في الوسم',cap_l:'السعة (لتر)',cap_known:'السعة مذكورة في المخطط',mount_note:'ملاحظة التركيب (افتراض)',display_note:'ملاحظة العرض'};
 const CONF={doc:['مستخرج من المستندات','#1a7f37'],derived:['مشتق/محسوب من المستندات','#9a6700'],assumed:['افتراض هندسي — يحتاج تأكيد','#cf222e']};
 const STAGE_KINDS={furniture:'أثاث',tree:'أشجار',plant:'نباتات',car:'سيارات',person:'أشخاص',shade:'مظلات ظل',play:'ألعاب أطفال',other:'أخرى'};
@@ -60,7 +60,7 @@ function patch(mat){
 const groups={}; const elRange=new Array(M.els.length); const elBB=new Float32Array(M.els.length*6);
 const grpMap={}; // grp -> [element idx]
 const stageCount={}; let stageTotal=0;
-function gkey(e){const st=stageKind(e);return e.c+'|'+e.l+'|'+(e.m||'conc')+(st?'|st:'+st:'')+(e.t==='lift_car'?'|'+e.id:'');}
+function gkey(e){const st=stageKind(e);return e.c+'|'+e.l+'|'+(e.m||'conc')+(st?'|st:'+st:'')+(e.t==='lift_car'?'|'+((e.a&&e.a.car)||e.id):'');}
 function uidx(u){return (u==null)?-1:(unitIndex[u]!==undefined?unitIndex[u]:-1);}
 
 /* ---------- supports: what carries every element (pipeline/support.py wrote rod_cm / hang_cm / stand_cm on the elements that need one) ---------- */
@@ -120,7 +120,8 @@ function buildAll(){
     bg.computeBoundingSphere();
     const m=MATS[G.mat]||{color:'#bbbbbb'};
     const op=(m.opacity!==undefined)?m.opacity:1;
-    const mat=patch(new THREE.MeshStandardMaterial({color:new THREE.Color(m.color),roughness:op<1?0.15:0.9,metalness:op<1?0.2:0.0,side:THREE.DoubleSide,transparent:op<1,opacity:op,depthWrite:op>=1,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));
+    const mat=patch(new THREE.MeshStandardMaterial({color:new THREE.Color(m.color),roughness:m.rough!==undefined?m.rough:(op<1?0.15:0.9),metalness:m.metal!==undefined?m.metal:(op<1?0.2:0.0),side:THREE.DoubleSide,transparent:op<1,opacity:op,depthWrite:op>=1,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));
+    if(m.emissive){mat.emissive=new THREE.Color(m.emissive); mat.emissiveIntensity=m.emissiveIntensity||0.9;}
     mat.userData.baseOpacity=op; G.matBase=mat;
     const mesh=new THREE.Mesh(bg,mat); mesh.userData={cat:G.cat,lvl:G.lvl,key:k}; mesh.frustumCulled=false; G.mesh=mesh; scene.add(mesh);
     g.pos=g.nrm=g.unit=g.mat=g.clip=null; G.posArr=bg.attributes.position.array;
@@ -422,14 +423,16 @@ buildClash();
 /* ---------- lifts: optional car motion (illustrative; speed and dwell are NOT from the documents) ---------- */
 const lifts=[]; let liftSim=false;
 function parseStops(s){const out=[]; String(s||'').split(',').forEach(p=>{p=p.trim(); const m=p.match(/^(\d+)\s*[–-]\s*(\d+)$/); if(m){for(let i=+m[1];i<=+m[2];i++) out.push(String(i));} else if(p) out.push(p);}); return out.filter(id=>LVL[id]);}
-(function(){M.els.forEach((e,ei)=>{if(e.t!=='lift_car') return; const G=groups[elRange[ei].gk]; const st=parseStops(e.a&&e.a.stops); if(!G||st.length<2) return;
-  const base=LVL[e.l].ffl; const idx=Math.max(0,st.indexOf(e.l)); lifts.push({G,base,ffl:st.map(id=>LVL[id].ffl),idx,dir:idx>=st.length-1?-1:1,dy:0,wait:0,last:null});});
+(function(){const byCar={}; M.els.forEach((e,ei)=>{if(e.t!=='lift_car') return; const G=groups[elRange[ei].gk]; if(!G) return; const key=(e.a&&e.a.car)||e.id;
+  let L=byCar[key]; if(!L){const st=parseStops(e.a&&e.a.stops); if(st.length<2) return; const base=LVL[e.l].ffl; const idx=Math.max(0,st.indexOf(e.l));
+    L=byCar[key]={Gs:[],base,ffl:st.map(id=>LVL[id].ffl),idx,dir:idx>=st.length-1?-1:1,dy:0,wait:0,last:null}; lifts.push(L);}
+  if(!L.Gs.includes(G)) L.Gs.push(G);});
   if(lifts.length) $('liftRow').style.display='flex';})();
 function stepLifts(dt){lifts.forEach(L=>{
   if(L.wait>0){L.wait-=dt;return;} const goal=L.ffl[L.idx]-L.base,d=goal-L.dy,st=1.6*dt;
   if(Math.abs(d)<=st){L.dy=goal;L.wait=1.8;L.idx+=L.dir; if(L.idx>=L.ffl.length||L.idx<0){L.dir*=-1;L.idx+=2*L.dir;}} else L.dy+=Math.sign(d)*st;
-  L.G.dy=L.dy; const lv=LVL[L.G.lvl]; L.G.mesh.position.y=explode*(lv?lv.idx:0)+L.dy;});}
-$('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إيقاف':'تشغيل'; $('liftBtn').classList.toggle('on',liftSim); if(liftSim){clearHL(); toast('محاكاة توضيحية: السرعة وزمن التوقف غير واردين في المستندات',4200);} else {lifts.forEach(L=>{L.dy=0;L.G.dy=0;L.idx=Math.max(0,L.ffl.findIndex(f=>Math.abs(f-L.base)<1e-6));L.wait=0;}); applyVis();}};
+  L.Gs.forEach(G=>{G.dy=L.dy; const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+L.dy;});});}
+$('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إيقاف':'تشغيل'; $('liftBtn').classList.toggle('on',liftSim); if(liftSim){clearHL(); toast('محاكاة توضيحية: السرعة وزمن التوقف غير واردين في المستندات',4200);} else {lifts.forEach(L=>{L.dy=0;L.Gs.forEach(G=>{G.dy=0;});L.idx=Math.max(0,L.ffl.findIndex(f=>Math.abs(f-L.base)<1e-6));L.wait=0;}); applyVis();}};
 
 /* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
 if(window.SampleLOD&&window.__SAMPLES__){

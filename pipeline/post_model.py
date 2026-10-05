@@ -744,6 +744,7 @@ print("support analysis:", dict(_cnt))
 import extras as _EXT
 els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]
 EXT = _EXT.build(M)
+els[:] = [e for e in els if e["t"] not in ("lift_car", "shed_sail")]                      # the two solid boxes are replaced by the detailed cars of extras.lifts()
 for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
 _pool = M["sp"]; _pidx = {t: i for i, t in enumerate(_pool)}
 def _spx(t):

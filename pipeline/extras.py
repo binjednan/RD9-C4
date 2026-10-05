@@ -18,6 +18,14 @@ MATS = {
     "canopy_steel": {"name": "فولاذ مدهون رمادي داكن — أضلاع وأعمدة مظلات المواقف", "color": "#565c63", "code": "A200 / A202"},
     "lamp_body": {"name": "كشاف خارجي مقاوم للماء (ألمنيوم رمادي داكن)", "color": "#3c4148", "code": "A2301"},
     "lamp_glass": {"name": "زجاج/ناشر الكشاف", "color": "#f4e7a8", "code": "A2301"},
+    "site_stopper": {"name": "مصدّ عجلات خرساني 195×15×15 سم", "color": "#9ea3a8", "code": "A1900"},
+    "site_access_blue": {"name": "علامة موقف ذوي الإعاقة — أرضية زرقاء", "color": "#1f5fb4", "code": "A1900"},
+    "site_access_white": {"name": "علامة موقف ذوي الإعاقة — رمز أبيض", "color": "#f4f6f8", "code": "A1900"},
+    "lift_steel": {"name": "فولاذ مقاوم للصدأ مصقول (جدران المقصورة وإطارات الأبواب)", "color": "#c3c7cc", "metal": 0.65, "rough": 0.35, "code": "A900"},
+    "lift_door": {"name": "أبواب مصعد فولاذ مقاوم للصدأ", "color": "#a9afb6", "metal": 0.7, "rough": 0.3, "code": "A900"},
+    "lift_floor": {"name": "أرضية المقصورة (جرانيت داكن)", "color": "#6f7378", "code": "A900"},
+    "lift_light": {"name": "إنارة المقصورة (لوحة LED سقفية)", "color": "#fff3c4", "emissive": "#ffe9a0", "emissiveIntensity": 1.0, "code": "A900"},
+    "lift_btn": {"name": "أزرار نداء المصعد ومؤشر الوصول", "color": "#ffb347", "emissive": "#ff9a2e", "emissiveIntensity": 1.1, "code": "A900"},
 }
 
 # ------------------------------------------------------------------------------------------------------------- helpers
@@ -155,6 +163,103 @@ def parking_canopies(M):
         out.append(_e("A.site", "G", ["rs", [[round(x_at(u), 1), ymid, round(base + _arc_z(u) - 0.20 + 0.07, 3)] for u in us], width, 0.03], "canopy_membrane", "shade_fabric", f"CANOPY-{name}", a0, src, grp=grp))
     return out
 
+
+# ------------------------------------------------------------------------------------------------------------- 5 lifts (cars with lights + landing doors)
+LIFT_SRC = ["ARCH2 ص17 (A900 تفاصيل المصاعد): مصعدان متجاوران، فتحة إنشائية للباب ارتفاعها 230 سم، توقفات B وG و1–5 والسطح",
+            "ARCH1 ص6–7 (A103/A104): موضع البئرين وجدرانهما؛ المقصورة 140×160 سم مقدَّرة من فتحة البئر (كما كانت في النموذج)"]
+LIFT_CARS = [("L1", 1565.0, 1705.0, "G"), ("L2", 1785.0, 1925.0, "3")]
+LIFT_STOPS = ["B", "G", "1", "2", "3", "4", "5", "R"]
+YA, YB, YF = 1040.0, 1200.0, 1020.0          # car front / back, landing-door plane (front of the shaft)
+
+def lifts(M):
+    out = []; LV = {l["id"]: l for l in M["levels"]}
+    stops = "B,G,1–5,R"
+    for car, xa, xb, lv0 in LIFT_CARS:
+        xc = (xa + xb) / 2.0; z0 = LV[lv0]["ffl"] + 0.05
+        a = {"car": car, "stops": stops, "cab_cm": "140×160 (تقديري من فتحة البئر)", "door_clear_cm": 110, "cab_h_m": 2.20}
+        def part(x0, y0, x1, y1, za, zb, mat, t="lift_car"):
+            out.append(_e("A.fix", lv0, ["r", x0, y0, x1, y1, round(z0 + za, 3), round(z0 + zb, 3)], t, mat, "LIFT-" + car, a, LIFT_SRC, grp="lift-" + car))
+        part(xa, YA, xb, YB, 0.00, 0.06, "lift_floor")
+        part(xa, YA, xa + 4, YB, 0.06, 2.26, "lift_steel"); part(xb - 4, YA, xb, YB, 0.06, 2.26, "lift_steel"); part(xa + 4, YB - 4, xb - 4, YB, 0.06, 2.26, "lift_steel")
+        part(xa + 4, YA, xc - 55, YA + 4, 0.06, 2.26, "lift_steel"); part(xc + 55, YA, xb - 4, YA + 4, 0.06, 2.26, "lift_steel"); part(xc - 55, YA, xc + 55, YA + 4, 2.10, 2.26, "lift_steel")
+        part(xc - 55, YA, xc - 1, YA + 3, 0.06, 2.10, "lift_door"); part(xc + 1, YA, xc + 55, YA + 3, 0.06, 2.10, "lift_door")
+        part(xa, YA, xb, YB, 2.26, 2.32, "lift_steel")
+        part(xc - 45, (YA + YB) / 2 - 45, xc + 45, (YA + YB) / 2 + 45, 2.245, 2.26, "lift_light")
+        part(xa + 8, YB - 8, xb - 8, YB - 4, 0.88, 0.93, "lift_steel")                 # back handrail
+    ld_src = LIFT_SRC + ["ARCH2 ص17: باب هبوط ثنائي الضلفة مركزي الفتح من فولاذ مقاوم للصدأ؛ عرض الفتحة الصافي 110 سم"]
+    for lv in LIFT_STOPS:
+        L = LV[lv]; ffl = L["ffl"]; top = L["top"]
+        for car, xa, xb, _ in LIFT_CARS:
+            xc = (xa + xb) / 2.0
+            ad = {"car": car, "level": lv, "clear_w_cm": 110, "clear_h_cm": 210}
+            def el(c, t, x0, y0, x1, y1, za, zb, mat, mark, extra=None, grp=None):
+                aa = dict(ad); aa.update(extra or {})
+                out.append(_e(c, lv, ["r", x0, y0, x1, y1, round(za, 3), round(zb, 3)], t, mat, mark, aa, ld_src, grp=grp or f"landing-{car}-{lv}"))
+            if top - (ffl + 2.30) > 0.05: el("A.wall", "lift_front_wall", xa, YF, xb, YF + 20, ffl + 2.30, top, "block_ext", "LIFT-FRONT-" + car)
+            if xc - 60 - xa > 1:
+                el("A.wall", "lift_front_wall", xa, YF, xc - 60, YF + 20, ffl, ffl + 2.30, "block_ext", "LIFT-FRONT-" + car); el("A.wall", "lift_front_wall", xc + 60, YF, xb, YF + 20, ffl, ffl + 2.30, "block_ext", "LIFT-FRONT-" + car)
+            el("A.door", "lift_landing_door", xc - 60, YF + 2, xc + 60, YF + 14, ffl + 2.10, ffl + 2.30, "lift_steel", f"LD-{car}-{lv}")
+            el("A.door", "lift_landing_door", xc - 60, YF + 2, xc - 55, YF + 14, ffl, ffl + 2.10, "lift_steel", f"LD-{car}-{lv}"); el("A.door", "lift_landing_door", xc + 55, YF + 2, xc + 60, YF + 14, ffl, ffl + 2.10, "lift_steel", f"LD-{car}-{lv}")
+            el("A.door", "lift_landing_door", xc - 55, YF + 5, xc - 0.5, YF + 11, ffl + 0.02, ffl + 2.10, "lift_door", f"LD-{car}-{lv}"); el("A.door", "lift_landing_door", xc + 0.5, YF + 5, xc + 55, YF + 11, ffl + 0.02, ffl + 2.10, "lift_door", f"LD-{car}-{lv}")
+            out.append(_e("A.fix", lv, ["r", xc - 10, YF - 4, xc + 10, YF + 2, round(ffl + 2.36, 3), round(ffl + 2.44, 3)], "lift_indicator", "lift_btn", f"LI-{car}-{lv}", dict(ad), ld_src, grp=f"landing-{car}-{lv}"))
+        out.append(_e("A.fix", lv, ["r", 1739, 996, 1751, 1000, round(ffl + 1.00, 3), round(ffl + 1.22, 3)], "lift_call_panel", "lift_steel", f"LCP-{lv}", {"level": lv}, ld_src, grp=f"callpanel-{lv}"))
+        out.append(_e("A.fix", lv, ["r", 1743, 995, 1747, 996, round(ffl + 1.08, 3), round(ffl + 1.12, 3)], "lift_call_panel", "lift_btn", f"LCP-{lv}", {"level": lv}, ld_src, grp=f"callpanel-{lv}"))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------------------- 6 parking details (A1900) + curved shade sails (A2305)
+PARK_BAYS = [  # (block, number, x_drive_side, x_rear, y0, y1, accessible)
+    ("W1", "14", 3320.0, 2770.0, 1870.0, 2120.0, True), ("W1", "13", 3320.0, 2770.0, 2270.0, 2520.0, True), ("W1", "12", 3320.0, 2770.0, 2520.0, 2790.0, False),
+    ("W1", "11", 3320.0, 2770.0, 2790.0, 3060.0, False), ("W1", "10", 3320.0, 2770.0, 3060.0, 3330.0, False)] + \
+    [("E1", f"{n:02d}", 3920.0, 4471.0, 1710.0 + 270.0 * k, 1980.0 + 270.0 * k, False) for k, n in enumerate(range(4, 10))] + \
+    [("E2", f"{n:02d}", 3920.0, 4471.0, 220.0 + 270.0 * k, 490.0 + 270.0 * k, False) for k, n in enumerate(range(1, 4))]
+
+def parking_details():
+    out = []
+    src = ["ARCH2 ص38 (A1900): موقف نمطي 270×550 سم، مصدّ عجلات خرساني 195×15×15 سم، موقف ذوي الإعاقة بممر هاشور 150 سم وعلامة طلاء",
+           "ARCH1 ص5 (A102) / ARCH2 ص50 (A2301): ترقيم المواقف 01–14 وكتل المواقف"]
+    for blk, num, xd, xr, y0, y1, acc in PARK_BAYS:
+        sg = -1 if xr < xd else 1; yc = (y0 + y1) / 2.0; xs = xr - sg * 47.5
+        a = {"bay": num, "block": blk, "accessible": "نعم" if acc else "لا", "size_cm": f"{round(y1 - y0)} × {round(abs(xr - xd))}"}
+        out.append(_e("A.site", "G", ["b", round(xs, 1), round(yc, 1), 15, 195, 0, 0.20, 0.35], "park_stopper", "site_stopper", f"STOPPER-{num}", a, src, grp=f"bay-{num}"))
+        if acc:
+            xm = xd + sg * (-1) * 0 + (-1 if xr < xd else 1) * 270
+            out.append(_e("A.site", "G", ["b", round(xm, 1), round(yc, 1), 110, 110, 0, 0.20, 0.205], "park_access_sign", "site_access_blue", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+            hx, hy = xm - 18, yc + 28                                                      # white pictogram: head, body, seat, leg, wheel ring
+            out.append(_e("A.site", "G", ["cyl", round(hx, 1), round(hy, 1), 7, 0.205, 0.21], "park_access_sign", "site_access_white", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+            out.append(_e("A.site", "G", ["b", round(hx, 1), round(hy - 22, 1), 9, 30, 0, 0.205, 0.21], "park_access_sign", "site_access_white", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+            out.append(_e("A.site", "G", ["b", round(hx + 14, 1), round(hy - 40, 1), 34, 9, 0, 0.205, 0.21], "park_access_sign", "site_access_white", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+            out.append(_e("A.site", "G", ["b", round(hx + 29, 1), round(hy - 52, 1), 9, 30, 0, 0.205, 0.21], "park_access_sign", "site_access_white", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+            ring = []
+            for k in range(24):
+                an = 2 * math.pi * k / 24; ring.append([round(hx + 6 + 26 * math.cos(an), 1), round(hy - 42 + 26 * math.sin(an), 1)])
+            hole = [[round(hx + 6 + 20 * math.cos(2 * math.pi * k / 24), 1), round(hy - 42 + 20 * math.sin(2 * math.pi * k / 24), 1)] for k in range(24)]
+            out.append(_e("A.site", "G", ["p", ring, 0.205, 0.21, hole], "park_access_sign", "site_access_white", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+    return out
+
+SHED_TOP = [(1265, 2975), (1665, 2975), (2065, 2975)]; SHED_BOT = [(1065, 2355), (1465, 2355), (1865, 2355), (2265, 2355)]; ZT, ZB = 4.50, 3.50
+def curved_sails():
+    """5 tensile sails of the kids-area shed (A2305).  The plan draws every edge as a concave arc, so the flat triangles of landscape_els are replaced by
+    sails whose edges bow inward (sag 7 % of the edge) and whose centre dips 0.20 m; filled as a fan of triangles."""
+    P = lambda xy, z: (xy[0], xy[1], z)
+    tris = [(P(SHED_TOP[0], ZT), P(SHED_BOT[0], ZB), P(SHED_BOT[1], ZB)), (P(SHED_TOP[1], ZT), P(SHED_BOT[1], ZB), P(SHED_BOT[2], ZB)), (P(SHED_TOP[2], ZT), P(SHED_BOT[2], ZB), P(SHED_BOT[3], ZB)),
+            (P(SHED_TOP[0], ZT), P(SHED_TOP[1], ZT), P(SHED_BOT[1], ZB)), (P(SHED_TOP[1], ZT), P(SHED_TOP[2], ZT), P(SHED_BOT[2], ZB))]
+    out = []; n = 6
+    for i, (A, B, C) in enumerate(tris, 1):
+        cen = ((A[0] + B[0] + C[0]) / 3, (A[1] + B[1] + C[1]) / 3, (A[2] + B[2] + C[2]) / 3 - 0.20)
+        bnd = []
+        for (p, q) in ((A, B), (B, C), (C, A)):
+            L = math.hypot(q[0] - p[0], q[1] - p[1]); ux, uy = (cen[0] - (p[0] + q[0]) / 2), (cen[1] - (p[1] + q[1]) / 2); ul = math.hypot(ux, uy) or 1; ux, uy = ux / ul, uy / ul
+            for k in range(n):
+                t = k / n; sag = 0.07 * L * 4 * t * (1 - t)
+                bnd.append((p[0] + (q[0] - p[0]) * t + ux * sag, p[1] + (q[1] - p[1]) * t + uy * sag, p[2] + (q[2] - p[2]) * t - 0.08 * 4 * t * (1 - t)))
+        for k in range(len(bnd)):
+            a_, b_ = bnd[k], bnd[(k + 1) % len(bnd)]
+            out.append(_e("A.site", "G", ["tri", [[round(a_[0], 1), round(a_[1], 1), round(a_[2], 3)], [round(b_[0], 1), round(b_[1], 1), round(b_[2], 3)], [round(cen[0], 1), round(cen[1], 1), round(cen[2], 3)]], 1.2],
+                          "shed_sail", "shade_fabric", f"SAIL-{i}", {"kind": "شراع ظل", "note": "قماش PVC مثقّب — حواف مقوّسة للداخل (7% من طول الحافة) كما في مسقط A2305؛ تقعّر الوسط 20 سم تقدير"},
+                          ["ARCH2 ص54 (A2305 ظلّة الألعاب): 7 أعمدة ⌀200 مم، قمم +4.50 (الصف الشمالي) و+3.50"], grp="shed"))
+    return out
+
 # ------------------------------------------------------------------------------------------------------------- types
 def types():
     def T(n, cf, sp, asm=None, sr=None):
@@ -179,10 +284,19 @@ def types():
                         ["منحنى القوس وارتفاع قمته (+3.40) وقطر الأنبوب ⌀12 سم قراءات من الرسم لا أرقام مكتوبة", "الصور (7 أغسطس) تؤكد مظلة غشائية بيج على هيكل فولاذي بينما A1700/A201 يذكران برجولة ألمنيوم بتأثير خشب — بانتظار تأكيدك أيّهما المعتمد"], ["A200/A202 المقطع", "A102 المسقط"]),
         "canopy_column": T("عمود مظلة المواقف (أنبوب فولاذ)", "doc", [["الارتفاع", "250 سم"], ["العدد", "عمود عند كل ضلع"]], ["القطر ⌀20 سم تقدير من الرسم", "موضع العمود على القوس (x≈4383 على الكتل الشرقية) مقروء من المقطع"], ["A200/A202"]),
         "canopy_strut": T("ساق مائلة لمظلة المواقف", "doc", [["الربط", "من العمود عند 145 سم إلى القوس"]], ["القطر ⌀8 سم تقدير"], ["A200/A202"]),
+        "park_stopper": T("مصدّ عجلات خرساني", "doc", [["الأبعاد", "195 × 15 × 15 سم"], ["الموضع", "40 سم من نهاية الموقف (A1900)"], ["المادة", "خرسانة"]], ["الارتفاع 15 سم من التفصيل؛ موضع المصدّ بالنسبة للمحور تقدير"], ["A1900 تفصيل 4"]),
+        "park_access_sign": T("علامة موقف ذوي الإعاقة (طلاء)", "derived", [["النوع", "رمز كرسي متحرك أبيض على أرضية زرقاء"], ["المواقف", "13 و14"], ["الممر", "هاشور 150 سم بين الموقفين"]], ["أبعاد الرمز المرسوم ~110 سم وشكله المبسّط تقدير؛ A1900 يعطي رمز 201.7 سم"], ["A1900", "A2301"]),
+        "lift_car": T("مقصورة مصعد (مع إنارة وأبواب)", "derived", [["الأبعاد", "140 × 160 سم (تقديرية من فتحة البئر)"], ["ارتفاع المقصورة الداخلي", "2.20 م"], ["فتحة الباب الصافية", "110 سم — ضلفتان مركزيتا الفتح"], ["التوقفات", "B وG و1–5 والسطح"], ["الإنارة", "لوحة LED سقفية"]],
+                       ["أبعاد المقصورة وسُمك الجدران 4 سم وارتفاعها وتفاصيل الإنارة افتراض؛ A900 يعطي الفتحة الإنشائية 230 سم والتوقفات فقط", "السعة والسرعة والشركة المصنّعة غير مذكورة في المستندات"], ["A900", "A103/A104"]),
+        "lift_landing_door": T("باب هبوط مصعد (فولاذ مقاوم للصدأ)", "derived", [["الفتحة الصافية", "110 × 210 سم"], ["النوع", "ضلفتان مركزيتا الفتح"], ["الفتحة الإنشائية", "230 سم (A900)"]],
+                              ["عرض الفتحة 110 سم وسُمك الضلفة افتراض (A900 يعطي الارتفاع الإنشائي 230 فقط)"], ["A900"]),
+        "lift_front_wall": T("جدار واجهة بئر المصعد (بلوك)", "derived", [["السماكة", "20 سم"], ["الارتفاع", "فوق وحول فتحة الباب حتى سقف الطابق"]], ["السماكة افتراض"], ["A900", "A103/A104"]),
+        "lift_indicator": T("مؤشر وصول المصعد (Hall lantern)", "assumed", [["الموضع", "فوق باب الهبوط"]], ["الوجود والموضع افتراض هندسي — غير مرسوم في المستندات"], []),
+        "lift_call_panel": T("لوحة نداء المصعد", "assumed", [["الارتفاع", "1.0–1.22 م"]], ["الوجود والموضع افتراض هندسي — غير مرسوم في المستندات"], []),
         "canopy_membrane": T("قماش مظلة المواقف (غشاء)", "derived", [["اللون", "بيج (من صور الموقع 7 أغسطس)"], ["الشكل", "سطح أسطواني فوق الأضلاع"]],
                              ["المادة وسُمك الغشاء غير محددين في المخططات؛ الصور تُظهر مظلة غشائية بيج بينما A1700/A201 يذكران برجولة ألمنيوم بتأثير خشب — بانتظار تأكيدك أيّهما المعتمد"], ["صور الموقع", "A102"]),
     }
 
 def build(M):
-    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M)
+    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails()
     return {"els": els, "mats": MATS, "types": types()}
