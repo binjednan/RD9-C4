@@ -151,6 +151,7 @@ class SampleLOD{
     });
     walls.forEach(w=>{for(let ix=Math.floor((w.x0-30)/200);ix<=Math.floor((w.x1+30)/200);ix++)for(let iy=Math.floor((w.y0-30)/200);iy<=Math.floor((w.y1+30)/200);iy++){const k=ix+','+iy;(this.wallGrid.get(k)||this.wallGrid.set(k,[]).get(k)).push(w);}});
     M.els.forEach((e,ei)=>{
+      if(e.c[0]==='A') return;   // architecture (A.*) is never swapped: its details stay visible at every distance (owner request); samples remain in the catalogue
       const key=e.c+'|'+e.t; let sid=typeCache.get(key); if(sid===undefined){sid=this.ruleFor(e)||null;typeCache.set(key,sid);} if(!sid||!lib.samples[sid]) return;
       const smp=lib.samples[sid]; const pl=smp.place||{}; if(pl.mode==='none') return; const g=e.g; const a=e.a||{};
       if(pl.mode==='group'){
@@ -172,6 +173,7 @@ class SampleLOD{
     }
     // path units (pipes / ducts): one unit per polyline
     M.els.forEach((e,ei)=>{
+      if(e.c[0]==='A') return;
       const key=e.c+'|'+e.t; const sid=typeCache.get(key); if(!sid||!lib.samples[sid]) return; const smp=lib.samples[sid]; if(smp.kind!=='path') return;
       const g=e.g; if(g[0]!=='t'&&g[0]!=='d') return; const pts=g[1]; if(pts.length<2) return;
       const vars={}; if(g[0]==='t'){vars.Dp=Math.round(g[2]*10)/10;} else {vars.W=g[2]; vars.H=g[3];} const aa=e.a||{}; vars.Hg=aa.hang_cm?Math.max(8,Math.round(aa.hang_cm/10)*10):((aa.stand_cm||aa.unsupported)?0:12); vars.St=aa.stand_cm?Math.max(10,Math.round(aa.stand_cm/10)*10):0;

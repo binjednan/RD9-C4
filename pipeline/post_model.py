@@ -162,13 +162,19 @@ if os.path.exists(SITE_JSON):
             pidx[t] = len(pool); pool.append(t)
         return pidx[t]
     els[:] = [e for e in els if not e["id"].startswith("A.site-G-S")]
+    _BEDS = []; _gazebo_c = (940.0, 4020.0)
     for k, e in enumerate(S_["els"], 1):
         ne = {"id": f"A.site-G-S{k:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx(t) for t in e["src"]]}
         if e.get("stage"): ne["stage"] = e["stage"]
+        if e["t"] == "site_shade":                       # the old round gazebo canopy of site.json: replaced by the detailed gazebo of A2305 (landscape_els.gazebo)
+            _gz_pts = e["g"][1] if e["g"][0] == "p" else None
+            if _gz_pts: _gazebo_c = (sum(q[0] for q in _gz_pts) / len(_gz_pts), sum(q[1] for q in _gz_pts) / len(_gz_pts))
+            continue
         if e["t"] == "site_grass":
-            # the A102 'grass' hatch is NOT lawn on site (photos 7 Aug: orange sand/soil, nothing planted yet). Small serpentine strips are planter beds with a
-            # dark-granite curb (photos 15, 19, 25-27, 30, 36, 42-45, 49-51); large areas are open sand beds. Sand = the documented F.L. level; curb height is NOT documented.
-            from shapely.geometry import Polygon as _P
+            # the A102 'grass' hatch (L1-THIN) is the planting BED.  The granite wall (A2302 sections 1-2: stone-clad R.C., ~22 cm, top = FL +1.05 = finished level of the cap) stands OUTSIDE
+            # the bed, between it and the paving.  Photos 7 Aug: the beds are unplanted orange sand BELOW the wall top, no lawn yet.  Small serpentine strips are planter beds,
+            # large areas are open sand/lawn beds (planting plan A2300: ZOYS.T lawn + big trees).
+            from shapely.geometry import Polygon as _P, box as _bxx
             _g = e["g"]; _poly = _P(_g[1], _g[4] if len(_g) > 4 and _g[4] else None).buffer(0); _top = _g[3]; _small = _poly.area / 1e4 < 40
             def _rings(pg):
                 out_ = []
@@ -176,22 +182,18 @@ if os.path.exists(SITE_JSON):
                     if q.is_empty or q.area < 50: continue
                     out_.append(([[round(x, 1), round(y, 1)] for x, y in list(q.exterior.coords)[:-1]], [[[round(x, 1), round(y, 1)] for x, y in list(h.coords)[:-1]] for h in q.interiors]))
                 return out_
-            CW = 15
-            _inner = _poly.buffer(-CW) if _small else _poly
-            if _inner.is_empty: _inner = _poly.buffer(-4)
+            CW = 22; _sand = round(_top - (0.20 if _small else 0.10), 2)
             ne["m"] = "site_sand"; ne["t"] = "site_planter_bed" if _small else "site_sand_bed"
-            _ra = _rings(_inner)
-            if _ra: ne["g"] = ["p", _ra[0][0], -0.1, _top] + ([_ra[0][1]] if _ra[0][1] else [])
-            ne["a"] = dict(ne["a"], kind="planter_sand" if _small else "sand_bed", sand_top_m=_top,
-                           fill_note="رمل/تربة برتقالية غير مزروعة كما في صور الموقع (طبقة A102 L1-THIN = «عشب» مصمَّم)؛ المنسوب من نقاط F.L. على المخطط")
+            _ra = _rings(_poly)
+            if _ra: ne["g"] = ["p", _ra[0][0], -0.1, _sand] + ([_ra[0][1]] if _ra[0][1] else [])
+            ne["a"] = dict(ne["a"], kind="planter_sand" if _small else "sand_bed", sand_top_m=_sand, fl_m=_top,
+                           fill_note="رمل/تربة برتقالية غير مزروعة كما في صور الموقع؛ منسوب الرمل أخفض من حافة الجدار (+%.2f) بـ%d سم — افتراض بصري من الصور (التصميم A2302: التربة تحت غطاء الجرانيت مباشرة)" % (_top, round((_top - _sand) * 100)))
             els.append(ne)
-            for _j, (_o, _h) in enumerate(_ra[1:], 1):
-                els.append(dict(ne, id=f"A.site-G-S{k:03d}F{_j}", g=["p", _o, -0.1, _top] + ([_h] if _h else [])))
-            for _j, (_o, _h) in enumerate(_rings(_poly.difference(_inner)) if _small else [], 1):
-                _ct = round(_top + 0.08, 2)
-                els.append({"id": f"A.site-G-S{k:03d}W{_j}", "c": "A.site", "l": "G", "g": ["p", _o, -0.1, _ct] + ([_h] if _h else []), "mark": "PLANTER-CURB", "t": "site_planter_wall", "m": "granite_curb",
-                            "a": {"kind": "planter_wall", "thick_cm": CW, "top_m": _ct, "level_note": "جدار حوض جرانيت داكن — شكله من مخطط A102 (حدّ طبقة L1-THIN) ولونه من الصور",
-                                  "assumed": "السماكة 15 سم وارتفاع الحافة +8 سم فوق منسوب الرمل: افتراض بصري من الصور — يحتاج تأكيد من المخططات التنفيذية/المقاول"}, "s": ne["s"]})
+            _BEDS.append((_poly, _sand))
+            for _j, (_o, _h) in enumerate(_rings(_poly.buffer(CW).difference(_poly).intersection(_bxx(-45, -45, 4435, 4435))), 1):
+                els.append({"id": f"A.site-G-S{k:03d}W{_j}", "c": "A.site", "l": "G", "g": ["p", _o, -0.1, _top] + ([_h] if _h else []), "mark": "PLANTER-CURB", "t": "site_planter_wall", "m": "granite_curb",
+                            "a": {"kind": "planter_wall", "thick_cm": CW, "top_m": _top, "level_note": "جدار حوض جرانيت W12 مغطّى بالحجر — الحافة العلوية FL +%.2f (A2302 مقطع 1 و2)" % _top,
+                                  "assumed": "السماكة 22 سم قُدّرت من مقياس A2302 (1:20) ومن الفراغ بين حدّ الطبقة L1-THIN وحافة الرصف على A102 (20–37 سم)"}, "s": ne["s"]})
             continue
         els.append(ne)
     # surrounding ground outside the plot / street: bare sand, as in photos 1, 5, 10, 21 (desert plots around the site). Inferred - no drawing covers it.
@@ -205,6 +207,25 @@ if os.path.exists(SITE_JSON):
                     "a": {"kind": "ground_sand", "level_note": "رمل الأرض خارج حدود القطعة والشارع — من الصور (أراضٍ رملية مجاورة)", "assumed": "المنسوب -0.10 م وحدود المنطقة افتراض؛ لا يوجد مخطط يغطي ما حول القطعة"}, "s": []})
     M["els"] = els
     print("site elements merged:", len(S_["els"]))
+
+    # ---- landscape: trees / shrubs / plants (A2300), benches (A102), kids-area shade sails + fence + play equipment (A2300/A2305), gazebo (A2305). pipeline/landscape.py -> data/landscape.json
+    LAND_JSON = os.path.join(HERE, "data", "landscape.json")
+    els[:] = [e for e in els if not re.match(r"^A\.(stage|site|rail)-G-L\d+$", e["id"])]
+    if os.path.exists(LAND_JSON):
+        import landscape_els as _LE
+        _LD = json.load(open(LAND_JSON, encoding="utf-8"))
+        for _k, _v in _LE.MATS.items(): M["mats"].setdefault(_k, _v)
+        _sidx = [sp_idx(t) for t in _LE.SRC]
+        _new = _LE.all_elements(_LD, _BEDS, _gazebo_c)
+        _cnt_l = collections.Counter()
+        for _n, _e in enumerate(_new, 1):
+            _cnt_l[_e["c"]] += 1
+            ne2 = {"id": f"{_e['c']}-G-L{_n:04d}", "c": _e["c"], "l": _e["l"], "g": _e["g"], "mark": _e["mark"], "t": _e["t"], "m": _e["m"], "a": _e["a"], "s": _sidx}
+            if _e.get("stage"): ne2["stage"] = _e["stage"]
+            if _e.get("grp"): ne2["grp"] = _e["grp"]
+            els.append(ne2)
+        M["els"] = els
+        print("landscape elements merged:", dict(_cnt_l), "| trees", len(_LD["trees"]), "shrubs", len(_LD["shrubs"]), "small plants", len(_LD["small"]))
 
 if "g_exterior_finishes_removed" not in FIXES:
     # the generic room-kind -> finish mapping put granite floors (F16) and ceilings on the ground level outside the building
@@ -504,6 +525,24 @@ if True:      # stateless: roof.json / mep_bg.json are re-merged on every run, s
     if "zero_depth_grille_v1" not in FIXES: FIXES.append("zero_depth_grille_v1")
     print("zero-depth grilles fixed:", n)
 
+# ------------------------------------------------------------------ column de-duplication (owner: "ground-floor columns must not be doubled")
+# The structural column-layout sheets draw every C1/C6 column twice on S-COLUMN: the concrete outline (e.g. 30x160) and the reinforcement-cage line 5 cm inside it
+# (40 mm cover, STR general notes). Both were extracted as columns, so G carried 10 ghost columns inside the real ones. Drop every column that lies inside another one.
+import support as _SUP0
+_dup, _keep = [], []
+for _lv in sorted({e["l"] for e in els if e["c"] == "S.col"}):
+    _cols = [(e, _SUP0.poly_of(e["g"])) for e in els if e["c"] == "S.col" and e["l"] == _lv and e["g"][0] in ("p", "r")]
+    for e, pp in _cols:
+        if pp is None: continue
+        if any(f is not e and q is not None and q.area > pp.area * 1.05 and q.buffer(8).contains(pp) for f, q in _cols):
+            _dup.append({"id": e["id"], "l": _lv, "mark": e.get("mark"), "bounds": [round(v) for v in pp.bounds]})
+_dup_ids = {d["id"] for d in _dup}
+if _dup_ids:
+    els[:] = [e for e in els if e["id"] not in _dup_ids]; M["els"] = els
+    json.dump(_dup, open(os.path.join(HERE, "data", "removed_col_cage_lines.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+M["meta"]["removed_col_cage_lines"] = max(M["meta"].get("removed_col_cage_lines", 0), len(_dup_ids))
+print("duplicate (cage-line) columns removed:", len(_dup_ids))
+
 # ------------------------------------------------------------------ physical consistency fixes found by the support audit
 # (1) basement services drawn inside the open ramp well: nothing can hang in the air above a ramp that is open to the sky -> removed (logged)
 _hole = None
@@ -593,6 +632,42 @@ if _slabG:
     print("ground-floor fill added:", _n, "areas,", round(sum(g.area for g in _geoms if g.area >= 900) / 1e4), "m2")
 M["els"] = els
 
+# ground-floor cladding colour: the photos (7 Aug) show the ground floor clad in medium-grey stone / porcelain with beige GRC above (A200 finishes: 1 porcelain, 2 GRC beige)
+M["mats"].setdefault("clad_stone_g", {"name": "كسوة حجر/بورسلين رمادي للدور الأرضي (من صور الموقع؛ اللون تقديري)", "color": "#a6a299", "code": "A200 (1)"})
+for _e in els:
+    if _e["l"] == "G" and _e["c"] == "A.clad" and _e.get("m") in ("clad_porc", "clad_stone_g"): _e["m"] = "clad_stone_g"
+
+# (5) ground-floor facade openings: 5 openings of the envelope were completely open from the floor to the first-floor soffit (south x 370-570 / 1345-1515 / 2195-2395, north x 1590-1790):
+#     A102 draws a glazed vestibule there (layer A-GLAZED: side glass 93 cm deep) with entrance doors (A200 elevation: aluminium frame, 10 mm tempered glass, GRC/porcelain panel above).
+els[:] = [e for e in els if not re.match(r"^A\.(win|door|clad)-G-GX\d+$", e["id"])]
+_gx = 0
+def _gxadd(c, t, m, g, mark, note):
+    global _gx
+    _gx += 1
+    els.append({"id": f"{c}-G-GX{_gx:03d}", "c": c, "l": "G", "g": g, "mark": mark, "t": t, "m": m, "a": {"kind": "entrance", "note": note}, "s": []})
+_NOTE = "مدخل زجاجي ناقص في النموذج: A102 يرسم الردهة الزجاجية (طبقة A-GLAZED، عمق 93 سم) والواجهة A200 تُظهر باب ألمنيوم بزجاج مقسّى 10 مم؛ الارتفاعات من CW-G (0.35–3.35) والكسوة فوقها حتى بلاطة الدور الأول"
+for _a, _b, _yf, _yi, _dir in ((370, 570, 235, 319, 1), (1345, 1515, 235, 309, 1), (2195, 2395, 235, 319, 1), (1590, 1790, 1630, 1541, -1)):
+    _y0, _y1 = (min(_yf, _yi), max(_yf, _yf if False else _yi)) if _dir == 1 else (min(_yi, _yf), max(_yi, _yf))
+    # side glazing (vestibule) and its frame
+    for _x0, _x1 in ((_a, _a + 3), (_b - 3, _b)):
+        _gxadd("A.win", "win_CW-G", "glass_vis", ["r", _x0, _y0, _x1, _y1, 0.40, 3.30], "CW-G", _NOTE)
+        _gxadd("A.win", "win_CW-G", "frame_alu", ["r", _x0 - 1, _y0, _x1 + 1, _y1, 0.35, 0.40], "CW-G", _NOTE)
+        _gxadd("A.win", "win_CW-G", "frame_alu", ["r", _x0 - 1, _y0, _x1 + 1, _y1, 3.30, 3.35], "CW-G", _NOTE)
+    # inner entrance doors (double leaf) + transom
+    _xi0, _xi1 = _a + 3, _b - 3; _ym = _yi; _mid = (_xi0 + _xi1) / 2
+    _gxadd("A.win", "win_CW-G", "glass_vis", ["r", _xi0, _ym - 1.5, _xi1, _ym + 1.5, 0.45, 2.52], "D9", _NOTE)
+    for _xx0, _xx1 in ((_xi0, _xi0 + 6), (_mid - 3, _mid + 3), (_xi1 - 6, _xi1)):
+        _gxadd("A.door", "door_D9", "door_alu", ["r", _xx0, _ym - 2.5, _xx1, _ym + 2.5, 0.37, 2.55], "D9", _NOTE)
+    _gxadd("A.door", "door_D9", "door_alu", ["r", _xi0, _ym - 2.5, _xi1, _ym + 2.5, 0.37, 0.47], "D9", _NOTE)
+    _gxadd("A.door", "door_D9", "door_alu", ["r", _xi0, _ym - 2.5, _xi1, _ym + 2.5, 2.50, 2.60], "D9", _NOTE)
+    _gxadd("A.win", "win_CW-G", "glass_vis", ["r", _xi0, _ym - 1.5, _xi1, _ym + 1.5, 2.60, 3.30], "CW-G", _NOTE)
+    _gxadd("A.win", "win_CW-G", "frame_alu", ["r", _xi0, _ym - 2.5, _xi1, _ym + 2.5, 3.30, 3.35], "CW-G", _NOTE)
+    # porcelain / GRC panel above the opening on the facade line (same band as the neighbouring bays: +3.35 to the first-floor soffit)
+    _fy0, _fy1 = (223, 247) if _dir == 1 else (1618, 1642)
+    _gxadd("A.clad", "clad_porcelain", "clad_porc", ["r", _a, _fy0, _b, _fy1, 3.35, 5.37], "CLAD", _NOTE)
+print("ground-floor facade opening elements added:", _gx)
+M["els"] = els
+
 # ------------------------------------------------------------------ support analysis (pipeline/support.py): what carries every MEP / electrical element?
 _wt = set()
 try:
@@ -622,7 +697,7 @@ for _i, _e in enumerate(els):
     if not _hit: _loose.append(_c)
 _nin = 0; _ain = 0
 for _fi, _cnt_dev in sorted(_used.items()):
-    _fp = _SUP.poly_of(els[_fi]["g"])
+    _fp = _SUP.poly_of(els[_fi]["g"]).difference(box(2635, 240, 3185, 1185))          # no ceiling in the HV / transformer rooms (equipment taller than 3.05 m)
     for _q in (list(_fp.geoms) if hasattr(_fp, "geoms") else [_fp]):
         if _q.is_empty or _q.area < 900: continue
         _nin += 1; _ain += _q.area
@@ -631,7 +706,7 @@ for _fi, _cnt_dev in sorted(_used.items()):
 # ceiling lights over the covered entrance band (no A.floor there - exterior paving): a rectangular soffit strip 3.2 m wide around each row of them
 if _loose:
     from shapely.ops import unary_union as _uu3
-    _soff = _uu3([_c.buffer(160, cap_style=3, join_style=2) for _c in _loose]).intersection(box(-80, 20, 3330, 2000))
+    _soff = _uu3([_c.buffer(160, cap_style=3, join_style=2) for _c in _loose]).intersection(box(-80, 20, 3330, 2000)).difference(box(2635, 240, 3185, 1185))
     for _q in (list(_soff.geoms) if hasattr(_soff, "geoms") else [_soff]):
         if _q.is_empty or _q.area < 900: continue
         _nin += 1; _ain += _q.area

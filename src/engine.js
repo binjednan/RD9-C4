@@ -69,6 +69,27 @@ function tubeSeg(g,p,q,r,u1,u2,mi,seg=8){
   for(let i=0;i<seg;i++){const j=(i+1)%seg;g.quad(A[i],A[j],B[j],B[i],u1,u2,mi);}
   return g.n-n0;
 }
+
+/* ---- landscape / canopy primitives ---- */
+// vertical ellipsoid: circular in plan (radius r cm), from z0 to z1 (m) -- tree canopies, shrubs, small plants
+function ellipsoid(g,cx,cy,r,z0,z1,u1,u2,mi,seg=8,rings=5){
+  const n0=g.n; const zc=(z0+z1)/2, hz=(z1-z0)/2;
+  const P=(i,j)=>{const th=Math.PI*i/rings, ph=2*Math.PI*j/seg; return W(cx+r*Math.sin(th)*Math.cos(ph),cy+r*Math.sin(th)*Math.sin(ph),zc+hz*Math.cos(th));};
+  for(let i=0;i<rings;i++)for(let j=0;j<seg;j++){
+    const a=P(i,j),b=P(i,j+1),c=P(i+1,j+1),d=P(i+1,j);
+    if(i===0) g.tri(a,c,d,u1,u2,mi); else if(i===rings-1) g.tri(a,b,c,u1,u2,mi); else g.quad(a,b,c,d,u1,u2,mi);
+  }
+  return g.n-n0;
+}
+// triangle in space with thickness (cm) -- shade sails, hip-roof panels.  pts = [[x,y,z],[x,y,z],[x,y,z]] (cm plan, m height)
+function triPlane(g,pts,thickCm,u1,u2,mi){
+  const n0=g.n; const A=pts.map(p=>W(p[0],p[1],p[2])); const n=triNormal(A[0],A[1],A[2]); const h=(thickCm||1)*S/2;
+  const T=(k)=>A.map(p=>[p[0]+n[0]*h*k,p[1]+n[1]*h*k,p[2]+n[2]*h*k]);
+  const U=T(1),D=T(-1);
+  g.tri(U[0],U[1],U[2],u1,u2,mi); g.tri(D[2],D[1],D[0],u1,u2,mi);
+  for(let i=0;i<3;i++){const j=(i+1)%3; g.quad(D[i],D[j],U[j],U[i],u1,u2,mi);}
+  return g.n-n0;
+}
 // sloped strip along centreline [[x,y,z_top]...] width cm, thickness m
 function rampStrip(g,pts,width,thick,u1,u2,mi){
   const n0=g.n; const hw=width/2;

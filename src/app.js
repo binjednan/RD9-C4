@@ -98,6 +98,8 @@ function buildAll(){
       case 'd': {const pts=geo[1]; for(let i=0;i<pts.length-1;i++) ductSeg(g,pts[i],pts[i+1],geo[2],geo[3],u1,u2,mi); break;}
       case 't': {const pts=geo[1]; for(let i=0;i<pts.length-1;i++) tubeSeg(g,pts[i],pts[i+1],geo[2]/2,u1,u2,mi); break;}
       case 'rs': rampStrip(g,geo[1],geo[2],geo[3],u1,u2,mi); break;
+      case 'sph': ellipsoid(g,geo[1],geo[2],geo[3],geo[4],geo[5],u1,u2,mi,geo[6]||8,geo[7]||5); break;
+      case 'tri': triPlane(g,geo[1],geo[2],u1,u2,mi); break;
       default: break;
     }
     addSupports(g,e,geo,u1,u2,mi);
@@ -435,7 +437,7 @@ if(window.SampleLOD&&window.__SAMPLES__){
   const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod');}catch(e){} if(saved==='0'){chk.checked=false; LOD.setEnabled(false);}
     chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب يُستبدل المجسم المبسّط بعينة تفصيلية':'عُطّل استبدال العينات التفصيلية');}; }
 }
-if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>';
+if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>';
 /* ---------- toolbar: modes, views, fullscreen, performance, help ---------- */
 document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>controls.setMode(b.dataset.m));
 controls.addEventListener('mode',ev=>{document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===ev.mode));wake();});

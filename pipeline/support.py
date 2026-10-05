@@ -21,6 +21,10 @@ def poly_of(g):
         hw, hd = g[3] / 2, g[4] / 2; a = math.radians(g[5]); c, s = abs(math.cos(a)), abs(math.sin(a)); ex, ey = hw * c + hd * s, hw * s + hd * c
         return box(g[1] - ex, g[2] - ey, g[1] + ex, g[2] + ey)
     if g[0] == "cyl": return Point(g[1], g[2]).buffer(g[3])
+    if g[0] == "sph": return Point(g[1], g[2]).buffer(g[3])
+    if g[0] == "tri":
+        try: return Polygon([(q[0], q[1]) for q in g[1]]).buffer(0)
+        except Exception: return None
     return None
 def zr(g):
     k = g[0]
@@ -28,8 +32,10 @@ def zr(g):
     if k == "b": return g[6], g[7]
     if k == "cyl": return g[4], g[5]
     if k == "p": return g[2], g[3]
-    if k in ("t", "d", "rs"):
+    if k in ("t", "d", "rs", "tri"):
         zs = [p[2] for p in g[1] if len(p) > 2]; return (min(zs), max(zs)) if zs else (None, None)
+    if k == "sph": return g[4], g[5]
+    return (None, None)
 class Idx:
     def __init__(self): self.polys = []; self.meta = []
     def add(self, p, z0, z1, ei, cat):

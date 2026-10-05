@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 function initSamplesUI(ctx){
-  const {M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost}=ctx;
+  const {M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}=ctx; const bbAll=elBB;
   const lib=window.__SAMPLES__; const pane=$('pSamp'); if(!lib||!pane||!LOD){ if(pane) pane.innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>'; return; }
   const CATN={architecture:'العمارة',electrical:'الكهرباء',mechanical:'الميكانيكا (تكييف وتهوية)',plumbing:'السباكة والصرف',fire:'الإطفاء',structure:'الإنشائي'};
   const CONFN={doc:['من المستندات','#1a7f37'],derived:['مشتق من المستندات','#9a6700'],assumed:['افتراض — يحتاج تأكيد','#cf222e']};
@@ -64,7 +64,14 @@ function initSamplesUI(ctx){
   let chip=null;
   function endNear(){ LOD.skipSids=null; LOD.invalidate(); setGhost(false); if(chip){chip.remove();chip=null;} wake(); }
   function goTo(id){
-    const us=LOD.units.filter(u=>u.sid===id); if(!us.length) return; const cam=camera.position; let best=null,bd=1e18;
+    const us=LOD.units.filter(u=>u.sid===id);
+    if(!us.length){ /* architecture is never swapped (its details are always in the model): fly to the nearest element of that type instead */
+      const bb=elBB, cam0=camera.position; let bi=-1,bd0=1e18; M.els.forEach((e,i)=>{ if(LOD.ruleFor(e)!==id) return; const d=((bb[i*6]+bb[i*6+3])/2-cam0.x)**2+((bb[i*6+1]+bb[i*6+4])/2-cam0.y)**2+((bb[i*6+2]+bb[i*6+5])/2-cam0.z)**2; if(d<bd0){bd0=d;bi=i;} });
+      if(bi<0){ toast('لا يوجد موضع لهذه العينة في النموذج'); return; }
+      ctx.ensureVisible(bi); const c0=new THREE.Vector3((bb[bi*6]+bb[bi*6+3])/2,(bb[bi*6+1]+bb[bi*6+4])/2,(bb[bi*6+2]+bb[bi*6+5])/2); const sz=Math.max(bb[bi*6+3]-bb[bi*6],bb[bi*6+4]-bb[bi*6+1],bb[bi*6+5]-bb[bi*6+2]);
+      closePreview(); document.body.classList.remove('panel-open'); flyTo(c0.clone().add(new THREE.Vector3(0.6,0.3,0.75).normalize().multiplyScalar(Math.max(2.5,Math.min(14,sz*1.5+1.5)))),c0,1100);
+      toast('التفاصيل المعمارية معروضة دائمًا في النموذج (لا تُستبدل بالتقريب) — هذا أقرب موضع للعينة «'+(lib.samples[id].name)+'»',4200); wake(2500); return; }
+    const cam=camera.position; let best=null,bd=1e18;
     us.forEach(u=>{const d=(u.cx-cam.x)**2+(u.cy-cam.y)**2+(u.cz-cam.z)**2; if(d<bd){bd=d;best=u;}}); const u=best; ctx.ensureVisible(u.eis[0]);
     const smp=lib.samples[id]; const lv=M.levels.find(l=>l.id===u.lvl); const size=Math.max(u.W||50,u.H||50,u.D||50)/100; const dist=Math.max(1.0,Math.min(9,size*1.6+0.8));
     const c=new THREE.Vector3(u.cx,(u.bb[1]+u.bb[4])/2,u.cz);
