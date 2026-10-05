@@ -25,6 +25,7 @@ MATS = {
     "furn_fabric_gray": {"name": "أثاث — قماش رمادي (إخراجي)", "color": "#8b9097", "code": "stage"},
     "furn_fabric_beige": {"name": "أثاث — قماش بيج (إخراجي)", "color": "#cdbd9f", "code": "stage"},
     "furn_dark": {"name": "أثاث — أسود/معدن داكن (إخراجي)", "color": "#2f3338", "code": "stage"},
+    "stair_rail": {"name": "درابزين وسلالم فولاذ مجلفن مدهون (Ø30/40/50 مم)", "color": "#9aa1a8", "metal": 0.5, "rough": 0.45, "code": "A605"},
     "site_stopper": {"name": "مصدّ عجلات خرساني 195×15×15 سم", "color": "#9ea3a8", "code": "A1900"},
     "site_access_blue": {"name": "علامة موقف ذوي الإعاقة — أرضية زرقاء", "color": "#1f5fb4", "code": "A1900"},
     "site_access_white": {"name": "علامة موقف ذوي الإعاقة — رمز أبيض", "color": "#f4f6f8", "code": "A1900"},
@@ -297,6 +298,53 @@ def furniture(M):
                         out.append(e)
     return out
 
+
+def zebra():
+    """pedestrian crossing at the entrance of the drive way: 5 white stripes 60 x 175 cm, pitch 120 (A2301 layer 'A-Road Marks', also A401 'FRONT PLAN')"""
+    out = []
+    for k, x0 in enumerate((3350, 3470, 3590, 3710, 3830), 1):
+        out.append(_e("A.site", "G", ["p", [[x0, 45], [x0 + 60, 45], [x0 + 60, 220], [x0, 220]], 0.10, 0.11], "site_mark", "site_mark", f"ZEBRA-{k}",
+                      {"kind": "علامة مرور — عبور مشاة", "size_cm": "60 × 175"}, ["ARCH2 ص50 (A2301، طبقة A-Road Marks)", "ARCH1 ص17 (A401 FRONT PLAN)"], grp="zebra"))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------------------- 8 stair balustrades + wall handrails (A605)
+def stair_rails(M):
+    """A605: wall handrail Ø40 at 0.95 m above the nosing line; open (well) side: guard with Ø50 posts @90, Ø30 balusters (clear 8 cm), rails at +0.20 / +0.95 / +1.20 above the nosing line"""
+    out = []; flights = {}
+    for e in M["els"]:
+        if e["c"] == "S.stair" and e["t"] == "stair_step" and e["g"][0] == "r" and (e.get("grp") or "").startswith("STAIR"):
+            flights.setdefault((e["grp"], e["a"]["flight"]), []).append(e)
+    src = ["ARCH2 ص6 (A605 تفاصيل الدرابزين): درابزين الدرج، رباعي الأجزاء 20/75/25 سم، عمود Ø50 مم كل 90 سم، قضبان Ø30 مم بفراغ 8 سم، درابزين جداري Ø40 مم عند 0.95 م"]
+    asm = {}
+    for (grp, fl), steps in sorted(flights.items()):
+        steps.sort(key=lambda e: e["a"]["step"]); lv = steps[0]["l"]
+        pts = []                                                       # nosing line: (x_leading_edge, y0, y1, z_top)
+        for e in steps:
+            g = e["g"]; lead_x = g[1] if fl == "B" else g[1]
+            pts.append((g[1], g[3], g[2], g[4], g[6]))
+        y0 = min(p[2] for p in pts); y1 = max(p[3] for p in pts)
+        # flight A runs west->east (y lower half), flight B east->west (y upper half)
+        outer_y = (y0 + 4) if fl == "A" else (y1 - 4)
+        inner_y = (y1 - 3) if fl == "A" else (y0 + 3)
+        # nosing points ordered along the walking direction
+        line = [((p[0] if fl == "A" else p[0]), p[4]) for p in pts]
+        if fl == "A": line.append((pts[-1][1], pts[-1][4]))
+        else: line.append((pts[-1][0] - 0.0, pts[-1][4]))
+        def rail(y, h, dia, mat="stair_rail", tag="RAIL"):
+            return _e("A.rail", lv, ["t", [[round(x, 1), round(y, 1), round(z + h, 3)] for x, z in line], dia], "stair_guard", mat, f"{grp}-{fl}-{tag}", dict(asm, flight=fl), src, grp=f"rail-{grp}-{fl}")
+        out.append(rail(outer_y, 0.95, 4.0, tag="WALL"))
+        for h, dia in ((0.20, 3.0), (0.95, 4.0), (1.20, 5.0)): out.append(rail(inner_y, h, dia, tag=f"G{round(h*100)}"))
+        # posts every third tread + balusters every 11 cm along the sloping guard
+        for k in range(0, len(pts), 3):
+            x, z = line[k]
+            out.append(_e("A.rail", lv, ["cyl", round(x, 1), round(inner_y, 1), 2.5, round(z, 3), round(z + 1.20, 3)], "stair_guard", "stair_rail", f"{grp}-{fl}-POST", dict(asm, flight=fl), src, grp=f"rail-{grp}-{fl}"))
+        x_a, z_a = line[0]; x_b, z_b = line[-1]; Lx = abs(x_b - x_a); n = max(2, int(Lx // 11))
+        for i in range(1, n):
+            t = i / n; x = x_a + (x_b - x_a) * t; z = z_a + (z_b - z_a) * t
+            out.append(_e("A.rail", lv, ["b", round(x, 1), round(inner_y, 1), 3, 3, 0, round(z + 0.20, 3), round(z + 1.20, 3)], "stair_guard", "stair_rail", f"{grp}-{fl}-BAL", dict(asm, flight=fl), src, grp=f"rail-{grp}-{fl}"))
+    return out
+
 # ------------------------------------------------------------------------------------------------------------- types
 def types():
     def T(n, cf, sp, asm=None, sr=None):
@@ -329,6 +377,7 @@ def types():
         "furn_tv_unit": T("وحدة تلفاز (أثاث إخراجي)", "assumed", [["الأبعاد", "190 × 42 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
         "furn_dining": T("طاولة طعام مع 6 كراسٍ (أثاث إخراجي)", "assumed", [["الأبعاد", "190 × 95 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
         "furn_washer": T("غسالة (أثاث إخراجي)", "assumed", [["الأبعاد", "60 × 60 × 85 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
+        "stair_guard": T("درابزين الدرج (فولاذ)", "doc", [["الدرابزين الجداري", "Ø40 مم عند 0.95 م فوق خط حواف الدرجات"], ["جهة فتحة البئر", "حاجز: أعمدة Ø50 مم كل ~90 سم، قضبان Ø30 مم فراغ 8 سم، قضبان أفقية عند +0.20 و+0.95 و+1.20 م"], ["المادة", "فولاذ مجلفن مدهون"]], ["حساب مواضع الأعمدة والقضبان على الدرجات العشر تقريبي؛ لا يظهر مقطع الجناح العلوي عند الأرضيات"], ["A605"]),
         "park_stopper": T("مصدّ عجلات خرساني", "doc", [["الأبعاد", "195 × 15 × 15 سم"], ["الموضع", "40 سم من نهاية الموقف (A1900)"], ["المادة", "خرسانة"]], ["الارتفاع 15 سم من التفصيل؛ موضع المصدّ بالنسبة للمحور تقدير"], ["A1900 تفصيل 4"]),
         "park_access_sign": T("علامة موقف ذوي الإعاقة (طلاء)", "derived", [["النوع", "رمز كرسي متحرك أبيض على أرضية زرقاء"], ["المواقف", "13 و14"], ["الممر", "هاشور 150 سم بين الموقفين"]], ["أبعاد الرمز المرسوم ~110 سم وشكله المبسّط تقدير؛ A1900 يعطي رمز 201.7 سم"], ["A1900", "A2301"]),
         "lift_car": T("مقصورة مصعد (مع إنارة وأبواب)", "derived", [["الأبعاد", "140 × 160 سم (تقديرية من فتحة البئر)"], ["ارتفاع المقصورة الداخلي", "2.20 م"], ["فتحة الباب الصافية", "110 سم — ضلفتان مركزيتا الفتح"], ["التوقفات", "B وG و1–5 والسطح"], ["الإنارة", "لوحة LED سقفية"]],
@@ -343,5 +392,5 @@ def types():
     }
 
 def build(M):
-    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + furniture(M)
+    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + furniture(M) + zebra() + stair_rails(M)
     return {"els": els, "mats": MATS, "types": types()}
