@@ -45,8 +45,9 @@ const U={iso:{value:-1},maskOn:{value:0},mask:{value:null},maskBox:{value:new TH
 function patch(mat){
   mat.onBeforeCompile=(sh)=>{
     sh.uniforms.uIso=U.iso; sh.uniforms.uMaskOn=U.maskOn; sh.uniforms.uMask=U.mask; sh.uniforms.uMaskBox=U.maskBox;
-    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec2 aUnit; attribute float aClip; varying vec2 vUnit; varying float vClip; varying vec3 vWPos;')
-      .replace('#include <begin_vertex>','#include <begin_vertex>\nvUnit=aUnit; vClip=aClip; vWPos=(modelMatrix*vec4(transformed,1.0)).xyz;');
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec2 aUnit; attribute float aClip; attribute float aHide; varying vec2 vUnit; varying float vClip; varying vec3 vWPos;')
+      .replace('#include <begin_vertex>','#include <begin_vertex>\nvUnit=aUnit; vClip=aClip; vWPos=(modelMatrix*vec4(transformed,1.0)).xyz;')
+      .replace('#include <project_vertex>','#include <project_vertex>\n if(aHide>0.5) gl_Position=vec4(2.0,2.0,2.0,1.0);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vUnit; varying float vClip; varying vec3 vWPos; uniform float uIso; uniform float uMaskOn; uniform sampler2D uMask; uniform vec4 uMaskBox;')
       .replace('void main() {','void main() {\n if(uIso>-0.5 && vClip<0.5 && abs(vUnit.x-uIso)>0.5 && abs(vUnit.y-uIso)>0.5) discard;\n if(uIso>-0.5 && vClip>0.5){ vec2 uv=(vWPos.xz-uMaskBox.xy)/uMaskBox.zw; if(uv.x<0.||uv.x>1.||uv.y<0.||uv.y>1.||texture2D(uMask,uv).r<0.5) discard; }');
   };
@@ -89,6 +90,7 @@ function buildAll(){
     bg.setAttribute('position',new THREE.Float32BufferAttribute(g.pos,3));
     bg.setAttribute('normal',new THREE.Float32BufferAttribute(g.nrm,3));
     bg.setAttribute('aUnit',new THREE.Float32BufferAttribute(g.unit,2)); bg.setAttribute('aClip',new THREE.Float32BufferAttribute(g.clip,1));
+    G.hideAttr=new THREE.Uint8BufferAttribute(new Uint8Array(g.n*3),1); bg.setAttribute('aHide',G.hideAttr);
     bg.computeBoundingSphere();
     const m=MATS[G.mat]||{color:'#bbbbbb'};
     const op=(m.opacity!==undefined)?m.opacity:1;
@@ -119,20 +121,22 @@ const lvlVis={}; M.levels.forEach(l=>lvlVis[l.id]=true);
 const layerOp={}; M.layers.forEach(L=>layerOp[L.id]=1);
 const catOp={}; Object.keys(CATS).forEach(c=>catOp[c]=1);
 const stageVis={all:true}; Object.keys(stageCount).forEach(k=>stageVis[k]=true);
-let isoUnit=null, explode=0;
+let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, CLASH=null;
 const stageOn=k=>stageVis.all&&stageVis[k]!==false;
 function groupVisible(G){
   if(G.stage&&!stageOn(G.stage)) return false;
+  if(focusGhost&&focusLevels&&!G.lift&&!focusLevels.includes(G.lvl)) return false;
   if(G.lift) return !!catVis[G.cat];
   if(isoUnit!==null){ if(G.clip) return catVis[G.cat]&&G.lvl===UNITS[isoUnit].level; return catVis[G.cat]; }
   return catVis[G.cat]&&lvlVis[G.lvl];
 }
-function effOpacity(G){const lo=layerOp[G.cat[0]],co=catOp[G.cat];return (G.matBase.userData.baseOpacity||1)*(lo===undefined?1:lo)*(co===undefined?1:co);}
+function effOpacity(G){const lo=layerOp[G.cat[0]],co=catOp[G.cat];return (G.matBase.userData.baseOpacity||1)*(lo===undefined?1:lo)*(co===undefined?1:co)*(focusGhost?focusOp:1);}
 function applyVis(){
   for(const k in groups){const G=groups[k]; if(!G.mesh) continue; G.mesh.visible=groupVisible(G);
     const o=effOpacity(G),m=G.matBase,tr=o<0.999; m.opacity=o; if(m.transparent!==tr){m.transparent=tr;m.needsUpdate=true;} m.depthWrite=!tr;
     const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+(G.dy||0);
   }
+  if(LOD) LOD.invalidate();
   wake();
 }
 function resize(){const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
@@ -178,16 +182,16 @@ let clipYv=1000, clipXv=1000;
 /* ---------- selection highlight ---------- */
 let hlObjs=[], selIdx=-1, selSet=[];
 function clearHL(){ hlObjs.forEach(o=>{scene.remove(o);o.geometry.dispose();}); hlObjs=[]; wake(); }
-function addHL(idxs,color=0xffb000,edges=true){
+function addHL(idxs,color=0xffb000,edges=true,opacity=0.8){
   idxs=idxs.filter(elVisible); if(!idxs.length) return;
   const pos=[];
   idxs.forEach(ei=>{const rg=elRange[ei]; const G=groups[rg.gk]; const off=offOf(ei); const P=G.posArr; for(let i=rg.start*9;i<(rg.start+rg.count)*9;i+=3){pos.push(P[i],P[i+1]+off,P[i+2]);}});
   const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  const mesh=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.8,depthTest:false,side:THREE.DoubleSide})); mesh.renderOrder=999; scene.add(mesh); hlObjs.push(mesh);
+  const mesh=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthTest:false,side:THREE.DoubleSide})); mesh.renderOrder=999; scene.add(mesh); hlObjs.push(mesh);
   if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0xb35c00,depthTest:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
   wake();
 }
-function highlight(idxs,color=0xffb000,edges=true){clearHL(); addHL(idxs,color,edges);}
+function highlight(idxs,color=0xffb000,edges=true,opacity=0.8){clearHL(); addHL(idxs,color,edges,opacity);}
 function bboxOf(idxs){const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];idxs.forEach(ei=>{for(let i=0;i<3;i++){mn[i]=Math.min(mn[i],elBB[ei*6+i]);mx[i]=Math.max(mx[i],elBB[ei*6+3+i]);}});return {mn,mx,c:[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2],r:Math.hypot(mx[0]-mn[0],mx[1]-mn[1],mx[2]-mn[2])/2};}
 
 /* ---------- camera fly (interpolated in spherical coords so it never cuts through the building) ---------- */
@@ -382,26 +386,10 @@ function buildMat(){
 buildMat();
 
 /* ---------- clash list ---------- */
+function setGhost(on,op,levels){focusGhost=!!on; if(op!==undefined) focusOp=op; focusLevels=on?(levels||null):null; applyVis();}
 function buildClash(){
-  const C=M.clashes||[],box=$('clashBox'); if(!C.length){box.innerHTML='<div class=muted>لا توجد تعارضات محسوبة في هذا الإصدار من النموذج.</div>';return;}
-  const K=M.clashKinds||{}; const cnt={}; C.forEach(c=>cnt[c.k]=(cnt[c.k]||0)+1);
-  let cur='*',shown=120;
-  const render=()=>{
-    const list=C.map((c,i)=>[c,i]).filter(x=>cur==='*'||x[0].k===cur);
-    let h=`<div class=note>${esc(M.clashNote||'')}</div><div class=chips><span class="chip ${cur==='*'?'on':''}" data-k="*">الكل (${C.length})</span>`+Object.keys(cnt).map(k=>`<span class="chip ${cur===k?'on':''}" data-k="${esc(k)}">${esc(K[k]||k)} (${cnt[k]})</span>`).join('')+`</div>`;
-    h+=list.slice(0,shown).map(([c,i])=>`<div class=res data-c="${i}"><b>${esc(K[c.k]||c.k)}</b><small>${esc((M.els[c.a].mark||M.els[c.a].id))} × ${esc((M.els[c.b].mark||M.els[c.b].id))} • ${esc(LVL[c.l].name)}${c.v?' • حجم التداخل ≈ '+c.v+' م³':''}</small></div>`).join('');
-    if(list.length>shown) h+=`<div class="chip" id="clMore" style="text-align:center;margin-top:8px">عرض المزيد (${list.length-shown})</div>`;
-    box.innerHTML=h;
-  };
-  render();
-  box.onclick=ev=>{
-    const ch=ev.target.closest('.chip[data-k]'); if(ch){cur=ch.dataset.k;shown=120;render();return;}
-    if(ev.target.closest('#clMore')){shown+=200;render();return;}
-    const r=ev.target.closest('.res[data-c]'); if(!r) return; const c=C[+r.dataset.c];
-    document.querySelectorAll('#clashBox .res.sel').forEach(x=>x.classList.remove('sel')); r.classList.add('sel');
-    ensureVisible(c.a); ensureVisible(c.b); select(c.a,false); addHL([c.b],0x2f81f7,true);
-    const p=new THREE.Vector3(c.pt[0],c.pt[1],c.pt[2]); flyTo(p.clone().add(new THREE.Vector3(-0.55,0.5,0.65).normalize().multiplyScalar(7)),p); document.body.classList.remove('panel-open');
-  };
+  if(!window.initClash){$('clashBox').innerHTML='<div class=muted>وحدة التعارضات غير محمّلة.</div>';return;}
+  CLASH=initClash({M,THREE,scene,camera,controls,$,esc,LVL,UNITS,wake,flyTo,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf});
 }
 buildClash();
 
@@ -417,6 +405,13 @@ function stepLifts(dt){lifts.forEach(L=>{
   L.G.dy=L.dy; const lv=LVL[L.G.lvl]; L.G.mesh.position.y=explode*(lv?lv.idx:0)+L.dy;});}
 $('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إيقاف':'تشغيل'; $('liftBtn').classList.toggle('on',liftSim); if(liftSim){clearHL(); toast('محاكاة توضيحية: السرعة وزمن التوقف غير واردين في المستندات',4200);} else {lifts.forEach(L=>{L.dy=0;L.G.dy=0;L.idx=Math.max(0,L.ffl.findIndex(f=>Math.abs(f-L.base)<1e-6));L.wait=0;}); applyVis();}};
 
+/* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
+if(window.SampleLOD&&window.__SAMPLES__){
+  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,exploded:()=>explode!==0,liftRunning:()=>liftSim,
+    unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G)/(G.matBase.userData.baseOpacity||1)>0.95;})});
+  const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod');}catch(e){} if(saved==='0'){chk.checked=false; LOD.setEnabled(false);}
+    chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب يُستبدل المجسم المبسّط بعينة تفصيلية':'عُطّل استبدال العينات التفصيلية');}; }
+}
 /* ---------- toolbar: modes, views, fullscreen, performance, help ---------- */
 document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>controls.setMode(b.dataset.m));
 controls.addEventListener('mode',ev=>{document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===ev.mode));wake();});
@@ -440,6 +435,8 @@ function loop(){requestAnimationFrame(loop);
   if(fly){stepFly();wake(300);}
   if(controls.update()) wake(300);
   if(liftSim&&lifts.length){stepLifts(dt);wake(300);}
+  if(LOD&&LOD.update()) wake(300);
+  if(CLASH) CLASH.frame(now,dt);
   if(now<awakeUntil){renderer.render(scene,camera);frames++;
     if(!perfProbe.done){ if(!perfProbe.t0&&now>0) {perfProbe.t0=now+900;} if(now>perfProbe.t0){perfProbe.f++; if(now>perfProbe.t0+2200){perfProbe.done=true; const fps=perfProbe.f*1000/(now-perfProbe.t0); let saved=null; try{saved=localStorage.getItem('c4perf');}catch(e){} if(saved===null&&fps<18&&!perfMode) setPerf(true,true);}}}
   }
@@ -449,4 +446,4 @@ function loop(){requestAnimationFrame(loop);
 wake(4200); loop(); applyVis();
 {const L=$('loader'); if(L){L.classList.add('off'); setTimeout(()=>L.remove(),600);} }
 $('stat').textContent=M.els.length.toLocaleString('en')+' عنصر';
-window.__dbg={scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};
+window.__dbg={LOD,get CLASH(){return CLASH;},scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};

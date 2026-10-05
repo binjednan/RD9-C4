@@ -96,6 +96,15 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
   #modes{bottom:calc(10px + var(--sa-b));left:calc(50% - 20px)}#fab{bottom:calc(10px + var(--sa-b));left:auto;right:calc(12px + var(--sa-r));transform:none;padding:10px 16px}
   #info{left:auto;right:0;width:min(380px,50vw);max-height:84dvh;top:calc(10px + var(--sa-t));bottom:auto;border-radius:14px 0 0 14px}
 }
+
+#clashPin{position:absolute;display:none;pointer-events:none;background:rgba(255,43,214,.92);color:#fff;font-size:12px;padding:4px 8px;border-radius:8px;white-space:nowrap;z-index:6;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.stb{display:inline-block;color:#fff;font-size:10.5px;padding:1px 7px;border-radius:9px;margin-inline-start:6px;vertical-align:middle}
+.cdet{border:1px solid var(--bd,#d0d7de);border-radius:10px;padding:10px;margin-bottom:10px;background:#fff}
+.cdet .chead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.cdet code{font-size:11px;background:#f0f2f5;padding:1px 5px;border-radius:5px}
+.ctab{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}.ctab th{text-align:start;color:var(--mu,#667);font-weight:500;padding:3px 6px;width:38%;vertical-align:top}.ctab td{padding:3px 6px}
+.warnbox{background:#fff8e1;border:1px solid #f0d58a;border-radius:8px;padding:6px 8px;font-size:12px;margin:6px 0}.okbox{background:#effaf1;border:1px solid #a8d8b2;border-radius:8px;padding:6px 8px;font-size:12px;margin:6px 0}
+.sliderrow{display:flex;align-items:center;gap:8px;font-size:12px;margin:8px 0}.sliderrow input{flex:1}
+.steps{font-size:12.5px;line-height:1.7;padding-inline-start:20px;margin:6px 0}.steps ol{padding-inline-start:18px}.mynote{margin-top:8px;font-size:12px;display:flex;flex-direction:column;gap:5px}.mynote textarea{width:100%;font-family:inherit;font-size:12px;box-sizing:border-box}
 </style></head><body>
 <div id="app"><div id="side"><div id="panelHead"><span>القوائم والتحكم</span><button id="panelClose" aria-label="إغلاق">✕</button></div>
 <div id="tabs" role="tablist"><div class="tab on" data-pane="pLayers">الأقسام</div><div class="tab" data-pane="pUnits">الوحدات</div><div class="tab" data-pane="pSearch">بحث</div><div class="tab" data-pane="pMat">المواد</div><div class="tab" data-pane="pClash">التعارضات</div></div>
@@ -105,15 +114,16 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 <details id="ctl"><summary>التحكم والأداء</summary>
 <div class="row"><span>جهاز التأشير (للتمرير والتقريب)</span><select id="ptrKind"><option value="auto">تلقائي</option><option value="mouse">ماوس</option><option value="pad">تراك باد</option></select></div>
 <div class="row"><span>وضع الأداء (دقة أقل لأجهزة ضعيفة)</span><input type="checkbox" id="perfChk"></div>
+<div class="row"><span>استبدال المجسم بعينة تفصيلية عند التقريب</span><input type="checkbox" id="lodChk" checked></div>
 <div class="row" id="liftRow" style="display:none"><span>محاكاة حركة المصعد</span><button class="mini" id="liftBtn">تشغيل</button></div>
 <div class="row"><span>دليل التحكم والاختصارات</span><button class="mini" id="helpBtn2">عرض</button></div></details></div>
 <div class="pane" id="pUnits"><h3>اختر وحدة لعزلها وعرض تفاصيلها</h3><div id="units"></div></div>
 <div class="pane" id="pSearch"><input id="q" type="search" placeholder="ابحث بالـTag أو الـID أو الاسم أو الغرفة…" autocomplete="off" enterkeyhint="search"><div id="qinfo" class="muted"></div><div id="qres"></div></div>
 <div class="pane" id="pMat"><div id="matBox"><div class="muted">جارٍ التجهيز…</div></div></div>
-<div class="pane" id="pClash"><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div>
+<div class="pane" id="pClash"><div id="clashDetail" style="display:none"></div><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div>
 <div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnAll">إظهار الكل</button><button id="btnFs" title="ملء الشاشة">⛶</button><button id="btnPerf" title="وضع الأداء" aria-pressed="false">أداء</button><button id="btnHelp" title="دليل التحكم">؟</button></div>
 <div id="viewMenu"><button data-v="persp">منظور (الافتراضي)</button><button data-v="top">علوي</button><button data-v="front">أمامي</button><button data-v="back">خلفي</button><button data-v="right">جانبي (يمين)</button><button data-v="left">جانبي (يسار)</button></div>
-<div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div>
+<div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div><div id="clashPin"></div>
 <div id="modes"><button data-m="rotate" class="on">تدوير</button><button data-m="pan">تحريك</button><button data-m="zoom">تقريب</button></div><div id="toast"></div></div></div>
 <button id="fab">☰ الأقسام والوحدات</button>
 <div id="help"><div class="hb"><div class="hh"><span>دليل التحكم بالنموذج</span><button id="helpClose" aria-label="إغلاق">✕</button></div>

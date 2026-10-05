@@ -476,6 +476,9 @@ for d in pairs.values():
     clashes.append({"a": d["a"], "b": d["b"], "k": d["k"], "l": els[d["a"]]["l"], "v": round(d["v"], 3), "pt": [round(x / 100, 2), round(z, 2), round(-y / 100, 2)]})
 clashes.sort(key=lambda c: -c["v"])
 M["clashes"] = clashes
+import clash_log as _CL
+_CL.merge_into(M, els)
+_CL.write_doc(M)
 M["clashKinds"] = {k: v for k, v in KIND_AR.items() if any(c["k"] == k for c in clashes)}
 M["clashNote"] = ("تعارضات هندسية مرجّحة (تقاطع الحجوم) بين عناصر النموذج. مناسيب الخدمات في فراغ السقف افتراضية (انظر بطاقة كل عنصر)، "
                   "لذلك هي مرشّحات للمراجعة وليست حكمًا نهائيًا. ثقوب العبور عبر الجدران والجسور لا تظهر في النموذج وقد تكون مصمَّمة فعلًا. "
