@@ -326,6 +326,7 @@ def make():
     S("e_F7", "لوحة CO", "CO panel", panel(40, 40, 15, "لوحة كواشف CO", screen=True, leds=4), WALL, lod=5, src=SRC_F, facts=ff("لوحة كواشف CO"), asm=["الأبعاد من رمز المخطط؛ الارتفاع: افتراض"], dims={"W": 40, "D": 15, "H": 40})
     S("e_F8", "لوحة التحكم بالإنذار (FACP)", "Fire alarm control panel (FACP)", panel(55, 60, 18, "FACP", screen=True, leds=4, keypad=True), WALL, lod=5, src=SRC_F, facts=ff("لوحة تحكم إنذار الحريق عنونة"), asm=["الأبعاد من رمز المخطط؛ الارتفاع: افتراض"], dims={"W": 55, "D": 18, "H": 60})
     S("e_F9", "لوحة تكرار إنذار الحريق (Repeater)", "Repeater fire alarm panel", panel(45, 50, 15, "لوحة التكرار", screen=True, leds=3), WALL, lod=5, src=SRC_F, facts=ff("لوحة تكرار"), asm=["الأبعاد من رمز المخطط؛ الارتفاع: افتراض"], dims={"W": 45, "D": 15, "H": 50})
+    S("e_F19", "لوحة التحكم بالإخلاء الصوتي", "Voice evacuation control panel", panel(45, 50, 15, "لوحة الإخلاء الصوتي", screen=True, leds=3, keypad=False), WALL, lod=5, src=SRC_F, facts=ff("لوحة تحكم الإخلاء الصوتي"), asm=["الأبعاد من رمز المخطط؛ الارتفاع: افتراض"], dims={"W": 45, "D": 15, "H": 50})
     S("e_F11", "إنارة طوارئ LED ذاتية (غاطسة)", "Emergency light LED self-contained (recessed)", lum_emerg(14), CEILC, lod=4, src=SRC_F, facts=ff("إنارة طوارئ ذاتية البطارية — غاطسة"), asm=["الاستطاعة ومدة التشغيل غير مذكورتين"], dims={"W": 14, "D": 14, "H": 4})
     S("e_F13", "لوحة مخرج طوارئ (EXIT) LED", "Exit sign (LED) self-contained", exit_sign(), WALL, lod=5, src=SRC_F, facts=ff("لوحة مخرج LED ذاتية"), asm=["ارتفاع التركيب 2.2 م: افتراض (فوق الباب)"], dims={"W": 35, "D": 6, "H": 18})
     S("e_F15", "سماعة إخلاء جدارية", "Wall mounted evacuation speaker", wall_speaker(), WALL, lod=4, src=SRC_F, facts=ff("سماعة إخلاء صوتي جدارية"), asm=["ارتفاع التركيب 2.2 م: افتراض"], dims={"W": 16, "D": 4, "H": 16})
@@ -349,4 +350,4 @@ def make():
 
 def _r(cat_t): return [{"c": c, "t": t, "s": t} for c, t in cat_t]
 RULES = [{"t": f"e_{k}", "s": f"e_{k}"} for k in ["L1","L2","L4","L5","L6","L7","L8","L9","L10","L11","L12","L13","P1","P2","P3","P4","P5","P6","P7","P8","P9","P10","P12","P14","P15","P16","P18",
-          "S1","S2","S4","S5","S6","S8","S9","S10","S11","F1","F2","F3","F4","F5","F6","F7","F8","F9","F11","F13","F15","F18","T1","T2","T3","T4","T5","T6","T7","T10","T11","T12","T20","G2","G3"]]
+          "S1","S2","S4","S5","S6","S8","S9","S10","S11","F1","F2","F3","F4","F5","F6","F7","F8","F9","F11","F13","F15","F18","F19","T1","T2","T3","T4","T5","T6","T7","T10","T11","T12","T20","G2","G3"]]

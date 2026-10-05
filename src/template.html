@@ -105,9 +105,18 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 .warnbox{background:#fff8e1;border:1px solid #f0d58a;border-radius:8px;padding:6px 8px;font-size:12px;margin:6px 0}.okbox{background:#effaf1;border:1px solid #a8d8b2;border-radius:8px;padding:6px 8px;font-size:12px;margin:6px 0}
 .sliderrow{display:flex;align-items:center;gap:8px;font-size:12px;margin:8px 0}.sliderrow input{flex:1}
 .steps{font-size:12.5px;line-height:1.7;padding-inline-start:20px;margin:6px 0}.steps ol{padding-inline-start:18px}.mynote{margin-top:8px;font-size:12px;display:flex;flex-direction:column;gap:5px}.mynote textarea{width:100%;font-family:inherit;font-size:12px;box-sizing:border-box}
+
+#smpPrev{position:fixed;inset:0;background:rgba(15,20,28,.55);display:none;align-items:center;justify-content:center;z-index:40}#smpPrev.on{display:flex}
+#smpPrev .smpbox{width:min(1080px,96vw);max-height:92dvh;display:flex;flex-direction:column;background:#fff;border-radius:14px;overflow:hidden}
+#smpPrev .smphead{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:15px;padding:10px 14px;border-bottom:1px solid #e5e9ef}#smpPrev .smphead button{border:0;background:#eef1f5;border-radius:50%;width:34px;height:34px;cursor:pointer}
+.spbody{display:flex;gap:0;min-height:0;flex:1}#smpCanvas{flex:1.3;min-height:340px;background:#dfe5ec;cursor:grab;position:relative}#smpCanvas canvas{width:100%!important;height:100%!important;display:block}
+#smpInfo{flex:1;overflow:auto;padding:12px 14px;min-width:300px;max-width:420px}#smpInfo h3{margin:0 0 4px;font-size:16px}#smpInfo h4{margin:12px 0 4px;font-size:13px;color:#445}
+.dimrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}.dimrow label{font-size:12px;display:flex;align-items:center;gap:4px}.dimrow input{width:64px}
+.asm li{color:#8a1f1f}.parts{font-size:11.5px;line-height:1.6}
+@media (max-width:760px){.spbody{flex-direction:column}#smpCanvas{min-height:260px;flex:none;height:42dvh}#smpInfo{max-width:none;min-width:0}}
 </style></head><body>
 <div id="app"><div id="side"><div id="panelHead"><span>القوائم والتحكم</span><button id="panelClose" aria-label="إغلاق">✕</button></div>
-<div id="tabs" role="tablist"><div class="tab on" data-pane="pLayers">الأقسام</div><div class="tab" data-pane="pUnits">الوحدات</div><div class="tab" data-pane="pSearch">بحث</div><div class="tab" data-pane="pMat">المواد</div><div class="tab" data-pane="pClash">التعارضات</div></div>
+<div id="tabs" role="tablist"><div class="tab on" data-pane="pLayers">الأقسام</div><div class="tab" data-pane="pUnits">الوحدات</div><div class="tab" data-pane="pSearch">بحث</div><div class="tab" data-pane="pMat">المواد</div><div class="tab" data-pane="pClash">التعارضات</div><div class="tab" data-pane="pSamp">العينات</div></div>
 <div class="pane on" id="pLayers"><div class="sechead"><h3>الأقسام: إظهار / إخفاء والشفافية</h3><button class="mini" id="opReset" title="يعيد شفافية كل الأقسام إلى 100%">إعادة ضبط الشفافية</button></div><div id="layers"></div><div id="stageBox"></div>
 <h3>الطوابق</h3><div id="levels"></div>
 <h3>قص أفقي <span id="clipYV">بدون</span></h3><input id="clipY" type="range" min="-4" max="30" step="0.1" value="30"><h3>قص طولي <span id="clipXV">بدون</span></h3><input id="clipX" type="range" min="0" max="46" step="0.1" value="46"><h3>تفكيك الطوابق</h3><input id="expl" type="range" min="0" max="60" value="0">
@@ -120,12 +129,14 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 <div class="pane" id="pUnits"><h3>اختر وحدة لعزلها وعرض تفاصيلها</h3><div id="units"></div></div>
 <div class="pane" id="pSearch"><input id="q" type="search" placeholder="ابحث بالـTag أو الـID أو الاسم أو الغرفة…" autocomplete="off" enterkeyhint="search"><div id="qinfo" class="muted"></div><div id="qres"></div></div>
 <div class="pane" id="pMat"><div id="matBox"><div class="muted">جارٍ التجهيز…</div></div></div>
+<div class="pane" id="pSamp"><div class="muted">جارٍ التجهيز…</div></div>
 <div class="pane" id="pClash"><div id="clashDetail" style="display:none"></div><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div>
 <div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnAll">إظهار الكل</button><button id="btnFs" title="ملء الشاشة">⛶</button><button id="btnPerf" title="وضع الأداء" aria-pressed="false">أداء</button><button id="btnHelp" title="دليل التحكم">؟</button></div>
 <div id="viewMenu"><button data-v="persp">منظور (الافتراضي)</button><button data-v="top">علوي</button><button data-v="front">أمامي</button><button data-v="back">خلفي</button><button data-v="right">جانبي (يمين)</button><button data-v="left">جانبي (يسار)</button></div>
 <div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div><div id="clashPin"></div>
 <div id="modes"><button data-m="rotate" class="on">تدوير</button><button data-m="pan">تحريك</button><button data-m="zoom">تقريب</button></div><div id="toast"></div></div></div>
 <button id="fab">☰ الأقسام والوحدات</button>
+<div id="smpPrev"><div class="smpbox"><div class="smphead"><span>معاينة عينة</span><button id="smpClose" aria-label="إغلاق">✕</button></div><div class="spbody"><div id="smpCanvas"></div><div id="smpInfo"></div></div></div></div>
 <div id="help"><div class="hb"><div class="hh"><span>دليل التحكم بالنموذج</span><button id="helpClose" aria-label="إغلاق">✕</button></div>
 <h4>اللمس (جوال / لوح)</h4><ul><li>إصبع واحد: حسب الزر السفلي (تدوير / تحريك / تقريب).</li><li>إصبعان: قرص للتقريب والتبعيد، وتحريك الإصبعين لتحريك المشهد.</li><li>نقرة على عنصر: بطاقة الأصل. نقرتان سريعتان: تركيز الكاميرا عليه.</li></ul>
 <h4>الماوس</h4><ul><li>الزر الأيسر: تدوير. الزر الأيمن أو <kbd>Shift</kbd> + السحب: تحريك. الأوسط: تقريب.</li><li>العجلة: تقريب نحو مؤشر الماوس. نقرتان على عنصر: تركيز عليه.</li></ul>

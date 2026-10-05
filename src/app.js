@@ -121,7 +121,7 @@ const lvlVis={}; M.levels.forEach(l=>lvlVis[l.id]=true);
 const layerOp={}; M.layers.forEach(L=>layerOp[L.id]=1);
 const catOp={}; Object.keys(CATS).forEach(c=>catOp[c]=1);
 const stageVis={all:true}; Object.keys(stageCount).forEach(k=>stageVis[k]=true);
-let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, CLASH=null;
+let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, focusSamples=false, CLASH=null;
 const stageOn=k=>stageVis.all&&stageVis[k]!==false;
 function groupVisible(G){
   if(G.stage&&!stageOn(G.stage)) return false;
@@ -130,7 +130,7 @@ function groupVisible(G){
   if(isoUnit!==null){ if(G.clip) return catVis[G.cat]&&G.lvl===UNITS[isoUnit].level; return catVis[G.cat]; }
   return catVis[G.cat]&&lvlVis[G.lvl];
 }
-function effOpacity(G){const lo=layerOp[G.cat[0]],co=catOp[G.cat];return (G.matBase.userData.baseOpacity||1)*(lo===undefined?1:lo)*(co===undefined?1:co)*(focusGhost?focusOp:1);}
+function effOpacity(G,noGhost){const lo=layerOp[G.cat[0]],co=catOp[G.cat];return (G.matBase.userData.baseOpacity||1)*(lo===undefined?1:lo)*(co===undefined?1:co)*(focusGhost&&!noGhost?focusOp:1);}
 function applyVis(){
   for(const k in groups){const G=groups[k]; if(!G.mesh) continue; G.mesh.visible=groupVisible(G);
     const o=effOpacity(G),m=G.matBase,tr=o<0.999; m.opacity=o; if(m.transparent!==tr){m.transparent=tr;m.needsUpdate=true;} m.depthWrite=!tr;
@@ -386,7 +386,7 @@ function buildMat(){
 buildMat();
 
 /* ---------- clash list ---------- */
-function setGhost(on,op,levels){focusGhost=!!on; if(op!==undefined) focusOp=op; focusLevels=on?(levels||null):null; applyVis();}
+function setGhost(on,op,levels,samples){focusGhost=!!on; if(op!==undefined) focusOp=op; focusLevels=on?(levels||null):null; focusSamples=!!(on&&samples); applyVis();}
 function buildClash(){
   if(!window.initClash){$('clashBox').innerHTML='<div class=muted>وحدة التعارضات غير محمّلة.</div>';return;}
   CLASH=initClash({M,THREE,scene,camera,controls,$,esc,LVL,UNITS,wake,flyTo,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf});
@@ -408,10 +408,11 @@ $('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إ
 /* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
 if(window.SampleLOD&&window.__SAMPLES__){
   LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,exploded:()=>explode!==0,liftRunning:()=>liftSim,
-    unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G)/(G.matBase.userData.baseOpacity||1)>0.95;})});
+    unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});
   const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod');}catch(e){} if(saved==='0'){chk.checked=false; LOD.setEnabled(false);}
     chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب يُستبدل المجسم المبسّط بعينة تفصيلية':'عُطّل استبدال العينات التفصيلية');}; }
 }
+if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>';
 /* ---------- toolbar: modes, views, fullscreen, performance, help ---------- */
 document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>controls.setMode(b.dataset.m));
 controls.addEventListener('mode',ev=>{document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===ev.mode));wake();});

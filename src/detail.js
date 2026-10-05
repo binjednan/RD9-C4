@@ -148,7 +148,7 @@ class SampleLOD{
     walls.forEach(w=>{for(let ix=Math.floor((w.x0-30)/200);ix<=Math.floor((w.x1+30)/200);ix++)for(let iy=Math.floor((w.y0-30)/200);iy<=Math.floor((w.y1+30)/200);iy++){const k=ix+','+iy;(this.wallGrid.get(k)||this.wallGrid.set(k,[]).get(k)).push(w);}});
     M.els.forEach((e,ei)=>{
       const key=e.c+'|'+e.t; let sid=typeCache.get(key); if(sid===undefined){sid=this.ruleFor(e)||null;typeCache.set(key,sid);} if(!sid||!lib.samples[sid]) return;
-      const smp=lib.samples[sid]; const pl=smp.place||{}; const g=e.g; const a=e.a||{};
+      const smp=lib.samples[sid]; const pl=smp.place||{}; if(pl.mode==='none') return; const g=e.g; const a=e.a||{};
       if(pl.mode==='group'){
         if(!e.grp) return; const k=sid+'|'+e.grp; let u=unitsByGrp.get(k); if(!u){u={sid,eis:[],bb:[1e9,1e9,1e9,-1e9,-1e9,-1e9],e0:ei,mode:'group',lvl:e.l,a};unitsByGrp.set(k,u);}
         u.eis.push(ei); const bb=this.c.elBB; for(let i=0;i<3;i++){u.bb[i]=Math.min(u.bb[i],bb[ei*6+i]);u.bb[i+3]=Math.max(u.bb[i+3],bb[ei*6+3+i]);}
@@ -158,7 +158,7 @@ class SampleLOD{
       if(g[0]==='b'&&(pl.mode==='box'||!pl.mode)){u={sid,eis:[ei],mode:'box',x:g[1],y:g[2],W:g[3],D:g[4],ang:g[5],z0:g[6],z1:g[7]};}
       else if(g[0]==='cyl'&&(pl.mode==='cyl'||!pl.mode)){u={sid,eis:[ei],mode:'cyl',x:g[1],y:g[2],W:g[3]*2,D:g[3]*2,ang:0,z0:g[4],z1:g[5]};}
       else if(g[0]==='r'&&(pl.mode==='rect'||!pl.mode)){const dx=Math.abs(g[3]-g[1]),dy=Math.abs(g[4]-g[2]);const horiz=dx>=dy;u={sid,eis:[ei],mode:'rect',x:(g[1]+g[3])/2,y:(g[2]+g[4])/2,W:Math.max(dx,dy),D:Math.min(dx,dy),ang:horiz?0:90,z0:g[5],z1:g[6]};}
-      else if(g[0]==='p'&&pl.mode==='prism'){const bb=bboxPoly(g[1]); const w=bb[2]-bb[0],d=bb[3]-bb[1]; if(w<=0||d<=0) return; u={sid,eis:[ei],mode:'prism',x:(bb[0]+bb[2])/2,y:(bb[1]+bb[3])/2,W:w,D:d,ang:0,z0:g[2],z1:g[3]};}
+      else if(g[0]==='p'&&pl.mode==='prism'){ if((g[4]&&g[4].length)||g[1].length>5) return; const bb=bboxPoly(g[1]); const w=bb[2]-bb[0],d=bb[3]-bb[1]; if(w<=0||d<=0) return; if(polyAreaAbs(g[1])<0.97*w*d) return; const hz=w>=d; u={sid,eis:[ei],mode:'prism',x:(bb[0]+bb[2])/2,y:(bb[1]+bb[3])/2,W:Math.max(w,d),D:Math.min(w,d),ang:hz?0:90,z0:g[2],z1:g[3]};}
       if(!u) return; u.lvl=e.l; u.a=a; this.units.push(u); types.add(sid);
     });
     for(const u of unitsByGrp.values()){
@@ -233,7 +233,7 @@ class SampleLOD{
     if(L) for(const ui of L){const u=this.units[ui]; const bb=u.bb; const dx=Math.max(bb[0]-cam.x,0,cam.x-bb[3]),dy=Math.max(bb[1]-cam.y,0,cam.y-bb[4]),dz=Math.max(bb[2]-cam.z,0,cam.z-bb[5]); const d2=dx*dx+dy*dy+dz*dz; if(d2>u.R*u.R) continue; cand.push([d2,ui]);}
     cand.sort((a,b)=>a[0]-b[0]);
     const next=new Map(); const MAXU=this.maxUnits||700; let nPath=0;
-    for(const [d2,ui] of cand){ if(next.size>=MAXU) break; const u=this.units[ui]; if(u.mode==='path'){ if(nPath>=160) continue; nPath++; } if(!c.unitVisible(u)) continue; next.set(ui,u); }
+    for(const [d2,ui] of cand){ if(next.size>=MAXU) break; const u=this.units[ui]; if(u.mode==='path'){ if(nPath>=160) continue; nPath++; } if(this.skipSids&&this.skipSids.has(u.sid)) continue; if(!c.unitVisible(u)) continue; next.set(ui,u); }
     let changed=false, pathChanged=false;
     for(const [ui,u] of this.active){ if(!next.has(ui)){this.hide(u,false);changed=true; if(u.mode==='path') pathChanged=true;} }
     for(const [ui,u] of next){ if(!this.active.has(ui)){this.hide(u,true);changed=true; if(u.mode==='path') pathChanged=true;} }
@@ -287,6 +287,7 @@ function buildPath(smp,u){
   const res={}; for(const cl of Object.keys(out)){res[cl]={pos:new Float32Array(out[cl].pos),nrm:new Float32Array(out[cl].nrm),col:new Float32Array(out[cl].col)};}
   return res;
 }
+function polyAreaAbs(p){let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1];}return Math.abs(a/2);}
 function bboxPoly(p){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const q of p){x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1]);}return [x0,y0,x1,y1];}
 window.SampleLOD=SampleLOD; window.SampleGeo={buildBufs,compile,ev};
 })();
