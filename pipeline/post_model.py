@@ -125,6 +125,18 @@ if "roof_dish_on_slab" not in FIXES:
             e.setdefault("a", {})["mount_note"] = "وُضع الصحن على بلاطة السطح مباشرة؛ ارتفاع القاعدة غير مذكور في المستندات — افتراض هندسي يحتاج تأكيد"
     FIXES.append("roof_dish_on_slab"); print("dishes lowered onto slab:", n)
 
+if "piles_30cm_display" not in FIXES:
+    # request: show only 30 cm of each pile below the raft (they go underground); the real 13 m length stays in the card
+    n = 0
+    for e in els:
+        if e["c"] == "S.pile" and e["g"][0] == "cyl":
+            top = e["g"][5]
+            e["g"][4] = round(top - 0.30, 3)
+            a = e.setdefault("a", {})
+            a["display_note"] = "يُعرض 30 سم فقط تحت اللبشة للدلالة على امتداد الخازوق تحت الأرض؛ الطول الفعلي 13 م (من المخطط)"
+            n += 1
+    FIXES.append("piles_30cm_display"); print("piles shortened for display:", n)
+
 # ------------------------------------------------------------------ types
 types = {}
 for k, d in kb.DOORS.items():

@@ -11,3 +11,4 @@ tools/
 *.jpg
 __pycache__/
 src/viewer.html
+pipeline/cache/
