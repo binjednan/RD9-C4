@@ -1,0 +1,69 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f6feb"><meta name="robots" content="noindex,nofollow">
+<title>نموذج C4 ثلاثي الأبعاد — RD9</title>
+<style>
+:root{--bg:#f3f5f8;--pn:#ffffff;--tx:#1c2430;--mu:#6b7686;--ac:#1f6feb;--bd:#d9dfe7;--sh:0 6px 24px #1c243026}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent} html,body{margin:0;height:100%;font-family:-apple-system,"SF Arabic","Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--tx);font-size:13px;overscroll-behavior:none}
+#app{display:grid;grid-template-columns:340px 1fr;height:100vh;height:100dvh}
+#side{background:var(--pn);border-inline-end:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
+#tabs{display:flex;border-bottom:1px solid var(--bd);background:#f8fafc;flex:none}
+.tab{flex:1;padding:10px 4px;text-align:center;cursor:pointer;font-size:12.5px;color:var(--mu);border-bottom:2px solid transparent;user-select:none}
+.tab.on{color:var(--ac);border-color:var(--ac);font-weight:600;background:#fff}
+.pane{display:none;overflow:auto;padding:10px;flex:1;min-height:0;-webkit-overflow-scrolling:touch}.pane.on{display:block}
+#view{position:relative;overflow:hidden;min-width:0}canvas{display:block;touch-action:none}
+h3{margin:12px 0 6px;font-size:13px;color:var(--mu);font-weight:600} label{display:block;font-size:13px;padding:3px 0;cursor:pointer}
+.lay{border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;padding:4px 8px}.lh{font-size:14px;display:flex;align-items:center;gap:4px}.subs{padding-inline-start:22px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 2px} i{font-style:normal;color:var(--mu);font-size:11px;float:left}
+button.mini{margin-inline-start:auto;border:1px solid var(--bd);background:#fff;border-radius:6px;font-size:11px;padding:2px 8px;cursor:pointer}
+input[type=range]{width:100%}
+#hud{position:absolute;top:8px;left:8px;background:#fffc;border-radius:6px;padding:4px 8px;font-size:12px;direction:ltr;z-index:5}
+#bar{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:5}
+#bar button{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:6px 11px;cursor:pointer;font-size:12.5px;box-shadow:0 1px 4px #0001}
+#info{display:none;position:absolute;left:10px;top:44px;bottom:10px;width:330px;overflow:auto;background:var(--pn);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);padding:10px 12px;z-index:6;-webkit-overflow-scrolling:touch}
+#info.on{display:block}
+.ih{display:flex;justify-content:space-between;align-items:center;font-size:15px;gap:8px}.ih button{border:0;background:#eef1f5;border-radius:50%;width:28px;height:28px;cursor:pointer;flex:none}
+#info h4{margin:12px 0 4px;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd);padding-bottom:2px}
+#info table{width:100%;border-collapse:collapse;font-size:12.5px}#info th{text-align:start;color:var(--mu);font-weight:500;padding:3px 0;width:38%;vertical-align:top}#info td{padding:3px 0;word-break:break-word}
+code{background:#eef1f5;border-radius:4px;padding:0 4px;font-size:11.5px;direction:ltr;unicode-bidi:isolate}
+.tags span{display:inline-block;background:#eef1f5;border-radius:10px;padding:1px 9px;margin:4px 4px 0 0;font-size:11.5px}
+.adv{background:#fff8e6;border:1px dashed #d4a72c;border-radius:8px;padding:6px 10px;margin-top:8px;font-size:12px}.adv ul{margin:4px 0 0;padding-inline-start:18px}
+.src ul{margin:4px 0 0;padding-inline-start:18px;color:#3a4656;font-size:12px}.cf{display:inline-block;border-radius:10px;padding:1px 9px;font-size:11.5px;font-weight:600}.muted{color:var(--mu);font-size:11.5px;margin-top:6px}
+.uh{margin:10px 0 4px;font-weight:600;color:var(--mu)}.ur{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ub{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:6px 4px;cursor:pointer;text-align:center}.ub b{display:block;font-size:12.5px}.ub i{float:none;font-size:10.5px;display:block}.ub.sel,.ub:hover{border-color:var(--ac);background:#eaf2ff}
+#isoBar{display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--ac);border-radius:10px;padding:6px 12px;z-index:7;box-shadow:var(--sh);gap:10px;align-items:center;max-width:92vw}
+#isoBar.on{display:flex} #isoBar button{border:0;background:var(--ac);color:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+#fab{display:none;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:30;border:0;background:var(--ac);color:#fff;border-radius:22px;padding:11px 22px;font-size:14px;font-weight:600;box-shadow:0 6px 20px #1f6feb66}
+#panelHead{display:none}
+#loader{position:fixed;inset:0;z-index:100;background:#f3f5f8;display:flex;align-items:center;justify-content:center;transition:opacity .35s}
+#loader.off{opacity:0;pointer-events:none}
+#loader .lb{background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);padding:22px 28px;text-align:center;max-width:86vw}
+#loader b{display:block;font-size:16px;margin-bottom:6px}#loader span{color:var(--mu);font-size:12.5px}
+.sp{display:block;width:30px;height:30px;margin:14px auto 0;border:3px solid #dbe5f5;border-top-color:var(--ac);border-radius:50%;animation:sp 0.9s linear infinite;float:none}@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:860px){
+  #app{display:block}
+  #view{position:absolute;inset:0}
+  #side{position:fixed;left:0;right:0;bottom:0;height:56vh;height:56dvh;z-index:20;border-radius:18px 18px 0 0;box-shadow:0 -8px 28px #1c243033;border-inline-end:0;transform:translateY(105%);transition:transform .25s ease;padding-bottom:env(safe-area-inset-bottom)}
+  body.panel-open #side{transform:none}
+  #fab{display:block} body.panel-open #fab{display:none}
+  #panelHead{display:flex;justify-content:space-between;align-items:center;padding:8px 12px 2px;font-weight:600;flex:none}
+  #panelHead button{border:0;background:#eef1f5;border-radius:50%;width:30px;height:30px;font-size:15px}
+  #info{left:0;right:0;top:auto;bottom:0;width:auto;max-height:54vh;max-height:54dvh;border-radius:18px 18px 0 0;border-width:1px 0 0 0;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  #bar{top:6px;right:6px;gap:5px}#bar button{padding:7px 9px;font-size:12px}
+  #hud{top:auto;bottom:calc(70px + env(safe-area-inset-bottom));left:8px;font-size:11px}
+  #fps{display:none}
+  body.info-open #fab{display:none}
+  #isoBar{top:48px;width:calc(100vw - 16px);justify-content:space-between;font-size:12.5px}
+  .ur{grid-template-columns:repeat(2,1fr)}
+}
+</style></head><body>
+<div id="app"><div id="side"><div id="panelHead"><span>القوائم والتحكم</span><button id="panelClose" aria-label="إغلاق">✕</button></div><div id="tabs"><div class="tab on" data-pane="pLayers">الأقسام</div><div class="tab" data-pane="pUnits">الوحدات</div><div class="tab" data-pane="pClash">التعارضات</div><div class="tab" data-pane="pMat">المواد</div></div>
+<div class="pane on" id="pLayers"><h3>الأقسام (إظهار/إخفاء)</h3><div id="layers"></div><h3>الطوابق</h3><div id="levels"></div>
+<h3>شفافية الهيكل الإنشائي</h3><input id="sOpa" type="range" min="5" max="100" value="100"><h3>قص أفقي <span id="clipYV">بدون</span></h3><input id="clipY" type="range" min="-4" max="30" step="0.1" value="30"><h3>قص طولي <span id="clipXV">بدون</span></h3><input id="clipX" type="range" min="0" max="46" step="0.1" value="46"><h3>تفكيك الطوابق</h3><input id="expl" type="range" min="0" max="60" value="0"></div>
+<div class="pane" id="pUnits"><h3>اختر وحدة لعزلها وعرض تفاصيلها</h3><div id="units"></div></div>
+<div class="pane" id="pClash"><div class="muted">لا توجد بيانات بعد</div></div><div class="pane" id="pMat"><div class="muted">لا توجد بيانات بعد</div></div></div>
+<div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnAll">إظهار الكل</button></div><div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div></div></div>
+<button id="fab">☰ الأقسام والوحدات</button>
+<div id="loader"><div class="lb"><b>نموذج مبنى C4 — مدينة الرياض RD09</b><span id="lmsg">جارٍ تجهيز النموذج ثلاثي الأبعاد…</span><i class="sp"></i></div></div>
+{{SCRIPTS}}
+</body></html>

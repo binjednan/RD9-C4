@@ -1,0 +1,1372 @@
+{
+ "ARCH1": [
+  {
+   "page": 1,
+   "no": "A000 00",
+   "title": "PERSPECTIVE",
+   "scale": ""
+  },
+  {
+   "page": 2,
+   "no": "A001 00",
+   "title": "CALCULATION TABLE",
+   "scale": ""
+  },
+  {
+   "page": 3,
+   "no": "A100 00",
+   "title": "SITE PLAN",
+   "scale": "1:200"
+  },
+  {
+   "page": 4,
+   "no": "A101 00",
+   "title": "BASEMENT FLOOR PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "A102 00",
+   "title": "GROUND FLOOR PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 6,
+   "no": "A103 00",
+   "title": "FIRST FLOOR PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 7,
+   "no": "A104 00",
+   "title": "TYPICAL FLOOR PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 8,
+   "no": "A105 00",
+   "title": "ROOF FLOOR PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 9,
+   "no": "A106 00",
+   "title": "TOP ROOF PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 10,
+   "no": "A 200 00",
+   "title": "ELEVATION 1",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 11,
+   "no": "A 201 00",
+   "title": "ELEVATION 2",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 12,
+   "no": "A 202 00",
+   "title": "ELEVATION 3",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 13,
+   "no": "A 203 00",
+   "title": "ELEVATION 4",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 14,
+   "no": "A 300 00",
+   "title": "SECTION A-A",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 15,
+   "no": "A 301 00",
+   "title": "SECTION B-B",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 16,
+   "no": "A400 00",
+   "title": "BOUNDARY WALL 01",
+   "scale": "1:100"
+  },
+  {
+   "page": 17,
+   "no": "A401 00",
+   "title": "BOUNDARY WALL 02",
+   "scale": "1:100"
+  },
+  {
+   "page": 18,
+   "no": "A 500 00",
+   "title": "FINISHING SCHEDULE",
+   "scale": "SIZE:"
+  }
+ ],
+ "ARCH2": [
+  {
+   "page": 1,
+   "no": "A600 00",
+   "title": "STAIR DETAILS 01 / PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 2,
+   "no": "A601 00",
+   "title": "STAIR DETAILS 01 / SECTION C-C",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 3,
+   "no": "A602 00",
+   "title": "STAIR DETAILS 02 / PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 4,
+   "no": "A603 00",
+   "title": "STAIR DETAILS 02 / SECTION D-D",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "A604 00",
+   "title": "STAIR DETAILS 03",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 6,
+   "no": "A605 00",
+   "title": "HAND RAIL DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 7,
+   "no": "A606 00",
+   "title": "RAMP DETAILS 01",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 8,
+   "no": "A607 00",
+   "title": "RAMP DETAILS 02",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 9,
+   "no": "A700 00",
+   "title": "SCHEDULE OF DOORS",
+   "scale": "1:50"
+  },
+  {
+   "page": 10,
+   "no": "A701 00",
+   "title": "DOOR DETAILS",
+   "scale": "1:50"
+  },
+  {
+   "page": 11,
+   "no": "A702 00",
+   "title": "HARDWARE SET / (SHEET 01 OF 02)",
+   "scale": ""
+  },
+  {
+   "page": 12,
+   "no": "A703 00",
+   "title": "HARDWARE SET / (SHEET 02 OF 02)",
+   "scale": ""
+  },
+  {
+   "page": 13,
+   "no": "A800 00",
+   "title": "SCHEDULE OF GLAZED & / WINDOWS 01",
+   "scale": "1:50"
+  },
+  {
+   "page": 14,
+   "no": "A801 00",
+   "title": "SCHEDULE OF GLAZED & / WINDOWS 02",
+   "scale": "1:50"
+  },
+  {
+   "page": 15,
+   "no": "A802 00",
+   "title": "SCHEDULE OF GLAZED & / WINDOWS 03",
+   "scale": "1:50"
+  },
+  {
+   "page": 16,
+   "no": "A803 00",
+   "title": "WINDOW DETAILS",
+   "scale": "1:20"
+  },
+  {
+   "page": 17,
+   "no": "A900 00",
+   "title": "LIFT DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 18,
+   "no": "A1100 00",
+   "title": "GARBAGE CHUTE / STRUCTURAL DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 19,
+   "no": "A1200 00",
+   "title": "BATHROOM DETAILS 01",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 20,
+   "no": "A1201",
+   "title": "BATHROOM DETAILS 02",
+   "scale": "1:20"
+  },
+  {
+   "page": 21,
+   "no": "A1202 00",
+   "title": "BATHROOM DETAILS 03",
+   "scale": "1:20"
+  },
+  {
+   "page": 22,
+   "no": "A1203 00",
+   "title": "BATHROOM DETAILS 04",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 23,
+   "no": "A1204",
+   "title": "KITCHEN DETAILS 01",
+   "scale": "1:50"
+  },
+  {
+   "page": 24,
+   "no": "A1205 00",
+   "title": "KITCHEN DETAILS 02",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 25,
+   "no": "A1300 00",
+   "title": "WARDROBE DETAIL 01",
+   "scale": "1:20"
+  },
+  {
+   "page": 26,
+   "no": "A1301 00",
+   "title": "WARDROBE DETAIL 02",
+   "scale": "1:20"
+  },
+  {
+   "page": 27,
+   "no": "A1302 00",
+   "title": "WARDROBE DETAIL 03",
+   "scale": "1:50"
+  },
+  {
+   "page": 28,
+   "no": "A1400 00",
+   "title": "BASEMENT FLOOR / REFLECTED CEILING",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 29,
+   "no": "A1401 00",
+   "title": "GF,FF,TYPICAL AND ROOF / FLOOR REFLECTED CEILING",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 30,
+   "no": "A1402 00",
+   "title": "CEILING DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 31,
+   "no": "A1500 00",
+   "title": "WALL SECTION 1",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 32,
+   "no": "A1501 00",
+   "title": "WALL SECTION 2",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 33,
+   "no": "00",
+   "title": "CURTAIN WALL DETAILS",
+   "scale": "1:10"
+  },
+  {
+   "page": 34,
+   "no": "A1600 00",
+   "title": "BASEMENT AND GROUND / FLOOR LIFT LOBBY DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 35,
+   "no": "A1601 00",
+   "title": "FIRST FLOOR AND TYPICAL / FLOOR LIFT LOBBY DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 36,
+   "no": "A1700 00",
+   "title": "CANOPY DETAILS",
+   "scale": "1:50"
+  },
+  {
+   "page": 37,
+   "no": "A1800 00",
+   "title": "LADDER DETAILS",
+   "scale": ""
+  },
+  {
+   "page": 38,
+   "no": "A1900 00",
+   "title": "CAR PARKING DETAILS 01 / 67.1",
+   "scale": ""
+  },
+  {
+   "page": 39,
+   "no": "A1901 00",
+   "title": "CAR PARKING DETAILS 02",
+   "scale": ""
+  },
+  {
+   "page": 40,
+   "no": "A1902 00",
+   "title": "ROAD MARKING ARROW",
+   "scale": "1:20"
+  },
+  {
+   "page": 41,
+   "no": "A1903 00",
+   "title": "TRAFFIC CONTROL / SIGN DETAILS",
+   "scale": "1:20"
+  },
+  {
+   "page": 42,
+   "no": "",
+   "title": "",
+   "scale": ""
+  },
+  {
+   "page": 43,
+   "no": "A2100 00",
+   "title": "RECEPTION DUSK / DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 44,
+   "no": "A2200 00",
+   "title": "BASEMENT FLOOR SIGNAGE / LAYOUTS",
+   "scale": "1:100"
+  },
+  {
+   "page": 45,
+   "no": "A2201 00",
+   "title": "GROUND FLOOR SIGNAGE / LAYOUTS",
+   "scale": "1:100"
+  },
+  {
+   "page": 46,
+   "no": "A2202 00",
+   "title": "FIRST FLOOR SIGNAGE / LAYOUTS",
+   "scale": "1:100"
+  },
+  {
+   "page": 47,
+   "no": "A2203 00",
+   "title": "TYPICAL FLOOR SIGNAGE / LAYOUTS",
+   "scale": "1:100"
+  },
+  {
+   "page": 48,
+   "no": "A2204 00",
+   "title": "ROOF FLOOR SIGNAGE / LAYOUTS",
+   "scale": "1:100"
+  },
+  {
+   "page": 49,
+   "no": "A2300 00",
+   "title": "PLANTING PLAN / DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 50,
+   "no": "A2301 00",
+   "title": "LANDSCAPE AREA / FLOORING TILE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 51,
+   "no": "A2302 00",
+   "title": "LANDSCAPE SECTION / DETAILS 01",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 52,
+   "no": "A2303 00",
+   "title": "LANDSCAPE SECTION / DETAILS 02",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 53,
+   "no": "A2304 00",
+   "title": "LANDSCAPE SECTION / DETAILS 03",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 54,
+   "no": "A2305 00",
+   "title": "GAZEBA AND KIDS PLAY / AREA SHED DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 55,
+   "no": "00",
+   "title": "PRELIMINARY CONCEPT DRAWING / DAVITSYSTEM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 56,
+   "no": "00",
+   "title": "PRELIMINARY CONCEPT DRAWING / DAVITSYSTEM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 57,
+   "no": "A2500 00",
+   "title": "WATER TANK DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 58,
+   "no": "A2600 00",
+   "title": "TYPICAL FACADE DETAILS",
+   "scale": "SIZE:"
+  }
+ ],
+ "STR": [
+  {
+   "page": 1,
+   "no": "00",
+   "title": "GENERAL NOTES 1",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 2,
+   "no": "00",
+   "title": "GENERAL NOTES 2",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 3,
+   "no": "00",
+   "title": "GENERAL NOTES 3",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 4,
+   "no": "00",
+   "title": "GENERAL NOTES 4",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "00",
+   "title": "BASEMENT FLOOR LOADING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 6,
+   "no": "00",
+   "title": "GROUND FLOOR LOADING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 7,
+   "no": "00",
+   "title": "1ST - 5TH FLOOR LOADING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 8,
+   "no": "00",
+   "title": "ROOF FLOOR LOADING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 9,
+   "no": "00",
+   "title": "TOP FLOOR LOADING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 10,
+   "no": "00",
+   "title": "FOUNDATION REACTION (KN)",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 11,
+   "no": "00",
+   "title": "FOUNDATION PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 12,
+   "no": "00",
+   "title": "FOUNDATION DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 13,
+   "no": "00",
+   "title": "SHORING PLAN",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 14,
+   "no": "00",
+   "title": "UNDERGROUND COLUMN LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 15,
+   "no": "00",
+   "title": "BASEMENT COLUMNS LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 16,
+   "no": "00",
+   "title": "GROUND FLOOR COLUMN LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 17,
+   "no": "00",
+   "title": "TYPICAL FLOOR COLUMN LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 18,
+   "no": "00",
+   "title": "ROOF FLOOR COLUMN LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 19,
+   "no": "00",
+   "title": "TOP ROOF COLUMN LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 20,
+   "no": "00",
+   "title": "GROUND FLOOR SLAB LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 21,
+   "no": "00",
+   "title": "FIRST FLOOR SLAB LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 22,
+   "no": "00",
+   "title": "TYPICAL FLOOR SLAB LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 23,
+   "no": "00",
+   "title": "ROOF FLOOR SLAB LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 24,
+   "no": "00",
+   "title": "TOP ROOF SLAB LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 25,
+   "no": "00",
+   "title": "COLUMN SCHEDULE 1",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 26,
+   "no": "00",
+   "title": "COLUMN SCHEDULE 2",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 27,
+   "no": "00",
+   "title": "SECTION DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 28,
+   "no": "00",
+   "title": "RAMP DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 29,
+   "no": "00",
+   "title": "STAIRCASE DETAILS (1&2)",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 30,
+   "no": "00",
+   "title": "STAIRCASE DETAILS (3)",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 31,
+   "no": "00",
+   "title": "BOUNDARY WALL",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 32,
+   "no": "00",
+   "title": "BOUNDARY WALL COPING BEAM",
+   "scale": "SIZE:"
+  }
+ ],
+ "MECH1": [
+  {
+   "page": 1,
+   "no": "AC-100 00",
+   "title": "BASEMENT FLOOR PLAN / AC LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 2,
+   "no": "AC-101 00",
+   "title": "GROUND FLOOR PLAN / AC LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 3,
+   "no": "AC-102 00",
+   "title": "FIRST FLOOR PLAN / AC LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 4,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / AC LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "AC-104 00",
+   "title": "5th FLOOR PLAN / AC LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 6,
+   "no": "AC-105 00",
+   "title": "ROOF FLOOR PLAN / AC LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 7,
+   "no": "AC-106 00",
+   "title": "AC SCHEDULE",
+   "scale": ""
+  },
+  {
+   "page": 8,
+   "no": "00",
+   "title": "00",
+   "scale": ""
+  },
+  {
+   "page": 9,
+   "no": "AC-107-B 00",
+   "title": "AC DETAILS",
+   "scale": ""
+  },
+  {
+   "page": 10,
+   "no": "AC-107-B 00",
+   "title": "AC DETAILS",
+   "scale": ""
+  },
+  {
+   "page": 11,
+   "no": "CHW-100 00",
+   "title": "BASEMENT FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 12,
+   "no": "CHW-101 00",
+   "title": "GROUND FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 13,
+   "no": "CHW-102 00",
+   "title": "FIRST FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 14,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 15,
+   "no": "CHW-104 00",
+   "title": "ROOF FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 16,
+   "no": "CHW-105 00",
+   "title": "CHILLED WATER RISER DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 17,
+   "no": "SM-100 00",
+   "title": "BASEMENT FLOOR PLAN / SMOKE MANAGEMENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 18,
+   "no": "SM-101 00",
+   "title": "GROUND FLOOR PLAN / SMOKE MANAGEMENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 19,
+   "no": "SM-102 00",
+   "title": "FIRST FLOOR PLAN / SMOKE MANAGEMENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 20,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / SMOKE MANAGEMENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 21,
+   "no": "SM-104 00",
+   "title": "ROOF FLOOR PLAN / SMOKE MANAGEMENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 22,
+   "no": "SM-105 00",
+   "title": "RISER DIAGRAM / SMOKE MANAGEMENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 23,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / VENTILATION LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 24,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / VENTILATION LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 25,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / VENTILATION LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 26,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / VENTILATION LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 27,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / VENTILATION LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 28,
+   "no": "00",
+   "title": "VENTILATION RISER DIAGRAM",
+   "scale": ""
+  },
+  {
+   "page": 29,
+   "no": "00",
+   "title": "VENTILATION SCHEDULE",
+   "scale": ""
+  }
+ ],
+ "MECH2": [
+  {
+   "page": 1,
+   "no": "00",
+   "title": "SITE PLAN / DRAINAGE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 2,
+   "no": "DR-100 00",
+   "title": "BASEMENT FLOOR PLAN / DRAINAGE LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 3,
+   "no": "DR-101-A 00",
+   "title": "GROUND FLOOR PLAN HIGH LEVEL / DRAINAGE LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 4,
+   "no": "DR-101 00",
+   "title": "GROUND FLOOR PLAN / DRAINAGE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "DR-102 00",
+   "title": "FIRST FLOOR PLAN / DRAINAGE LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 6,
+   "no": "DR-103 00",
+   "title": "TYPICAL FLOOR PLAN / DRAINAGE LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 7,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / DRAINAGE LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 8,
+   "no": "00",
+   "title": "TOP ROOF PLAN / DRAINAGE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 9,
+   "no": "DR-106",
+   "title": "DRAINAGE DETAILS",
+   "scale": ""
+  },
+  {
+   "page": 10,
+   "no": "FF-100",
+   "title": "BASEMENT FLOOR PLAN / FIRE FIGHTING LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 11,
+   "no": "FF-101 00",
+   "title": "GROUND FLOOR PLAN / FIRE FIGHTING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 12,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / FIRE FIGHTING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 13,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / FIRE FIGHTING LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 14,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / FIRE FIGHTING LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 15,
+   "no": "FF-105 00",
+   "title": "FIRE FIGHTING RISER DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 16,
+   "no": "00",
+   "title": "FIRE FIGHTING DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 17,
+   "no": "00",
+   "title": "SITE PLAN / WATER SUPPLY LAYOUT",
+   "scale": "1:150"
+  },
+  {
+   "page": 18,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / WATER SUPPLY LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 19,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / WATER SUPPLY LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 20,
+   "no": "WS-102 00",
+   "title": "FIRST FLOOR PLAN / WATER SUPPLY LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 21,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / WATER SUPPLY LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 22,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / WATER SUPPLY LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 23,
+   "no": "00",
+   "title": "WATER SUPPLY RISER DIAGRAM",
+   "scale": ""
+  },
+  {
+   "page": 24,
+   "no": "00",
+   "title": "WATER SUPPLY DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 25,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / IRRIGATION LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 26,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / IRRIGATION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 27,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / STORM WATER LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 28,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / STORM WATER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 29,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / STORM WATER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 30,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / STORM WATER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 31,
+   "no": "SW-105 00",
+   "title": "TOP ROOF PLAN / STORM WATER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 32,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 33,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "1:100"
+  },
+  {
+   "page": 34,
+   "no": "CHW-102 00",
+   "title": "FIRST FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 35,
+   "no": "CHW-103 00",
+   "title": "TYPICAL FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 36,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / CHILLED WATER CONNECTION LAYOUT",
+   "scale": "1:50"
+  },
+  {
+   "page": 37,
+   "no": "AC-105 00",
+   "title": "CHILLED WATER RISER DIAGRAM",
+   "scale": "SIZE:"
+  }
+ ],
+ "ELEC1": [
+  {
+   "page": 1,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / LIGHT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 2,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / LIGHT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 3,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / LIGHT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 4,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / LIGHT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / LIGHT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 6,
+   "no": "00",
+   "title": "TOP ROOF PLAN / LIGHT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 7,
+   "no": "00",
+   "title": "LIGHTING CONTROL SYSTEM / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 8,
+   "no": "00",
+   "title": "SITE PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 9,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 10,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 11,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 12,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 13,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 14,
+   "no": "00",
+   "title": "TOP ROOF PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 15,
+   "no": "00",
+   "title": "ELECTRICAL / LOAD SCHEDULE",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 16,
+   "no": "00",
+   "title": "ELECTRICAL / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 17,
+   "no": "EP-108 00",
+   "title": "ELECTRICAL / ROOM DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 18,
+   "no": "00",
+   "title": "ELECTRICAL / GENERAL DETAILS",
+   "scale": "SIZE:"
+  }
+ ],
+ "ELEC2": [
+  {
+   "page": 1,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / EARTHING PROTECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 2,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / FIRE ALARM LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 3,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / FIRE ALARM LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 4,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / FIRE ALARM LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 5,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / FIRE ALARM LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 6,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / FIRE ALARM LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 7,
+   "no": "00",
+   "title": "FIRE ALARM / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 8,
+   "no": "00",
+   "title": "CENTRAL MONITORING / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 9,
+   "no": "00",
+   "title": "VOICE EVACUATION / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 10,
+   "no": "00",
+   "title": "FIRE ALARM / GENERAL DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 11,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / LIGHTNING PROTECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 12,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / LIGHTNING PROTECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 13,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / SPOT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 14,
+   "no": "",
+   "title": "TYPICAL FLOOR PLAN / LIGHTNING PROTECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 15,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / LIGHTNING PROTECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 16,
+   "no": "00",
+   "title": "TOP ROOF PLAN / LIGHTNING PROTECTION LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 17,
+   "no": "00",
+   "title": "LIGHTNING PROTECTION / GENERAL DETAILS",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 18,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / LOW CURRENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 19,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / LOW CURRENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 20,
+   "no": "00",
+   "title": "FIRST FLOOR PLAN / SPOT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 21,
+   "no": "LIGHT",
+   "title": "TYPICAL FLOOR PLAN / LOW CURRENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 22,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / LOW CURRENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 23,
+   "no": "00",
+   "title": "TOP ROOF PLAN / LOW CURRENT LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 24,
+   "no": "00",
+   "title": "SMATV / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 25,
+   "no": "00",
+   "title": "CCTV / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 26,
+   "no": "00",
+   "title": "INTERCOM / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 27,
+   "no": "00",
+   "title": "SITE PLAN / POWER LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 28,
+   "no": "00",
+   "title": "BASEMENT FLOOR PLAN / TELEPHONE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 29,
+   "no": "00",
+   "title": "GROUND FLOOR PLAN / TELEPHONE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 30,
+   "no": "",
+   "title": "FIRST FLOOR PLAN / TELEPHONE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 31,
+   "no": "00",
+   "title": "TYPICAL FLOOR PLAN / TELEPHONE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 32,
+   "no": "00",
+   "title": "ROOF FLOOR PLAN / TELEPHONE LAYOUT",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 33,
+   "no": "00",
+   "title": "TELEPHONE / SCHEMATIC DIAGRAM",
+   "scale": "SIZE:"
+  },
+  {
+   "page": 34,
+   "no": "00",
+   "title": "TELEPHONE / GENERAL DETAILS",
+   "scale": "SIZE:"
+  }
+ ]
+}
