@@ -127,7 +127,7 @@ function groupVisible(G){
   if(isoUnit!==null){ if(G.clip) return catVis[G.cat]&&G.lvl===UNITS[isoUnit].level; return catVis[G.cat]; }
   return catVis[G.cat]&&lvlVis[G.lvl];
 }
-function effOpacity(G){return (G.matBase.userData.baseOpacity||1)*(layerOp[G.cat[0]]??1)*(catOp[G.cat]??1);}
+function effOpacity(G){const lo=layerOp[G.cat[0]],co=catOp[G.cat];return (G.matBase.userData.baseOpacity||1)*(lo===undefined?1:lo)*(co===undefined?1:co);}
 function applyVis(){
   for(const k in groups){const G=groups[k]; if(!G.mesh) continue; G.mesh.visible=groupVisible(G);
     const o=effOpacity(G),m=G.matBase,tr=o<0.999; m.opacity=o; if(m.transparent!==tr){m.transparent=tr;m.needsUpdate=true;} m.depthWrite=!tr;

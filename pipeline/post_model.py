@@ -183,6 +183,49 @@ if "g_exterior_finishes_removed" not in FIXES:
     M["meta"]["removed_exterior_floors"] = len(gone)
     FIXES.append("g_exterior_finishes_removed"); print("exterior G floors/ceilings removed:", len(gone))
 
+# ------------------------------------------------------------------ roof equipment (pipeline/roof.py -> data/roof.json)
+ROOF_JSON = os.path.join(HERE, "data", "roof.json")
+ROOF_TYPES = {}
+if os.path.exists(ROOF_JSON):
+    import re as _re
+    Rf = json.load(open(ROOF_JSON, encoding="utf-8"))
+    for k, v in Rf["mats"].items():
+        M["mats"].setdefault(k, v)
+    ROOF_TYPES = Rf["types"]
+    pool = M["sp"]; pidx = {t: i for i, t in enumerate(pool)}
+    def sp_idx2(t):
+        if t not in pidx:
+            pidx[t] = len(pool); pool.append(t)
+        return pidx[t]
+    els[:] = [e for e in els if not _re.search(r"-R-S\d+$", e["id"])]
+    for k, e in enumerate(Rf["els"], 1):
+        ne = {"id": f"{e['c']}-R-S{k:04d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx2(t) for t in e["src"]]}
+        if e.get("grp"): ne["grp"] = e["grp"]
+        els.append(ne)
+    M["els"] = els
+    print("roof elements merged:", len(Rf["els"]))
+
+if "r_open_roof_finishes_removed" not in FIXES:
+    # the generic builder gave the OPEN roof (chillers, FAHU, open terraces) floors (F2 ceramic) and ceilings (C3) as if it were a bathroom
+    # ('BATH A:4.8M2' text matched to every cell). Rooms of the roof are exactly the footprint of the top slabs (S.slab T): keep finishes only there.
+    from shapely.ops import unary_union as _uu
+    zones = []
+    for e in els:
+        if e["l"] == "T" and e["c"] == "S.slab" and e["g"][0] == "r":
+            g = e["g"]; zones.append(box(min(g[1], g[3]), min(g[2], g[4]), max(g[1], g[3]), max(g[2], g[4])))
+    Z = _uu(zones).buffer(25) if zones else None
+    kept, gone = [], []
+    for e in els:
+        if Z is not None and e["l"] == "R" and e["c"] in ("A.floor", "A.ceil"):
+            P = plan_pts(e["g"]); cx = sum(p[0] for p in P) / len(P); cy = sum(p[1] for p in P) / len(P)
+            if not Z.contains(Point(cx, cy)):
+                gone.append({"id": e["id"], "c": e["c"], "xy": [round(cx), round(cy)], "fin": (e.get("a") or {}).get("fin")}); continue
+        kept.append(e)
+    els[:] = kept; M["els"] = els
+    json.dump(gone, open(os.path.join(HERE, "data", "removed_open_roof_finishes.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    M["meta"]["removed_open_roof_finishes"] = len(gone)
+    FIXES.append("r_open_roof_finishes_removed"); print("open-roof floors/ceilings removed:", len(gone))
+
 # ------------------------------------------------------------------ types
 types = {}
 for k, d in kb.DOORS.items():
@@ -209,6 +252,7 @@ for cid, c in kb_elec.C.items():
 used = {e["t"] for e in els}
 types = {k: v for k, v in types.items() if k in used}
 M["types"] = types
+M["types"].update(ROOF_TYPES)
 
 # ------------------------------------------------------------------ finishes + areas
 def poly_area_cm2(g):
