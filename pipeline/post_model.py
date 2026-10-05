@@ -757,6 +757,8 @@ for _e in EXT["els"]:
     _ne = {"id": f"{_e['c']}-{_e['l']}-X{sum(_cx.values()):04d}", "c": _e["c"], "l": _e["l"], "g": _e["g"], "mark": _e["mark"], "t": _e["t"], "m": _e["m"], "a": _e["a"], "s": [_spx(t) for t in _e["src"]]}
     if _e.get("grp"): _ne["grp"] = _e["grp"]
     if _e.get("stage"): _ne["stage"] = _e["stage"]
+    if _e.get("u"): _ne["u"] = _e["u"]
+    if _e.get("u2"): _ne["u2"] = _e["u2"]
     els.append(_ne)
 M["els"] = els
 print("extras merged:", len(EXT["els"]), dict(collections.Counter(e["t"] for e in EXT["els"])))

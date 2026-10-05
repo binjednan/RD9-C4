@@ -18,6 +18,13 @@ MATS = {
     "canopy_steel": {"name": "فولاذ مدهون رمادي داكن — أضلاع وأعمدة مظلات المواقف", "color": "#565c63", "code": "A200 / A202"},
     "lamp_body": {"name": "كشاف خارجي مقاوم للماء (ألمنيوم رمادي داكن)", "color": "#3c4148", "code": "A2301"},
     "lamp_glass": {"name": "زجاج/ناشر الكشاف", "color": "#f4e7a8", "code": "A2301"},
+    "furn_wood": {"name": "أثاث — خشب متوسط (إخراجي)", "color": "#a8794d", "code": "stage"},
+    "furn_wood_light": {"name": "أثاث — خشب فاتح (إخراجي)", "color": "#d6bb92", "code": "stage"},
+    "furn_wood_dark": {"name": "أثاث — خشب داكن (إخراجي)", "color": "#5b4332", "code": "stage"},
+    "furn_white": {"name": "أثاث — أبيض (إخراجي)", "color": "#f2efe8", "code": "stage"},
+    "furn_fabric_gray": {"name": "أثاث — قماش رمادي (إخراجي)", "color": "#8b9097", "code": "stage"},
+    "furn_fabric_beige": {"name": "أثاث — قماش بيج (إخراجي)", "color": "#cdbd9f", "code": "stage"},
+    "furn_dark": {"name": "أثاث — أسود/معدن داكن (إخراجي)", "color": "#2f3338", "code": "stage"},
     "site_stopper": {"name": "مصدّ عجلات خرساني 195×15×15 سم", "color": "#9ea3a8", "code": "A1900"},
     "site_access_blue": {"name": "علامة موقف ذوي الإعاقة — أرضية زرقاء", "color": "#1f5fb4", "code": "A1900"},
     "site_access_white": {"name": "علامة موقف ذوي الإعاقة — رمز أبيض", "color": "#f4f6f8", "code": "A1900"},
@@ -260,6 +267,36 @@ def curved_sails():
                           ["ARCH2 ص54 (A2305 ظلّة الألعاب): 7 أعمدة ⌀200 مم، قمم +4.50 (الصف الشمالي) و+3.50"], grp="shed"))
     return out
 
+
+# ------------------------------------------------------------------------------------------------------------- 7 staged furniture (pipeline/furnish.py -> data/furniture.json)
+FURN_TYPE = {"سرير": "furn_bed", "طاولة جانبية": "furn_nightstand", "دولاب": "furn_wardrobe", "كنبة": "furn_sofa", "طاولة قهوة": "furn_coffee_table", "وحدة تلفاز": "furn_tv_unit",
+             "طاولة طعام مع 6 كراسٍ": "furn_dining", "غسالة": "furn_washer"}
+FURN_LEVELS = {"typ": ("2", "3", "4", "5"), "1": ("1",)}
+
+def furniture(M):
+    p = os.path.join(D, "furniture.json")
+    if not os.path.exists(p): return []
+    F = json.load(open(p, encoding="utf-8")); LV = {l["id"]: l for l in M["levels"]}; out = []
+    src = ["ترتيب إخراجي آلي (pipeline/furnish.py) — المخططات المعمارية A103/A104 لا ترسم أثاثًا منفصلًا؛ المواضع والأبعاد افتراضات للعرض فقط"]
+    for key, flats in F.items():
+        for lv in FURN_LEVELS[key]:
+            ffl = LV[lv]["ffl"]
+            for flat, items in flats.items():
+                for k, it in enumerate(items):
+                    t = FURN_TYPE.get(it["name"], "furn_other"); grp = f"furn-{lv}-{flat}-{k}"
+                    for (ox, oy, w, d, z0, z1, mat) in it["parts"]:
+                        if it.get("free"):
+                            ang = math.radians(it["ang"]); c, s_ = math.cos(ang), math.sin(ang)
+                            cx = it["c"][0] + ox * c - oy * s_; cy = it["c"][1] + ox * s_ + oy * c; rot = it["ang"]
+                        else:
+                            tt, nn = it["t"], it["n"]
+                            cx = it["base"][0] + tt[0] * ox + nn[0] * oy; cy = it["base"][1] + tt[1] * ox + nn[1] * oy; rot = it["ang"]
+                        e = _e("A.stage", lv, ["b", round(cx, 1), round(cy, 1), round(w, 1), round(d, 1), round(rot, 2), round(ffl + z0, 3), round(ffl + z1, 3)], t, mat, it["name"],
+                               {"kind": "أثاث إخراجي", "room": it.get("room"), "size_cm": f"{round(it['w'])} × {round(it['d'])}"}, src, grp=grp, stage="furniture")
+                        e["u"] = f"{lv}-{flat}"
+                        out.append(e)
+    return out
+
 # ------------------------------------------------------------------------------------------------------------- types
 def types():
     def T(n, cf, sp, asm=None, sr=None):
@@ -284,6 +321,14 @@ def types():
                         ["منحنى القوس وارتفاع قمته (+3.40) وقطر الأنبوب ⌀12 سم قراءات من الرسم لا أرقام مكتوبة", "الصور (7 أغسطس) تؤكد مظلة غشائية بيج على هيكل فولاذي بينما A1700/A201 يذكران برجولة ألمنيوم بتأثير خشب — بانتظار تأكيدك أيّهما المعتمد"], ["A200/A202 المقطع", "A102 المسقط"]),
         "canopy_column": T("عمود مظلة المواقف (أنبوب فولاذ)", "doc", [["الارتفاع", "250 سم"], ["العدد", "عمود عند كل ضلع"]], ["القطر ⌀20 سم تقدير من الرسم", "موضع العمود على القوس (x≈4383 على الكتل الشرقية) مقروء من المقطع"], ["A200/A202"]),
         "canopy_strut": T("ساق مائلة لمظلة المواقف", "doc", [["الربط", "من العمود عند 145 سم إلى القوس"]], ["القطر ⌀8 سم تقدير"], ["A200/A202"]),
+        "furn_bed": T("سرير (أثاث إخراجي)", "assumed", [["النوع", "كمالية إخراجية — للعرض لا للتنفيذ"], ["الأبعاد", "180–200 × 200 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي آلي حسب الغرفة والأبواب"], []),
+        "furn_nightstand": T("طاولة جانبية (أثاث إخراجي)", "assumed", [["الأبعاد", "45 × 40 × 50 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
+        "furn_wardrobe": T("دولاب (أثاث إخراجي)", "assumed", [["العمق", "60 سم"], ["الارتفاع", "2.30 م"]], ["غير مرسوم في هذا الموضع؛ A1300–A1302 تفاصيل دواليب غير مربوطة بالمساقط في هذا النموذج"], ["A1300–A1302"]),
+        "furn_sofa": T("كنبة (أثاث إخراجي)", "assumed", [["الأبعاد", "230 × 95 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
+        "furn_coffee_table": T("طاولة قهوة (أثاث إخراجي)", "assumed", [["الأبعاد", "110 × 60 × 40 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
+        "furn_tv_unit": T("وحدة تلفاز (أثاث إخراجي)", "assumed", [["الأبعاد", "190 × 42 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
+        "furn_dining": T("طاولة طعام مع 6 كراسٍ (أثاث إخراجي)", "assumed", [["الأبعاد", "190 × 95 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
+        "furn_washer": T("غسالة (أثاث إخراجي)", "assumed", [["الأبعاد", "60 × 60 × 85 سم"]], ["غير مرسوم في المخططات؛ ترتيب افتراضي"], []),
         "park_stopper": T("مصدّ عجلات خرساني", "doc", [["الأبعاد", "195 × 15 × 15 سم"], ["الموضع", "40 سم من نهاية الموقف (A1900)"], ["المادة", "خرسانة"]], ["الارتفاع 15 سم من التفصيل؛ موضع المصدّ بالنسبة للمحور تقدير"], ["A1900 تفصيل 4"]),
         "park_access_sign": T("علامة موقف ذوي الإعاقة (طلاء)", "derived", [["النوع", "رمز كرسي متحرك أبيض على أرضية زرقاء"], ["المواقف", "13 و14"], ["الممر", "هاشور 150 سم بين الموقفين"]], ["أبعاد الرمز المرسوم ~110 سم وشكله المبسّط تقدير؛ A1900 يعطي رمز 201.7 سم"], ["A1900", "A2301"]),
         "lift_car": T("مقصورة مصعد (مع إنارة وأبواب)", "derived", [["الأبعاد", "140 × 160 سم (تقديرية من فتحة البئر)"], ["ارتفاع المقصورة الداخلي", "2.20 م"], ["فتحة الباب الصافية", "110 سم — ضلفتان مركزيتا الفتح"], ["التوقفات", "B وG و1–5 والسطح"], ["الإنارة", "لوحة LED سقفية"]],
@@ -298,5 +343,5 @@ def types():
     }
 
 def build(M):
-    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails()
+    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + furniture(M)
     return {"els": els, "mats": MATS, "types": types()}
