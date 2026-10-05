@@ -36,7 +36,7 @@ SPEC = {   # canopy z0,z1 (above the soil), trunk radius, material
     "HIBI.T": dict(stem=1.8, h=4.2, tr=7, mat="tree_hibi", name="هبسكس", assumed="الارتفاع الكلي 4.2 م افتراض (الجدول يذكر ساق 1.8 م وقطر 40–50 مم فقط)"),
     "PLUM.O": dict(stem=1.0, h=3.0, tr=5, mat="tree_plum", name="فرنجبان", assumed=None),
 }
-SRC = ["ARCH2 ص19 (A2300 خطة الزراعة)", "ARCH1 ص5 (A102)"]
+SRC = ["ARCH2 ص49 (A2300 خطة الزراعة)", "ARCH1 ص5 (A102)"]
 
 def _e(c, t, g, mat, mark, a=None, stage=None, grp=None):
     e = {"c": c, "l": "G", "g": g, "mark": mark, "t": t, "m": mat, "a": a or {}, "src": list(SRC)}

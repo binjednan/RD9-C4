@@ -794,6 +794,14 @@ M["types"].update(MEPBG_TYPES)
 M["types"].update(RS_TYPES)
 M["types"].update(ER_TYPES)
 M["types"].update(EXT["types"])
+# cards for every remaining type (structure, finishes, ducts, pipes, valves, sprinklers, site, planting): pipeline/kb_types.py — never overrides a card defined above
+import kb_types as _KBT
+_kb_new = _KBT.build(M)
+for _k, _v in _kb_new.items():
+    M["types"].setdefault(_k, _v)
+print("kb_types: +%d cards covering %d elements | FCU schedule:" % (len(_kb_new), sum(1 for e in M["els"] if e["t"] in _kb_new)), _KBT.enrich(M))
+_still = sorted({e["t"] for e in M["els"]} - set(M["types"]))
+if _still: print("types without a card:", _still)
 
 # ------------------------------------------------------------------ finishes + areas
 def poly_area_cm2(g):
@@ -984,6 +992,11 @@ M["clashKinds"] = {k: v for k, v in KIND_AR.items() if any(c["k"] == k for c in 
 M["clashNote"] = ("تعارضات هندسية مرجّحة (تقاطع الحجوم) بين عناصر النموذج. مناسيب الخدمات في فراغ السقف افتراضية (انظر بطاقة كل عنصر)، "
                   "لذلك هي مرشّحات للمراجعة وليست حكمًا نهائيًا. ثقوب العبور عبر الجدران والجسور لا تظهر في النموذج وقد تكون مصمَّمة فعلًا. "
                   "مرتبة بحجم التداخل.")
+
+# citation fixes found while checking the sources (the old strings stay in model.json written by earlier stages): A2300 is ARCH2 page 49, STR page 24 is sheet S-19
+_CITE_FIX = {"STR p24 (S-141)": "STR p24 (S-19 TOP ROOF SLAB LAYOUT)", "ARCH2 ص19 (A2300 خطة الزراعة)": "ARCH2 ص49 (A2300 خطة الزراعة)"}
+for _i, _s in enumerate(M["sp"]):
+    if _s in _CITE_FIX: M["sp"][_i] = _CITE_FIX[_s]
 
 json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False)
 cnt = collections.Counter(c["k"] for c in clashes)

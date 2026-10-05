@@ -39,7 +39,7 @@ def build(els):
         z1=s["top"]; z0=z1-s["t"]
         if "rects" in s:
             for r in s["rects"]:
-                add("S.slab",s["lvl"],R(r[0],r[1],r[2],r[3],z0,z1),mark="SLAB-"+s["lvl"],typ="slab_"+s["lvl"],attrs={"thk_cm":round(s["t"]*100)},src=["STR p24 (S-141)"])
+                add("S.slab",s["lvl"],R(r[0],r[1],r[2],r[3],z0,z1),mark="SLAB-"+s["lvl"],typ="slab_"+s["lvl"],attrs={"thk_cm":round(s["t"]*100)},src=["STR p24 (S-19 TOP ROOF SLAB LAYOUT)"])
         else:
             add("S.slab",s["lvl"],P(s["outer"],z0,z1,holes=s["holes"]),mark="SLAB-"+s["lvl"],typ="slab_"+s["lvl"],attrs={"thk_cm":round(s["t"]*100)},src=["STR slab layout"])
     # ---- beams (typical beams of floor 2 repeated for 3,4,5)
