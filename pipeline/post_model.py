@@ -145,7 +145,11 @@ SITE_MATS = {
     "site_rubber": {"name": "بلاط مطاطي خارجي 100 مم — منطقة ألعاب الأطفال", "color": "#6e7a6a", "code": "F15"},
     "site_asphalt": {"name": "أسفلت الممر والمواقف الخارجية — التشطيب غير محدد على A102", "color": "#4b5057", "code": "A102"},
     "site_mark": {"name": "علامات مرورية وخطوط مواقف (طلاء)", "color": "#f2f2ee", "code": "A102"},
+    "site_shade": {"name": "مظلة ظل دائرية — مادة غير محددة (افتراض)", "color": "#d8cdb6", "code": "A102 LINEA"},
 }
+for L_ in M["layers"]:
+    if L_["id"] == "A" and not any(s_[0] == "A.stage" for s_ in L_["subs"]):
+        L_["subs"].append(["A.stage", "الكماليات الإخراجية (للعرض لا للتنفيذ)"])
 if os.path.exists(SITE_JSON):
     S_ = json.load(open(SITE_JSON, encoding="utf-8"))
     for k, v in SITE_MATS.items():
@@ -162,6 +166,22 @@ if os.path.exists(SITE_JSON):
         els.append(ne)
     M["els"] = els
     print("site elements merged:", len(S_["els"]))
+
+if "g_exterior_finishes_removed" not in FIXES:
+    # the generic room-kind -> finish mapping put granite floors (F16) and ceilings on the ground level outside the building
+    # (drive way, bays, garden). The exterior is now modelled from A102 (pipeline/site.py), so drop them.
+    BX0, BY0, BX1, BY1 = -80, -80, 3330, 2000          # building ground-floor zone (A102): tower + retail frontage + entrance paving band
+    kept, gone = [], []
+    for e in els:
+        if e["l"] == "G" and e["c"] in ("A.floor", "A.ceil"):
+            P = plan_pts(e["g"]); cx = sum(p[0] for p in P) / len(P); cy = sum(p[1] for p in P) / len(P)
+            if not (BX0 <= cx <= BX1 and BY0 <= cy <= BY1):
+                gone.append({"id": e["id"], "c": e["c"], "xy": [round(cx), round(cy)], "fin": (e.get("a") or {}).get("fin")}); continue
+        kept.append(e)
+    els[:] = kept; M["els"] = els
+    json.dump(gone, open(os.path.join(HERE, "data", "removed_exterior_floors.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    M["meta"]["removed_exterior_floors"] = len(gone)
+    FIXES.append("g_exterior_finishes_removed"); print("exterior G floors/ceilings removed:", len(gone))
 
 # ------------------------------------------------------------------ types
 types = {}

@@ -136,6 +136,65 @@ def main():
         ar = round((poly_area(outer) - sum(poly_area(h) for h in holes)) / 1e4, 1)
         add("هاتش الرصف (طبقة LAND - TILE) تحت وسم F15 (منطقة ألعاب الأطفال)", outer, holes, -0.1, 0.2, "site_rubber", "F15-01", "site_rubber",
             {"kind": "play_area", "fin": ["F15"], "top_m": 0.2, "area_m2": ar, "level_note": "المنسوب +0.20 م = F.F.L. المكتوب على المخطط"})
+    # ================= v2: driveway, parking bays, markings, street, barrier gate, gazebo =================
+    def rect(x0, y0, x1, y1): return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
+    def add_el(c, kind, g, mat, mark, typ, attrs, stage=None, srcs=()):
+        e = {"c": c, "l": "G", "g": g, "mark": mark, "t": typ, "m": mat, "a": attrs, "src": [SRC + " — " + kind] + list(srcs)}
+        if stage: e["stage"] = stage
+        els.append(e)
+    TOP_DW = 0.10                                # 'F.F.L. +0.10 DRIVE WAY' written on the plan
+    # drive way = 6 m between the two bay columns (x 3320..3920), from the street apron to the ramp junction
+    DW = [(3320, -480, 3920, 3430, "ممر القيادة 6 م (النص «6 m WIDE DRIVE WAY»)"), (2770, 1870, 3320, 3330, "مواقف السيارات — العمود الأيسر"),
+          (3920, 1710, 4471, 3330, "مواقف السيارات — العمود الأيمن العلوي"), (3920, 220, 4471, 1035, "مواقف السيارات — العمود الأيمن السفلي")]
+    for k, (x0, y0, x1, y1, nm) in enumerate(DW, 1):
+        add_el("A.site", nm, ["p", rect(x0, y0, x1, y1), -0.1, TOP_DW], "site_asphalt", f"ASPH-{k}", "site_asphalt",
+               {"kind": "asphalt", "top_m": TOP_DW, "area_m2": round((x1 - x0) * (y1 - y0) / 1e4, 1),
+                "level_note": "المنسوب +0.10 م = F.F.L. المكتوب للممر على المخطط",
+                "finish_note": "مادة الطبقة النهائية (أسفلت) غير محددة على A102 — الأسفلت افتراض بناءً على طلب المشروع «الشارع المسفلت»"})
+    # bay dividers: the exact y values come from the merged dashed lines of layer A-CAR (stall module 2.7 m)
+    BAYS = [(2770, 3320, [1870, 2120, 2270, 2520, 2790, 3060, 3330], 2770), (3920, 4471, [1710, 1980, 2250, 2520, 2790, 3060, 3330], 4470),
+            (3920, 4471, [220, 490, 760, 1030], 4470)]
+    mk = 0
+    def mark(poly, nm, kind="line"):
+        nonlocal mk
+        mk += 1
+        add_el("A.site", nm, ["p", poly, TOP_DW, TOP_DW + 0.01], "site_mark", f"MARK-{mk:03d}", "site_mark", {"kind": "marking"})
+    for x0, x1, ys, back in BAYS:
+        for y in ys: mark(rect(x0, y - 5, x1, y + 5), "فاصل موقف (طبقة A-CAR)")
+        mark(rect(back - 5, min(ys), back + 5, max(ys)), "خط خلفية المواقف (طبقة A-CAR)")
+    # dashed centre line: filled rectangles x 3615..3626 of layer 0; direction arrows: filled shapes of the Road Marks / Arrow layers
+    for d in sh.D:
+        if not d.get("fill") or not d["polys"]: continue
+        ly = d["layer"] or ""
+        w = [sh.T(x, y) for x, y in d["polys"][0]]
+        xs = [q[0] for q in w]; ys_ = [q[1] for q in w]
+        if len(w) < 3: continue
+        if ly == "0" and 3600 < min(xs) and max(xs) < 3640 and max(xs) - min(xs) < 20 and 90 < max(ys_) - min(ys_) < 140 and -100 < min(ys_) < 3400:
+            mark([[round(a, 1), round(b, 1)] for a, b in w], "خط منتصف متقطع (طبقة 0)")
+        elif ly.endswith("A-Road Marks") or ly.endswith("$Arrow"):
+            mark([[round(a, 1), round(b, 1)] for a, b in w], "سهم اتجاه (طبقة " + ly.split("$")[-1] + ")")
+    # ---- street in front of the plot (A100 site plan, registered to A102 by hatch matching, data/reg_p3.json)
+    STREET = [(-1277, -1030, 6000, -480, "الشارع الجنوبي (حوافه من A100: y=-480 و y=-1030)"), (-1277, -480, -479, 4600, "الشارع الغربي (حوافه من A100: x=-1277 و x=-479)")]
+    for k, (x0, y0, x1, y1, nm) in enumerate(STREET, 1):
+        add_el("A.site", nm, ["p", rect(x0, y0, x1, y1), -0.25, 0.0], "site_asphalt", f"STREET-{k}", "site_asphalt",
+               {"kind": "street", "top_m": 0.0, "level_note": "المنسوب ±0.00 م (R.L ±0.00 المكتوب عند المدخل)",
+                "finish_note": "عرض الشارع من خطوط حافة الطريق في A100؛ مادة التشطيب غير محددة (أسفلت افتراض)"}, srcs=["ARCH1 ص3 (A100 مخطط الموقع 1:200) طبقة roadedge"])
+    # ---- automatic barrier gate: two posts and two booms across the drive way (layer 'Appliances' of A102)
+    for nm, (x0, y0, x1, y1, z0, z1) in (("عمود البوابة الأيسر", (3292, 1624, 3310, 1654, TOP_DW, 1.2)), ("عمود البوابة الأيمن", (3930, 1624, 3949, 1654, TOP_DW, 1.2)),
+                                          ("ذراع الحاجز الأيسر", (3310, 1634, 3610, 1643, 1.0, 1.08)), ("ذراع الحاجز الأيمن", (3631, 1634, 3930, 1643, 1.0, 1.08))):
+        add_el("A.rail", nm + " (بوابة الحاجز الآلي AUTOMATIC BARRIER GATE)", ["r", x0, y0, x1, y1, z0, z1], "frame_alu", "BARRIER-GATE", "barrier_gate",
+               {"kind": "barrier_gate", "h_m": z1, "dim_note": "الأرتفاعات افتراضية — غير مذكورة على A102 (الموضع والأطوال من الرسم)"})
+    # ---- circular shade (gazebo): octagon of layers LINEA-1/LINEA-2; heights are NOT in the documents -> stage item flagged as assumed
+    xs = []; ys_ = []
+    for a, b, c, d in sh.segments("LINEA-1"):
+        xs += [a, c]; ys_ += [b, d]
+    if xs:
+        cx, cy, rr = (min(xs) + max(xs)) / 2, (min(ys_) + max(ys_)) / 2, (max(xs) - min(xs)) / 2
+        oct_ = [[round(cx + rr * math.cos(math.radians(22.5 + 45 * i)), 1), round(cy + rr * math.sin(math.radians(22.5 + 45 * i)), 1)] for i in range(8)]
+        add_el("A.stage", "مظلة دائرية ثمانية (طبقتا LINEA-1 وLINEA-2)", ["p", oct_, 2.8, 2.95], "site_shade", "SHADE-01", "site_shade",
+               {"kind": "shade", "dia_cm": round(2 * rr), "assumed_h": 2.8, "dim_note": "القطر من الرسم؛ ارتفاع المظلة وسماكتها وأعمدتها غير مذكورة — افتراض يحتاج تأكيد"}, stage="shade")
+        add_el("A.stage", "عمود المظلة الدائرية المركزي", ["cyl", round(cx, 1), round(cy, 1), 10, 0.2, 2.8], "site_shade", "SHADE-01-POLE", "site_shade",
+               {"kind": "shade_pole", "dim_note": "افتراض هندسي — يحتاج تأكيد"}, stage="shade")
     out = {"spots": spots, "f15": f15, "els": els}
     json.dump(out, open(os.path.join(HERE, "data", "site.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     print("grass", ng, "paving", npv, "spots", len(spots), "f15 labels", len(f15), "elements", len(els))
