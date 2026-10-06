@@ -45,6 +45,7 @@ CLAD_T = 2.0
 MATS = {
     "frame_alu": {"name": "إطار ألمنيوم مطلي بالمسحوق — بيج فاتح (Light Beige)", "color": "#d6c7a6", "code": "A800–A802", "rough": 0.45, "metal": 0.35},
     "glass_vis": {"name": "زجاج مزدوج عاكس 6-12-6 مم — بني فاتح (Light Brown) — ثابت/مفصلي", "color": "#a58a6b", "opacity": 0.40, "code": "A800–A802", "rough": 0.06, "metal": 0.35},
+    "glass_vis_lit": {"name": "زجاج مزدوج عاكس 6-12-6 مم — بني فاتح — نافذة غرفة مضاءة ليلًا (حوالي 40% من نوافذ الشقق، تظهر مضاءة في وضع الغروب/الليل)", "color": "#a58a6b", "opacity": 0.40, "code": "A800–A802", "rough": 0.06, "metal": 0.35},
     "glass_span": {"name": "زجاج سبانديرل (غير شفاف) — بني فاتح عاكس", "color": "#7a6b5a", "opacity": 0.96, "code": "A800–A802", "rough": 0.12, "metal": 0.30},
     "sill_block": {"name": "عتبة بلوك 60 سم — لياسة داخلية بيضاء", "color": "#eeeae2", "code": "A1500"},
     "win_handle": {"name": "مقبض نافذة مفصلية (ستانلس)", "color": "#9aa0a6", "code": "A800–A802", "metal": 0.8, "rough": 0.3},
@@ -107,9 +108,11 @@ def build(M):
         if mod.get("u2"): e["u2"] = mod["u2"]
         els.append(e)
 
+    import zlib
     for mod in mods:
         code = mod["t"][4:]
         o, u, n, length = _frame(mod)
+        GV = "glass_vis_lit" if (mod.get("u") and zlib.crc32((mod["grp"] + mod["l"]).encode()) % 100 < 40) else "glass_vis"      # rooms with the lights on at dusk (deterministic, ~40% of the flats' windows)
         ffl = L[mod["l"]]["ffl"]
         # ---------------- the continuous stair window: one module for levels 1..R at level '1'
         if code == "CW-19":
@@ -157,7 +160,7 @@ def build(M):
                 if kind == "S":
                     add(mod, _box(o, u, n, a0, a1, -GLASS_T / 2, GLASS_T / 2, za2, zb2), "glass_span", "spandrel")
                 else:
-                    add(mod, _box(o, u, n, a0, a1, -GLASS_T / 2, GLASS_T / 2, za2, zb2), "glass_vis", "glass" if kind == "F" else "vent_glass",
+                    add(mod, _box(o, u, n, a0, a1, -GLASS_T / 2, GLASS_T / 2, za2, zb2), GV, "glass" if kind == "F" else "vent_glass",
                         extra=({"operation": "مفصلية Hinged"} if kind == "V" else {"operation": "ثابتة Fixed"}))
                     if kind == "V":                                   # hinged vent: sash frame on both faces and a handle inside
                         for aa, bb in ((a0, a0 + 3), (a1 - 3, a1)):

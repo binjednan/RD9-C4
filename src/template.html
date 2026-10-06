@@ -27,8 +27,8 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 #bar{position:absolute;top:calc(8px + var(--sa-t));right:calc(8px + var(--sa-r));display:flex;gap:6px;z-index:8;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 150px)}
 #bar button{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:7px 11px;cursor:pointer;font-size:12.5px;box-shadow:0 1px 4px #0001;min-height:34px}
 #bar button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-#viewMenu{display:none;position:absolute;top:calc(48px + var(--sa-t));right:calc(8px + var(--sa-r));background:#fff;border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);padding:4px;z-index:9;min-width:150px}
-#viewMenu.on{display:block}#viewMenu button{display:block;width:100%;text-align:start;border:0;background:none;padding:9px 12px;border-radius:7px;cursor:pointer;font-size:13px;min-height:40px}#viewMenu button:hover{background:#eef3fb}
+#viewMenu,#lightMenu{display:none;position:absolute;top:calc(48px + var(--sa-t));right:calc(8px + var(--sa-r));background:#fff;border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);padding:4px;z-index:9;min-width:150px}
+#viewMenu.on,#lightMenu.on{display:block}#viewMenu button,#lightMenu button{display:block;width:100%;text-align:start;border:0;background:none;padding:9px 12px;border-radius:7px;cursor:pointer;font-size:13px;min-height:40px}#viewMenu button:hover,#lightMenu button:hover{background:#eef3fb}#lightMenu button.on{background:#e3edfb;font-weight:600}#lightMenu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
 #modes{position:absolute;bottom:calc(12px + var(--sa-b));left:50%;transform:translateX(-50%);display:flex;gap:2px;background:#fffffff2;border:1px solid var(--bd);border-radius:24px;padding:3px;box-shadow:var(--sh);z-index:7;max-width:calc(100% - 16px)}
 #modes button{border:0;background:none;border-radius:20px;padding:9px 14px;font-size:13px;cursor:pointer;white-space:nowrap;min-height:40px;color:var(--tx)}
 #modes button.on{background:var(--ac);color:#fff;font-weight:600}
@@ -83,7 +83,7 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
   #panelHead button{border:0;background:#eef1f5;border-radius:50%;width:36px;height:36px;font-size:15px}
   #info{left:0;right:0;top:auto;bottom:0;width:auto;max-height:56vh;max-height:56dvh;border-radius:18px 18px 0 0;border-width:1px 0 0 0;padding-bottom:calc(14px + var(--sa-b))}
   #bar{max-width:calc(100% - 16px);gap:5px;top:calc(46px + var(--sa-t));right:calc(6px + var(--sa-r))}#bar button{padding:7px 9px;font-size:12px;min-height:38px}
-  #viewMenu{top:calc(88px + var(--sa-t))}
+  #viewMenu,#lightMenu{top:calc(88px + var(--sa-t))}
   #hud{top:calc(6px + var(--sa-t));left:calc(6px + var(--sa-l));font-size:11px}
   #fps{display:none}
   body.info-open #fab{display:none}
@@ -131,8 +131,9 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 <div class="pane" id="pMat"><div id="matBox"><div class="muted">جارٍ التجهيز…</div></div></div>
 <div class="pane" id="pSamp"><div class="muted">جارٍ التجهيز…</div></div>
 <div class="pane" id="pClash"><div id="clashDetail" style="display:none"></div><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div>
-<div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnAll">إظهار الكل</button><button id="btnFs" title="ملء الشاشة">⛶</button><button id="btnPerf" title="وضع الأداء" aria-pressed="false">أداء</button><button id="btnHelp" title="دليل التحكم">؟</button></div>
+<div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnLight" aria-haspopup="true">الإضاءة ▾</button><button id="btnAll">إظهار الكل</button><button id="btnFs" title="ملء الشاشة">⛶</button><button id="btnPerf" title="وضع الأداء" aria-pressed="false">أداء</button><button id="btnHelp" title="دليل التحكم">؟</button></div>
 <div id="viewMenu"><button data-v="persp">منظور (الافتراضي)</button><button data-v="top">علوي</button><button data-v="front">أمامي</button><button data-v="back">خلفي</button><button data-v="right">جانبي (يمين)</button><button data-v="left">جانبي (يسار)</button></div>
+<div id="lightMenu"><button data-l="day">نهار</button><button data-l="dusk">غروب</button><button data-l="night">ليل</button><hr><button data-l="lamps" id="lampsBtn">تشغيل الإنارة (مصابيح، واجهات مضاءة)</button></div>
 <div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div><div id="clashPin"></div>
 <div id="modes"><button data-m="rotate" class="on">تدوير</button><button data-m="pan">تحريك</button><button data-m="zoom">تقريب</button></div><div id="toast"></div></div></div>
 <button id="fab">☰ الأقسام والوحدات</button>

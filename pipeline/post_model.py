@@ -723,6 +723,11 @@ for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
 M["mats"].update(_AW.MATS)                                              # approved window colours replace the earlier grey/blue placeholders
 import fixtures as _FX
 M["mats"].update(_FX.MATS)                                              # fixture colours are re-applied on every run (setdefault would keep the first draft)
+# night / "lights on": which materials glow when the viewer turns the lights on (colour, emissive intensity, glow sprite at every element)
+_NIGHT = {"m_light": {"c": "#ffe4a0", "i": 2.0, "glow": 1}, "m_emerg": {"c": "#d8ffe2", "i": 1.0}, "m_exit": {"c": "#74ff9f", "i": 1.4}, "lamp_glass": {"c": "#ffe9b0", "i": 1.8, "glow": 1},
+          "glass_vis_lit": {"c": "#ffd79a", "i": 0.85}}
+for _k, _v in _NIGHT.items():
+    if _k in M["mats"]: M["mats"][_k]["night"] = _v
 import arch_equipment as _AE
 for _k, _c in _AE.PROXY_COLORS.items():
     if _k in M["mats"]: M["mats"][_k]["color"] = _c                  # neutral metal / enamel instead of purple / cyan toy boxes

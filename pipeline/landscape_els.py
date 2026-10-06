@@ -15,6 +15,25 @@ MATS = {
     "tree_plum": {"name": "فرنجبان (Plumeria obtusa) — تاج الشجرة", "color": "#6fae4f", "code": "A2300 PLUM.O"},
     "tree_trunk": {"name": "جذوع الأشجار", "color": "#6b5236", "code": "A2300"},
     "shrub_jatr": {"name": "جاتروفا (Jatropha pandurifolia) — شجيرات", "color": "#3f7f3a", "code": "A2300 JATR.P"},
+    "tree_core": {"name": "كتلة داخلية داكنة للتاج (ظلّ بين الأوراق)", "color": "#2f6030", "rough": 1.0, "code": "A2300"},
+    "leaf_plum_a": {"name": "أوراق الفرنجبان — أخضر فاتح", "color": "#86c264", "rough": 0.8, "code": "A2300 PLUM.O"},
+    "leaf_plum_b": {"name": "أوراق الفرنجبان — أخضر", "color": "#69a84c", "rough": 0.8, "code": "A2300 PLUM.O"},
+    "leaf_plum_c": {"name": "أوراق الفرنجبان — أخضر داكن", "color": "#4f8e3b", "rough": 0.8, "code": "A2300 PLUM.O"},
+    "leaf_hibi_a": {"name": "أوراق الهبسكس — أخضر فاتح", "color": "#78b358", "rough": 0.8, "code": "A2300 HIBI.T"},
+    "leaf_hibi_b": {"name": "أوراق الهبسكس — أخضر", "color": "#5a9a42", "rough": 0.8, "code": "A2300 HIBI.T"},
+    "leaf_hibi_c": {"name": "أوراق الهبسكس — أخضر داكن", "color": "#427f33", "rough": 0.8, "code": "A2300 HIBI.T"},
+    "leaf_azad_a": {"name": "أوراق النيم — أخضر فاتح", "color": "#6fa94c", "rough": 0.8, "code": "A2300 AZAD.I"},
+    "leaf_azad_b": {"name": "أوراق النيم — أخضر", "color": "#538f3a", "rough": 0.8, "code": "A2300 AZAD.I"},
+    "leaf_azad_c": {"name": "أوراق النيم — أخضر داكن", "color": "#3c7330", "rough": 0.8, "code": "A2300 AZAD.I"},
+    "leaf_jatr_b": {"name": "أوراق الجاتروفا — أخضر", "color": "#4e9444", "rough": 0.8, "code": "A2300 JATR.P"},
+    "leaf_jatr_c": {"name": "أوراق الجاتروفا — أخضر داكن", "color": "#2f6d33", "rough": 0.85, "code": "A2300 JATR.P"},
+    "flower_plum": {"name": "أزهار الفرنجبان — أبيض مصفرّ", "color": "#f7efc9", "rough": 0.7, "code": "A2300 PLUM.O"},
+    "flower_hibi": {"name": "أزهار الهبسكس — أصفر", "color": "#f2c230", "rough": 0.7, "code": "A2300 HIBI.T"},
+    "flower_neem": {"name": "أزهار النيم — أبيض", "color": "#f4f1e6", "rough": 0.7, "code": "A2300 AZAD.I"},
+    "flower_jatr": {"name": "أزهار الجاتروفا — أحمر", "color": "#d8332a", "rough": 0.7, "code": "A2300 JATR.P"},
+    "sand_wet": {"name": "رمل مبلّل بالري (أغمق من الرمل الجاف)", "color": "#9a6137", "rough": 1.0, "code": "صور 7 أغسطس"},
+    "puddle": {"name": "بركة ماء ري ضحلة", "color": "#7b98aa", "opacity": 0.62, "rough": 0.04, "metal": 0.3, "code": "صور 7 أغسطس"},
+    "hose_black": {"name": "خرطوم ري بالتنقيط — بوليإيثيلين أسود", "color": "#1b1c1f", "rough": 0.7, "code": "صور 7 أغسطس"},
     "plant_a": {"name": "نباتات صغيرة (مغطّيات تربة/عصاريات) — الأخضر الفاتح", "color": "#86b252", "code": "A2300"},
     "plant_b": {"name": "نباتات صغيرة (مغطّيات تربة/عصاريات) — الأخضر الداكن", "color": "#2f6f3a", "code": "A2300"},
     "plant_c": {"name": "نباتات صغيرة (مغطّيات تربة/عصاريات) — الزيتوني", "color": "#a3b85e", "code": "A2300"},
@@ -50,6 +69,21 @@ def _base(beds, x, y, default=0.2):
         if poly.contains(p): return top
     return default
 
+def _seed(*v):
+    h = 2166136261
+    for x in v:
+        h = ((h ^ (int(round(float(x) * 7)) & 0xffffffff)) * 16777619) & 0xffffffff
+    return h or 1
+
+
+# leaf clouds: ["leaf", cx, cy, rx(cm), z0, z1, count, size(cm), seed, inner-radius-fraction] -> viewer engine.js leafCloud(): small leaf quads on an ellipsoid shell (3 greens per tree)
+LEAVES = {   # species: (materials light/mid/dark, leaf count at canopy r=170, leaf size cm, flower material, flowers per tree)
+    "PLUM.O": (("leaf_plum_a", "leaf_plum_b", "leaf_plum_c"), 900, 32, "flower_plum", 22),
+    "HIBI.T": (("leaf_hibi_a", "leaf_hibi_b", "leaf_hibi_c"), 1000, 27, "flower_hibi", 20),
+    "AZAD.I": (("leaf_azad_a", "leaf_azad_b", "leaf_azad_c"), 1300, 19, "flower_neem", 0),
+}
+
+
 def plants(L, beds):
     out = []; n = 0
     for t in L["trees"]:
@@ -57,19 +91,101 @@ def plants(L, beds):
         a = {"kind": "tree", "species": t["sp"], "name_ar": sp["name"], "canopy_diam_cm": 2 * t["r"], "total_h_m": sp["h"], "base_z_m": round(z0, 2),
              "note": "مصمَّم حسب مخطط الزراعة A2300 — غير مزروع بعد في صور الموقع (7 أغسطس)"}
         if sp["assumed"]: a["assumed"] = sp["assumed"]
-        g = f"tree-{n}"
-        out.append(_e("A.stage", "tree_trunk", ["cyl", t["x"], t["y"], sp["tr"], round(z0, 2), round(z0 + sp["stem"] + 0.4, 2)], "tree_trunk", t["sp"], a, "tree", g))
-        out.append(_e("A.stage", "tree_" + t["sp"][:4].lower(), ["sph", t["x"], t["y"], t["r"], round(z0 + sp["stem"], 2), round(z0 + sp["h"], 2), 10, 6], sp["mat"], t["sp"], a, "tree", g))
+        g = f"tree-{n}"; typ = "tree_" + t["sp"][:4].lower()
+        zc0 = z0 + sp["stem"]; zc1 = z0 + sp["h"]; hh = zc1 - zc0
+        sd = _seed(t["x"], t["y"], n)
+        out.append(_e("A.stage", "tree_trunk", ["cyl", t["x"], t["y"], sp["tr"], round(z0, 2), round(zc0 + 0.4, 2)], "tree_trunk", t["sp"], a, "tree", g))
+        out.append(_e("A.stage", "tree_trunk", ["cyl", t["x"], t["y"], round(sp["tr"] * 1.5), round(z0, 2), round(z0 + 0.35, 2)], "tree_trunk", t["sp"], a, "tree", g))      # root flare
+        for k in range(4):                                                                       # main limbs into the crown
+            ang = ((sd >> (k * 3)) % 628) / 100.0 + k * 1.57
+            reach = 0.55 * t["r"]
+            pts = [[t["x"], t["y"], round(zc0 - 0.30, 2)], [round(t["x"] + math.cos(ang) * reach * 0.45), round(t["y"] + math.sin(ang) * reach * 0.45), round(zc0 + 0.25 * hh, 2)],
+                   [round(t["x"] + math.cos(ang) * reach), round(t["y"] + math.sin(ang) * reach), round(zc0 + 0.55 * hh, 2)]]
+            out.append(_e("A.stage", "tree_trunk", ["t", pts, round(sp["tr"] * 0.9, 1)], "tree_trunk", t["sp"], a, "tree", g))
+        out.append(_e("A.stage", typ, ["sph", t["x"], t["y"], round(t["r"] * 0.52), round(zc0 + 0.28 * hh, 2), round(zc1 - 0.26 * hh, 2), 8, 5], "tree_core", t["sp"], a, "tree", g))   # dense dark inner mass (the leaf cloud is the visible surface)
+        mats, cnt, size, fmat, nfl = LEAVES[t["sp"]]
+        k_ = (t["r"] / 170.0) ** 2
+        for i, m in enumerate(mats):
+            out.append(_e("A.stage", typ, ["leaf", t["x"], t["y"], t["r"], round(zc0, 2), round(zc1, 2), int(cnt * k_ / 3), round(size * (t["r"] / 170.0) ** 0.5, 1), _seed(sd, i), 0.64], m, t["sp"], a, "tree", g))
+        out.append(_e("A.stage", typ, ["leaf", t["x"], t["y"], round(t["r"] * 0.85), round(zc0 + 0.1 * hh, 2), round(zc1 - 0.05 * hh, 2), int(cnt * k_ * 0.28), round(size * (t["r"] / 170.0) ** 0.5, 1), _seed(sd, 7), 0.15], mats[1], t["sp"], a, "tree", g))   # leaves inside the crown volume
+        if nfl:
+            out.append(_e("A.stage", typ, ["leaf", t["x"], t["y"], t["r"], round(zc0 + 0.3 * hh, 2), round(zc1, 2), nfl, 11.0, _seed(sd, 9), 0.9], fmat, t["sp"], a, "tree", g))
     for s in L["shrubs"]:
-        z0 = _base(beds, s["x"], s["y"]); n += 1
-        out.append(_e("A.stage", "shrub_jatr", ["sph", s["x"], s["y"], s["r"], round(z0, 2), round(z0 + 0.75, 2), 8, 5], "shrub_jatr", "JATR.P",
-                      {"kind": "shrub", "species": "JATR.P", "name_ar": "جاتروفا", "height_m": "0.70–0.80", "base_z_m": round(z0, 2), "note": "حسب A2300 (55 شجيرة في الجدول)"}, "plant"))
+        z0 = _base(beds, s["x"], s["y"]); n += 1; sd = _seed(s["x"], s["y"], n)
+        a = {"kind": "shrub", "species": "JATR.P", "name_ar": "جاتروفا", "height_m": "0.70–0.80", "base_z_m": round(z0, 2), "note": "حسب A2300 (55 شجيرة في الجدول)"}
+        out.append(_e("A.stage", "shrub_jatr", ["sph", s["x"], s["y"], round(s["r"] * 0.7), round(z0 + 0.05, 2), round(z0 + 0.58, 2), 7, 4], "tree_core", "JATR.P", a, "plant"))
+        out.append(_e("A.stage", "shrub_jatr", ["leaf", s["x"], s["y"], s["r"], round(z0, 2), round(z0 + 0.75, 2), 70, 15.0, _seed(sd, 1), 0.7], "shrub_jatr", "JATR.P", a, "plant"))
+        out.append(_e("A.stage", "shrub_jatr", ["leaf", s["x"], s["y"], s["r"], round(z0, 2), round(z0 + 0.75, 2), 44, 14.0, _seed(sd, 2), 0.7], "leaf_jatr_b", "JATR.P", a, "plant"))
+        out.append(_e("A.stage", "shrub_jatr", ["leaf", s["x"], s["y"], round(s["r"] * 0.7), round(z0 + 0.35, 2), round(z0 + 0.78, 2), 5, 5.0, _seed(sd, 3), 0.9], "flower_jatr", "JATR.P", a, "plant"))
     for i, s in enumerate(L["small"]):
         z0 = _base(beds, s["x"], s["y"]); m = ("plant_a", "plant_b", "plant_c")[i % 3]
         out.append(_e("A.stage", "plant_small", ["sph", s["x"], s["y"], s["r"], round(z0, 2), round(z0 + 0.35, 2), 6, 4], m, "GC/SUC",
                       {"kind": "plant", "name_ar": "نبات صغير (مغطّي تربة/عصاريات)", "base_z_m": round(z0, 2),
                        "assumed": "النوع بين Ruellia / Alternanthera / Bougainvillea / Vitex / Adenium / Zamia لا يُحدَّد من الرمز (دوائر r≈12 سم)؛ الارتفاع 0.35 م افتراض بين 0.2–0.8 م"}, "plant"))
     return out
+
+
+# ------------------------------------------------------------------------------------------------------------------ ground details in the sandy beds (photos 7 Aug: unplanted orange sand, black drip hoses)
+def _blob(cx, cy, r, sd, n=14, noise=0.2):
+    pts = []
+    for k in range(n):
+        a = 2 * math.pi * k / n
+        f = 1 + noise * (((sd >> (k * 2)) & 3) / 3.0 - 0.5) * 2
+        pts.append([round(cx + r * f * math.cos(a), 1), round(cy + r * f * 0.82 * math.sin(a), 1)])
+    return pts
+
+
+def ground_details(L, beds):
+    """wet sand around every tree / shrub standing in a sand bed (irrigation), a few shallow puddles, and the black polyethylene drip hose that links the plants of each bed"""
+    out = []
+    inbed = []
+    for kind, lst in (("tree", L["trees"]), ("shrub", L["shrubs"])):
+        for q in lst:
+            for poly, top in beds:
+                if poly.contains(Point(q["x"], q["y"])):
+                    inbed.append((kind, q, top, poly)); break
+    SA = {"kind": "wet_sand", "assumed": "بقع الري وأماكنها تقدير بصري من صور الموقع (رمل مبلّل حول الأشجار)"}
+    for i, (kind, q, top, poly) in enumerate(inbed):
+        sd = _seed(q["x"], q["y"], i)
+        r = max(40.0, 0.62 * q["r"]) if kind == "tree" else 38.0
+        blob = _blob(q["x"], q["y"], r, sd)
+        if not poly.buffer(-3).contains(Polygon(blob).buffer(0)):
+            blob = _blob(q["x"], q["y"], r * 0.6, sd)
+        out.append(_e("A.stage", "ground_wet_sand", ["p", blob, round(top + 0.002, 3), round(top + 0.006, 3)], "sand_wet", "WET-SAND", SA, "ground", f"wet-{i}"))
+        if kind == "tree" and sd % 4 == 0:                                       # a puddle that has not soaked in yet
+            pr = 16 + (sd >> 5) % 18
+            ox, oy = ((sd >> 3) % 40) - 20, ((sd >> 9) % 40) - 20
+            pb = _blob(q["x"] + ox, q["y"] + oy, pr, sd >> 2, 12, 0.25)
+            if poly.buffer(-3).contains(Polygon(pb).buffer(0)):
+                out.append(_e("A.stage", "ground_puddle", ["p", pb, round(top + 0.006, 3), round(top + 0.009, 3)], "puddle", "PUDDLE", {"kind": "puddle", "assumed": "بركة ماء صغيرة بعد الري — تقدير بصري"}, "ground", f"wet-{i}"))
+    # drip hoses: per bed, chain the plants by nearest neighbour, offset 22 cm from the trunk
+    by = {}
+    for kind, q, top, poly in inbed: by.setdefault(id(poly), []).append((q, top))
+    for j, (pid, lst) in enumerate(by.items()):
+        if len(lst) < 2: continue
+        top = lst[0][1]; rest = sorted(lst, key=lambda it: (it[0]["x"], it[0]["y"])); chain = [rest.pop(0)]
+        while rest:
+            lx, ly = chain[-1][0]["x"], chain[-1][0]["y"]
+            k = min(range(len(rest)), key=lambda m: (rest[m][0]["x"] - lx) ** 2 + (rest[m][0]["y"] - ly) ** 2); chain.append(rest.pop(k))
+        pts = []
+        for it in chain:
+            pts.append([round(it[0]["x"] + 22), round(it[0]["y"] + 14), round(top + 0.012, 3)])
+        out.append(_e("A.stage", "irrigation_hose", ["t", pts, 1.8], "hose_black", "HOSE", {"kind": "irrigation_hose", "dia_mm": 18, "assumed": "مسار الخرطوم تقدير بصري (الرسم A2300 لا يحدد خطوط التنقيط)"}, "ground", f"hose-{j}"))
+    return out
+
+
+def types():
+    S = SRC
+    def T(n, cf, sp, asm=None):
+        d = {"n": n, "cf": cf, "sp": sp, "sr": S + ["صور الموقع 7 أغسطس (أحواض رمل برتقالية وخراطيم ري سوداء)"]}
+        if asm: d["asm"] = asm
+        return d
+    return {
+        "ground_wet_sand": T("رمل مبلّل حول جذور الشجرة (ري)", "assumed", [["الوصف", "بقعة رمل أغمق حول كل شجرة وشجيرة داخل حوض رملي"], ["الحجم", "نصف قطر 40 سم أو 62% من نصف قطر التاج"]], ["من الصور؛ المواضع والأحجام تقدير بصري"]),
+        "ground_puddle": T("بركة ماء ري صغيرة", "assumed", [["الوصف", "سطح مائي ضحل (عمق صفري) بجانب بعض الأشجار"]], ["تقدير بصري"]),
+        "irrigation_hose": T("خرطوم ري بالتنقيط أسود", "assumed", [["القطر", "18 مم (بوليإيثيلين أسود)"], ["المسار", "يصل بين الأشجار والشجيرات داخل كل حوض"]], ["المسار تقدير؛ A2300 لا يحدد خطوط التنقيط"]),
+    }
+
 
 def benches(L):
     out = []
@@ -179,5 +295,7 @@ def gazebo(cx, cy):
         out.append(_e("A.site", "gazebo_roof", ["tri", [[round(a[0]), round(a[1]), ZW], [round(b[0]), round(b[1]), ZW], apex], 6], "wood_slat", f"GAZEBO-T{k+1}", {"kind": "roof", "note": "سقف هرمي ثماني من عوارض/لوفر خشبية — الارتفاع +3.95 إلى +5.00 (A2305)"}, grp="gazebo"))
     return out
 
+PLAY_SET = "INEX"      # 'INEX' = the equipment submitted by INEX / EDUPARK (pipeline/arch_play.py); 'A2300' = the original drawn equipment (play() below)
+
 def all_elements(L, beds, gz):
-    return plants(L, beds) + benches(L) + shed() + fence() + play() + gazebo(*gz)
+    return plants(L, beds) + ground_details(L, beds) + benches(L) + shed() + fence() + (play() if PLAY_SET == "A2300" else []) + gazebo(*gz)

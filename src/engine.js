@@ -70,6 +70,36 @@ function tubeSeg(g,p,q,r,u1,u2,mi,seg=8){
   return g.n-n0;
 }
 
+/* ---- curtain: pleated vertical sheet along the plan segment (x0,y0)->(x1,y1) (cm), z0..z1 (m); `folds` pleats of amplitude `amp` (cm) across the segment ---- */
+function curtain(g,x0,y0,x1,y1,z0,z1,folds,amp,u1,u2,mi){
+  const n0=g.n; const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy); if(L<5) return 0; const nx=-dy/L,ny=dx/L; const N=Math.max(6,Math.round(folds*6));
+  for(let i=0;i<N;i++){const t0=i/N,t1=(i+1)/N,o0=amp*Math.sin(2*Math.PI*folds*t0),o1=amp*Math.sin(2*Math.PI*folds*t1);
+    const px0=x0+dx*t0+nx*o0,py0=y0+dy*t0+ny*o0,px1=x0+dx*t1+nx*o1,py1=y0+dy*t1+ny*o1;
+    g.quad(W(px0,py0,z0),W(px1,py1,z0),W(px1,py1,z1),W(px0,py0,z1),u1,u2,mi);}
+  return g.n-n0;
+}
+
+/* ---- leaf cloud: `count` small leaf quads scattered on an ellipsoid shell (horizontal radius rx cm, z0..z1 m, inner radius fraction `inner`), deterministic by `seed` -- tree crowns, shrubs, flower clusters ---- */
+function leafCloud(g,cx,cy,rx,z0,z1,count,size,seed,u1,u2,mi,inner){
+  const n0=g.n; let s=(seed>>>0)||1;
+  const rnd=()=>{s=(s+0x6D2B79F5)>>>0; let t=s; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296;};
+  const zc=(z0+z1)*50, rz=(z1-z0)*50, f0=(inner===undefined?0.6:inner);
+  for(let i=0;i<count;i++){
+    const u=rnd()*2-1, ph=rnd()*6.2831853, r=Math.sqrt(1-u*u), dx=r*Math.cos(ph), dy=r*Math.sin(ph), dz=u;
+    const f=f0+(1-f0)*Math.pow(rnd(),0.5), p=[cx+dx*rx*f, cy+dy*rx*f, zc+dz*rz*f];
+    let nx=dx+(rnd()-0.5), ny=dy+(rnd()-0.5), nz=dz+(rnd()-0.5); const nl=Math.hypot(nx,ny,nz)||1; nx/=nl; ny/=nl; nz/=nl;
+    const flat=Math.abs(nz)<0.9, ax=flat?0:1, az=flat?1:0;
+    let t1=[ny*az, nz*ax-nx*az, -ny*ax]; const l1=Math.hypot(t1[0],t1[1],t1[2])||1; t1=[t1[0]/l1,t1[1]/l1,t1[2]/l1];
+    const t2=[ny*t1[2]-nz*t1[1], nz*t1[0]-nx*t1[2], nx*t1[1]-ny*t1[0]];
+    const al=rnd()*6.2831853, ca=Math.cos(al), sa=Math.sin(al);
+    const a1=[t1[0]*ca+t2[0]*sa, t1[1]*ca+t2[1]*sa, t1[2]*ca+t2[2]*sa], a2=[-t1[0]*sa+t2[0]*ca, -t1[1]*sa+t2[1]*ca, -t1[2]*sa+t2[2]*ca];
+    const L=size*(0.7+0.6*rnd()), h1=L/2, h2=L*0.30;
+    const V=(k1,k2)=>W(p[0]+a1[0]*k1+a2[0]*k2, p[1]+a1[1]*k1+a2[1]*k2, (p[2]+a1[2]*k1+a2[2]*k2)/100);
+    g.quad(V(h1,0),V(0,h2),V(-h1,0),V(0,-h2),u1,u2,mi);
+  }
+  return g.n-n0;
+}
+
 /* ---- landscape / canopy primitives ---- */
 // vertical ellipsoid: circular in plan (radius r cm), from z0 to z1 (m) -- tree canopies, shrubs, small plants
 function ellipsoid(g,cx,cy,r,z0,z1,u1,u2,mi,seg=8,rings=5){

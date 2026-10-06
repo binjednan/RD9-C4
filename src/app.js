@@ -6,13 +6,14 @@ const CATS={}; M.layers.forEach(L=>L.subs.forEach(s=>{CATS[s[0]]={id:s[0],name:s
 const LAYER={}; M.layers.forEach(L=>LAYER[L.id]=L);
 const MATS=M.mats; const TYPES=M.types||{};
 const matIndex={}; Object.keys(MATS).forEach((k,i)=>matIndex[k]=i);
+let lightPreset='day',lightsOn=false,glow=null,lampsPinned=false,lastPL=0;   // lighting state (the block further down uses them; applyVis() may run earlier)
 const UNITS=M.units||[]; const unitIndex={}; UNITS.forEach((u,i)=>unitIndex[u.id]=i);
-const ATTR={thk_cm:'السماكة (سم)',w_cm:'العرض (سم)',h_cm:'الارتفاع (سم)',d_cm:'العمق (سم)',dia_cm:'القطر (سم)',len_m:'الطول (م)',kind:'النوع',loc:'الموقع',side:'الجهة',room:'الغرفة',wall_cm:'سماكة الجدار (سم)',step:'رقم الدرجة',rise_cm:'ارتفاع الدرجة (سم)',tread_cm:'عرض الدرجة (سم)',flight:'الجناح',stops:'المحطات',cab_cm:'مقصورة (سم)',h_m:'الارتفاع (م)',top:'منسوب القمة',part:'الجزء',assumed_h:'ارتفاع السقف المستعار (م) — افتراضي',
+const ATTR={model:'كود المنتج (الموديل)',area_m2:'المساحة (م²)',thickness_mm:'السماكة (مم)',state:'الحالة',thk_cm:'السماكة (سم)',w_cm:'العرض (سم)',h_cm:'الارتفاع (سم)',d_cm:'العمق (سم)',dia_cm:'القطر (سم)',len_m:'الطول (م)',kind:'النوع',loc:'الموقع',side:'الجهة',room:'الغرفة',wall_cm:'سماكة الجدار (سم)',step:'رقم الدرجة',rise_cm:'ارتفاع الدرجة (سم)',tread_cm:'عرض الدرجة (سم)',flight:'الجناح',stops:'المحطات',cab_cm:'مقصورة (سم)',h_m:'الارتفاع (م)',top:'منسوب القمة',part:'الجزء',assumed_h:'ارتفاع السقف المستعار (م) — افتراضي',
     hang_cm:'طول التعليقة (سم)',car:'المصعد',level:'الطابق',clear_w_cm:'العرض الصافي (سم)',clear_h_cm:'الارتفاع الصافي (سم)',door_clear_cm:'فتحة الباب الصافية (سم)',cab_h_m:'ارتفاع المقصورة (م)',bay:'رقم الموقف',accessible:'موقف ذوي الإعاقة',base_z_m:'منسوب القاعدة (م)',name_ar:'الاسم',note:'ملاحظة',snap_note:'ملاحظة السحب إلى الجدار',snap_cm:'مسافة السحب إلى الجدار (سم)',stand_cm:'ارتفاع الحامل (سم)',species:'النوع النباتي (رمز)',canopy_diam_cm:'قطر التاج (سم)',total_h_m:'الارتفاع الكلي (م)',pole_h_m:'ارتفاع العمود (م)',bays:'المواقف (أرقام)',block:'الكتلة',ribs:'عدد الأضلاع',span_cm:'الفتحة (سم)',top_of_beam_m:'قمة الحزمة (م)',rod_cm:'طول القضيب (سم)',height_m:'الارتفاع (م)',power_w:'القدرة (واط)',mount_h_m:'ارتفاع التركيب (م)',unsupported:'غير محمول',top_m:'منسوب القمة (م)',dim_note:'ملاحظة الأبعاد',level_note:'ملاحظة المنسوب',area_m2:'المساحة (م²)',height_cm:'الارتفاع (سم)',thick_cm:'السماكة (سم)',n:'العدد',from_level:'من الطابق',to_level:'إلى الطابق',x_cm:'الإحداثي x (سم)',y_cm:'الإحداثي y (سم)',riser_note:'ملاحظة الرايزر',where:'الموضع',floor_note:'ملاحظة الأرضية',finish_note:'ملاحظة التشطيب',top_of_seat_m:'منسوب سطح المقعد (م)',face_note:'ملاحظة اتجاه الواجهة',devices:'عدد الأجهزة',dims_mm:'الأبعاد (مم)',sand_top_m:'منسوب الرمل (م)',fl_m:'المنسوب النهائي F.L. (م)',fill_note:'ملاحظة الردم',duty:'الخدمة',ffl_m:'منسوب الأرضية (م)',width_cm:'العرض (سم)',slope_pct:'الميل (%)',transition_pct:'ميل الانتقال (%)',transition_cm:'طول الانتقال (سم)',z_note:'ملاحظة المنسوب',level_m:'المنسوب (م)',height_note:'ملاحظة الارتفاع',cladding:'الكسوة',kva:'القدرة (ك.ف.أ)',hv_kv:'الجهد العالي (ك.ف)',lv_kv:'الجهد المنخفض (ك.ف)',amps:'التيار (أمبير)',dims_cm:'الأبعاد (سم)',dims_note:'ملاحظة الأبعاد',
   dia_mm:'القطر (مم)',length_m:'الطول (م)',size_cm:'المقاس (سم)',dia_note:'ملاحظة القطر',size_note:'ملاحظة المقاس',cls:'رمز الفئة (من المفتاح)',match:'درجة مطابقة الرمز',derived_type:'النوع مشتق من المخطط',tag_floor:'الطابق في الوسم',cap_l:'السعة (لتر)',cap_known:'السعة مذكورة في المخطط',mount_note:'ملاحظة التركيب (افتراض)',display_note:'ملاحظة العرض',
   sched_unit:'الوحدة في جدول AC-106',serving:'تخدم (من الجدول)',fcu_kind:'نوع الوحدة',cap_total_kw:'السعة الكلية للتبريد (كيلوواط)',cap_sens_kw:'السعة المحسوسة (كيلوواط)',chw_gpm:'تدفق المياه المبردة (GPM)',chw_pipe:'وصلة المياه المبردة',air_lps:'تدفق الهواء (لتر/ثانية)',esp_pa:'الضغط الاستاتيكي (باسكال)',coil_on:'هواء الدخول للملف — جاف/رطب (°م)',coil_off:'هواء الخروج من الملف — جاف/رطب (°م)',elec_kw:'القدرة الكهربائية (كيلوواط)',qty_floors:'عدد الوحدات المماثلة في الجدول',sched_note:'ملاحظة مطابقة الجدول'};
 const CONF={doc:['مستخرج من المستندات','#1a7f37'],derived:['مشتق/محسوب من المستندات','#9a6700'],assumed:['افتراض هندسي — يحتاج تأكيد','#cf222e']};
-const STAGE_KINDS={furniture:'أثاث',tree:'أشجار',plant:'نباتات',car:'سيارات',person:'أشخاص',shade:'مظلات ظل',play:'ألعاب أطفال',appliance:'أجهزة المطبخ (غير مشمولة بالعقد)',curtain:'ستائر',other:'أخرى'};
+const STAGE_KINDS={furniture:'أثاث',tree:'أشجار',plant:'نباتات',car:'سيارات',person:'أشخاص',shade:'مظلات ظل',play:'ألعاب أطفال',appliance:'أجهزة المطبخ (غير مشمولة بالعقد)',curtain:'ستائر',ground:'تفاصيل الأرض (رمل مبلّل، خراطيم ري)',other:'أخرى'};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtVal=v=>v===true?'نعم':v===false?'لا':Array.isArray(v)?v.join(' '):v;
 const normAr=s=>String(s).toLowerCase().replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
@@ -35,7 +36,7 @@ function homeView(){const dir=HOME.pos.clone().sub(HOME.tgt).multiplyScalar(aspe
 camera.position.copy(homeView().pos);
 const controls=new CameraRig(camera,renderer.domElement);
 controls.target.copy(HOME.tgt); camera.lookAt(HOME.tgt);
-scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f98,0.85));
+const hemi=new THREE.HemisphereLight(0xffffff,0x8a8f98,0.85); scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffffff,0.75); sun.position.set(-40,70,30); scene.add(sun);
 const sun2=new THREE.DirectionalLight(0xffffff,0.25); sun2.position.set(50,30,-40); scene.add(sun2);
 const clipY=new THREE.Plane(new THREE.Vector3(0,-1,0),1000);
@@ -102,6 +103,8 @@ function buildAll(){
       case 'rs': rampStrip(g,geo[1],geo[2],geo[3],u1,u2,mi); break;
       case 'sph': ellipsoid(g,geo[1],geo[2],geo[3],geo[4],geo[5],u1,u2,mi,geo[6]||8,geo[7]||5); break;
       case 'tri': triPlane(g,geo[1],geo[2],u1,u2,mi); break;
+      case 'leaf': leafCloud(g,geo[1],geo[2],geo[3],geo[4],geo[5],geo[6],geo[7],geo[8],u1,u2,mi,geo[9]); break;
+      case 'cur': curtain(g,geo[1],geo[2],geo[3],geo[4],geo[5],geo[6],geo[7],geo[8],u1,u2,mi); break;
       default: break;
     }
     addSupports(g,e,geo,u1,u2,mi);
@@ -165,6 +168,7 @@ function applyVis(){
     const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+(G.dy||0);
   }
   if(LOD) LOD.invalidate();
+  updateGlow();
   wake();
 }
 function resize(){const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
@@ -461,6 +465,57 @@ const helpOpen=on=>$('help').classList.toggle('on',on); $('btnHelp').onclick=()=
 window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else{ $('viewMenu').classList.remove('on'); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
 $('fab').onclick=()=>document.body.classList.add('panel-open'); $('panelClose').onclick=()=>document.body.classList.remove('panel-open');
 
+
+/* ---------- lighting: day / dusk / night presets and "lights on" (emissive fixtures + glow sprites + a few real point lights that follow the view) ---------- */
+const LP={
+  day:{bg:0xe9edf2,sky:null,hs:0xffffff,hg:0x8a8f98,hi:0.85,sc:0xffffff,si:0.75,s2:0.25,sp:[-40,70,30]},
+  dusk:{bg:0xf0b78f,sky:['#34477a','#b2708b','#f2b27f','#f6d8a8'],hs:0xffdcc0,hg:0x6a5560,hi:0.62,sc:0xffa968,si:0.62,s2:0.14,sp:[-70,18,-35]},
+  night:{bg:0x0a0f1d,sky:['#03060f','#0b1428','#18284a','#26385f'],hs:0x5f74a8,hg:0x141829,hi:0.34,sc:0x8095d0,si:0.26,s2:0.06,sp:[-30,60,20]},
+};
+function skyTex(stops){const c=document.createElement('canvas');c.width=2;c.height=256;const g=c.getContext('2d');const gr=g.createLinearGradient(0,0,0,256);stops.forEach((s,i)=>gr.addColorStop(i/(stops.length-1),s));g.fillStyle=gr;g.fillRect(0,0,2,256);return new THREE.CanvasTexture(c);}
+const PLIGHTS=[]; for(let i=0;i<4;i++){const l=new THREE.PointLight(0xffd9a6,0,6.5,1.4); l.visible=false; scene.add(l); PLIGHTS.push(l);}
+function buildGlow(){
+  const pos=[],eis=[];
+  M.els.forEach((e,ei)=>{const m=MATS[e.m]; if(!(m&&m.night&&m.night.glow)) return; const b=elBB.subarray(ei*6,ei*6+6); pos.push((b[0]+b[3])/2,(b[1]+b[4])/2-0.03,(b[2]+b[5])/2); eis.push(ei);});
+  const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,238,200,1)');gr.addColorStop(0.18,'rgba(255,214,150,0.55)');gr.addColorStop(0.5,'rgba(255,190,110,0.14)');gr.addColorStop(1,'rgba(255,180,100,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);
+  const geo=new THREE.BufferGeometry(); const P=new Float32Array(pos), C=new Float32Array(pos.length).fill(1);
+  geo.setAttribute('position',new THREE.BufferAttribute(P.slice(),3)); geo.setAttribute('color',new THREE.BufferAttribute(C,3));
+  const mat=new THREE.PointsMaterial({size:0.95,map:new THREE.CanvasTexture(c),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});
+  const pts=new THREE.Points(geo,mat); pts.frustumCulled=false; pts.visible=false; scene.add(pts);
+  return {pts,base:P,eis};
+}
+function updateGlow(){
+  if(!glow||!lightsOn) return; const a=glow.pts.geometry.attributes; const P=a.position.array,C=a.color.array;
+  for(let i=0;i<glow.eis.length;i++){const ei=glow.eis[i]; const v=elVisible(ei)?1:0; C[i*3]=C[i*3+1]=C[i*3+2]=v; P[i*3]=glow.base[i*3]; P[i*3+1]=glow.base[i*3+1]+offOf(ei); P[i*3+2]=glow.base[i*3+2];}
+  a.position.needsUpdate=true; a.color.needsUpdate=true; wake();
+}
+function setLightsOn(on){
+  lightsOn=on;
+  for(const k in groups){const G=groups[k]; const m=MATS[G.mat]; if(!G.matBase||!m||!m.night) continue; G.matBase.emissive.set(on?m.night.c:0x000000); G.matBase.emissiveIntensity=on?m.night.i:0;}
+  if(on&&!glow) glow=buildGlow();
+  if(glow) glow.pts.visible=on;
+  PLIGHTS.forEach(l=>l.visible=on); lastPL=0;
+  $('lampsBtn').classList.toggle('on',on); updateGlow(); wake();
+}
+function applyPreset(name){
+  lightPreset=name; const P=LP[name];
+  if(P.sky){const t=skyTex(P.sky); if(scene.background&&scene.background.isTexture) scene.background.dispose(); scene.background=t;} else scene.background=new THREE.Color(P.bg);
+  hemi.color.set(P.hs); hemi.groundColor.set(P.hg); hemi.intensity=P.hi; sun.color.set(P.sc); sun.intensity=P.si; sun2.intensity=P.s2; sun.position.set(P.sp[0],P.sp[1],P.sp[2]);
+  document.querySelectorAll('#lightMenu button[data-l]').forEach(b=>{if(b.dataset.l!=='lamps') b.classList.toggle('on',b.dataset.l===name);});
+  if(name!=='day'&&!lightsOn) setLightsOn(true); else if(name==='day'&&lightsOn&&!lampsPinned) setLightsOn(false);
+  wake();
+}
+function stepPLights(now){
+  if(!lightsOn||!glow||now-lastPL<350) return; lastPL=now; const t=controls.target; const P=glow.base; const best=[];
+  for(let i=0;i<glow.eis.length;i++){ if(!elVisible(glow.eis[i])) continue; const dx=P[i*3]-t.x,dy=P[i*3+1]+offOf(glow.eis[i])-t.y,dz=P[i*3+2]-t.z; const d=dx*dx+dy*dy+dz*dz; if(d>400) continue; if(best.length<PLIGHTS.length||d<best[best.length-1][0]){best.push([d,i]); best.sort((u,v)=>u[0]-v[0]); if(best.length>PLIGHTS.length) best.pop();} }
+  PLIGHTS.forEach((l,k)=>{const b=best[k]; if(!b){l.intensity=0;return;} const i=b[1]; l.position.set(P[i*3],P[i*3+1]+offOf(glow.eis[i])-0.1,P[i*3+2]); l.intensity=lightPreset==='day'?0.35:1.15;});
+  wake(300);
+}
+$('btnLight').onclick=ev=>{ev.stopPropagation();$('lightMenu').classList.toggle('on');$('viewMenu').classList.remove('on');};
+$('lightMenu').onclick=ev=>{const b=ev.target.closest('button[data-l]'); if(!b) return; const l=b.dataset.l; if(l==='lamps'){lampsPinned=!lightsOn; setLightsOn(!lightsOn);} else {applyPreset(l);} };
+document.addEventListener('click',ev=>{if(!ev.target.closest('#lightMenu,#btnLight')) $('lightMenu').classList.remove('on');});
+applyPreset('day');
+
 /* ---------- loop (renders only while something changes: saves battery on phones) ---------- */
 let frames=0,tLast=performance.now(),tPrev=performance.now(),perfProbe={t0:0,f:0,done:false};
 function loop(){requestAnimationFrame(loop);
@@ -469,6 +524,7 @@ function loop(){requestAnimationFrame(loop);
   if(controls.update()) wake(300);
   if(liftSim&&lifts.length){stepLifts(dt);wake(300);}
   if(LOD&&LOD.update()) wake(300);
+  stepPLights(now);
   if(CLASH) CLASH.frame(now,dt);
   if(now<awakeUntil){renderer.render(scene,camera);frames++;
     if(!perfProbe.done){ if(!perfProbe.t0&&now>0) {perfProbe.t0=now+900;} if(now>perfProbe.t0){perfProbe.f++; if(now>perfProbe.t0+2200){perfProbe.done=true; const fps=perfProbe.f*1000/(now-perfProbe.t0); let saved=null; try{saved=localStorage.getItem('c4perf');}catch(e){} if(saved===null&&fps<18&&!perfMode) setPerf(true,true);}}}
@@ -479,4 +535,4 @@ function loop(){requestAnimationFrame(loop);
 wake(4200); loop(); applyVis();
 {const L=$('loader'); if(L){L.classList.add('off'); setTimeout(()=>L.remove(),600);} }
 $('stat').textContent=M.els.length.toLocaleString('en')+' عنصر';
-window.__dbg={LOD,get CLASH(){return CLASH;},scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};
+window.__dbg={setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};
