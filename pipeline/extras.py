@@ -392,9 +392,9 @@ def types():
     }
 
 def build(M):
-    import arch_windows as AW
-    W = AW.build(M)
-    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + furniture(M) + zebra() + stair_rails(M) + W["els"]
-    mats = dict(MATS); mats.update(W["mats"])
-    tp = types(); tp.update(AW.types(M))
+    import arch_windows as AW, arch_equipment as AE
+    W = AW.build(M); Q = AE.build(M)
+    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + furniture(M) + zebra() + stair_rails(M) + W["els"] + Q["els"]
+    mats = dict(MATS); mats.update(W["mats"]); mats.update(Q["mats"])
+    tp = types(); tp.update(AW.types(M)); tp.update(AE.types())
     return {"els": els, "mats": mats, "types": tp}

@@ -10,6 +10,20 @@ CLASSES = {
     "glass": {"rough": 0.05, "metal": 0.0, "opacity": 0.30}, "ghost": {"rough": 0.9, "metal": 0.0, "opacity": 0.22}, "emit": {"basic": True},
 }
 
+
+# ---- how far away a sample takes over from its simple proxy (the user sees plain boxes at ordinary viewing distances otherwise)
+LOD_BIG = {"chiller": 170, "chiller_fan": 170, "fahu": 150, "chwp": 110, "det_transformer_dry": 80, "det_hv_switchgear": 80, "det_mdb_2000a": 80, "det_generator": 80,
+           "det_lv_metering": 70, "det_dms_rtu": 60, "det_battery_rack": 60, "det_dc_supply": 60, "det_smdb_enclosure": 60, "det_fire_pump_set": 70, "det_booster_pumps": 70,
+           "det_transfer_pumps": 70, "det_pump_chamber": 60, "lift_car": 45}
+LOD_MUL = 3.5                      # every other detailed object (lights, FCU, heaters, valves, diffusers, detectors ...): 3.5x its old radius, still budget-limited by the viewer (nearest 700 units)
+def widen_lod(samples):
+    for sid, sm in samples.items():
+        lod = sm.get("lod") or {}
+        if sm.get("kind") == "path" or sm.get("cat") in ("architecture", "structure"): continue          # architecture/structure are never swapped or already show from afar
+        r = lod.get("r")
+        if r is None or (r >= 25 and sid not in LOD_BIG): continue          # structure / site samples already show from far away
+        sm["lod"] = dict(lod, r=LOD_BIG.get(sid, round(r * LOD_MUL, 1)))
+
 def main():
     samples = {}; rules = []
     for mn in MODS:
@@ -19,6 +33,7 @@ def main():
             raise
         out = m.make(); samples.update(out)
         for r in getattr(m, "RULES", []): rules.append(r)
+    widen_lod(samples)
     lib = {"v": 1, "title": "مكتبة العينات التفصيلية — مشروع C4 (RD09)", "classes": CLASSES, "samples": samples, "map": rules,
            "note": "عينة واقعية مفصلة لكل نوع مكوّن؛ تحل محل المجسم المبسّط في النموذج عند التقريب. الأبعاد الأساسية من المستندات وما عداها قياسي موسوم في «asm»."}
     json.dump(lib, open(os.path.join(ROOT, "src", "samples.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))

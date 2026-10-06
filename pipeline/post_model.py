@@ -721,6 +721,9 @@ EXT = _EXT.build(M)
 els[:] = [e for e in els if e["t"] not in ("lift_car", "shed_sail")]                      # the two solid boxes are replaced by the detailed cars of extras.lifts()
 for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
 M["mats"].update(_AW.MATS)                                              # approved window colours replace the earlier grey/blue placeholders
+import arch_equipment as _AE
+for _k, _c in _AE.PROXY_COLORS.items():
+    if _k in M["mats"]: M["mats"][_k]["color"] = _c                  # neutral metal / enamel instead of purple / cyan toy boxes
 _pool = M["sp"]; _pidx = {t: i for i, t in enumerate(_pool)}
 def _spx(t):
     if t not in _pidx:

@@ -162,7 +162,7 @@ class SampleLOD{
       let u=null;
       if(g[0]==='b'&&(pl.mode==='box'||!pl.mode)){u={sid,eis:[ei],mode:'box',x:g[1],y:g[2],W:g[3],D:g[4],ang:g[5],z0:g[6],z1:g[7]};}
       else if(g[0]==='cyl'&&(pl.mode==='cyl'||!pl.mode)){u={sid,eis:[ei],mode:'cyl',x:g[1],y:g[2],W:g[3]*2,D:g[3]*2,ang:0,z0:g[4],z1:g[5]};}
-      else if(g[0]==='r'&&(pl.mode==='rect'||!pl.mode)){const dx=Math.abs(g[3]-g[1]),dy=Math.abs(g[4]-g[2]);const horiz=dx>=dy;u={sid,eis:[ei],mode:'rect',x:(g[1]+g[3])/2,y:(g[2]+g[4])/2,W:Math.max(dx,dy),D:Math.min(dx,dy),ang:horiz?0:90,z0:g[5],z1:g[6]};}
+      else if(g[0]==='r'&&(pl.mode==='rect'||pl.mode==='box'||!pl.mode)){const dx=Math.abs(g[3]-g[1]),dy=Math.abs(g[4]-g[2]);const horiz=dx>=dy;u={sid,eis:[ei],mode:'rect',x:(g[1]+g[3])/2,y:(g[2]+g[4])/2,W:Math.max(dx,dy),D:Math.min(dx,dy),ang:horiz?0:90,z0:g[5],z1:g[6]};}
       else if(g[0]==='p'&&pl.mode==='prism'){ if((g[4]&&g[4].length)||g[1].length>5) return; const bb=bboxPoly(g[1]); const w=bb[2]-bb[0],d=bb[3]-bb[1]; if(w<=0||d<=0) return; if(polyAreaAbs(g[1])<0.97*w*d) return; const hz=w>=d; u={sid,eis:[ei],mode:'prism',x:(bb[0]+bb[2])/2,y:(bb[1]+bb[3])/2,W:Math.max(w,d),D:Math.min(w,d),ang:hz?0:90,z0:g[2],z1:g[3]};}
       if(!u) return; u.lvl=e.l; u.a=a; this.units.push(u); types.add(sid);
     });
