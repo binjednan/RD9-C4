@@ -721,6 +721,8 @@ EXT = _EXT.build(M)
 els[:] = [e for e in els if e["t"] not in ("lift_car", "shed_sail")]                      # the two solid boxes are replaced by the detailed cars of extras.lifts()
 for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
 M["mats"].update(_AW.MATS)                                              # approved window colours replace the earlier grey/blue placeholders
+import fixtures as _FX
+M["mats"].update(_FX.MATS)                                              # fixture colours are re-applied on every run (setdefault would keep the first draft)
 import arch_equipment as _AE
 for _k, _c in _AE.PROXY_COLORS.items():
     if _k in M["mats"]: M["mats"][_k]["color"] = _c                  # neutral metal / enamel instead of purple / cyan toy boxes
@@ -882,6 +884,7 @@ def mep_kind(e):
     c = e["c"]
     if c == "M.duct": return "duct"
     if c == "M.equip": return "equip"
+    if c == "P.fix": return None                      # sanitary ware is not a pipe (WC / basin / tub taps stand on the finished floor and touch walls by design)
     if c.startswith("P."): return "pipe"
     return None
 

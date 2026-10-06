@@ -144,7 +144,8 @@ def audit_walls(M, verbose=True):
 def audit_envelope(M, verbose=True, du=10.0, dz=0.10):
     """probe every facade (4 sides x levels): is each (u, z) sample of the skin covered by a solid?  Reports uncovered rectangles (cm along the facade, m height)."""
     import numpy as np
-    sides = {"S": ("y", -76.0, "x", -60.0, 3260.0), "N": ("y", 1865.0, "x", -60.0, 3260.0), "W": ("x", 100.0, "y", -60.0, 1900.0), "E": ("x", 3190.0, "y", -60.0, 1900.0)}
+    # probe ranges stay inside the tower footprint (x 84..3205, y -91..1880, extras.cornices TOWER): outside it there is no skin to cover
+    sides = {"S": ("y", -76.0, "x", 90.0, 3195.0), "N": ("y", 1865.0, "x", 90.0, 3195.0), "W": ("x", 100.0, "y", -80.0, 1870.0), "E": ("x", 3190.0, "y", -80.0, 1870.0)}
     cats = {"A.win", "A.clad", "A.wall", "S.col", "S.wall", "S.slab", "S.beam", "A.door", "A.rail"}
     sol = solids(M, cats=cats)
     # volumes as (polygon, z0, z1)

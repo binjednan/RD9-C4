@@ -392,9 +392,11 @@ def types():
     }
 
 def build(M):
-    import arch_windows as AW, arch_equipment as AE
-    W = AW.build(M); Q = AE.build(M)
-    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + furniture(M) + zebra() + stair_rails(M) + W["els"] + Q["els"]
-    mats = dict(MATS); mats.update(W["mats"]); mats.update(Q["mats"])
-    tp = types(); tp.update(AW.types(M)); tp.update(AE.types())
+    import arch_windows as AW, arch_equipment as AE, fixtures as FXT
+    W = AW.build(M); Q = AE.build(M); X = FXT.build(M, W["els"])
+    fur, dropped = FXT.drop_staged_wardrobes(furniture(M), X["els"])
+    print("staged wardrobes replaced by the drawn WR1-WR7:", dropped)
+    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + fur + zebra() + stair_rails(M) + W["els"] + Q["els"] + X["els"]
+    mats = dict(MATS); mats.update(W["mats"]); mats.update(Q["mats"]); mats.update(X["mats"])
+    tp = types(); tp.update(AW.types(M)); tp.update(AE.types()); tp.update(X["types"])
     return {"els": els, "mats": mats, "types": tp}

@@ -12,7 +12,7 @@ const ATTR={thk_cm:'السماكة (سم)',w_cm:'العرض (سم)',h_cm:'الا
   dia_mm:'القطر (مم)',length_m:'الطول (م)',size_cm:'المقاس (سم)',dia_note:'ملاحظة القطر',size_note:'ملاحظة المقاس',cls:'رمز الفئة (من المفتاح)',match:'درجة مطابقة الرمز',derived_type:'النوع مشتق من المخطط',tag_floor:'الطابق في الوسم',cap_l:'السعة (لتر)',cap_known:'السعة مذكورة في المخطط',mount_note:'ملاحظة التركيب (افتراض)',display_note:'ملاحظة العرض',
   sched_unit:'الوحدة في جدول AC-106',serving:'تخدم (من الجدول)',fcu_kind:'نوع الوحدة',cap_total_kw:'السعة الكلية للتبريد (كيلوواط)',cap_sens_kw:'السعة المحسوسة (كيلوواط)',chw_gpm:'تدفق المياه المبردة (GPM)',chw_pipe:'وصلة المياه المبردة',air_lps:'تدفق الهواء (لتر/ثانية)',esp_pa:'الضغط الاستاتيكي (باسكال)',coil_on:'هواء الدخول للملف — جاف/رطب (°م)',coil_off:'هواء الخروج من الملف — جاف/رطب (°م)',elec_kw:'القدرة الكهربائية (كيلوواط)',qty_floors:'عدد الوحدات المماثلة في الجدول',sched_note:'ملاحظة مطابقة الجدول'};
 const CONF={doc:['مستخرج من المستندات','#1a7f37'],derived:['مشتق/محسوب من المستندات','#9a6700'],assumed:['افتراض هندسي — يحتاج تأكيد','#cf222e']};
-const STAGE_KINDS={furniture:'أثاث',tree:'أشجار',plant:'نباتات',car:'سيارات',person:'أشخاص',shade:'مظلات ظل',play:'ألعاب أطفال',other:'أخرى'};
+const STAGE_KINDS={furniture:'أثاث',tree:'أشجار',plant:'نباتات',car:'سيارات',person:'أشخاص',shade:'مظلات ظل',play:'ألعاب أطفال',appliance:'أجهزة المطبخ (غير مشمولة بالعقد)',curtain:'ستائر',other:'أخرى'};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtVal=v=>v===true?'نعم':v===false?'لا':Array.isArray(v)?v.join(' '):v;
 const normAr=s=>String(s).toLowerCase().replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
