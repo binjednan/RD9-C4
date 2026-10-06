@@ -680,44 +680,14 @@ try:
         if (_v.get("place") or {}).get("mount") == "wall": _wt.add(_k)
 except Exception: pass
 _wt.discard("fhc")
-# (4) ground-floor ceilings: the typical floors carry a false ceiling over 98 % of their floor area, the ground floor only 15 % (the A1401 reflected-ceiling plan of the
-#     ground floor could not be read), so ~80 lights / diffusers / detectors hung on 2.4 m rods from the first-floor slab. Where ceiling devices exist but no ceiling,
-#     infer a plain ceiling at the typical height (F.F.L. + 2.70 m) over the floor area (room) that contains them. Flagged as an assumption.
-els[:] = [e for e in els if not e["id"].startswith("A.ceil-G-INF")]
-_S0 = _SUP.Support(els, M["levels"], set())
-_gfl = [(_i, _SUP.poly_of(_e["g"])) for _i, _e in enumerate(els) if _e["l"] == "G" and _e["c"] == "A.floor" and _e["g"][0] in ("p", "r")]
-_used = {}; _loose = []
-_zc = LV["G"]["ffl"] + 2.70
-for _i, _e in enumerate(els):
-    if _e["l"] != "G" or _e["c"][0] in "SA": continue
-    _z0, _z1 = _SUP.zr(_e["g"])
-    if _z1 is None or not (_zc - 0.25 <= _z1 <= _zc + 0.05): continue          # sits at / just under the ceiling line
-    _r = _S0.analyse(_i)
-    if _r["kind"] not in ("rod", "float", "hang"): continue
-    _pp = _SUP.poly_of(_e["g"])
-    if _pp is None: continue
-    _c = _pp.centroid; _hit = False
-    for _fi, _fp in _gfl:
-        if _fp is not None and _fp.contains(_c): _used[_fi] = _used.get(_fi, 0) + 1; _hit = True; break
-    if not _hit: _loose.append(_c)
-_nin = 0; _ain = 0
-for _fi, _cnt_dev in sorted(_used.items()):
-    _fp = _SUP.poly_of(els[_fi]["g"]).difference(box(2635, 240, 3185, 1185))          # no ceiling in the HV / transformer rooms (equipment taller than 3.05 m)
-    for _q in (list(_fp.geoms) if hasattr(_fp, "geoms") else [_fp]):
-        if _q.is_empty or _q.area < 900: continue
-        _nin += 1; _ain += _q.area
-        els.append({"id": f"A.ceil-G-INF{_nin:03d}", "c": "A.ceil", "l": "G", "g": ["p", [[round(x, 1), round(y, 1)] for x, y in list(_q.exterior.coords)[:-1]], round(_zc, 2), round(_zc + 0.02, 2)] + ([[[[round(x, 1), round(y, 1)] for x, y in list(h.coords)[:-1]] for h in _q.interiors]] if list(_q.interiors) else []),
-                    "mark": "G-CEIL-INFERRED", "t": "ceil_inferred", "m": "fin_C1", "a": {"kind": "ceil_inferred", "fin": ["C1"], "assumed_h": 2.7, "devices": _cnt_dev, "note": "سقف مستنتج: أجهزة سقفية بلا سقف في الدور الأرضي؛ الارتفاع F.F.L.+2.70 (كالأدوار المتكررة) والتشطيب C1 — افتراض يحتاج مخطط A1401"}, "s": []})
-# ceiling lights over the covered entrance band (no A.floor there - exterior paving): a rectangular soffit strip 3.2 m wide around each row of them
-if _loose:
-    from shapely.ops import unary_union as _uu3
-    _soff = _uu3([_c.buffer(160, cap_style=3, join_style=2) for _c in _loose]).intersection(box(-80, 20, 3330, 2000)).difference(box(2635, 240, 3185, 1185))
-    for _q in (list(_soff.geoms) if hasattr(_soff, "geoms") else [_soff]):
-        if _q.is_empty or _q.area < 900: continue
-        _nin += 1; _ain += _q.area
-        els.append({"id": f"A.ceil-G-INF{_nin:03d}", "c": "A.ceil", "l": "G", "g": ["p", [[round(x, 1), round(y, 1)] for x, y in list(_q.exterior.coords)[:-1]], round(_zc, 2), round(_zc + 0.02, 2)],
-                    "mark": "G-SOFFIT-INFERRED", "t": "ceil_inferred", "m": "fin_C1", "a": {"kind": "soffit_inferred", "fin": ["C1"], "assumed_h": 2.7, "note": "سقف/سوفيت مستنتج فوق الممر المغطى: إنارة سقفية بلا سقف؛ الارتفاع F.F.L.+2.70 — افتراض يحتاج مخطط A1401 والواجهات"}, "s": []})
-print("ground-floor inferred ceilings:", _nin, "areas,", round(_ain / 1e4), "m2")
+# (4) ceilings: rebuilt from the approved reflected-ceiling plans A1401 / A1600 / A1601 (pipeline/arch_ceilings.py): FCL +2.40 in the apartments, trays +2.35/+2.50 in corridors and lobbies,
+#     +3.40/+3.55 entrance, +3.50 retail, +2.80 services at the ground floor; no plates inside the stair / lift openings; ceiling devices follow their plate.  Runs before the support
+#     analysis so rods and hangers are computed from the real ceiling.
+import arch_stairs as _AS
+print("stairs vs concrete:", _AS.fix(M, els))
+import arch_ceilings as _AC
+_ac = _AC.rebuild(M, els, LV)
+print("ceilings rebuilt (A1401/A1601):", _ac["ceilings"], "plates | devices moved:", _ac["devices_moved"], _ac["by_level"])
 M["els"] = els
 
 _S = _SUP.Support(els, M["levels"], _wt)
@@ -799,6 +769,7 @@ M["types"].update(MEPBG_TYPES)
 M["types"].update(RS_TYPES)
 M["types"].update(ER_TYPES)
 M["types"].update(EXT["types"])
+M["types"].update(_AC.types())
 # cards for every remaining type (structure, finishes, ducts, pipes, valves, sprinklers, site, planting): pipeline/kb_types.py — never overrides a card defined above
 import kb_types as _KBT
 _kb_new = _KBT.build(M)
