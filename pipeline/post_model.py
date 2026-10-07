@@ -701,6 +701,8 @@ _cnt = collections.Counter()
 for _i, _e in enumerate(els):
     _a = _e.setdefault("a", {})
     for _k in ("rod_cm", "hang_cm", "stand_cm", "unsupported", "buried"): _a.pop(_k, None)
+    _mn = str(_a.get("mount_note") or "")
+    if _mn.startswith("لا يوجد جدار/سقف/أرضية مضيف قريب") and not _a.get("guess_from"): _a.pop("mount_note", None)      # stale: re-derived below when it is still true
     if _e["c"][0] in "SA": continue
     _r = _S.analyse(_i); _k = _r["kind"]; _cnt[_k] += 1
     if _k == "lower":                                                  # wall device above the top of its (lower) host wall: bring it down onto the wall
@@ -718,8 +720,21 @@ for _i, _e in enumerate(els):
         else:
             shift_z(_e, -_dz); _e["l"] = "T"; _a["unsupported"] = 1; _a.setdefault("mount_note", "لا يوجد جدار/سقف/أرضية مضيف قريب في النموذج — موضع الرمز على المخطط يحتاج مراجعة (مدقّق الدعم: غير محمول)")
     elif _k == "float": _a["unsupported"] = 1; _a.setdefault("mount_note", "لا يوجد جدار/سقف/أرضية مضيف قريب في النموذج — موضع الرمز على المخطط يحتاج مراجعة (مدقّق الدعم: غير محمول)")
+import guesses as _GS
+_GS.prepare(M)
+_samples = json.load(open(os.path.join(os.path.dirname(HERE), "src", "samples.json"), encoding="utf-8")).get("samples", {}) if os.path.exists(os.path.join(os.path.dirname(HERE), "src", "samples.json")) else {}
+_moved, _failed = _GS.relocate(M, els, _wt, _samples)
+if _moved:
+    _S2 = _SUP.Support(els, M["levels"], _wt); _ix = {e["id"]: i for i, e in enumerate(els)}
+    _cnt["float"] -= len(_moved)
+    for _id in _moved:
+        _i = _ix[_id]; _a = els[_i]["a"]; _r = _S2.analyse(_i); _k = _r["kind"]; _cnt[_k] += 1
+        if _k == "rod": _a["rod_cm"] = max(8, _r["gap_cm"])
+        elif _k == "hang": _a["hang_cm"] = max(8, _r["gap_cm"])
+        elif _k == "stand" and not _a.get("stand_cm"): _a["stand_cm"] = max(8, _r["gap_cm"])
+        elif _k == "float" and _a.get("guess_kind") != "stand": _a["unsupported"] = 1; _cnt["float"] += 1; _cnt[_k] -= 1
 M["meta"]["support"] = dict(_cnt)
-print("support analysis:", dict(_cnt))
+print("support analysis:", dict(_cnt), "| best-guess relocations:", len(_moved), "| no host found:", _failed)
 
 # ------------------------------------------------------------------ accessories added after the GitHub hand-off (pipeline/extras.py): cornices, ramp fence, site lights, parking canopies
 import extras as _EXT
@@ -997,11 +1012,19 @@ M["clashNote"] = ("تعارضات هندسية مرجّحة (تقاطع الحج
                   "لذلك هي مرشّحات للمراجعة وليست حكمًا نهائيًا. ثقوب العبور عبر الجدران والجسور لا تظهر في النموذج وقد تكون مصمَّمة فعلًا. "
                   "مرتبة بحجم التداخل.")
 
+import clash_tiers as _CT
+_CT.classify(M, els)
+
 # citation fixes found while checking the sources (the old strings stay in model.json written by earlier stages): A2300 is ARCH2 page 49, STR page 24 is sheet S-19
 _CITE_FIX = {"STR p24 (S-141)": "STR p24 (S-19 TOP ROOF SLAB LAYOUT)", "ARCH2 ص19 (A2300 خطة الزراعة)": "ARCH2 ص49 (A2300 خطة الزراعة)"}
 for _i, _s in enumerate(M["sp"]):
     if _s in _CITE_FIX: M["sp"][_i] = _CITE_FIX[_s]
 
+import reliability as _REL
+_REL.assign(M)
+_GS.registry(M, els)
+import inventory as _INV
+_INV.build(M); _INV.write_doc(M)
 json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False)
 cnt = collections.Counter(c["k"] for c in clashes)
 print("types", len(types), "| fin", len(M["fin"]), "| clashes", len(clashes), dict(cnt), "|", round(os.path.getsize(SRC) / 1e6, 2), "MB")

@@ -73,6 +73,7 @@ class Support:
     def zone(self, e):
         z0, z1 = zr(e["g"]); ffl = self.LV[e["l"]]["ffl"]
         if e.get("t") in self.wall_types: return "wall"
+        if (e.get("a") or {}).get("guess_kind") in ("wall", "equip"): return "wall"          # best-guess mount (guesses.py): a bracket on a wall / machine casing even though the symbol is a ceiling one
         if z0 - ffl < 0.06: return "floor"
         if z1 > ffl + 2.2: return "ceil"
         return "wall"
