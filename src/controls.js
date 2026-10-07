@@ -5,7 +5,9 @@
    - mouse: left = mode action, right / Shift+left = pan, middle = zoom, wheel = zoom to cursor.
    - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = pan; rotate = three-finger drag (macOS turns it into a
      mouse drag) or Alt + two-finger scroll.
-   - touch: one finger = mode action, two fingers = pinch zoom + pan.
+   - touch (tablets, owner 2026-10-07): one finger = rotate (the bottom mode buttons can change it), two fingers moving TOGETHER = pan, two fingers moving TOWARD each
+     other = zoom in, moving APART = zoom out (switchable: pinchInZooms=false gives the usual spread = zoom in). A two-finger gesture is classified once (pan or zoom),
+     so a pan never zooms and a pinch never drifts; after a short pause the next movement is classified again.
    - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.        */
 class CameraRig extends THREE.EventDispatcher{
   constructor(camera,dom){
@@ -14,7 +16,7 @@ class CameraRig extends THREE.EventDispatcher{
     this.minDistance=0.15; this.maxDistance=260; this.minSurface=0.25; this.hitTest=null; this.minPolarAngle=0.02; this.maxPolarAngle=Math.PI*0.499;
     this.bounds=new THREE.Box3(new THREE.Vector3(-30,-6,-85),new THREE.Vector3(85,48,35));
     this.mode='rotate'; this.pointerKind='auto'; this.rotateSpeed=1; this.zoomSpeed=1; this.padSpeed=1;
-    this.onHome=null; this.onFocus=null; this.lastGestureMulti=false;
+    this.onHome=null; this.onFocus=null; this.lastGestureMulti=false; this.pinchInZooms=true;
     this._ptrs=new Map(); this._drag=null; this._pinch=null; this._vel={th:0,ph:0}; this._keys=new Set();
     this._t=performance.now(); this._lastPad=0; this._wheelTimer=0; this._started=false; this._gs=1;
     this._o=new THREE.Vector3(); this._f=new THREE.Vector3(); this._r=new THREE.Vector3(); this._u=new THREE.Vector3(); this._d=new THREE.Vector3();
@@ -86,14 +88,23 @@ class CameraRig extends THREE.EventDispatcher{
     else if(this._ptrs.size===2){this.lastGestureMulti=true; this._drag=null; this._initPinch();}
     if(e.pointerType==='mouse') this.dom.focus({preventScroll:true});
   }
-  _initPinch(){const [a,b]=[...this._ptrs.values()]; this._pinch={dist:Math.hypot(a.x-b.x,a.y-b.y)||1,mx:(a.x+b.x)/2,my:(a.y+b.y)/2};}
+  _initPinch(){const [a,b]=[...this._ptrs.values()]; const dist=Math.hypot(a.x-b.x,a.y-b.y)||1,mx=(a.x+b.x)/2,my=(a.y+b.y)/2; this._pinch={dist,mx,my,d0:dist,mx0:mx,my0:my,kind:null,last:performance.now()};}
+  _pinchScale(prev,cur){const r=this.pinchInZooms?cur/prev:prev/cur; return Math.pow(r,this.zoomSpeed);}   // < 1 = camera moves closer
   _move(e){
     const p=this._ptrs.get(e.pointerId); if(!p||!this.enabled) return;
     const dx=e.clientX-p.x,dy=e.clientY-p.y; p.x=e.clientX; p.y=e.clientY;
     if(this._ptrs.size>=2&&this._pinch){
       const [a,b]=[...this._ptrs.values()]; const dist=Math.hypot(a.x-b.x,a.y-b.y)||1,mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
-      this.dolly(Math.pow(this._pinch.dist/dist,this.zoomSpeed),mx,my); this.pan(mx-this._pinch.mx,my-this._pinch.my);
-      this._pinch.dist=dist; this._pinch.mx=mx; this._pinch.my=my; return;
+      const P=this._pinch,now=performance.now();
+      if(P.kind&&now-P.last>240){P.kind=null;P.d0=P.dist;P.mx0=P.mx;P.my0=P.my;}                   // fingers paused: classify the next movement again
+      P.last=now;
+      if(!P.kind){
+        const dD=Math.abs(dist-P.d0),dM=Math.hypot(mx-P.mx0,my-P.my0);
+        if(Math.max(dD,dM)<9){P.dist=dist;P.mx=mx;P.my=my;return;}                                   // too small to tell pan from pinch: wait
+        P.kind=dD>1.2*dM?'zoom':'pan'; P.dist=P.d0; P.mx=P.mx0; P.my=P.my0;                           // then apply everything since the start of the gesture
+      }
+      if(P.kind==='zoom') this.dolly(this._pinchScale(P.dist,dist),mx,my); else this.pan(mx-P.mx,my-P.my);
+      P.dist=dist; P.mx=mx; P.my=my; return;
     }
     const D=this._drag; if(!D) return; D.moved+=Math.abs(dx)+Math.abs(dy);
     let act; if(D.type==='mouse'){ act=D.btn===2?'pan':D.btn===1?'zoom':(D.shift?'pan':this.mode);} else act=this.mode;

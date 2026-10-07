@@ -8,7 +8,7 @@ const MATS=M.mats; const TYPES=M.types||{};
 const matIndex={}; Object.keys(MATS).forEach((k,i)=>matIndex[k]=i);
 let lightPreset='day',lightsOn=false,glow=null,lampsPinned=false,lastPL=0;   // lighting state (the block further down uses them; applyVis() may run earlier)
 const UNITS=M.units||[]; const unitIndex={}; UNITS.forEach((u,i)=>unitIndex[u.id]=i);
-const ATTR={model:'كود المنتج (الموديل)',area_m2:'المساحة (م²)',thickness_mm:'السماكة (مم)',state:'الحالة',thk_cm:'السماكة (سم)',w_cm:'العرض (سم)',h_cm:'الارتفاع (سم)',d_cm:'العمق (سم)',dia_cm:'القطر (سم)',len_m:'الطول (م)',kind:'النوع',loc:'الموقع',side:'الجهة',room:'الغرفة',wall_cm:'سماكة الجدار (سم)',step:'رقم الدرجة',rise_cm:'ارتفاع الدرجة (سم)',tread_cm:'عرض الدرجة (سم)',flight:'الجناح',stops:'المحطات',cab_cm:'مقصورة (سم)',h_m:'الارتفاع (م)',top:'منسوب القمة',part:'الجزء',assumed_h:'ارتفاع السقف المستعار (م) — افتراضي',
+const ATTR={head:'رأس الرشاش المخدوم (ID)',buried:'مدفون تحت الأرضية',model:'كود المنتج (الموديل)',area_m2:'المساحة (م²)',thickness_mm:'السماكة (مم)',state:'الحالة',thk_cm:'السماكة (سم)',w_cm:'العرض (سم)',h_cm:'الارتفاع (سم)',d_cm:'العمق (سم)',dia_cm:'القطر (سم)',len_m:'الطول (م)',kind:'النوع',loc:'الموقع',side:'الجهة',room:'الغرفة',wall_cm:'سماكة الجدار (سم)',step:'رقم الدرجة',rise_cm:'ارتفاع الدرجة (سم)',tread_cm:'عرض الدرجة (سم)',flight:'الجناح',stops:'المحطات',cab_cm:'مقصورة (سم)',h_m:'الارتفاع (م)',top:'منسوب القمة',part:'الجزء',assumed_h:'ارتفاع السقف المستعار (م) — افتراضي',
     hang_cm:'طول التعليقة (سم)',car:'المصعد',level:'الطابق',clear_w_cm:'العرض الصافي (سم)',clear_h_cm:'الارتفاع الصافي (سم)',door_clear_cm:'فتحة الباب الصافية (سم)',cab_h_m:'ارتفاع المقصورة (م)',bay:'رقم الموقف',accessible:'موقف ذوي الإعاقة',base_z_m:'منسوب القاعدة (م)',name_ar:'الاسم',note:'ملاحظة',snap_note:'ملاحظة السحب إلى الجدار',snap_cm:'مسافة السحب إلى الجدار (سم)',stand_cm:'ارتفاع الحامل (سم)',species:'النوع النباتي (رمز)',canopy_diam_cm:'قطر التاج (سم)',total_h_m:'الارتفاع الكلي (م)',pole_h_m:'ارتفاع العمود (م)',bays:'المواقف (أرقام)',block:'الكتلة',ribs:'عدد الأضلاع',span_cm:'الفتحة (سم)',top_of_beam_m:'قمة الحزمة (م)',rod_cm:'طول القضيب (سم)',height_m:'الارتفاع (م)',power_w:'القدرة (واط)',mount_h_m:'ارتفاع التركيب (م)',unsupported:'غير محمول',top_m:'منسوب القمة (م)',dim_note:'ملاحظة الأبعاد',level_note:'ملاحظة المنسوب',area_m2:'المساحة (م²)',height_cm:'الارتفاع (سم)',thick_cm:'السماكة (سم)',n:'العدد',from_level:'من الطابق',to_level:'إلى الطابق',x_cm:'الإحداثي x (سم)',y_cm:'الإحداثي y (سم)',riser_note:'ملاحظة الرايزر',where:'الموضع',floor_note:'ملاحظة الأرضية',finish_note:'ملاحظة التشطيب',top_of_seat_m:'منسوب سطح المقعد (م)',face_note:'ملاحظة اتجاه الواجهة',devices:'عدد الأجهزة',dims_mm:'الأبعاد (مم)',sand_top_m:'منسوب الرمل (م)',fl_m:'المنسوب النهائي F.L. (م)',fill_note:'ملاحظة الردم',duty:'الخدمة',ffl_m:'منسوب الأرضية (م)',width_cm:'العرض (سم)',slope_pct:'الميل (%)',transition_pct:'ميل الانتقال (%)',transition_cm:'طول الانتقال (سم)',z_note:'ملاحظة المنسوب',level_m:'المنسوب (م)',height_note:'ملاحظة الارتفاع',cladding:'الكسوة',kva:'القدرة (ك.ف.أ)',hv_kv:'الجهد العالي (ك.ف)',lv_kv:'الجهد المنخفض (ك.ف)',amps:'التيار (أمبير)',dims_cm:'الأبعاد (سم)',dims_note:'ملاحظة الأبعاد',
   dia_mm:'القطر (مم)',length_m:'الطول (م)',size_cm:'المقاس (سم)',dia_note:'ملاحظة القطر',size_note:'ملاحظة المقاس',cls:'رمز الفئة (من المفتاح)',match:'درجة مطابقة الرمز',derived_type:'النوع مشتق من المخطط',tag_floor:'الطابق في الوسم',cap_l:'السعة (لتر)',cap_known:'السعة مذكورة في المخطط',mount_note:'ملاحظة التركيب (افتراض)',display_note:'ملاحظة العرض',
   sched_unit:'الوحدة في جدول AC-106',serving:'تخدم (من الجدول)',fcu_kind:'نوع الوحدة',cap_total_kw:'السعة الكلية للتبريد (كيلوواط)',cap_sens_kw:'السعة المحسوسة (كيلوواط)',chw_gpm:'تدفق المياه المبردة (GPM)',chw_pipe:'وصلة المياه المبردة',air_lps:'تدفق الهواء (لتر/ثانية)',esp_pa:'الضغط الاستاتيكي (باسكال)',coil_on:'هواء الدخول للملف — جاف/رطب (°م)',coil_off:'هواء الخروج من الملف — جاف/رطب (°م)',elec_kw:'القدرة الكهربائية (كيلوواط)',qty_floors:'عدد الوحدات المماثلة في الجدول',sched_note:'ملاحظة مطابقة الجدول'};
@@ -172,7 +172,7 @@ function applyVis(){
   wake();
 }
 function resize(){const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
-window.addEventListener('resize',resize); window.addEventListener('orientationchange',()=>setTimeout(resize,250)); resize();
+window.addEventListener('resize',resize); window.addEventListener('orientationchange',()=>setTimeout(resize,250)); resize(); if(window.ResizeObserver) new ResizeObserver(()=>resize()).observe(wrap);
 
 /* ---------- picking ---------- */
 const ray=new THREE.Raycaster(); const mouse=new THREE.Vector2();
@@ -214,16 +214,18 @@ let clipYv=1000, clipXv=1000;
 /* ---------- selection highlight ---------- */
 let hlObjs=[], selIdx=-1, selSet=[];
 function clearHL(){ hlObjs.forEach(o=>{scene.remove(o);o.geometry.dispose();}); hlObjs=[]; wake(); }
-function addHL(idxs,color=0xffb000,edges=true,opacity=0.8){
+const HL_BLUE=0x2f7bff;   // selection = light translucent blue shading (surface pass + faint see-through pass + thin outline)
+function addHL(idxs,color=HL_BLUE,edges=true,opacity=0.36){
   idxs=idxs.filter(elVisible); if(!idxs.length) return;
   const pos=[];
   idxs.forEach(ei=>{const rg=elRange[ei]; const G=groups[rg.gk]; const off=offOf(ei); const P=G.posArr; for(let i=rg.start*9;i<(rg.start+rg.count)*9;i+=3){pos.push(P[i],P[i+1]+off,P[i+2]);}});
   const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  const mesh=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthTest:false,side:THREE.DoubleSide})); mesh.renderOrder=999; scene.add(mesh); hlObjs.push(mesh);
-  if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0xb35c00,depthTest:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
+  const surf=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthTest:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3,side:THREE.DoubleSide})); surf.renderOrder=998; scene.add(surf); hlObjs.push(surf);
+  const ghost=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity:Math.min(0.12,opacity*0.4),depthTest:false,depthWrite:false,side:THREE.DoubleSide})); ghost.renderOrder=997; scene.add(ghost); hlObjs.push(ghost);
+  if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0x1747b8,transparent:true,opacity:0.8,depthTest:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
   wake();
 }
-function highlight(idxs,color=0xffb000,edges=true,opacity=0.8){clearHL(); addHL(idxs,color,edges,opacity);}
+function highlight(idxs,color=HL_BLUE,edges=true,opacity=0.36){clearHL(); addHL(idxs,color,edges,opacity);}
 function bboxOf(idxs){const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];idxs.forEach(ei=>{for(let i=0;i<3;i++){mn[i]=Math.min(mn[i],elBB[ei*6+i]);mx[i]=Math.max(mx[i],elBB[ei*6+3+i]);}});return {mn,mx,c:[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2],r:Math.hypot(mx[0]-mn[0],mx[1]-mn[1],mx[2]-mn[2])/2};}
 
 /* ---------- camera fly (interpolated in spherical coords so it never cuts through the building) ---------- */
@@ -244,33 +246,44 @@ function viewPreset(name){
   const tgt=HOME.tgt.clone(); if(name!=='top') tgt.y=11;
   flyTo(tgt.clone().add(new THREE.Vector3(d[0],d[1],d[2]).normalize().multiplyScalar(R)),tgt);
 }
-controls.addEventListener('start',()=>{fly=null;$('viewMenu').classList.remove('on');});
+controls.addEventListener('start',()=>{fly=null;closeMenus();});
 controls.onHome=goHome; controls.onFocus=()=>{if(selIdx>=0) flyToBox(bboxOf(selSet));};
 
 /* ---------- info panel ---------- */
 function row(k,v){return `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;}
+const DESK=window.matchMedia('(min-width:861px)'); let infoMin=false;
+function infoDocked(){return DESK.matches&&!document.body.classList.contains('dock-off');}
+function hideInfo(){['info','infoDock'].forEach(k=>{$(k).classList.remove('on');$(k).innerHTML='';}); document.body.classList.remove('info-open');}
 function showInfo(ei){
   const e=M.els[ei]; const T=TYPES[e.t]||{}; const c=CATS[e.c]; const lv=LVL[e.l];
   const unit=e.u?UNITS[unitIndex[e.u]]:null; const st=stageKind(e);
-  let h=`<div class=ih><b>${esc(T.n||c.name)}</b><button id=icl aria-label="إغلاق">×</button></div>`;
+  const sec=(t,body,open)=>`<details class=idet${open?' open':''}><summary>${t}</summary>${body}</details>`;
+  let h=`<div class=ih><b>${esc(T.n||c.name)}</b><span class=ihb><button id=icol type=button aria-label="طيّ التفاصيل أو فردها" title="طيّ / فرد">▴</button><button id=icl type=button aria-label="إغلاق" title="إلغاء التحديد">×</button></span></div>`;
+  h+=`<div class=isub><code>${esc(e.id)}</code><span>${esc(lv.name)} (${lv.ffl>0?'+':''}${lv.ffl.toFixed(2)})</span>${unit?`<span>${esc(unit.name)}</span>`:''}</div><div class=ibody>`;
   h+=`<div class=tags><span style="background:${c.color}22;color:${c.color}">${esc(LAYER[c.layer].name)}</span><span>${esc(c.name)}</span>${st?'<span style="background:#fff1f0;color:#cf222e">كمالية إخراجية — للعرض لا للتنفيذ</span>':''}</div>`;
-  h+=`<h4>الهوية</h4><table>`+row('الرمز التعريفي (ID)',`<code>${esc(e.id)}</code>`)+(e.mark?row('الوسم / Tag',`<code>${esc(e.mark)}</code>`):'')+row('الطابق',esc(lv.name)+` (${lv.ffl>0?'+':''}${lv.ffl.toFixed(2)})`)+(unit?row('الوحدة',esc(unit.name)):'')+`</table>`;
+  h+=sec('الهوية',`<table>`+row('الرمز التعريفي (ID)',`<code>${esc(e.id)}</code>`)+(e.mark?row('الوسم / Tag',`<code>${esc(e.mark)}</code>`):'')+row('الطابق',esc(lv.name)+` (${lv.ffl>0?'+':''}${lv.ffl.toFixed(2)})`)+(unit?row('الوحدة',esc(unit.name)):'')+`</table>`,true);
   const sp=(T.sp||[]).slice(); const at=e.a||{};
   const extra=[]; for(const k in at){ if(k==='fin'||k==='assumed'||at[k]===null||at[k]===''||(Array.isArray(at[k])&&!at[k].length)) continue; extra.push([ATTR[k]||k,esc(fmtVal(at[k]))]); }
   if(at.fin&&at.fin.length) extra.push(['رموز التشطيب (A500)',at.fin.map(f=>esc(M.fin&&M.fin[f]?`${f} — ${M.fin[f][0]}`:f)).join('<br>')]);
-  if(sp.length||extra.length){h+=`<h4>المواصفات الفنية</h4><table>`+sp.map(r=>row(r[0],esc(r[1]))).join('')+extra.map(r=>row(r[0],r[1])).join('')+`</table>`;}
+  if(sp.length||extra.length){h+=sec('المواصفات الفنية',`<table>`+sp.map(r=>row(r[0],esc(r[1]))).join('')+extra.map(r=>row(r[0],r[1])).join('')+`</table>`,true);}
   const mt=(T.mt||[]);
-  h+=`<h4>الصيانة والتشغيل</h4><table>`+(mt.length?mt.map(r=>row(r[0],esc(r[1]))).join(''):row('البيانات','غير مذكورة في المستندات المرفقة'))+`</table>`;
+  h+=sec('الصيانة والتشغيل',`<table>`+(mt.length?mt.map(r=>row(r[0],esc(r[1]))).join(''):row('البيانات','غير مذكورة في المستندات المرفقة'))+`</table>`,false);
   {const asmL=(T.asm||[]).slice(); if(at.assumed) asmL.push(String(at.assumed)); if(asmL.length) h+=`<div class=asm><b>افتراضات هندسية — تحتاج تأكيد</b><ul>`+asmL.map(a=>`<li>${esc(a)}</li>`).join('')+`</ul></div>`;}
   if(T.adv&&T.adv.length) h+=`<div class=adv><b>إرشاد عام — غير مستخرج من المستندات</b><ul>`+T.adv.map(a=>`<li>${esc(a)}</li>`).join('')+`</ul></div>`;
   const cf=CONF[T.cf||'doc']; const srcs=(e.s||[]).map(i=>M.sp[i]).concat(T.sr||[]);
-  h+=`<h4>مصدر البيانات</h4><div class=src><span class=cf style="background:${cf[1]}1a;color:${cf[1]}">${cf[0]}</span><ul>`+srcs.map(s=>`<li>${esc(s)}</li>`).join('')+`</ul></div>`;
+  h+=sec(`مصدر البيانات <span class=cf style="background:${cf[1]}1a;color:${cf[1]}">${cf[0]}</span>`,`<div class=src><ul>`+srcs.map(s=>`<li>${esc(s)}</li>`).join('')+`</ul></div>`,false);
   const grp=e.grp&&grpMap[e.grp]?grpMap[e.grp].length:0; if(grp>1) h+=`<div class=muted>جزء من مجموعة (${grp} عنصر)</div>`;
-  $('info').innerHTML=h; $('info').classList.add('on'); document.body.classList.add('info-open'); document.body.classList.remove('panel-open'); $('icl').onclick=()=>{select(-1);};
+  h+=`</div>`;
+  /* ONE dock: on a desktop the card lives at the top of the side panel (no second floating panel over the model); on phones / with the panel hidden it is a compact card or bottom sheet */
+  const docked=infoDocked(), el=docked?$('infoDock'):$('info'), other=docked?$('info'):$('infoDock');
+  other.classList.remove('on'); other.innerHTML='';
+  el.innerHTML=h; el.classList.toggle('min',infoMin); el.classList.add('on'); el.scrollTop=0;
+  document.body.classList.toggle('info-open',!docked); document.body.classList.remove('panel-open');
+  $('icl').onclick=()=>{select(-1);}; $('icol').onclick=()=>{infoMin=!infoMin; el.classList.toggle('min',infoMin);};
   wake();
 }
 function select(ei,fit=false){
-  selIdx=ei; if(ei<0){clearHL();$('info').classList.remove('on');document.body.classList.remove('info-open');selSet=[];document.querySelectorAll('.res.sel,.mrow.sel').forEach(x=>x.classList.remove('sel'));return;}
+  selIdx=ei; if(ei<0){clearHL();hideInfo();selSet=[];document.querySelectorAll('.res.sel,.mrow.sel').forEach(x=>x.classList.remove('sel'));return;}
   const e=M.els[ei]; selSet=(e.grp&&grpMap[e.grp])?grpMap[e.grp]:[ei];
   highlight(selSet); showInfo(ei); if(fit) flyToBox(bboxOf(selSet));
 }
@@ -310,7 +323,7 @@ M.layers.forEach(L=>{
   const box=document.createElement('div'); box.className='lay';
   const head=document.createElement('label'); head.className='lh'; head.innerHTML=`<input type=checkbox checked data-layer="${L.id}"><span class=dot style="background:${L.color}"></span><b>${L.name}</b>`;
   const only=document.createElement('button'); only.textContent='فقط'; only.className='mini'; only.onclick=(ev)=>{ev.preventDefault();M.layers.forEach(L2=>{lp.querySelector(`input[data-layer="${L2.id}"]`).checked=(L2.id===L.id); lp.querySelectorAll(`input[data-cat^="${L2.id}."]`).forEach(i=>{i.checked=(L2.id===L.id);catVis[i.dataset.cat]=(L2.id===L.id);});}); applyVis();};
-  head.appendChild(only); box.appendChild(head);
+  head.appendChild(only); const chv=document.createElement('button'); chv.className='mini chv'; chv.textContent='▾'; chv.title='عرض / إخفاء الفروع'; chv.setAttribute('aria-label','عرض فروع '+L.name); chv.onclick=(ev)=>{ev.preventDefault(); box.classList.toggle('open');}; head.appendChild(chv); box.appendChild(head);
   const opr=document.createElement('div'); opr.className='opr'; opr.innerHTML=`<span>الشفافية</span><input type=range min=5 max=100 value=100 data-opl="${L.id}" aria-label="شفافية ${L.name}"><b data-opv="${L.id}">100%</b><button class=mini data-subtog="1" title="شفافية كل فرع على حدة" aria-label="شفافية الفروع">الفروع</button>`;
   box.appendChild(opr);
   const subs=document.createElement('div'); subs.className='subs';
@@ -335,11 +348,12 @@ $('btnAll').onclick=()=>{M.layers.forEach(L=>{lp.querySelector(`input[data-layer
 /* ---------- stage items (display-only props): one global switch + per-kind switches ---------- */
 function buildStageBox(){
   const box=$('stageBox'); if(!stageTotal){box.innerHTML='';return;}
-  let h=`<div class=lay style="border-color:#e0b4b0"><label class=lh><input type=checkbox checked data-stage="all"><span class=dot style="background:#cf222e"></span><b>الكماليات الإخراجية</b><i>${stageTotal}</i></label><div class=muted style="margin:0 0 4px">للعرض لا للتنفيذ (أثاث، أشجار، سيارات…). لا تمسّ العناصر الموثّقة في المخططات.</div><div class=subs>`;
+  let h=`<div class=lay style="border-color:#e0b4b0"><label class=lh><input type=checkbox checked data-stage="all"><span class=dot style="background:#cf222e"></span><b>الكماليات الإخراجية</b><i>${stageTotal}</i><button type=button class="mini chv" data-chv=1 title="عرض / إخفاء الأنواع" aria-label="عرض أنواع الكماليات">▾</button></label><div class=muted style="margin:0 0 4px">للعرض لا للتنفيذ (أثاث، أشجار، سيارات…). لا تمسّ العناصر الموثّقة في المخططات.</div><div class=subs>`;
   Object.keys(stageCount).forEach(k=>{h+=`<label><input type=checkbox checked data-stage="${k}"> ${STAGE_KINDS[k]||k} <i>${stageCount[k]}</i></label>`;});
   box.innerHTML=h+`</div></div>`;
 }
 function syncStageBox(){document.querySelectorAll('#stageBox input[data-stage]').forEach(i=>{i.checked=i.dataset.stage==='all'?stageVis.all:stageVis[i.dataset.stage]!==false;});}
+$('stageBox').addEventListener('click',ev=>{const b=ev.target.closest('[data-chv]'); if(b){ev.preventDefault(); b.closest('.lay').classList.toggle('open');}});
 $('stageBox').addEventListener('change',ev=>{const t=ev.target; if(!t.dataset.stage) return; if(t.dataset.stage==='all') stageVis.all=t.checked; else stageVis[t.dataset.stage]=t.checked; applyVis();});
 buildStageBox();
 
@@ -371,8 +385,22 @@ function isolate(uid){
 function exitIso(noFly){isoUnit=null;U.iso.value=-1;U.maskOn.value=0;ghost.visible=false; catVis['A.ceil']=ceilWasOn; const cb=document.querySelector('input[data-cat="A.ceil"]'); if(cb) cb.checked=ceilWasOn; applyVis();$('isoBar').classList.remove('on');document.querySelectorAll('.ub').forEach(b=>b.classList.remove('sel')); if(noFly!==true) goHome();}
 $('isoExit').onclick=()=>exitIso();
 
-/* ---------- tabs ---------- */
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));t.classList.add('on');$(t.dataset.pane).classList.add('on');t.scrollIntoView&&t.scrollIntoView({block:'nearest',inline:'nearest'});if(t.dataset.pane==='pSearch'&&matchMedia('(pointer:fine)').matches) $('q').focus();});
+/* ---------- panel: ONE scrolling panel of collapsible sections (accordion) ---------- */
+const ACC_KEY='c4acc';
+function accState(){try{return JSON.parse(localStorage.getItem(ACC_KEY)||'null');}catch(e){return null;}}
+function accSave(){try{localStorage.setItem(ACC_KEY,JSON.stringify([...document.querySelectorAll('.acc.on')].map(x=>x.dataset.sec)));}catch(e){}}
+var openSec=function(id,opt){opt=opt||{}; const sec=document.querySelector('.acc[data-sec="'+id+'"]'); if(!sec) return; if(opt.only) document.querySelectorAll('.acc.on').forEach(x=>{if(x!==sec){x.classList.remove('on');x.querySelector('.acc-h').setAttribute('aria-expanded','false');}});
+  sec.classList.add('on'); sec.querySelector('.acc-h').setAttribute('aria-expanded','true'); accSave();
+  if(opt.scroll!==false) setTimeout(()=>{const c=$('acc'); if(c) c.scrollTo({top:sec.offsetTop-2,behavior:'smooth'});},30);
+  if(id==='pSearch'&&opt.focus&&matchMedia('(pointer:fine)').matches) $('q').focus();};
+var toggleSec=function(sec){const on=!sec.classList.contains('on'); sec.classList.toggle('on',on); sec.querySelector('.acc-h').setAttribute('aria-expanded',on?'true':'false'); accSave();
+  if(on) setTimeout(()=>{const c=$('acc'); if(c&&sec.offsetTop<c.scrollTop) c.scrollTo({top:sec.offsetTop-2,behavior:'smooth'});},30);};
+function syncNav(){document.querySelectorAll('#secnav button').forEach(b=>{const sec=document.querySelector('.acc[data-sec="'+b.dataset.go+'"]'); b.classList.toggle('on',!!(sec&&sec.classList.contains('on')));});}
+const _openSec=openSec, _toggleSec=toggleSec; openSec=function(id,opt){_openSec(id,opt); syncNav();}; toggleSec=function(sec){_toggleSec(sec); syncNav();};
+document.querySelectorAll('#secnav button').forEach(b=>b.onclick=()=>{const sec=document.querySelector('.acc[data-sec="'+b.dataset.go+'"]'); if(sec&&sec.classList.contains('on')&&$('acc').scrollTop+4<sec.offsetTop-2){ $('acc').scrollTo({top:sec.offsetTop-2,behavior:'smooth'}); } else openSec(b.dataset.go,{scroll:true,focus:true});});
+document.querySelectorAll('.acc-h').forEach(h=>h.onclick=()=>toggleSec(h.parentElement));
+syncNav();
+{const st=accState(); if(st&&Array.isArray(st)){document.querySelectorAll('.acc').forEach(x=>{const on=st.includes(x.dataset.sec); x.classList.toggle('on',on); x.querySelector('.acc-h').setAttribute('aria-expanded',on?'true':'false');}); syncNav();}}
 
 /* ---------- search by tag / ID / name ---------- */
 let sIdx=null, lastHits=[];
@@ -386,9 +414,11 @@ function runSearch(raw){
   info.innerHTML=`${hits.length.toLocaleString('en')} نتيجة`+(hits.length>80?' — يُعرض أول 80':'')+(hits.length&&hits.length<=1500?` <button class=mini id=qhl>إبراز الكل</button>`:'');
   box.innerHTML=lastHits.slice(0,80).map(i=>{const e=M.els[i],T=TYPES[e.t]||{};return `<div class=res data-i="${i}"><b>${esc(e.mark||e.id)}</b><small>${esc(T.n||CATS[e.c].name)} • ${esc(CATS[e.c].name)} • ${esc(LVL[e.l].name)}${e.mark?' • '+esc(e.id):''}</small></div>`;}).join('');
 }
-let qT=0; $('q').addEventListener('input',ev=>{clearTimeout(qT);qT=setTimeout(()=>runSearch(ev.target.value),130);});
+let qT=0; $('q').addEventListener('input',ev=>{clearTimeout(qT);qT=setTimeout(()=>runSearch(ev.target.value),130); if(ev.target.value.trim()) openSec('pSearch',{scroll:true});});
+$('q').addEventListener('focus',()=>{if($('q').value.trim()) openSec('pSearch',{scroll:false});});
+{const bu=$('accN_pUnits'); if(bu) bu.textContent=String(UNITS.length); const bc=$('accN_pClash'); if(bc) bc.textContent=String((M.clashes||[]).length);}
 $('qres').addEventListener('click',ev=>{const r=ev.target.closest('.res'); if(!r) return; document.querySelectorAll('#qres .res.sel').forEach(x=>x.classList.remove('sel')); r.classList.add('sel'); focusEl(+r.dataset.i);});
-$('qinfo').addEventListener('click',ev=>{if(ev.target.id!=='qhl') return; lastHits.forEach(ensureVisible); select(-1); clearHL(); addHL(lastHits,0xffb000,lastHits.length<300); flyToBox(bboxOf(lastHits)); document.body.classList.remove('panel-open');});
+$('qinfo').addEventListener('click',ev=>{if(ev.target.id!=='qhl') return; lastHits.forEach(ensureVisible); select(-1); clearHL(); addHL(lastHits,HL_BLUE,lastHits.length<300); flyToBox(bboxOf(lastHits)); document.body.classList.remove('panel-open');});
 runSearch('');
 
 /* ---------- materials legend + finishes vs BOQ ---------- */
@@ -415,7 +445,7 @@ function buildMat(){
     document.querySelectorAll('#matBox .mrow.sel').forEach(x=>x.classList.remove('sel'));
     if(matSel===key){matSel=null;clearHL();return;} matSel=key; r.classList.add('sel');
     const idx=r.dataset.mat?byMat[r.dataset.mat]:byFin[r.dataset.fin]; if(!idx||!idx.length) return; const vis=idx.filter(i=>{const e=M.els[i];return catVis[e.c]&&lvlVis[e.l];});
-    selIdx=-1; $('info').classList.remove('on'); document.body.classList.remove('info-open'); clearHL(); addHL(vis.length?vis:idx,0xffb000,idx.length<250); if(!vis.length) toast('عناصر هذه المادة مخفية حاليًا — فعّل أقسامها أو طوابقها'); else flyToBox(bboxOf(vis)); document.body.classList.remove('panel-open');};
+    selIdx=-1; hideInfo(); clearHL(); addHL(vis.length?vis:idx,HL_BLUE,idx.length<250); if(!vis.length) toast('عناصر هذه المادة مخفية حاليًا — فعّل أقسامها أو طوابقها'); else flyToBox(bboxOf(vis)); document.body.classList.remove('panel-open');};
 }
 buildMat();
 
@@ -446,15 +476,30 @@ if(window.SampleLOD&&window.__SAMPLES__){
   LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,exploded:()=>explode!==0,liftRunning:()=>liftSim,
     unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});
   const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod');}catch(e){} if(saved==='0'){chk.checked=false; LOD.setEnabled(false);}
+    const rb=$('rebarChk'); if(rb){ let sv=null; try{sv=localStorage.getItem('c4rebar');}catch(e){} if(sv==='1'){rb.checked=true; LOD.setRebar(true);}
+      rb.onchange=ev=>{LOD.setRebar(ev.target.checked); try{localStorage.setItem('c4rebar',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب من الأعمدة والجسور والجدران يظهر حديد التسليح داخل الخرسانة الشفافة':'الخرسانة تبقى مصمتة عند التقريب (حديد التسليح مخفي)');};}
     chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب يُستبدل المجسم المبسّط بعينة تفصيلية':'عُطّل استبدال العينات التفصيلية');}; }
 }
 if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>';
 /* ---------- toolbar: modes, views, fullscreen, performance, help ---------- */
 document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>controls.setMode(b.dataset.m));
+/* mode buttons: shown on mouse devices, hidden on touch tablets (gestures replace them); «⋯» menu switches them */
+function setModes(on,noSave){document.body.classList.toggle('modes-on',!!on); $('btnModes').classList.toggle('on',!!on); if(!on) controls.setMode('rotate'); if(!noSave){try{localStorage.setItem('c4modes',on?'1':'0');}catch(e){}}}
+{let sv=null; try{sv=localStorage.getItem('c4modes');}catch(e){} setModes(sv===null?!matchMedia('(pointer:coarse)').matches:sv==='1',true);}
+$('btnModes').onclick=()=>setModes(!document.body.classList.contains('modes-on'));
+{const pc=$('pinchChk'); let sv=null; try{sv=localStorage.getItem('c4pinch');}catch(e){} controls.pinchInZooms=sv!=='0'; pc.checked=controls.pinchInZooms;
+  pc.onchange=ev=>{controls.pinchInZooms=ev.target.checked; try{localStorage.setItem('c4pinch',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'اللمس: تقريب الإصبعين من بعضهما = تقريب (Zoom in)':'اللمس: تباعد الإصبعين = تقريب (الاتجاه المعتاد)');};}
 controls.addEventListener('mode',ev=>{document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===ev.mode));wake();});
-$('btnViews').onclick=ev=>{ev.stopPropagation();$('viewMenu').classList.toggle('on');};
-$('viewMenu').onclick=ev=>{const b=ev.target.closest('button[data-v]'); if(!b) return; viewPreset(b.dataset.v); $('viewMenu').classList.remove('on');};
-document.addEventListener('click',ev=>{if(!ev.target.closest('#viewMenu,#btnViews')) $('viewMenu').classList.remove('on');});
+const MENU_IDS=['viewMenu','lightMenu','moreMenu'];
+function closeMenus(except){MENU_IDS.forEach(m=>{if(m!==except) $(m).classList.remove('on');});}
+window.addEventListener('resize',()=>closeMenus());
+function toggleMenu(mid,bid){const m=$(mid),b=$(bid); const on=!m.classList.contains('on'); closeMenus(on?mid:null); m.classList.toggle('on',on);
+  if(on){const vr=$('view').getBoundingClientRect(), br=b.getBoundingClientRect(); m.style.top=Math.round(Math.max(br.bottom,$('bar').getBoundingClientRect().bottom)-vr.top+6)+'px'; m.style.right=Math.max(8,Math.min(Math.round(vr.right-br.right),Math.round(vr.width-m.offsetWidth-8)))+'px';}}
+$('btnViews').onclick=ev=>{ev.stopPropagation();toggleMenu('viewMenu','btnViews');};
+$('btnMore').onclick=ev=>{ev.stopPropagation();toggleMenu('moreMenu','btnMore');};
+$('viewMenu').onclick=ev=>{const b=ev.target.closest('button[data-v]'); if(!b) return; viewPreset(b.dataset.v); closeMenus();};
+$('moreMenu').onclick=ev=>{if(ev.target.closest('button')) setTimeout(closeMenus,0);};
+document.addEventListener('click',ev=>{if(!ev.target.closest('#viewMenu,#lightMenu,#moreMenu,#btnViews,#btnLight,#btnMore')) closeMenus();});
 const FS_OK=document.fullscreenEnabled||document.webkitFullscreenEnabled; if(!FS_OK) $('btnFs').style.display='none';
 $('btnFs').onclick=()=>{const d=document,el=d.documentElement; if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d);} else (el.requestFullscreen||el.webkitRequestFullscreen).call(el);};
 document.addEventListener('fullscreenchange',()=>{$('btnFs').classList.toggle('on',!!document.fullscreenElement);setTimeout(resize,150);});
@@ -462,7 +507,11 @@ function setPerf(on,auto){perfMode=on; renderer.setPixelRatio(ratioFor()); resiz
 $('btnPerf').onclick=()=>setPerf(!perfMode); $('perfChk').onchange=ev=>setPerf(ev.target.checked);
 $('ptrKind').onchange=ev=>{controls.pointerKind=ev.target.value;};
 const helpOpen=on=>$('help').classList.toggle('on',on); $('btnHelp').onclick=()=>helpOpen(true); $('helpBtn2').onclick=()=>helpOpen(true); $('helpClose').onclick=()=>helpOpen(false); $('help').onclick=ev=>{if(ev.target===$('help')) helpOpen(false);};
-window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else{ $('viewMenu').classList.remove('on'); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
+window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else{ closeMenus(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
+function setDock(off,noSave){document.body.classList.toggle('dock-off',!!off); const b=$('dockBtn'); b.textContent=off?'\u2039':'\u203A'; b.setAttribute('aria-expanded',off?'false':'true'); if(!noSave){try{localStorage.setItem('c4dock',off?'1':'0');}catch(e){}} if(selIdx>=0) showInfo(selIdx); setTimeout(resize,40);}
+$('dockBtn').onclick=()=>setDock(!document.body.classList.contains('dock-off'));
+{let sv=null; try{sv=localStorage.getItem('c4dock');}catch(e){} if(sv==='1') setDock(true,true);}
+DESK.addEventListener?DESK.addEventListener('change',()=>{if(selIdx>=0) showInfo(selIdx);}):DESK.addListener(()=>{if(selIdx>=0) showInfo(selIdx);});
 $('fab').onclick=()=>document.body.classList.add('panel-open'); $('panelClose').onclick=()=>document.body.classList.remove('panel-open');
 
 
@@ -511,9 +560,8 @@ function stepPLights(now){
   PLIGHTS.forEach((l,k)=>{const b=best[k]; if(!b){l.intensity=0;return;} const i=b[1]; l.position.set(P[i*3],P[i*3+1]+offOf(glow.eis[i])-0.1,P[i*3+2]); l.intensity=lightPreset==='day'?0.35:1.15;});
   wake(300);
 }
-$('btnLight').onclick=ev=>{ev.stopPropagation();$('lightMenu').classList.toggle('on');$('viewMenu').classList.remove('on');};
-$('lightMenu').onclick=ev=>{const b=ev.target.closest('button[data-l]'); if(!b) return; const l=b.dataset.l; if(l==='lamps'){lampsPinned=!lightsOn; setLightsOn(!lightsOn);} else {applyPreset(l);} };
-document.addEventListener('click',ev=>{if(!ev.target.closest('#lightMenu,#btnLight')) $('lightMenu').classList.remove('on');});
+$('btnLight').onclick=ev=>{ev.stopPropagation();toggleMenu('lightMenu','btnLight');};
+$('lightMenu').onclick=ev=>{const b=ev.target.closest('button[data-l]'); if(!b) return; const l=b.dataset.l; if(l==='lamps'){lampsPinned=!lightsOn; setLightsOn(!lightsOn);} else {applyPreset(l);} closeMenus(); };
 applyPreset('day');
 
 /* ---------- loop (renders only while something changes: saves battery on phones) ---------- */

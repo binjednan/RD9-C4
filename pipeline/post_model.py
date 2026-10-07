@@ -232,6 +232,12 @@ if os.path.exists(SITE_JSON):
         M["els"] = els
         print("landscape elements merged:", dict(_cnt_l), "| trees", len(_LD["trees"]), "shrubs", len(_LD["shrubs"]), "small plants", len(_LD["small"]))
 
+if "g_planted_cols_removed_v1" not in FIXES:
+    # the 20 x 140 facade fins are PLANTED columns (S-11 legend PC) that start at the first-floor slab: they do not exist at the ground floor (A102 shows none)
+    import arch_columns as _ACOL
+    _gone_c = _ACOL.remove_planted(els); M["els"] = els
+    FIXES.append("g_planted_cols_removed_v1"); print("ground-floor planted fin columns removed:", len(_gone_c))
+
 if "g_exterior_finishes_removed" not in FIXES:
     # the generic room-kind -> finish mapping put granite floors (F16) and ceilings on the ground level outside the building
     # (drive way, bays, garden). The exterior is now modelled from A102 (pipeline/site.py), so drop them.
@@ -694,7 +700,7 @@ _S = _SUP.Support(els, M["levels"], _wt)
 _cnt = collections.Counter()
 for _i, _e in enumerate(els):
     _a = _e.setdefault("a", {})
-    for _k in ("rod_cm", "hang_cm", "stand_cm", "unsupported"): _a.pop(_k, None)
+    for _k in ("rod_cm", "hang_cm", "stand_cm", "unsupported", "buried"): _a.pop(_k, None)
     if _e["c"][0] in "SA": continue
     _r = _S.analyse(_i); _k = _r["kind"]; _cnt[_k] += 1
     if _k == "lower":                                                  # wall device above the top of its (lower) host wall: bring it down onto the wall
@@ -704,6 +710,7 @@ for _i, _e in enumerate(els):
     if _k == "rod": _a["rod_cm"] = max(8, _r["gap_cm"])
     elif _k == "hang": _a["hang_cm"] = max(8, _r["gap_cm"])
     elif _k == "stand": _a["stand_cm"] = max(8, _r["gap_cm"])
+    elif _k == "buried": _a["buried"] = 1; _a["mount_note"] = "مدفون في طبقة التسوية فوق اللبشة تحت أرضية المواقف (DR-100: مصائد أرضية + تفاصيل التمديد تحت الأرض/التغطية) — لا تعليقات من بلاطة الدور الأرضي؛ المنسوب افتراض"
     elif _k == "float" and _e["l"] == "T" and _e["g"][0] in ("b", "cyl"):
         _dz = LV["R"]["ffl"] - LV["T"]["ffl"]; shift_z(_e, _dz); _e["l"] = "R"; _r2 = _S.analyse(_i)
         if _r2["kind"] in ("ok", "rod"):
@@ -747,6 +754,15 @@ for _e in EXT["els"]:
     els.append(_ne)
 M["els"] = els
 print("extras merged:", len(EXT["els"]), dict(collections.Counter(e["t"] for e in EXT["els"])))
+# a sprinkler head that the support pass called "unsupported" is carried by its drop nipple (extras run after the support pass): clear the flag
+_served = {(_e.get("a") or {}).get("head") for _e in els if _e["t"] == "sprk_drop"}
+_cleared = 0
+for _e in els:
+    if _e["id"] in _served and (_e.get("a") or {}).pop("unsupported", None):
+        _e["a"].pop("mount_note", None); _cleared += 1
+if _cleared:
+    _sp = M["meta"].setdefault("support", {}); _sp["float"] = max(0, _sp.get("float", 0) - _cleared); _sp["ok"] = _sp.get("ok", 0) + _cleared
+print("sprinkler heads now carried by a drop nipple:", _cleared)
 
 # ------------------------------------------------------------------ types
 types = {}
@@ -889,6 +905,7 @@ def mep_kind(e):
     c = e["c"]
     if c == "M.duct": return "duct"
     if c == "M.equip": return "equip"
+    if e.get("t") == "sprk_drop": return None         # 25 mm sprinkler drop nipples are fittings of the branch pipe, not separate runs
     if c == "P.fix": return None                      # sanitary ware is not a pipe (WC / basin / tub taps stand on the finished floor and touch walls by design)
     if c.startswith("P."): return "pipe"
     return None

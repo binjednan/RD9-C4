@@ -62,7 +62,8 @@ function initSamplesUI(ctx){
   $('smpClose').onclick=closePreview; dlg.addEventListener('click',ev=>{if(ev.target===dlg) closePreview();});
   /* fly to the nearest instance: the level is ghosted (other levels hidden) so the sample is visible from a clear angle; a chip ends the mode */
   let chip=null;
-  function endNear(){ LOD.skipSids=null; LOD.invalidate(); setGhost(false); if(chip){chip.remove();chip=null;} wake(); }
+  let rebarPrev=null;
+  function endNear(){ LOD.skipSids=null; if(rebarPrev!==null){LOD.setRebar(rebarPrev); rebarPrev=null;} LOD.invalidate(); setGhost(false); if(chip){chip.remove();chip=null;} wake(); }
   function goTo(id){
     const us=LOD.units.filter(u=>u.sid===id);
     if(!us.length){ /* architecture is never swapped (its details are always in the model): fly to the nearest element of that type instead */
@@ -81,6 +82,7 @@ function initSamplesUI(ctx){
     // near-inspection: samples of the building shell (walls, doors, windows, cladding, structure) are not swapped in, otherwise they stand between the camera and the target
     const occl=/^(ceil_|floor_|slab|raft|site_paving)/; const shell=c=>c==='architecture'||c==='structure';
     LOD.skipSids=shell(smp.cat)?(occl.test(id)?null:new Set(Object.keys(lib.samples).filter(k=>occl.test(k)))):new Set(Object.keys(lib.samples).filter(k=>shell(lib.samples[k].cat)&&k!==id));
+    if(smp.cat==='structure'){ if(rebarPrev===null) rebarPrev=LOD.rebarOn; LOD.setRebar(true); }
     setGhost(true,0.10,[u.lvl],true);
     if(!chip){chip=document.createElement('button'); chip.textContent='إنهاء الفحص القريب ✕'; chip.style.cssText='position:fixed;z-index:30;bottom:78px;left:50%;transform:translateX(-50%);padding:8px 16px;border-radius:20px;border:1px solid #888;background:#fff;color:#111;font:600 13px system-ui;box-shadow:0 2px 8px #0004;cursor:pointer'; chip.onclick=endNear; document.body.appendChild(chip);}
     flyTo(c.clone().addScaledVector(dir,dist),c,1100); toast('اقتربت من '+(smp.name)+' — باقي المبنى شفّاف؛ اضغط «إنهاء الفحص القريب» للعودة',4200); LOD.setEnabled(true); LOD.invalidate(); wake(3000);

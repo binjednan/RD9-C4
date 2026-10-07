@@ -392,14 +392,14 @@ def types():
     }
 
 def build(M):
-    import arch_windows as AW, arch_equipment as AE, fixtures as FXT, arch_curtains as ACU, arch_play as APL
-    W = AW.build(M); Q = AE.build(M); X = FXT.build(M, W["els"]); CU = ACU.build(M); PL = APL.build(M)
+    import arch_windows as AW, arch_equipment as AE, fixtures as FXT, arch_curtains as ACU, arch_play as APL, arch_sprinklers as ASP, arch_floorfill as AFF
+    W = AW.build(M); Q = AE.build(M); X = FXT.build(M, W["els"]); CU = ACU.build(M); PL = APL.build(M); SPD = ASP.build(M); FF = AFF.build(M)
     print("INEX play area: elements", len(PL["els"]), "| E10 rubber m2:", PL["rubber_m2"])
     fur, dropped = FXT.drop_staged_wardrobes(furniture(M), X["els"])
     print("staged wardrobes replaced by the drawn WR1-WR7:", dropped)
-    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + fur + zebra() + stair_rails(M) + W["els"] + Q["els"] + X["els"] + CU["els"] + PL["els"]
-    mats = dict(MATS); mats.update(W["mats"]); mats.update(Q["mats"]); mats.update(X["mats"]); mats.update(CU["mats"]); mats.update(PL["mats"])
-    tp = types(); tp.update(AW.types(M)); tp.update(AE.types()); tp.update(X["types"]); tp.update(ACU.types()); tp.update(PL["types"])
+    els = cornices(M) + ramp_fence() + site_lights(M) + parking_canopies(M) + lifts(M) + parking_details() + curved_sails() + fur + zebra() + stair_rails(M) + W["els"] + Q["els"] + X["els"] + CU["els"] + PL["els"] + SPD + FF["els"]
+    mats = dict(MATS); mats.update(W["mats"]); mats.update(Q["mats"]); mats.update(X["mats"]); mats.update(CU["mats"]); mats.update(PL["mats"]); mats.update(FF["mats"])
+    tp = types(); tp.update(AW.types(M)); tp.update(AE.types()); tp.update(X["types"]); tp.update(ACU.types()); tp.update(PL["types"]); tp.update(ASP.types()); tp.update(AFF.types())
     import landscape_els as LE
     tp.update(LE.types())
     return {"els": els, "mats": mats, "types": tp}

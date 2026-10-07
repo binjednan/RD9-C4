@@ -7,6 +7,7 @@ For every MEP / electrical element it answers "what carries it?":
   * floor zone   (bottom within 6 cm of FFL): a floor / slab / site surface below                  -> carried
                                          pipes on an open roof / floor within 90 cm              -> carried by stands                (a.stand, cm)
   * wall zone    (in between, or wall-mounted device): a wall / column / parapet / cabinet touching (<= 15 cm) -> carried
+  * buried       (pipes below the floor finish that rest on a slab / raft just under them): embedded in the screed, no hangers
 Anything left is reported as "float".  Nothing is moved here: the result is only classification + the length of the missing support."""
 import math, collections, json, os
 from shapely.geometry import Polygon, Point, box
@@ -93,6 +94,10 @@ class Support:
         e = self.els[i]; g = e["g"]; z0, z1 = zr(g)
         if z0 is None: return {"kind": "skip"}
         if g[0] in ("t", "d"):
+            # under the floor finish and resting on a slab / raft just below: buried in the screed (basement drains: DR-100 floor traps + bedding details) -> nothing hangs it
+            ffl_ = self.LV[e["l"]]["ffl"]; pts_ = g[1]
+            if all(p[2] <= ffl_ + 0.015 for p in pts_) and all(self.floor_gap(Point(p[0], p[1]), p[2], 0.35, 3) is not None for p in pts_[:: max(1, len(pts_) // 4)]):
+                return {"kind": "buried"}
             gaps = []; fl = []; walls = 0
             for p in g[1]:
                 P = Point(p[0], p[1])

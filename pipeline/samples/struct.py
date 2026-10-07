@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """structural samples with the reinforcement of the column / wall schedules (STR p25-26 'COLUMN SCHEDULE 1/2', S-20), shown inside a ghost concrete body.
 Bars: number and diameter from the schedule, spread evenly along the inside perimeter; links at the schedule spacing (10 cm in the end zones, 15 cm mid-height).
-Cover 40 mm is a typical value (not stated in the extracted notes). Beams / slabs / raft details are typical sections from the general details (S-22, S-8)."""
+Cover 40 mm is a typical value (not stated in the extracted notes). All bars are round cylinders; every link is a hoop of four round legs whose outer face sits at the cover, with the main bars inside it (no solid plates). Beams / slabs / raft details are typical sections from the general details (S-22, S-8)."""
 from .lib import *
 
 REBAR = "#6b4a2f"; TIE = "#7a5a3a"
@@ -11,19 +11,21 @@ def _s(N):          # distance along the perimeter for bar i
     return f"((i+0.5)*P/{N})"
 
 def column(N, db, link, sp_mid=15, sp_end=10, cover=4.0):
+    # all bars are ROUND (cylinders): main bars inside the link hoops, hoops = four round legs; the outer face of a hoop sits at the concrete cover
     s = _s(N)
     x = f"({s}<Wi ? -Wi/2+{s} : ({s}<Wi+Di ? Wi/2 : ({s}<2*Wi+Di ? Wi/2-({s}-Wi-Di) : -Wi/2)))"
     z = f"({s}<Wi ? -Di/2 : ({s}<Wi+Di ? -Di/2+({s}-Wi) : ({s}<2*Wi+Di ? Di/2 : Di/2-({s}-2*Wi-Di))))"
     r = db / 20.0; lr = link / 20.0
     P = [box(("-W/2", 0, "-D/2"), ("W/2", "H", "D/2"), "#b4b4ae", "ghost", n=f"جسم الخرسانة المسلّحة (شفاف لإظهار التسليح) — Fcu 40")]
-    P += [rep(cyl((x, 3.0, z), r, "H-6", REBAR, "metal", seg=10, n=f"قضيب رئيسي T{db} — {N} قضيبًا حسب الجدول"), N, (0, 0, 0))]
-    # links: end zones (bottom, top) every sp_end, middle every sp_mid; each link = 4 bars forming the rectangle
-    cw, cd = f"(W/2-{cover}+{lr})", f"(D/2-{cover}+{lr})"
+    P += [rep(cyl((x, 3.0, z), r, "H-6", REBAR, "metal", seg=10, n=f"قضيب رئيسي مستدير T{db} — {N} قضيبًا حسب الجدول"), N, (0, 0, 0))]
+    # links: end zones (bottom, top) every sp_end, middle every sp_mid; each link = a hoop of 4 round legs (two along x, two along z)
+    hx, hz = f"(W/2-{cover}-{lr})", f"(D/2-{cover}-{lr})"
     def ring(y_expr, step_expr, n_expr, nm):
-        return [rep(box((f"-{cw}", f"{y_expr}", f"-{cd}"), (f"{cw}", f"({y_expr})+{2*lr}", f"-{cd}+{2*lr}"), TIE, "metal", n=nm), n_expr, (0, step_expr, 0)),
-                rep(box((f"-{cw}", f"{y_expr}", f"{cd}-{2*lr}"), (f"{cw}", f"({y_expr})+{2*lr}", f"{cd}"), TIE, "metal"), n_expr, (0, step_expr, 0)),
-                rep(box((f"-{cw}", f"{y_expr}", f"-{cd}"), (f"-{cw}+{2*lr}", f"({y_expr})+{2*lr}", f"{cd}"), TIE, "metal"), n_expr, (0, step_expr, 0)),
-                rep(box((f"{cw}-{2*lr}", f"{y_expr}", f"-{cd}"), (f"{cw}", f"({y_expr})+{2*lr}", f"{cd}"), TIE, "metal"), n_expr, (0, step_expr, 0))]
+        y = f"({y_expr})+{lr}"
+        return [rep(cyl((f"-{hx}", y, f"-{hz}"), lr, f"2*{hx}", TIE, "metal", ax="x", seg=8, n=nm), n_expr, (0, step_expr, 0)),
+                rep(cyl((f"-{hx}", y, f"{hz}"), lr, f"2*{hx}", TIE, "metal", ax="x", seg=8), n_expr, (0, step_expr, 0)),
+                rep(cyl((f"-{hx}", y, f"-{hz}"), lr, f"2*{hz}", TIE, "metal", ax="z", seg=8), n_expr, (0, step_expr, 0)),
+                rep(cyl((f"{hx}", y, f"-{hz}"), lr, f"2*{hz}", TIE, "metal", ax="z", seg=8), n_expr, (0, step_expr, 0))]
     He = "min(60,H/3)"
     P += ring("4", f"{sp_end}", f"round({He}/{sp_end})", f"كانة T{link} كل {sp_end} سم (منطقة النهاية السفلية)")
     P += ring(f"H-4-{He}", f"{sp_end}", f"round({He}/{sp_end})", f"كانة T{link} كل {sp_end} سم (منطقة النهاية العلوية)")
@@ -31,25 +33,37 @@ def column(N, db, link, sp_mid=15, sp_end=10, cover=4.0):
     return P
 
 def wall_rc(db, link, sp=15, cover=4.0):
-    # two curtains of vertical bars (both faces) + horizontal bars, ghost concrete body. W = long side, D = thickness
-    lr = link / 20.0
+    # two curtains (both faces): horizontal bars in the outer layer, vertical bars inside them, cross-links every 2nd bar both ways; all ROUND bars. W = long side, D = thickness
+    rv = db / 20.0; rh = link / 20.0; dh = link / 10.0
+    zh = f"(D/2-{cover}-{rh})"                      # centre line of a horizontal bar (outer layer)
+    zv = f"(D/2-{cover}-{dh}-{rv})"                 # centre line of a vertical bar (inside the horizontals)
+    xv = cover + dh + rv                            # first vertical bar from the wall end
+    nvert = f"floor((W-{2*xv})/{sp})+1"
     P = [box(("-W/2", 0, "-D/2"), ("W/2", "H", "D/2"), "#b4b4ae", "ghost", n="جسم الجدار الخرساني المسلّح (شفاف)"),
-         rep(cyl((f"-W/2+{cover}", 3.0, f"-D/2+{cover}"), db / 20.0, "H-6", REBAR, "metal", seg=10, n=f"قضيب رأسي T{db} كل {sp} سم — الوجه الأول"), f"floor((W-{2*cover})/{sp})+1", (sp, 0, 0)),
-         rep(cyl((f"-W/2+{cover}", 3.0, f"D/2-{cover}"), db / 20.0, "H-6", REBAR, "metal", seg=10, n=f"قضيب رأسي T{db} كل {sp} سم — الوجه الثاني"), f"floor((W-{2*cover})/{sp})+1", (sp, 0, 0)),
-         rep(box((f"-W/2+{cover}", 6, f"-D/2+{cover-lr}"), (f"W/2-{cover}", f"6+{2*lr}", f"-D/2+{cover+lr}"), TIE, "metal", n=f"قضيب أفقي T{link} كل {sp} سم — الوجه الأول"), f"floor((H-12)/{sp})", (0, sp, 0)),
-         rep(box((f"-W/2+{cover}", 6, f"D/2-{cover+lr}"), (f"W/2-{cover}", f"6+{2*lr}", f"D/2-{cover-lr}"), TIE, "metal", n=f"قضيب أفقي T{link} كل {sp} سم — الوجه الثاني"), f"floor((H-12)/{sp})", (0, sp, 0)),
-         rep(box((f"-W/2+{cover}", 8, f"-D/2+{cover}"), (f"-W/2+{cover+2*lr}", f"8+{2*lr}", f"D/2-{cover}"), TIE, "metal", n=f"رباط عرضي T{link} (Link) بين الوجهين"), f"floor((W-{2*cover})/{sp*2})+1", (sp * 2, 0, 0))]
+         rep(cyl((f"-W/2+{xv}", 3.0, f"-{zv}"), rv, "H-6", REBAR, "metal", seg=10, n=f"قضيب رأسي مستدير T{db} كل {sp} سم — الوجه الأول"), nvert, (sp, 0, 0)),
+         rep(cyl((f"-W/2+{xv}", 3.0, f"{zv}"), rv, "H-6", REBAR, "metal", seg=10, n=f"قضيب رأسي مستدير T{db} كل {sp} سم — الوجه الثاني"), nvert, (sp, 0, 0)),
+         rep(cyl((f"-W/2+{cover}", 6, f"-{zh}"), rh, f"W-{2*cover}", TIE, "metal", ax="x", seg=8, n=f"قضيب أفقي مستدير T{link} كل {sp} سم — الوجه الأول"), f"floor((H-12)/{sp})", (0, sp, 0)),
+         rep(cyl((f"-W/2+{cover}", 6, f"{zh}"), rh, f"W-{2*cover}", TIE, "metal", ax="x", seg=8, n=f"قضيب أفقي مستدير T{link} كل {sp} سم — الوجه الثاني"), f"floor((H-12)/{sp})", (0, sp, 0))]
+    for k in range(20):                             # cross-links: one row every 2*sp cm of height (up to 6 m), one per second vertical bar
+        P.append(rep(cyl((f"-W/2+{xv}", 6 + k * sp * 2, f"-{zh}"), rh, f"2*{zh}", TIE, "metal", ax="z", seg=6, n=f"رباط عرضي T{link} (Link) بين الوجهين" if k == 0 else None),
+                     f"(H-12>={k * sp * 2}) ? floor((W-{2*xv})/{sp * 2})+1 : 0", (sp * 2, 0, 0)))
     return P
 
 def beam():
     # typical beam: 2T20 top + 2T20 bottom, T10 links @10 near the supports (L=100 cm) and @20 elsewhere (S-22: punching / strip details)
-    c = 3.5; lr = 0.5
+    # every link is a RECTANGULAR HOOP of four round bars (not a solid plate) and the main bars sit inside it; the hoop's outer face is at the cover c
+    c = 3.5; dl = 1.0; lr = dl / 2; rb = 1.0
+    zb = f"(D/2-{c}-{dl}-{rb})"
     P = [box(("-W/2", 0, "-D/2"), ("W/2", "H", "D/2"), "#b4b4ae", "ghost", n="جسم الجسر الخرساني (شفاف)")]
     for sz in (-1, 1):
-        P += [cyl(("-W/2+3", f"{c}", f"{sz}*(D/2-{c+0.5})"), 1.0, "W-6", REBAR, "metal", ax="x", seg=10, n="قضيب سفلي T20 — تفصيل نموذجي (S-22)"), cyl(("-W/2+3", f"H-{c}", f"{sz}*(D/2-{c+0.5})"), 1.0, "W-6", REBAR, "metal", ax="x", seg=10, n="قضيب علوي T20")]
-    cw, ch = f"(D/2-{c-0.3})", f"(H/2-{c-0.3})"
+        P += [cyl(("-W/2+3", f"{c + dl + rb}", f"{sz}*{zb}"), rb, "W-6", REBAR, "metal", ax="x", seg=10, n="قضيب سفلي مستدير T20 — تفصيل نموذجي (S-22)"),
+              cyl(("-W/2+3", f"H-{c + dl + rb}", f"{sz}*{zb}"), rb, "W-6", REBAR, "metal", ax="x", seg=10, n="قضيب علوي مستدير T20")]
+    hz = f"(D/2-{c}-{lr})"
     def link(x0, n, step, nm):
-        return [rep(box((f"{x0}", f"{c}-0.3", f"-{cw}"), (f"{x0}+1.0", f"H-{c}+0.3", f"{cw}"), TIE, "metal", n=nm), n, (step, 0, 0))]
+        return [rep(cyl((f"{x0}", f"{c + lr}", f"-{hz}"), lr, f"2*{hz}", TIE, "metal", ax="z", seg=8, n=nm), n, (step, 0, 0)),
+                rep(cyl((f"{x0}", f"H-{c + lr}", f"-{hz}"), lr, f"2*{hz}", TIE, "metal", ax="z", seg=8), n, (step, 0, 0)),
+                rep(cyl((f"{x0}", f"{c + lr}", f"-{hz}"), lr, f"H-{2 * (c + lr)}", TIE, "metal", seg=8), n, (step, 0, 0)),
+                rep(cyl((f"{x0}", f"{c + lr}", f"{hz}"), lr, f"H-{2 * (c + lr)}", TIE, "metal", seg=8), n, (step, 0, 0))]
     P += link("-W/2+5", "round(min(100,W/3)/10)", 10, "كانة T10 كل 10 سم (منطقة الدعامات 100 سم)")
     P += link("W/2-5-min(100,W/3)", "round(min(100,W/3)/10)", 10, "كانة T10 كل 10 سم (منطقة الدعامة الثانية)")
     P += link("-W/2+5+min(100,W/3)+20", "max(0,floor((W-10-2*min(100,W/3)-20)/20))", 20, "كانة T10 كل 20 سم (الوسط)")
@@ -77,7 +91,7 @@ def make():
         add(sample(f"col_{k}", f"عمود {k} ({w}×{d} سم) — {n}T{db} وكانات T{lk}", f"Column {k} reinforcement detail", "structure", column(n, db, lk, sp_mid, 10), place={"mode": "prism", "anchor": "bottom"}, lod=6.0, conf="doc", src=SRC_C,
                    facts=[["المقطع", f"{w} × {d} سم"], ["التسليح الرئيسي", f"{n} T{db}"], ["الكانات", f"T{lk} كل 10–15 سم"], ["الخرسانة", "Fcu 40 N/mm² / Fy 460"]],
                    asm=["توزيع القضبان على المحيط بالتساوي (الجدول يعرض الترتيب بالرسم، وقد تختلف أماكن القضبان الفردية)", "الغطاء الخرساني 40 مم: قياسي", "طول التراكب (Lap) وبداية القضبان: غير معروضة", "العمود يُعرض شفافًا لإظهار التسليح"],
-                   vars={"c": 4.5, "Wi": "W-2*c", "Di": "D-2*c", "P": "2*(Wi+Di)"}, dims={"W": w, "D": d, "H": 320}))
+                   vars={"cc": round(4.0 + lk / 10.0 + db / 20.0, 3), "Wi": "W-2*cc", "Di": "D-2*cc", "P": "2*(Wi+Di)"}, dims={"W": w, "D": d, "H": 320}))
     out["col_column"] = dict(out["col_C7"]); out["col_column"]["name"] = "عمود (غير مصنّف) — يُعرض كما C7"; out["col_column"]["asm"] = out["col_C7"]["asm"] + ["لا وسم لهذا العمود في المخطط الإنشائي؛ عُرض بتسليح C7 (20×140) لتطابق المقطع — يحتاج تأكيدًا"]
     for k, (db, lk, L) in WALLS.items():
         add(sample(f"col_{k}", f"جدار خرساني {k} — T{db}@15 + T{lk}@15", f"RC wall {k} reinforcement detail", "structure", wall_rc(db, lk, 15), place={"mode": "prism", "anchor": "bottom"}, lod=7.0, conf="doc", src=SRC_C,

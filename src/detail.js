@@ -128,7 +128,7 @@ function mirrorPart(p,v,axis){const q=Object.assign({},p); const k=axis==='x'?0:
 /* ---------- engine ---------- */
 class SampleLOD{
   constructor(ctx){
-    this.c=ctx; this.lib=window.__SAMPLES__; this.enabled=true; this.active=new Map(); this.units=[]; this.dirty=true; this.lastPos=new THREE.Vector3(1e9,0,0); this.lastT=0; this.entries=new Map(); this.stat={active:0,units:0,types:0};
+    this.c=ctx; this.lib=window.__SAMPLES__; this.enabled=true; this.active=new Map(); this.units=[]; this.dirty=true; this.lastPos=new THREE.Vector3(1e9,0,0); this.lastT=0; this.entries=new Map(); this.stat={active:0,units:0,types:0}; this.rebarOn=false; this.structSids=new Set();
     if(!this.lib||!this.lib.samples) {this.enabled=false;return;}
     this.root=new THREE.Group(); this.root.renderOrder=5; ctx.scene.add(this.root);
     this.mats={}; const cls=this.lib.classes||{};
@@ -136,8 +136,11 @@ class SampleLOD{
       if(c.basic) m=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
       else m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:c.rough!==undefined?c.rough:0.8,metalness:c.metal||0,side:THREE.DoubleSide,transparent:c.opacity!==undefined&&c.opacity<1,opacity:c.opacity!==undefined?c.opacity:1,depthWrite:!(c.opacity!==undefined&&c.opacity<1)});
       this.mats[k]=m;}
+    for(const k of Object.keys(this.lib.samples)) if(this.lib.samples[k].cat==='structure') this.structSids.add(k);
     this.index();
   }
+  /* reinforcement (structure samples: columns, walls, beams, piles) is shown only on request: concrete stays solid when the camera comes close */
+  setRebar(on){this.rebarOn=!!on; this.dirty=true; this.invalidate();}
   ruleFor(e){
     const R=this.rules; for(const r of R){ if(r.c&&r.c!==e.c) continue; if(r.t){ if(r.tp){ if(!(e.t&&e.t.startsWith(r.tp))) continue; } else if(r.t!==e.t) continue; } return r.s; }
     return null;
@@ -239,7 +242,7 @@ class SampleLOD{
     if(L) for(const ui of L){const u=this.units[ui]; const bb=u.bb; const dx=Math.max(bb[0]-cam.x,0,cam.x-bb[3]),dy=Math.max(bb[1]-cam.y,0,cam.y-bb[4]),dz=Math.max(bb[2]-cam.z,0,cam.z-bb[5]); const d2=dx*dx+dy*dy+dz*dz; if(d2>u.R*u.R) continue; cand.push([d2,ui]);}
     cand.sort((a,b)=>a[0]-b[0]);
     const next=new Map(); const MAXU=this.maxUnits||700; let nPath=0;
-    for(const [d2,ui] of cand){ if(next.size>=MAXU) break; const u=this.units[ui]; if(u.mode==='path'){ if(nPath>=160) continue; nPath++; } if(this.skipSids&&this.skipSids.has(u.sid)) continue; if(!c.unitVisible(u)) continue; next.set(ui,u); }
+    for(const [d2,ui] of cand){ if(next.size>=MAXU) break; const u=this.units[ui]; if(u.mode==='path'){ if(nPath>=160) continue; nPath++; } if(this.skipSids&&this.skipSids.has(u.sid)) continue; if(!this.rebarOn&&this.structSids.has(u.sid)) continue; if(!c.unitVisible(u)) continue; next.set(ui,u); }
     let changed=false, pathChanged=false;
     for(const [ui,u] of this.active){ if(!next.has(ui)){this.hide(u,false);changed=true; if(u.mode==='path') pathChanged=true;} }
     for(const [ui,u] of next){ if(!this.active.has(ui)){this.hide(u,true);changed=true; if(u.mode==='path') pathChanged=true;} }

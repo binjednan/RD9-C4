@@ -8,12 +8,20 @@
 button,input,select{font:inherit;color:inherit}
 #app{display:grid;grid-template-columns:minmax(300px,340px) 1fr;height:100vh;height:100dvh}
 #side{background:var(--pn);border-inline-end:1px solid var(--bd);display:flex;flex-direction:column;min-height:0;min-width:0}
-#tabs{display:flex;border-bottom:1px solid var(--bd);background:#f8fafc;flex:none;overflow-x:auto;scrollbar-width:none}#tabs::-webkit-scrollbar{display:none}
-.tab{flex:1 0 auto;padding:11px 9px;text-align:center;cursor:pointer;font-size:12.5px;color:var(--mu);border-bottom:2px solid transparent;user-select:none;white-space:nowrap}
-.tab.on{color:var(--ac);border-color:var(--ac);font-weight:600;background:#fff}
-.pane{display:none;overflow:auto;padding:10px;flex:1;min-height:0;-webkit-overflow-scrolling:touch}.pane.on{display:block}
+#qbar{flex:none;padding:8px 10px;border-bottom:1px solid var(--bd);background:#fff}#qbar input{width:100%;padding:8px 11px;border:1px solid var(--bd);border-radius:10px;background:#f6f8fb;font-size:13px}#qbar input:focus{outline:2px solid #1f6feb55;background:#fff}
+#secnav{flex:none;display:flex;gap:5px;padding:6px 10px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bd);background:#fff}#secnav::-webkit-scrollbar{display:none}#secnav button{flex:0 0 auto;border:1px solid var(--bd);background:#f6f8fb;border-radius:14px;padding:4px 11px;font-size:12px;cursor:pointer;color:var(--mu);white-space:nowrap}#secnav button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+#acc{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;overscroll-behavior:contain}
+.acc{border-bottom:1px solid var(--bd)}
+.acc-h{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:8px;width:100%;padding:11px 12px;background:#f8fafc;border:0;cursor:pointer;font-size:13px;font-weight:600;text-align:start;color:var(--tx);min-height:42px}
+.acc-h:hover{background:#eef3fb}.acc.on>.acc-h{background:#fff;color:var(--ac);box-shadow:0 1px 0 var(--bd)}
+.acc-n{font-size:11px;font-weight:500;color:var(--mu);background:#e9eef5;border-radius:9px;padding:1px 8px}.acc-n:empty{display:none}.acc.on .acc-n{background:#e3edfb;color:var(--ac)}
+.acc-c{margin-inline-start:auto;font-size:11px;color:var(--mu);transition:transform .22s}.acc.on .acc-c{transform:rotate(180deg)}
+.acc-b{display:none}.acc.on>.acc-b{display:block;animation:accIn .18s ease-out}
+@keyframes accIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pane{display:block;padding:8px 10px 14px;overflow:visible}
 #view{position:relative;overflow:hidden;min-width:0}canvas{display:block;touch-action:none}
 h3{margin:12px 0 6px;font-size:13px;color:var(--mu);font-weight:600} label{display:block;font-size:13px;padding:3px 0;cursor:pointer}
+.lay .subs{display:none}.lay.open .subs{display:block}.lay.open button.chv{transform:rotate(180deg)}button.chv{margin-inline-start:4px;min-width:26px}
 .sechead{display:flex;align-items:center;justify-content:space-between;gap:8px}.sechead h3{margin:12px 0 6px}
 .lay{border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;padding:4px 8px}.lh{font-size:14px;display:flex;align-items:center;gap:4px}.subs{padding-inline-start:22px}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 2px} i{font-style:normal;color:var(--mu);font-size:11px;float:left}
@@ -24,20 +32,29 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 .sop{display:none;align-items:center;gap:6px;margin:0 0 2px;font-size:11px;color:var(--mu)}.sop input{flex:1;min-width:0}.lay.subop .sop{display:flex}
 .lay.subop .subs label.sl{padding-bottom:0}
 #hud{position:absolute;top:calc(8px + var(--sa-t));left:calc(8px + var(--sa-l));background:#fffc;border-radius:6px;padding:4px 8px;font-size:12px;direction:ltr;z-index:5}
-#bar{position:absolute;top:calc(8px + var(--sa-t));right:calc(8px + var(--sa-r));display:flex;gap:6px;z-index:8;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 150px)}
+#bar{position:absolute;top:calc(8px + var(--sa-t));right:calc(8px + var(--sa-r));display:flex;gap:6px;z-index:8;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 270px)}
 #bar button{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:7px 11px;cursor:pointer;font-size:12.5px;box-shadow:0 1px 4px #0001;min-height:34px}
 #bar button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-#viewMenu,#lightMenu{display:none;position:absolute;top:calc(48px + var(--sa-t));right:calc(8px + var(--sa-r));background:#fff;border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);padding:4px;z-index:9;min-width:150px}
-#viewMenu.on,#lightMenu.on{display:block}#viewMenu button,#lightMenu button{display:block;width:100%;text-align:start;border:0;background:none;padding:9px 12px;border-radius:7px;cursor:pointer;font-size:13px;min-height:40px}#viewMenu button:hover,#lightMenu button:hover{background:#eef3fb}#lightMenu button.on{background:#e3edfb;font-weight:600}#lightMenu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
-#modes{position:absolute;bottom:calc(12px + var(--sa-b));left:50%;transform:translateX(-50%);display:flex;gap:2px;background:#fffffff2;border:1px solid var(--bd);border-radius:24px;padding:3px;box-shadow:var(--sh);z-index:7;max-width:calc(100% - 16px)}
+#viewMenu,#lightMenu,#moreMenu{display:none;position:absolute;top:calc(48px + var(--sa-t));right:calc(8px + var(--sa-r));background:#fff;border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);padding:4px;z-index:12;min-width:170px}
+#viewMenu.on,#lightMenu.on,#moreMenu.on{display:block}#viewMenu button,#lightMenu button,#moreMenu button{display:block;width:100%;text-align:start;border:0;background:none;padding:9px 12px;border-radius:7px;cursor:pointer;font-size:13px;min-height:40px}#viewMenu button:hover,#lightMenu button:hover,#moreMenu button:hover{background:#eef3fb}#lightMenu button.on,#moreMenu button.on{background:#e3edfb;font-weight:600}#lightMenu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
+#modes{position:absolute;bottom:calc(12px + var(--sa-b));left:50%;transform:translateX(-50%);display:none;gap:2px;background:#fffffff2;border:1px solid var(--bd);border-radius:24px;padding:3px;box-shadow:var(--sh);z-index:7;max-width:calc(100% - 16px)}
 #modes button{border:0;background:none;border-radius:20px;padding:9px 14px;font-size:13px;cursor:pointer;white-space:nowrap;min-height:40px;color:var(--tx)}
 #modes button.on{background:var(--ac);color:#fff;font-weight:600}
 #modes .sep{width:1px;background:var(--bd);margin:6px 2px}
-#info{display:none;position:absolute;left:10px;top:calc(48px + var(--sa-t));bottom:10px;width:330px;overflow:auto;background:var(--pn);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);padding:10px 12px;z-index:6;-webkit-overflow-scrolling:touch}
+body.modes-on #modes{display:flex}
+#info{display:none;position:absolute;left:10px;top:calc(52px + var(--sa-t));width:300px;max-height:min(62%,560px);overflow:auto;background:var(--pn);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);padding:0 12px 8px;z-index:6;-webkit-overflow-scrolling:touch}
 #info.on{display:block}
-.ih{display:flex;justify-content:space-between;align-items:center;font-size:15px;gap:8px}.ih button{border:0;background:#eef1f5;border-radius:50%;width:32px;height:32px;cursor:pointer;flex:none}
-#info h4{margin:12px 0 4px;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd);padding-bottom:2px}
-#info table{width:100%;border-collapse:collapse;font-size:12.5px}#info th{text-align:start;color:var(--mu);font-weight:500;padding:3px 0;width:38%;vertical-align:top}#info td{padding:3px 0;word-break:break-word}
+#view:has(#isoBar.on) #info{top:calc(98px + var(--sa-t));max-height:min(56%,520px)}
+#infoDock{display:none;flex:0 1 auto;max-height:46%;min-height:0;overflow:auto;background:#fff;border-bottom:2px solid var(--ac);padding:0 12px 6px;-webkit-overflow-scrolling:touch}
+#infoDock.on{display:block}
+.ih{position:sticky;top:0;z-index:2;background:#fff;display:flex;justify-content:space-between;align-items:center;font-size:14.5px;gap:8px;padding:8px 0 4px}.ih b{min-width:0;overflow-wrap:anywhere}
+.ihb{display:flex;gap:4px;flex:none}.ih button{border:0;background:#eef1f5;border-radius:50%;width:30px;height:30px;cursor:pointer;flex:none;font-size:15px;line-height:1;padding:0}
+.isub{font-size:11.5px;color:var(--mu);margin:0 0 2px;display:flex;flex-wrap:wrap;gap:3px 8px;align-items:center}
+.infoD.min .ibody{display:none}.infoD.min #icol{transform:rotate(180deg)}
+.idet{border-bottom:1px solid var(--bd)}.idet>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;padding:7px 0;font-size:12px;font-weight:600;color:var(--mu);min-height:32px}
+.idet>summary::-webkit-details-marker{display:none}.idet>summary::before{content:'\25C2';font-size:10px;transition:transform .15s}.idet[open]>summary::before{transform:rotate(-90deg)}
+.idet>:not(summary){margin-bottom:6px}
+.infoD table{width:100%;border-collapse:collapse;font-size:12.5px}.infoD th{text-align:start;color:var(--mu);font-weight:500;padding:3px 0;width:38%;vertical-align:top}.infoD td{padding:3px 0;word-break:break-word}
 code{background:#eef1f5;border-radius:4px;padding:0 4px;font-size:11.5px;direction:ltr;unicode-bidi:isolate}
 .tags span{display:inline-block;background:#eef1f5;border-radius:10px;padding:1px 9px;margin:4px 4px 0 0;font-size:11.5px}
 .adv{background:#fff8e6;border:1px dashed #d4a72c;border-radius:8px;padding:6px 10px;margin-top:8px;font-size:12px}.adv ul{margin:4px 0 0;padding-inline-start:18px}
@@ -45,7 +62,7 @@ code{background:#eef1f5;border-radius:4px;padding:0 4px;font-size:11.5px;directi
 .src ul{margin:4px 0 0;padding-inline-start:18px;color:#3a4656;font-size:12px}.cf{display:inline-block;border-radius:10px;padding:1px 9px;font-size:11.5px;font-weight:600}.muted{color:var(--mu);font-size:11.5px;margin-top:6px}
 .uh{margin:10px 0 4px;font-weight:600;color:var(--mu)}.ur{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .ub{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:6px 4px;cursor:pointer;text-align:center;min-height:44px}.ub b{display:block;font-size:12.5px}.ub i{float:none;font-size:10.5px;display:block}.ub.sel,.ub:hover{border-color:var(--ac);background:#eaf2ff}
-#isoBar{display:none;position:absolute;top:calc(8px + var(--sa-t));left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--ac);border-radius:10px;padding:6px 12px;z-index:10;box-shadow:var(--sh);gap:10px;align-items:center;max-width:92vw}
+#isoBar{display:none;position:absolute;top:calc(52px + var(--sa-t));left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--ac);border-radius:10px;padding:6px 12px;z-index:10;box-shadow:var(--sh);gap:10px;align-items:center;max-width:92vw}
 #isoBar.on{display:flex} #isoBar button{border:0;background:var(--ac);color:#fff;border-radius:6px;padding:7px 11px;cursor:pointer;white-space:nowrap;min-height:34px}
 #fab{display:none;position:fixed;bottom:calc(14px + var(--sa-b));left:50%;transform:translateX(-50%);z-index:30;border:0;background:var(--ac);color:#fff;border-radius:22px;padding:12px 22px;font-size:14px;font-weight:600;box-shadow:0 6px 20px #1f6feb66;min-height:44px}
 #panelHead{display:none}
@@ -68,9 +85,12 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 #help .hb{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:86dvh;overflow:auto;padding:14px 18px;box-shadow:var(--sh)}
 #help h4{margin:12px 0 4px;font-size:13px}#help ul{margin:0;padding-inline-start:18px;line-height:1.7;font-size:12.5px}#help kbd{background:#eef1f5;border:1px solid var(--bd);border-radius:4px;padding:0 5px;font-size:11.5px;direction:ltr;unicode-bidi:isolate}
 #help .hh{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:15px}#help .hh button{border:0;background:#eef1f5;border-radius:50%;width:34px;height:34px;cursor:pointer}
-#toast{position:absolute;top:calc(56px + var(--sa-t));left:50%;transform:translateX(-50%);background:#1c2430ee;color:#fff;border-radius:10px;padding:8px 14px;font-size:12.5px;z-index:20;display:none;max-width:88%;text-align:center}#toast.on{display:block}
+#toast{position:absolute;bottom:calc(72px + var(--sa-b));left:50%;transform:translateX(-50%);background:#1c2430ee;color:#fff;border-radius:10px;padding:8px 14px;font-size:12.5px;z-index:20;display:none;max-width:88%;text-align:center}#toast.on{display:block}
+#dockBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:8;width:18px;height:64px;border:1px solid var(--bd);border-right:0;border-radius:10px 0 0 10px;background:#fff;color:var(--mu);cursor:pointer;box-shadow:var(--sh);padding:0;font-size:15px;line-height:1}#dockBtn:hover{background:#eef3fb;color:var(--ac)}
+@media (min-width:861px){body.dock-off #app{grid-template-columns:1fr}body.dock-off #side{display:none}}
+@media (max-width:1000px){#hudm{display:none}#bar{max-width:calc(100% - 130px)}}
 @media (min-width:1600px){#app{grid-template-columns:380px 1fr}body{font-size:14px}}
-@media (pointer:coarse){label{min-height:34px;display:flex;align-items:center;gap:6px}input[type=checkbox]{width:20px;height:20px}input[type=range]{height:30px}.tab{padding:13px 10px}button.mini{min-height:34px;padding:4px 12px}}
+@media (pointer:coarse){label{min-height:34px;display:flex;align-items:center;gap:6px}input[type=checkbox]{width:20px;height:20px}input[type=range]{height:30px}.acc-h{padding:14px 12px;min-height:48px}button.mini{min-height:34px;padding:4px 12px}}
 @media (max-width:860px){
   #app{display:block}
   #view{position:absolute;inset:0}
@@ -89,7 +109,9 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
   body.info-open #fab{display:none}
   #isoBar{top:calc(6px + var(--sa-t));left:auto;right:calc(6px + var(--sa-r));transform:none;max-width:calc(100% - 110px);font-size:12px;padding:5px 8px;gap:6px}#isoBar b{font-size:12px}
   .ur{grid-template-columns:repeat(2,1fr)}
-  #toast{top:calc(96px + var(--sa-t))}
+  #toast{top:calc(96px + var(--sa-t));bottom:auto}
+  #dockBtn{display:none}
+  #infoDock{display:none!important}
 }
 @media (max-width:860px) and (orientation:landscape){
   #side{height:92dvh;left:auto;width:min(420px,56vw);border-radius:18px 0 0 18px}
@@ -116,30 +138,35 @@ details#ctl .row{display:flex;align-items:center;justify-content:space-between;g
 @media (max-width:760px){.spbody{flex-direction:column}#smpCanvas{min-height:260px;flex:none;height:42dvh}#smpInfo{max-width:none;min-width:0}}
 </style></head><body>
 <div id="app"><div id="side"><div id="panelHead"><span>القوائم والتحكم</span><button id="panelClose" aria-label="إغلاق">✕</button></div>
-<div id="tabs" role="tablist"><div class="tab on" data-pane="pLayers">الأقسام</div><div class="tab" data-pane="pUnits">الوحدات</div><div class="tab" data-pane="pSearch">بحث</div><div class="tab" data-pane="pMat">المواد</div><div class="tab" data-pane="pClash">التعارضات</div><div class="tab" data-pane="pSamp">العينات</div></div>
-<div class="pane on" id="pLayers"><div class="sechead"><h3>الأقسام: إظهار / إخفاء والشفافية</h3><button class="mini" id="opReset" title="يعيد شفافية كل الأقسام إلى 100%">إعادة ضبط الشفافية</button></div><div id="layers"></div><div id="stageBox"></div>
+<div id="qbar"><input id="q" type="search" placeholder="بحث سريع: Tag أو ID أو اسم أو غرفة…" autocomplete="off" enterkeyhint="search"></div>
+<div id="secnav" role="navigation" aria-label="أقسام اللوحة"><button type="button" data-go="pLayers">الأقسام</button><button type="button" data-go="pUnits">الوحدات</button><button type="button" data-go="pSearch">البحث</button><button type="button" data-go="pMat">المواد</button><button type="button" data-go="pClash">التعارضات</button><button type="button" data-go="pSamp">العينات</button></div>
+<div id="infoDock" class="infoD" aria-live="polite"></div>
+<div id="acc"><section class="acc on" data-sec="pLayers"><button class="acc-h" type="button" aria-expanded="true"><span class="acc-t">الأقسام والطوابق</span><span class="acc-n" id="accN_pLayers"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pLayers"><div class="sechead"><h3>الأقسام: إظهار / إخفاء والشفافية</h3><button class="mini" id="opReset" title="يعيد شفافية كل الأقسام إلى 100%">إعادة ضبط الشفافية</button></div><div id="layers"></div><div id="stageBox"></div>
 <h3>الطوابق</h3><div id="levels"></div>
 <h3>قص أفقي <span id="clipYV">بدون</span></h3><input id="clipY" type="range" min="-4" max="30" step="0.1" value="30"><h3>قص طولي <span id="clipXV">بدون</span></h3><input id="clipX" type="range" min="0" max="46" step="0.1" value="46"><h3>تفكيك الطوابق</h3><input id="expl" type="range" min="0" max="60" value="0">
 <details id="ctl"><summary>التحكم والأداء</summary>
 <div class="row"><span>جهاز التأشير (للتمرير والتقريب)</span><select id="ptrKind"><option value="auto">تلقائي</option><option value="mouse">ماوس</option><option value="pad">تراك باد</option></select></div>
 <div class="row"><span>وضع الأداء (دقة أقل لأجهزة ضعيفة)</span><input type="checkbox" id="perfChk"></div>
-<div class="row"><span>استبدال المجسم بعينة تفصيلية عند التقريب</span><input type="checkbox" id="lodChk" checked></div>
+<div class="row"><span>اللمس: تقريب الإصبعين من بعضهما = تقريب، وتباعدهما = ابتعاد (إيقافه يعكس الاتجاه)</span><input type="checkbox" id="pinchChk" checked></div>
+<div class="row"><span>استبدال المجسم بعينة تفصيلية عند التقريب (معدات وتجهيزات)</span><input type="checkbox" id="lodChk" checked></div>
+<div class="row"><span>كشف حديد التسليح عند التقريب من الأعمدة والجسور والجدران</span><input type="checkbox" id="rebarChk"></div>
 <div class="row" id="liftRow" style="display:none"><span>محاكاة حركة المصعد</span><button class="mini" id="liftBtn">تشغيل</button></div>
-<div class="row"><span>دليل التحكم والاختصارات</span><button class="mini" id="helpBtn2">عرض</button></div></details></div>
-<div class="pane" id="pUnits"><h3>اختر وحدة لعزلها وعرض تفاصيلها</h3><div id="units"></div></div>
-<div class="pane" id="pSearch"><input id="q" type="search" placeholder="ابحث بالـTag أو الـID أو الاسم أو الغرفة…" autocomplete="off" enterkeyhint="search"><div id="qinfo" class="muted"></div><div id="qres"></div></div>
-<div class="pane" id="pMat"><div id="matBox"><div class="muted">جارٍ التجهيز…</div></div></div>
-<div class="pane" id="pSamp"><div class="muted">جارٍ التجهيز…</div></div>
-<div class="pane" id="pClash"><div id="clashDetail" style="display:none"></div><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div>
-<div id="view"><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnLight" aria-haspopup="true">الإضاءة ▾</button><button id="btnAll">إظهار الكل</button><button id="btnFs" title="ملء الشاشة">⛶</button><button id="btnPerf" title="وضع الأداء" aria-pressed="false">أداء</button><button id="btnHelp" title="دليل التحكم">؟</button></div>
+<div class="row"><span>دليل التحكم والاختصارات</span><button class="mini" id="helpBtn2">عرض</button></div></details></div></div></section>
+<section class="acc" data-sec="pUnits"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">الوحدات (الشقق)</span><span class="acc-n" id="accN_pUnits"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pUnits"><h3>اختر وحدة لعزلها وعرض تفاصيلها</h3><div id="units"></div></div></div></section>
+<section class="acc" data-sec="pSearch"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">نتائج البحث</span><span class="acc-n" id="accN_pSearch"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pSearch"><div id="qinfo" class="muted"></div><div id="qres"></div></div></div></section>
+<section class="acc" data-sec="pMat"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">المواد والتشطيبات</span><span class="acc-n" id="accN_pMat"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pMat"><div id="matBox"><div class="muted">جارٍ التجهيز…</div></div></div></div></section>
+<section class="acc" data-sec="pClash"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">التعارضات</span><span class="acc-n" id="accN_pClash"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pClash"><div id="clashDetail" style="display:none"></div><div id="clashBox"><div class="muted">جارٍ التجهيز…</div></div></div></div></section>
+<section class="acc" data-sec="pSamp"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">العينات التفصيلية</span><span class="acc-n" id="accN_pSamp"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pSamp"><div class="muted">جارٍ التجهيز…</div></div></div></section></div></div>
+<div id="view"><button id="dockBtn" type="button" aria-label="إخفاء اللوحة الجانبية أو إظهارها" title="إخفاء اللوحة / إظهارها">›</button><div id="bar"><button id="btnHome">العرض الكامل</button><button id="btnViews" aria-haspopup="true">عروض ▾</button><button id="btnLight" aria-haspopup="true">الإضاءة ▾</button><button id="btnAll">إظهار الكل</button><button id="btnMore" aria-haspopup="true" aria-label="المزيد" title="المزيد">⋯</button></div>
 <div id="viewMenu"><button data-v="persp">منظور (الافتراضي)</button><button data-v="top">علوي</button><button data-v="front">أمامي</button><button data-v="back">خلفي</button><button data-v="right">جانبي (يمين)</button><button data-v="left">جانبي (يسار)</button></div>
+<div id="moreMenu"><button id="btnModes" title="أزرار تغيير ما يفعله السحب بإصبع واحد؛ على اللوح يكفي: إصبع للتدوير، إصبعان للتحريك، وقرصهما للتقريب">أزرار الوضع (تدوير / تحريك / تقريب)</button><button id="btnFs">ملء الشاشة</button><button id="btnPerf" aria-pressed="false">وضع الأداء (دقة أقل لأجهزة ضعيفة)</button><button id="btnHelp">دليل التحكم والاختصارات</button></div>
 <div id="lightMenu"><button data-l="day">نهار</button><button data-l="dusk">غروب</button><button data-l="night">ليل</button><hr><button data-l="lamps" id="lampsBtn">تشغيل الإنارة (مصابيح، واجهات مضاءة)</button></div>
-<div id="hud"><span id="fps"></span><span id="stat"></span> · <span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info"></div><div id="clashPin"></div>
+<div id="hud"><span id="hudm"><span id="fps"></span><span id="stat"></span> · </span><span id="ver">{{VERSION}}</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info" class="infoD"></div><div id="clashPin"></div>
 <div id="modes"><button data-m="rotate" class="on">تدوير</button><button data-m="pan">تحريك</button><button data-m="zoom">تقريب</button></div><div id="toast"></div></div></div>
 <button id="fab">☰ الأقسام والوحدات</button>
 <div id="smpPrev"><div class="smpbox"><div class="smphead"><span>معاينة عينة</span><button id="smpClose" aria-label="إغلاق">✕</button></div><div class="spbody"><div id="smpCanvas"></div><div id="smpInfo"></div></div></div></div>
 <div id="help"><div class="hb"><div class="hh"><span>دليل التحكم بالنموذج</span><button id="helpClose" aria-label="إغلاق">✕</button></div>
-<h4>اللمس (جوال / لوح)</h4><ul><li>إصبع واحد: حسب الزر السفلي (تدوير / تحريك / تقريب).</li><li>إصبعان: قرص للتقريب والتبعيد، وتحريك الإصبعين لتحريك المشهد.</li><li>نقرة على عنصر: بطاقة الأصل. نقرتان سريعتان: تركيز الكاميرا عليه.</li></ul>
+<h4>اللمس (جوال / لوح)</h4><ul><li>إصبع واحد: تدوير المبنى.</li><li>إصبعان تتحركان معًا: تحريك المشهد.</li><li>إصبعان تقتربان من بعضهما: تقريب (Zoom in). إصبعان تتباعدان: ابتعاد (Zoom out). الاتجاه قابل للعكس من «⋯ ← التحكم والأداء».</li><li>زر «⋯ ← أزرار الوضع» يُظهر أزرار تدوير / تحريك / تقريب لمن يحتاجها.</li><li>نقرة على عنصر: بطاقة الأصل. نقرتان سريعتان: تركيز الكاميرا عليه.</li></ul>
 <h4>الماوس</h4><ul><li>الزر الأيسر: تدوير. الزر الأيمن أو <kbd>Shift</kbd> + السحب: تحريك. الأوسط: تقريب.</li><li>العجلة: تقريب نحو مؤشر الماوس. نقرتان على عنصر: تركيز عليه.</li></ul>
 <h4>التراك باد</h4><ul><li>قرص بإصبعين: تقريب / تبعيد. تمرير بإصبعين: تحريك المشهد.</li><li>التدوير: السحب بثلاثة أصابع (على ماك: الإعدادات ← إمكانية الوصول ← التحكم بالمؤشر ← خيارات التراك باد ← «السحب بثلاثة أصابع»)، أو <kbd>Alt</kbd> مع تمرير الإصبعين، أو زر «تدوير» مع السحب.</li></ul>
 <h4>لوحة المفاتيح</h4><ul><li><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd>: تدوير. <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>: تحريك. <kbd>Q</kbd> <kbd>E</kbd>: خفض / رفع.</li><li><kbd>+</kbd> <kbd>−</kbd>: تقريب / تبعيد. <kbd>Home</kbd>: العرض الكامل. <kbd>F</kbd>: تركيز على العنصر المحدد. <kbd>Esc</kbd>: إلغاء التحديد. <kbd>Shift</kbd>: أسرع.</li></ul></div></div>
