@@ -25,8 +25,11 @@ from shapely.strtree import STRtree
 SRC = os.path.join(os.path.dirname(HERE), "src", "model.json")
 M = json.load(open(SRC, encoding="utf-8"))
 els = M["els"]
+PREV_X = [e for e in els if re.search(r"-X\d{4}$", e["id"])]               # the accessories of the previous run: a rebuilt accessory with the same shape keeps its old id (see the X merge below)
 els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]      # accessories of pipeline/extras.py are rebuilt below (keep them out of every earlier pass)
 els[:] = [e for e in els if not re.search(r"-K\d{4}$", e["id"])]      # derived connectors of pipeline/connectors.py are rebuilt at the end (keep them out of every earlier pass)
+els[:] = [e for e in els if not re.search(r"-V\d{4}$", e["id"])]      # inferred risers of pipeline/risers.py (suffix V; L belongs to the landscape elements) are rebuilt at the end (keep them out of every earlier pass)
+els[:] = [e for e in els if not re.search(r"-W\d{4}$", e["id"])]      # electrical conductors / boards of pipeline/elec_build.py (suffix W) are rebuilt at the end
 # the apartment windows are rebuilt from the approved schedule (A801/A802 + A1500): keep the old single-slab modules (saved once to data/win_modules.json) out of every pass
 import arch_windows as _AW
 _AW.modules(M)
@@ -298,6 +301,29 @@ if os.path.exists(RS_JSON):
         els.append({"id": f"{e['c']}-{e['l']}-RS{cnt_rs[(e['c'], e['l'])]:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx4(t) for t in e["src"]]})
     M["els"] = els
     print("ramp/stair elements merged:", len(Rs["els"]))
+
+# the 22 cm granite planter curbs (landscape plan) and the structural walls of the car ramp (structure plan) are the SAME wall drawn by two documents: where they overlap with the same top the two prisms share
+# their side and top faces, and the depth buffer flips between them frame by frame — the dark «slots» in the curved ramp wall of the owner's screenshots.  The structure wins; the curb keeps only what lies outside it.
+from shapely.geometry import Polygon as _CP
+_cw = [(_e, _CP(_e["g"][1]).buffer(0)) for _e in els if _e["c"] == "S.wall" and _e["g"][0] == "p" and _e["l"] == "G"]
+_trim = []
+for _e in list(els):
+    if _e.get("t") != "site_planter_wall" or _e["g"][0] != "p": continue
+    _g = _e["g"]
+    try: _pg = _CP(_g[1], _g[4] if len(_g) > 4 and _g[4] else None).buffer(0)
+    except Exception: continue
+    _cut = _pg
+    for _w, _wg in _cw:
+        if min(_g[3], _w["g"][3]) - max(_g[2], _w["g"][2]) > 0.2 and _cut.intersects(_wg): _cut = _cut.difference(_wg.buffer(0.5))
+    if _cut.equals(_pg): continue
+    _parts = sorted([q for q in getattr(_cut, "geoms", [_cut]) if q.geom_type == "Polygon" and q.area > 200], key=lambda q: -q.area)     # > 0.02 m²
+    els.remove(_e)
+    for _n, _q in enumerate(_parts, 1):
+        _ne = dict(_e, id=_e["id"] if _n == 1 else f"{_e['id']}x{_n}", g=["p", [[round(x, 1), round(y, 1)] for x, y in _q.exterior.coords[:-1]], _g[2], _g[3]] + ([[[[round(x, 1), round(y, 1)] for x, y in r.coords[:-1]] for r in _q.interiors]] if list(_q.interiors) else []))
+        _ne["a"] = dict(_e.get("a") or {}, trimmed="قُصّ الجزء المتطابق مع جدار المنحدر الإنشائي (S.wall) لمنع تداخل الأوجه")
+        els.append(_ne)
+    _trim.append((_e["id"], len(_parts)))
+print("planter curbs trimmed against structural walls:", _trim)
 
 # ------------------------------------------------------------------ electrical rooms equipment (pipeline/elec_rooms.py -> data/elec_rooms.json)
 ER_JSON = os.path.join(HERE, "data", "elec_rooms.json")
@@ -771,16 +797,53 @@ def _spx(t):
         _pidx[t] = len(_pool); _pool.append(t)
     return _pidx[t]
 _cx = collections.Counter()
-for _e in EXT["els"]:
+# stable ids: the accessories are rebuilt on every run and their numbers are a running count over ~7,000 pieces, so one piece more or less before a given accessory renumbered everything after it (and with it
+# the owner's notes, hidden elements and saved views, which point at ids).  A rebuilt accessory of the same category / level / type / mark that stands within 60 cm of one of the previous run's takes that
+# id (nearest first; later passes move devices a few centimetres, so the geometry is not compared exactly); only genuinely new pieces get fresh numbers above the highest one ever used.
+def _ctr(g):
+    k = g[0]
+    try:
+        if k in ("b", "cyl", "sph", "leaf"): return (g[1], g[2])
+        if k == "r": return ((g[1] + g[3]) / 2, (g[2] + g[4]) / 2)
+        if k == "p": xs = [q[0] for q in g[1]]; ys = [q[1] for q in g[1]]; return ((min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2)
+        if k in ("t", "d"): a_, b_ = g[1][0], g[1][-1]; return ((a_[0] + b_[0]) / 2, (a_[1] + b_[1]) / 2)
+        if k == "cur": return ((g[1] + g[3]) / 2, (g[2] + g[4]) / 2)
+        if k == "tri": return (g[1][0][0], g[1][0][1])
+        if k == "rs": return (g[1][len(g[1]) // 2][0], g[1][len(g[1]) // 2][1])
+    except Exception: pass
+    return None
+_by_old = collections.defaultdict(list); _by_new = collections.defaultdict(list)
+for _o in PREV_X:
+    _c0 = _ctr(_o["g"])
+    if _c0: _by_old[(_o["c"], _o["l"], _o.get("t"), _o.get("mark"))].append((_o["id"], _c0))
+for _k, _e in enumerate(EXT["els"]):
+    _c1 = _ctr(_e["g"])
+    if _c1: _by_new[(_e["c"], _e["l"], _e.get("t"), _e.get("mark"))].append((_k, _c1))
+_plan = [None] * len(EXT["els"]); _taken = set(); _stable = _fresh = 0
+for _key, _nl in _by_new.items():
+    _ol = _by_old.get(_key)
+    if not _ol: continue
+    _pairs = sorted((math.hypot(_n[1][0] - _o[1][0], _n[1][1] - _o[1][1]), _i, _j) for _i, _n in enumerate(_nl) for _j, _o in enumerate(_ol))
+    _un = set(); _uo = set()
+    for _d, _i, _j in _pairs:
+        if _d > 60: break
+        if _i in _un or _j in _uo: continue
+        _un.add(_i); _uo.add(_j); _plan[_nl[_i][0]] = _ol[_j][0]; _taken.add(_ol[_j][0]); _stable += 1
+_max_x = max([int(_o["id"][-4:]) for _o in PREV_X] + [0])
+for _e, _id in zip(EXT["els"], _plan):
     _cx[(_e["c"], _e["l"])] += 1
-    _ne = {"id": f"{_e['c']}-{_e['l']}-X{sum(_cx.values()):04d}", "c": _e["c"], "l": _e["l"], "g": _e["g"], "mark": _e["mark"], "t": _e["t"], "m": _e["m"], "a": _e["a"], "s": [_spx(t) for t in _e["src"]]}
+    if _id is None:
+        _max_x += 1; _id = f"{_e['c']}-{_e['l']}-X{_max_x:04d}"; _fresh += 1
+        while _id in _taken: _max_x += 1; _id = f"{_e['c']}-{_e['l']}-X{_max_x:04d}"
+        _taken.add(_id)
+    _ne = {"id": _id, "c": _e["c"], "l": _e["l"], "g": _e["g"], "mark": _e["mark"], "t": _e["t"], "m": _e["m"], "a": _e["a"], "s": [_spx(t) for t in _e["src"]]}
     if _e.get("grp"): _ne["grp"] = _e["grp"]
     if _e.get("stage"): _ne["stage"] = _e["stage"]
     if _e.get("u"): _ne["u"] = _e["u"]
     if _e.get("u2"): _ne["u2"] = _e["u2"]
     els.append(_ne)
 M["els"] = els
-print("extras merged:", len(EXT["els"]), dict(collections.Counter(e["t"] for e in EXT["els"])))
+print("extras merged:", len(EXT["els"]), dict(collections.Counter(e["t"] for e in EXT["els"])), "| ids kept", _stable, "| fresh", _fresh)
 # a sprinkler head that the support pass called "unsupported" is carried by its drop nipple (extras run after the support pass): clear the flag
 _served = {(_e.get("a") or {}).get("head") for _e in els if _e["t"] == "sprk_drop"}
 _cleared = 0
@@ -1049,6 +1112,10 @@ for _i, _s in enumerate(M["sp"]):
     if _s in _CITE_FIX: M["sp"][_i] = _CITE_FIX[_s]
 
 # derived connections between the parts of each system (the last pipe / duct piece the plans imply): added AFTER the clash pass so they never show up as clashes, BEFORE the grading
+import risers as _RS
+_RS.build(M, verbose=True)
+import elec_build as _EB
+_EB.build(M, verbose=True)
 import connectors as _CN
 _CN.build(M, verbose=True)
 import reliability as _REL
@@ -1057,6 +1124,30 @@ _GS.registry(M, els)
 # life-cycle tests: switch every system on from its sources and record what is really connected (viewer: «اختبارات دورة الحياة»; docs/LIFECYCLE_TESTS.md)
 import lifecycle as _LC
 _LC.apply(M, verbose=True)
+# self-touching / self-crossing polygon prisms make the viewer's triangulation draw bow-ties and holes (owner screenshots 2026-10-08: broken floor arrows): repaired here, the largest part is kept
+from shapely.validation import make_valid as _make_valid
+_repaired = []
+for _e in els:
+    _g = _e["g"]
+    if _g[0] != "p" or _e["c"][0] == "S": continue              # structure is left exactly as extracted: the later passes (floor fill, ceilings, supports) read slab and raft outlines and holes
+    _holes = _g[4] if len(_g) > 4 and _g[4] else None
+    try: _pg = Polygon(_g[1], _holes)
+    except Exception: continue
+    if _pg.is_valid: continue
+    _mv = _make_valid(_pg); _parts = []
+    for _q in getattr(_mv, "geoms", [_mv]):
+        _parts.extend(list(_q.geoms) if _q.geom_type == "MultiPolygon" else [_q] if _q.geom_type == "Polygon" else [])
+    if not _parts: continue
+    _best = max(_parts, key=lambda q: q.area)
+    _g[1] = [[round(x, 1), round(y, 1)] for x, y in _best.exterior.coords[:-1]]
+    _rings = [[[round(x, 1), round(y, 1)] for x, y in r.coords[:-1]] for r in _best.interiors]
+    if len(_g) > 4: _g[4] = _rings or None
+    elif _rings: _g.append(_rings)
+    _repaired.append(_e["id"])
+if _repaired:
+    M["meta"].setdefault("fixes", []).append("invalid_polygons_repaired_v1")
+    M["meta"]["invalid_polygons_repaired"] = _repaired
+print("polygons repaired:", len(_repaired))
 import inventory as _INV
 _INV.build(M); _INV.write_doc(M)
 json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False)

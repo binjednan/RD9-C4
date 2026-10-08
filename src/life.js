@@ -10,7 +10,7 @@ function initLife(ctx){
   const box=$('lifeBox'); const LC=M.lifecycle; if(!box) return null;
   if(!LC||!LC.systems||!LC.systems.length){ box.innerHTML='<div class="muted">لا نتائج اختبارات في هذا النموذج (شغّل pipeline/lifecycle.py).</div>'; return null; }
   const CLS=[{k:'src',n:'مصدر',c:'#0072B2',h:'نقطة تشغيل النظام (خزان، مبرّد، سخان، لوحة …)'},{k:'con',n:'موصل مُغذّى',c:'#56B4E9',h:'ماسورة أو مجرى أو موصل موصول فعليًا بالمصدر'},
-    {k:'ok',n:'نهاية مُغذّاة',c:'#009E73',h:'جهاز موصول بالمصدر عبر هندسة فعلية'},{k:'bad',n:'نهاية غير موصولة',c:'#D55E00',h:'جهاز لا يصله المصدر — اختبار فاشل'},{k:'orph',n:'موصل يتيم',c:'#DB7F4A',h:'ماسورة أو مجرى لا يصل إلى أي مصدر'}];
+    {k:'ok',n:'نهاية مُغذّاة',c:'#009E73',h:'جهاز موصول بالمصدر عبر هندسة فعلية'},{k:'bad',n:'نهاية غير موصولة',c:'#D55E00',h:'جهاز لا يصله المصدر — اختبار فاشل'},{k:'orph',n:'موصل يتيم',c:'#DB7F4A',h:'ماسورة أو مجرى لا يصل إلى أي مصدر أو نقطة دخول'},{k:'edge',n:'نقطة دخول',c:'#CC79A7',h:'حدّ ما هو مرسوم في النموذج: ما قبله (مضخات، خزان سطح، مخرج…) غير مرسوم، فالتوزيع يُختبر منه'}];
   let cur=0, timer=0, playing=false, T=0, hideOther=false, finalMode=false; const sys=()=>LC.systems[cur];
   const lvName=l=>(LVL[l]&&LVL[l].name)||l;
   const total=(s)=>s.tests.length, passN=s=>s.tests.filter(t=>t.p).length;
@@ -28,7 +28,7 @@ function initLife(ctx){
   function classMap(s,upto,fin){
     const P=prep(s), map=new Map(); const n=s.ri.length;
     for(let k=0;k<n&&s.rd[k]<=upto;k++){ const i=s.ri[k], r=s.rk[k];
-      if(r==='s') map.set(i,1); else if(r==='c') map.set(i,2); else P.expand(i).forEach(j=>{ if(!map.has(j)||map.get(j)!==1) map.set(j,3); }); }
+      if(r==='s') map.set(i,1); else if(r==='e') map.set(i,6); else if(r==='c') map.set(i,2); else P.expand(i).forEach(j=>{ if(!map.has(j)||map.get(j)!==1) map.set(j,3); }); }
     if(fin){ s.x.forEach(i=>{ P.expand(i).forEach(j=>{ if(!map.has(j)) map.set(j,4); }); }); s.o.forEach(i=>{ if(!map.has(i)) map.set(i,5); }); }
     return map;
   }
@@ -52,14 +52,14 @@ function initLife(ctx){
     const all=LC.systems.reduce((a,s)=>a+total(s),0), pass=LC.systems.reduce((a,s)=>a+passN(s),0);
     let h='<div class="lf-top"><b>'+pass+' من '+all+' اختبارًا ناجح</b><small class="muted">بناء '+esc(LC.built||'')+' · فجوة التلامس المقبولة '+Math.round(LC.tol*100)+' سم</small></div>';
     h+='<p class="muted lf-how">يُشغَّل كل نظام من مصادره، ولا يُضاء إلا ما هو موصول بالمصدر عبر هندسة فعلية في النموذج (مواسير ومجاري وموصلات ومحابس تتلامس). ما لا يصل يبقى مظلمًا ويُحسب فشلًا ويظهر في القائمة لتراجعه.</p>';
-    h+='<div class="lf-cards">'+LC.systems.map((s,i)=>{ const p=pct(s.cnt.ok,s.cnt.ter), np=passN(s); return '<button type="button" class="lf-card'+(i===cur?' on':'')+'" data-lf="sel" data-i="'+i+'" style="--lc:'+esc(s.color)+'"><span class="lf-ic">'+esc(s.icon)+'</span><b>'+esc(s.name)+'</b><span class="lf-pb"><i style="width:'+p+'%"></i></span><small>'+s.cnt.ok.toLocaleString('en')+' / '+s.cnt.ter.toLocaleString('en')+' موصول · '+np+'/'+total(s)+' اختبار</small></button>'; }).join('')+'</div>';
+    h+='<div class="lf-cards">'+LC.systems.map((s,i)=>{ const p=pct(s.cnt.ok,s.cnt.ter), np=passN(s); return '<button type="button" class="lf-card'+(i===cur?' on':'')+'" data-lf="sel" data-i="'+i+'" style="--lc:'+esc(s.color)+'"><span class="lf-ic">'+esc(s.icon)+'</span><b>'+esc(s.name)+'</b><span class="lf-pb"><i style="width:'+p+'%"></i></span><small>'+s.cnt.ok.toLocaleString('en')+' / '+s.cnt.ter.toLocaleString('en')+' موصول'+(s.cnt.edge?' من نقاط الدخول':'')+' · '+np+'/'+total(s)+' اختبار</small></button>'; }).join('')+'</div>';
     const s=sys(), P=prep(s);
     h+='<div class="lf-det"><h4>'+esc(s.icon)+' '+esc(s.name)+'</h4><p class="muted">'+esc(s.desc)+'</p>';
     h+='<div class="lf-ctl"><button type="button" id="lfPlay" class="lf-pri" data-lf="play">▶ تشغيل الدورة</button><button type="button" data-lf="final">النتيجة</button><button type="button" data-lf="hide" class="'+(hideOther?'on':'')+'" title="إخفاء كل ما ليس من هذا النظام">عزل النظام</button><button type="button" data-lf="off">إيقاف التلوين</button></div>';
     h+='<div class="lf-bar"><input id="lfBar" type="range" min="0" max="100" value="0" aria-label="تقدّم الدورة"><span id="lfBarT">0%</span></div>';
     h+='<table class="lf-t"><tbody>'+s.tests.map(t=>'<tr class="'+(t.p?'ok':'no')+'"><td class="lf-st">'+(t.p?'✔':'✖')+'</td><td>'+esc(t.n)+'</td><td class="lf-n">'+t.ok.toLocaleString('en')+' / '+t.of.toLocaleString('en')+'</td></tr>').join('')+'</tbody></table>';
     const d=s.cnt, iso=d.isl||0;
-    h+='<div class="lf-diag">'+(s.cnt.ter-s.cnt.ok?'<span>غير موصولة <b>'+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+'</b></span>':'')+(d.orph?'<span>موصلات يتيمة <b>'+d.orph.toLocaleString('en')+'</b></span>':'')+(d.near?'<span title="يوجد موصل من النظام قربها في المسقط">وصلة أخيرة ناقصة <b>'+d.near+'</b></span>':'')+(d.far?'<span title="لا شيء موثّق قربها">لا شيء قربها <b>'+d.far+'</b></span>':'')+'</div>';
+    h+='<div class="lf-diag">'+(s.cnt.edge?'<span title="حدّ ما هو مرسوم في النموذج">نقاط دخول <b>'+s.cnt.edge.toLocaleString('en')+'</b> · السلسلة الكاملة من المصدر <b>'+(s.cnt.chain||0).toLocaleString('en')+'</b>/'+s.cnt.ter.toLocaleString('en')+'</span>':'')+(s.cnt.ter-s.cnt.ok?'<span>غير موصولة <b>'+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+'</b></span>':'')+(d.orph?'<span>موصلات يتيمة <b>'+d.orph.toLocaleString('en')+'</b></span>':'')+(d.near?'<span title="يوجد موصل من النظام قربها في المسقط">وصلة أخيرة ناقصة <b>'+d.near+'</b></span>':'')+(d.far?'<span title="لا شيء موثّق قربها">لا شيء قربها <b>'+d.far+'</b></span>':'')+'</div>';
     // failing list
     const keys=[...P.bad.keys()];
     if(keys.length){

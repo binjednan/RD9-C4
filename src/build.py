@@ -22,6 +22,12 @@ def opt(n):
     p=os.path.join(WWW,n); return open(p,encoding="utf-8").read() if os.path.exists(p) else "null"
 smp=opt("samples.json"); photos=opt("photos.json")
 model=open(os.path.join(WWW,"model.json"),encoding="utf-8").read()
+try:                                                    # viewer copy only: fewer vertices on traced outlines (pipeline/viewsimp.py); model.json itself is untouched
+    sys.path.insert(0,os.path.join(OUT_DIR,"pipeline")); import viewsimp
+    _m=json.loads(model); _n,_a,_b=viewsimp.simplify_model(_m)
+    model=json.dumps(_m,separators=(",",":"),ensure_ascii=False); print("viewer outlines simplified:",_n,"elements, vertices",_a,"->",_b)
+except ImportError as _e:
+    print("shapely missing — viewer model not simplified:",_e)
 for name,src in list(srcs.items())+[("app",app)]:
     assert "</script" not in src.lower(), name
 safe=lambda t:t.replace("</","<\\/")

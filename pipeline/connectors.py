@@ -143,6 +143,7 @@ def build(M, verbose=False):
 
     for sd in L.SYSTEMS:
         sid = sd["id"]
+        if sd.get("no_connectors"): continue                  # electricity: only drawn conductors connect (pipeline/elec_build.py), nothing is derived here
         src = [i for i, e in enumerate(els) if sd["source"](e)]
         ter = [i for i, e in enumerate(els) if sd["terminal"](e)]
         for vname, vpred in sd["variants"]:

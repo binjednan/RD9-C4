@@ -89,8 +89,40 @@ def height_class(level, a, fin):
     return H_FLAT, "flat"
 
 
+def _stabilise_ids(old, new):
+    """The ceilings are rebuilt from the floor polygons on every run, and the ORDER in which the pieces come out depends on the vertex order of the floors, so the numbers C0001… used to shift from
+    run to run.  Ids are what the owner's notes, hidden elements and saved views point at: a rebuilt ceiling that covers (IoU >= 0.85, same elevation) a ceiling of the previous model takes ITS id;
+    only genuinely new pieces get fresh numbers (continuing after the highest number used on that level)."""
+    if not old: return 0
+    cands = []
+    for i, n in enumerate(new):
+        pn = _poly(n["g"])
+        if pn is None or pn.is_empty: continue
+        for j, o in enumerate(old):
+            if o["l"] != n["l"] or abs(_zr(o["g"])[0] - _zr(n["g"])[0]) > 0.011: continue
+            po = _poly(o["g"])
+            if po is None or po.is_empty or not pn.intersects(po): continue
+            u = pn.union(po).area
+            if u > 0:
+                iou = pn.intersection(po).area / u
+                if iou >= 0.85: cands.append((iou, i, j))
+    cands.sort(reverse=True); used_new = set(); used_old = set(); n_same = 0
+    for iou, i, j in cands:
+        if i in used_new or j in used_old: continue
+        if new[i]["id"] != old[j]["id"]: n_same += 0
+        new[i]["id"] = old[j]["id"]; used_new.add(i); used_old.add(j)
+    top = collections.defaultdict(int)
+    for o in old: top[o["l"]] = max(top[o["l"]], int(o["id"].rsplit("-C", 1)[1]))
+    for i, n in enumerate(new):
+        if i in used_new: continue
+        top[n["l"]] += 1; n["id"] = f"A.ceil-{n['l']}-C{top[n['l']]:04d}"
+    ids = [n["id"] for n in new]; assert len(ids) == len(set(ids)), "ceiling ids collide"
+    return len(used_new)
+
+
 def rebuild(M, els, LV):
     """replace every A.ceil; return stats"""
+    old_ceil = [e for e in els if e["c"] == "A.ceil" and e["g"][0] == "p"]
     els[:] = [e for e in els if e["c"] != "A.ceil"]
     slabs = {e["l"]: e for e in els if e["c"] == "S.slab" and e["g"][0] == "p"}
     parts = collections.defaultdict(list)
@@ -158,9 +190,10 @@ def rebuild(M, els, LV):
         if t not in pool: pool.append(t)
         idx.append(pool.index(t))
     for e in new: e["s"] = list(idx)
+    kept = _stabilise_ids(old_ceil, new)
     els.extend(new)
     n_dev = _move_devices(els, ceil_of, slabs, LV)
-    return {"ceilings": len(new), "devices_moved": n_dev, "by_level": dict(counter)}
+    return {"ceilings": len(new), "ids_kept": kept, "devices_moved": n_dev, "by_level": dict(counter)}
 
 
 def _mk(lv, counter, typ, cfin, geom, rooms, kind, part, H):

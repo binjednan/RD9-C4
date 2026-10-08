@@ -138,10 +138,26 @@ def _grp(e): return e.get("grp") or e["id"]
 
 # Every system: sources (where it is switched on), conductors (pipes / ducts / conduits and in-line valves / dampers), terminals (where it is used).
 # `variants` are separate conductor networks that must ALL reach a terminal (chilled-water supply and return).  `sink=True` runs the flow backwards (drainage: from the outlet to the fixtures).
+BOARDS_T = ("det_db", "e_P18")                                   # distribution boards: wired from their circuits, boundary of what the drawings connect
+def _is_board(e): return (e["c"] == "E.panel" and _t(e) == "det_db") or _t(e) == "e_P18"
+def _elec_load(e):
+    t = _t(e)
+    if e["c"] in ("E.light", "E.emerg"): return True
+    if e["c"] == "E.socket": return (t.startswith("e_S") or t.startswith("e_P")) and t not in ("e_P14", "e_P15", "e_P16", "e_P18")
+    return False
+
+
 SYSTEMS = [
+    dict(id="power", name="الكهرباء", icon="⚡", color="#8C6BD0", pass_terminal=True, no_connectors=True,
+         desc="اللوحة الرئيسية MDB ← لوحات التوزيع (DB / SMDB) ← دوائر الإنارة والقوى (موصلات مرسومة في ELEC1) ← الكشافات والمفاتيح والمقابس؛ المغذّيات بين اللوحات غير مرسومة",
+         source=lambda e: e["c"] == "E.panel" and _t(e) == "det_mdb_2000a",
+         edge=lambda e: _is_board(e) or _t(e) in ("wire_homerun_open", "wire_circuit_end"), edge_name="لوحات التوزيع ونهايات الدوائر (المسار من نهاية الموصل إلى اللوحة والمغذّيات من MDB غير مرسومة في المخططات)",
+         variants=[("الدوائر", lambda e: (e["c"] == "E.tray" and _t(e).startswith("wire_")) or _is_board(e))],
+         terminal=_elec_load, term_name=lambda e: "كشاف" if e["c"] in ("E.light", "E.emerg") else "مفتاح / مقبس", source_name="MDB", conductor_name="موصل كهرباء"),
     dict(id="fire", name="الإطفاء", icon="🔥", color="#D55E00",
          desc="خزانات الإطفاء ← أنابيب السحب ← الصاعدان ← شبكة الرشاشات وخط FFC ← الرشاشات وصناديق الخراطيم",
          source=lambda e: e["c"] == "P.tank" and _t(e) == "tank_water" and _m(e) in ("FT1", "FT2"),
+         edge=lambda e: e["c"] == "P.ff" and _t(e) in ("riser_spr", "riser_ffc") and _m(e) in ("G→1", "B→G"), edge_name="مخرج مضخات الإطفاء (غير مرسومة)",
          variants=[("الشبكة", lambda e: e["c"] == "P.ff" and (_t(e).startswith("pipe_") or _t(e).startswith("riser_") or _t(e) == "sprk_drop"))],
          terminal=lambda e: e["c"] == "P.ff" and (_t(e) in ("sprk_pendent", "sprk_upright", "sprk_double") or _t(e) == "fhc"),
          term_name=lambda e: "صندوق خرطوم" if _t(e) == "fhc" else "رشاش", source_name="خزان إطفاء", conductor_name="أنبوب إطفاء"),
@@ -160,6 +176,8 @@ SYSTEMS = [
     dict(id="cold", joint_end_only=False, name="المياه الباردة", icon="💧", color="#06b6d4",
          desc="خزان المياه المنزلي ← مواسير المياه الباردة والمحابس ← مداخل الأجهزة الصحية والسخانات",
          source=lambda e: e["c"] == "P.tank" and _t(e) == "tank_water" and _m(e) == "DT",
+         edge=lambda e: e["c"] == "P.cold" and e["g"][0] == "t" and e["l"] in ("R", "G", "B") and ((e.get("a") or {}).get("dia_mm") or 0) >= 50 and not (e.get("a") or {}).get("connector"),
+         edge_name="رئيسيات غرف المضخات (مضخات الرفع والتعزيز غير مرسومة)",
          variants=[("الشبكة", lambda e: e["c"] == "P.cold")],
          terminal=lambda e: fix_cold_inlet(e) or e["c"] == "P.heater", group=_grp,
          term_name=lambda e: "سخان" if e["c"] == "P.heater" else "مدخل جهاز صحي", source_name="خزان منزلي", conductor_name="ماسورة مياه باردة"),
@@ -172,6 +190,8 @@ SYSTEMS = [
     dict(id="drain", joint_end_only=False, name="الصرف", icon="⇩", color="#8a6d4b", sink=True,
          desc="المخرج ← مواسير الصرف والصاعدان ← المصائد ← مصارف الأجهزة (المسار عكس اتجاه الجريان)",
          source=lambda e: e["c"] == "P.drain" and _t(e) == "drain_outlet",
+         edge=lambda e: e["c"] == "P.drain" and _t(e).startswith("pipe_") and e["l"] in ("B", "G") and not (e.get("a") or {}).get("connector"),
+         edge_name="مواسير الصرف تحت الأرض (المخرج إلى المجمّع العام غير مرسوم)",
          variants=[("الشبكة", lambda e: e["c"] == "P.drain" and (_t(e).startswith("pipe_") or _t(e) in ("cleanout", "floor_trap", "stack")))],
          terminal=lambda e: fix_waste_outlet(e) or (e["c"] == "P.drain" and _t(e) == "floor_trap"), group=_grp,
          term_name=lambda e: "مصيدة أرضية" if _t(e) == "floor_trap" else "مصرف جهاز", source_name="مخرج الصرف", conductor_name="ماسورة صرف"),
@@ -215,13 +235,14 @@ def neighbours(world, idx, tol=TOL):
     return adj
 
 
-def flood(world, src, kind, adj):
-    """Dijkstra from the sources over conductors; arrival distance (m) = centre → contact → centre along the way.  A terminal consumes: it never passes anything on."""
+def flood(world, src, kind, adj, pass_t=False):
+    """Dijkstra from the sources over conductors; arrival distance (m) = centre → contact → centre along the way.  A terminal consumes: it never passes anything on —
+    except in a daisy-chained electrical circuit, where a fixture / switch / socket is a junction of the wiring (pass_t)."""
     dist = {}; pq = []
     for i in src: dist[i] = 0.0; heapq.heappush(pq, (0.0, i))
     while pq:
         d, i = heapq.heappop(pq)
-        if d > dist.get(i, 1e18) or kind[i] == "t": continue
+        if d > dist.get(i, 1e18) or (kind[i] == "t" and not pass_t): continue
         ci = world.C[i]
         for j, (g, c, _x, _y) in adj.get(i, {}).items():
             if kind[j] == "s" or kind[j] == "x": continue
@@ -250,6 +271,7 @@ def plan_dist_cm(e, conds):
 def analyse_system(M, sd, world):
     els = M["els"]
     src = [i for i, e in enumerate(els) if sd["source"](e)]
+    edge = [i for i, e in enumerate(els) if sd.get("edge") and sd["edge"](e)]
     ter = [i for i, e in enumerate(els) if sd["terminal"](e)]
     grp = sd.get("group")
     units = collections.OrderedDict()
@@ -264,20 +286,24 @@ def analyse_system(M, sd, world):
         for i in src: kind[i] = "s"
         for i in list(kind): world.prim(i)
         adj = neighbours(world, list(kind))
-        dist = flood(world, src, kind, adj)
-        var.append(dict(name=vname, con=con, dist=dist, adj=adj, kind=kind))
+        pt = bool(sd.get("pass_terminal"))
+        chain = flood(world, src, kind, adj, pt)                              # strict: only from the real sources
+        dist = flood(world, src + [i for i in edge if i in kind and i not in src], kind, adj, pt)   # distribution: also from the boundary entries (what the model does not draw lies behind them)
+        var.append(dict(name=vname, con=con, dist=dist, chain=chain, adj=adj, kind=kind))
         allcon.update(con)
     # a unit (terminal) is OK when it is reached through EVERY variant
-    ok_units, bad_units = [], []
+    ok_units, bad_units, chain_units = [], [], []
     for k, v in units.items():
         if all(any(i in vr["dist"] for i in v) for vr in var): ok_units.append(k)
         else: bad_units.append(k)
+        if all(any(i in vr["chain"] for i in v) for vr in var): chain_units.append(k)
     reached_any = {}
     for vr in var:
         for i, d in vr["dist"].items():
             if i not in reached_any or d < reached_any[i]: reached_any[i] = d
     orphans = [i for vr in var for i in vr["con"] if i not in vr["dist"]]
-    return dict(src=src, ter=ter, units=units, ok=ok_units, bad=bad_units, var=var, reach=reached_any, orph=orphans, allcon=allcon)
+    edge_ok = [i for i in edge if any(i in vr["chain"] for vr in var)]
+    return dict(src=src, edge=edge, edge_ok=edge_ok, ter=ter, units=units, ok=ok_units, bad=bad_units, chain=chain_units, var=var, reach=reached_any, orph=orphans, allcon=allcon)
 
 
 def diagnose(M, sd, R):
@@ -326,23 +352,24 @@ def levels_of(els, idxs): return collections.Counter(els[i]["l"] for i in idxs)
 
 
 def tests_of(M, sd, R):
-    els = M["els"]; T = []
+    els = M["els"]; T = []; sid = sd["id"]
     nsrc, nu = len(R["src"]), len(R["units"])
-    T.append(dict(id=sd["id"] + ".src", n="توجد عناصر مصدر في النموذج (" + sd["source_name"] + ")", ok=nsrc, of=max(nsrc, 1), pass_=nsrc > 0))
-    T.append(dict(id=sd["id"] + ".cov", n="كل نهاية استهلاك موصولة بالمصدر عبر موصلات فعلية (" + sd["term_name"](els[R["ter"][0]]) + (" …" if len({sd["term_name"](els[i]) for i in R["ter"]}) > 1 else "") + ")" if R["ter"] else "لا نهايات استهلاك",
-                  ok=len(R["ok"]), of=nu, pass_=nu > 0 and len(R["ok"]) == nu))
+    tname = (sd["term_name"](els[R["ter"][0]]) + (" …" if len({sd["term_name"](els[i]) for i in R["ter"]}) > 1 else "")) if R["ter"] else "نهايات الاستهلاك"
+    T.append(dict(id=sid + ".src", n="توجد عناصر مصدر في النموذج (" + sd["source_name"] + ")", ok=nsrc, of=max(nsrc, 1), pass_=nsrc > 0))
+    T.append(dict(id=sid + ".dist", n="كل نهاية استهلاك موصولة بالشبكة الموزّعة من " + ("مصدرها أو من نقاط دخولها" if R["edge"] else "مصدرها") + " (" + tname + ")", ok=len(R["ok"]), of=max(nu, 1), pass_=nu > 0 and len(R["ok"]) == nu))
+    T.append(dict(id=sid + ".cov", n="السلسلة كاملة: كل نهاية استهلاك موصولة بالمصدر نفسه (" + sd["source_name"] + ") عبر موصلات فعلية", ok=len(R["chain"]), of=max(nu, 1), pass_=nu > 0 and len(R["chain"]) == nu))
+    if R["edge"]:
+        T.append(dict(id=sid + ".edge", n="نقاط الدخول (" + sd.get("edge_name", "") + ") موصولة بالمصدر عبر هندسة فعلية", ok=len(R["edge_ok"]), of=len(R["edge"]), pass_=len(R["edge_ok"]) == len(R["edge"])))
     ncon = len(R["allcon"])
-    T.append(dict(id=sd["id"] + ".orph", n="لا موصل يتيم: كل " + sd["conductor_name"] + " موصول بالمصدر", ok=ncon - len(R["orph"]), of=max(ncon, 1), pass_=ncon > 0 and not R["orph"]))
-    # per level coverage
-    lv_ok = collections.Counter(); lv_all = collections.Counter()
+    T.append(dict(id=sid + ".orph", n="لا موصل يتيم: كل " + sd["conductor_name"] + " موصول بمصدر أو نقطة دخول", ok=ncon - len(R["orph"]), of=max(ncon, 1), pass_=ncon > 0 and not R["orph"]))
+    lv_ok = collections.Counter(); lv_all = collections.Counter(); okset = set(R["ok"])
     for k, v in R["units"].items():
         l = els[v[0]]["l"]; lv_all[l] += 1
-        if k in set(R["ok"]): lv_ok[l] += 1
+        if k in okset: lv_ok[l] += 1
     order = [l["id"] for l in M["levels"]]
     lv = [l for l in order if lv_all[l]]
     full = [l for l in lv if lv_ok[l] == lv_all[l]]
-    T.append(dict(id=sd["id"] + ".lvl", n="كل طابق فيه نهايات استهلاك موصول كله بالشبكة", ok=len(full), of=max(len(lv), 1), pass_=bool(lv) and len(full) == len(lv),
-                  detail={l: [lv_ok[l], lv_all[l]] for l in lv}))
+    T.append(dict(id=sid + ".lvl", n="كل طابق فيه نهايات استهلاك موصول كله بالشبكة", ok=len(full), of=max(len(lv), 1), pass_=bool(lv) and len(full) == len(lv), detail={l: [lv_ok[l], lv_all[l]] for l in lv}))
     return T
 
 
@@ -356,7 +383,7 @@ def run(M, verbose=False):
         R["tests"] = tests_of(M, sd, R)
         out.append((sd, R))
         if verbose:
-            print(f"{sd['id']:6s} sources {len(R['src']):3d} (unlinked {len(R['lone'])}) conductors {len(R['allcon']):5d} terminals {len(R['units']):5d} reached {len(R['ok']):5d}  failed {len(R['bad']):4d} [island {len(isl)}, last piece missing {len(near)}, nothing nearby {len(far)}]  unreached networks {len(R['islands'])} (largest {[n for n, _ in R['islands'][:5]]})")
+            print(f"{sd['id']:6s} sources {len(R['src']):3d} entries {len(R['edge']):3d} conductors {len(R['allcon']):5d} terminals {len(R['units']):5d} distribution {len(R['ok']):5d} chain {len(R['chain']):5d}  failed {len(R['bad']):4d} [island {len(isl)}, last piece missing {len(near)}, nothing nearby {len(far)}]  unreached networks {len(R['islands'])} (largest {[n for n, _ in R['islands'][:5]]})")
     return out
 
 
@@ -367,11 +394,12 @@ def pack(M, results):
     for sd, R in results:
         reach = sorted(R["reach"].items(), key=lambda kv: kv[1])
         role = []
+        srcs, eds, ters = set(R["src"]), set(R["edge"]), set(R["ter"])
         for i, d in reach:
-            role.append("s" if i in set(R["src"]) else "t" if i in set(R["ter"]) else "c")
+            role.append("s" if i in srcs else "e" if i in eds else "t" if i in ters else "c")
         unreached_ter = [i for k in R["bad"] for i in R["units"][k]]
         S.append(dict(id=sd["id"], name=sd["name"], icon=sd["icon"], color=sd["color"], desc=sd["desc"],
-                      cnt=dict(src=len(R["src"]), con=len(R["allcon"]), ter=len(R["units"]), ok=len(R["ok"]), orph=len(R["orph"]), isl=len(R["isl"]), near=len(R["near"]), far=len(R["far"]), lone=len(R["lone"])),
+                      cnt=dict(src=len(R["src"]), edge=len(R["edge"]), con=len(R["allcon"]), ter=len(R["units"]), ok=len(R["ok"]), chain=len(R["chain"]), orph=len(R["orph"]), isl=len(R["isl"]), near=len(R["near"]), far=len(R["far"]), lone=len(R["lone"])),
                       tests=[dict(id=t["id"], n=t["n"], ok=t["ok"], of=t["of"], p=1 if t["pass_"] else 0, **({"d": t["detail"]} if "detail" in t else {})) for t in R["tests"]],
                       src=R["src"], ri=[i for i, d in reach], rd=[int(round(d * 10)) for i, d in reach], rk="".join(role), x=unreached_ter, o=R["orph"]))
     return {"v": 1, "tol": TOL, "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "systems": S}

@@ -163,16 +163,8 @@ def main():
         for y in ys: mark(rect(x0, y - 5, x1, y + 5), "فاصل موقف (طبقة A-CAR)")
         mark(rect(back - 5, min(ys), back + 5, max(ys)), "خط خلفية المواقف (طبقة A-CAR)")
     # dashed centre line: filled rectangles x 3615..3626 of layer 0; direction arrows: filled shapes of the Road Marks / Arrow layers
-    for d in sh.D:
-        if not d.get("fill") or not d["polys"]: continue
-        ly = d["layer"] or ""
-        w = [sh.T(x, y) for x, y in d["polys"][0]]
-        xs = [q[0] for q in w]; ys_ = [q[1] for q in w]
-        if len(w) < 3: continue
-        if ly == "0" and 3600 < min(xs) and max(xs) < 3640 and max(xs) - min(xs) < 20 and 90 < max(ys_) - min(ys_) < 140 and -100 < min(ys_) < 3400:
-            mark([[round(a, 1), round(b, 1)] for a, b in w], "خط منتصف متقطع (طبقة 0)")
-        elif ly.endswith("A-Road Marks") or ly.endswith("$Arrow"):
-            mark([[round(a, 1), round(b, 1)] for a, b in w], "سهم اتجاه (طبقة " + ly.split("$")[-1] + ")")
+    import site_marks                                      # one polygon per drawing: the triangles of a dash / arrow are merged (the first triangle alone drew spikes and bow-ties)
+    for nm, poly in site_marks.shapes(sh): mark(poly, nm)
     # ---- street in front of the plot (A100 site plan, registered to A102 by hatch matching, data/reg_p3.json)
     STREET = [(-1277, -1030, 6000, -480, "الشارع الجنوبي (حوافه من A100: y=-480 و y=-1030)"), (-1277, -480, -479, 4600, "الشارع الغربي (حوافه من A100: x=-1277 و x=-479)")]
     for k, (x0, y0, x1, y1, nm) in enumerate(STREET, 1):
