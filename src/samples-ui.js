@@ -17,10 +17,10 @@ function initSamplesUI(ctx){
     const by={}; ids.forEach(id=>(by[lib.samples[id].cat]=by[lib.samples[id].cat]||[]).push(id));
     let h=`<div class="note">${esc(lib.note||'')}</div><div class="muted">${ids.length} عينة من ${Object.keys(lib.samples).length} — انقر عينة لمعاينتها منفردة، ومنها «اذهب إلى موضعها في المبنى».</div>`;
     for(const c of Object.keys(CATN)){ const arr=by[c]; if(!arr) continue; h+=`<details open><summary><b>${CATN[c]}</b> (${arr.length})</summary>`+arr.sort().map(id=>{const s=lib.samples[id]; const cf=CONFN[s.conf]||['',''];
-        return `<div class="res" data-s="${esc(id)}"><b>${esc(s.name)}</b><small><code>${esc(id)}</code> • <span style="color:${cf[1]}">${cf[0]}</span> • ${typeCnt[id]?typeCnt[id]+' عنصر في النموذج':'كتالوج فقط'}${s.place&&s.place.mode==='none'?' (لا استبدال تلقائي)':''}</small></div>`;}).join('')+`</details>`; }
+        return `<div class="res hasth" data-s="${esc(id)}"><img class="sthumb" data-sid="${esc(id)}" alt="" width="76" height="54">${(window.THUMBS&&THUMBS.photoOfKey(id))?`<img class="sphoto" src="${esc(THUMBS.photoOfKey(id).u)}" alt="صورة توضيحية" width="76" height="54" loading="lazy" title="صورة واقعية توضيحية لمنتج مماثل — ليست من الموقع">`:''}<div class="stx"><b>${esc(s.name)}</b><small><code>${esc(id)}</code> • <span style="color:${cf[1]}">${cf[0]}</span> • ${typeCnt[id]?typeCnt[id]+' عنصر في النموذج':'كتالوج فقط'}${s.place&&s.place.mode==='none'?' (لا استبدال تلقائي)':''}</small></div></div>`;}).join('')+`</details>`; }
     return h; }
   pane.innerHTML=`<input id="smpQ" type="search" placeholder="ابحث في العينات (اسم، معرّف، نوع)…" autocomplete="off"><div id="smpList"></div>`;
-  const render=()=>{$('smpList').innerHTML=listHTML();}; render();
+  const render=()=>{$('smpList').innerHTML=listHTML(); if(window.THUMBS) THUMBS.attach($('smpList'));}; render();
   $('smpQ').oninput=ev=>{q=ev.target.value.trim().toLowerCase(); render();};
   $('smpList').onclick=ev=>{const r=ev.target.closest('.res[data-s]'); if(r) openPreview(r.dataset.s);};
   /* ---------- preview ---------- */
@@ -29,7 +29,8 @@ function initSamplesUI(ctx){
     const s=lib.samples[id]; dlg.classList.add('on'); const wrap=$('smpCanvas'); wrap.innerHTML='';
     const dims=Object.assign({},s.defaults||{},s.dims||{}); const keys=Object.keys(s.dims||{}); if(!keys.length&&s.kind==='path') keys.push('L');
     const cf=CONFN[s.conf]||['',''];
-    $('smpInfo').innerHTML=`<h3>${esc(s.name)}</h3><div class="muted">${esc(s.en||'')} • <code>${esc(id)}</code> • <b style="color:${cf[1]}">${cf[0]}</b></div>
+    const ph=window.THUMBS?THUMBS.photoOfKey(id):null;
+    $('smpInfo').innerHTML=`<h3>${esc(s.name)}</h3><div class="muted">${esc(s.en||'')} • <code>${esc(id)}</code> • <b style="color:${cf[1]}">${cf[0]}</b></div>${ph?'<div class="ithumb">'+THUMBS.photoFigure(ph)+'</div>':''}
       <div class="dimrow">${keys.map(k=>`<label>${k}<input type="number" data-d="${k}" value="${dims[k]}" step="1" min="0.1"></label>`).join('')}<span class="muted">سم — غيّر الأبعاد لرؤية تكيّف العينة</span></div>
       ${(s.facts&&s.facts.length)?'<h4>من المستندات</h4><table class="ctab">'+s.facts.map(f=>`<tr><th>${esc(f[0])}</th><td>${esc(f[1])}</td></tr>`).join('')+'</table>':''}
       ${(s.asm&&s.asm.length)?'<h4>افتراضات هندسية — تحتاج تأكيد</h4><ul class="asm">'+s.asm.map(a=>`<li>${esc(a)}</li>`).join('')+'</ul>':''}

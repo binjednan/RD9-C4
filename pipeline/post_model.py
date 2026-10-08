@@ -736,6 +736,17 @@ if _moved:
 M["meta"]["support"] = dict(_cnt)
 print("support analysis:", dict(_cnt), "| best-guess relocations:", len(_moved), "| no host found:", _failed)
 
+# ------------------------------------------------------------------ finish corrections B / G / R (pipeline/arch_finfix.py): car park (CSP) instead of lobby granite, plant rooms with abbreviated labels
+import arch_finfix as _FF
+_ff = _FF.apply(M, els)
+print("finish fixes:", _ff)
+M["meta"].setdefault("finfix", {}).update(_ff)
+import arch_wallfin as _WF
+_wf, _wfc = _WF.build(M, els)
+els.extend(_wf)
+print("wall finish layers:", len(_wf), _wfc)
+M["meta"].setdefault("wallfin", {}).update(_wfc)
+
 # ------------------------------------------------------------------ accessories added after the GitHub hand-off (pipeline/extras.py): cornices, ramp fence, site lights, parking canopies
 import extras as _EXT
 els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]
@@ -828,7 +839,15 @@ def poly_area_cm2(g):
         return ar(g[1]) - sum(ar(h) for h in (g[4] if len(g) > 4 and g[4] else []))
     if g[0] == "r":
         return abs(g[3] - g[1]) * abs(g[4] - g[2])
+    if g[0] == "rs":                                                             # sloped strip (ramp finish plate): surface length x width, cm2
+        pts = g[1]; L = sum(((pts[i + 1][0] - pts[i][0]) ** 2 + (pts[i + 1][1] - pts[i][1]) ** 2 + ((pts[i + 1][2] - pts[i][2]) * 100.0) ** 2) ** .5 for i in range(len(pts) - 1))
+        return L * g[2]
     return None
+
+# discipline colours (owner 2026-10-08: the gold of architecture / electrical was «not beautiful at all»): cool grey structure, warm stone architecture, blue mechanical, violet electrical, teal plumbing
+_LAYER_COL = {"S": "#8A94A3", "A": "#B9A89A", "M": "#3F7FBF", "E": "#9A6FD0", "P": "#1FA187"}
+for _L in M["layers"]:
+    if _L["id"] in _LAYER_COL: _L["color"] = _LAYER_COL[_L["id"]]
 
 M["fin"] = {k: list(v) for k, v in finishes.FIN.items()}
 finq = collections.defaultdict(lambda: {"n": 0, "area": 0.0, "tower": 0.0})
@@ -836,12 +855,20 @@ for e in els:
     fl = (e.get("a") or {}).get("fin") or []
     for f in fl:
         finq[f]["n"] += 1
+    if e["c"] == "A.wfin" and len(fl) == 1:                                    # wall layers: length x height (m2)
+        _g = e["g"]; _m2 = max(abs(_g[3] - _g[1]), abs(_g[4] - _g[2])) / 100.0 * (_g[6] - _g[5])
+        finq[fl[0]]["area"] += _m2
+        if e["l"] in ("1", "2", "3", "4", "5"): finq[fl[0]]["tower"] += _m2
     if e["c"] in ("A.floor", "A.ceil", "A.site") and len(fl) == 1:
         a = poly_area_cm2(e["g"])
         if a is not None:
             finq[fl[0]]["area"] += a / 1e4
             if e["l"] in ("1", "2", "3", "4", "5"):
                 finq[fl[0]]["tower"] += a / 1e4
+# BOQ 9.1.1.4.6 prices «(CSP3&CSP4) basement driveway, car parking & ramp» as ONE item: its row is the sum of the three A500 systems drawn separately (CSP-2 ramp, CSP-3 drive way, CSP-4 bays)
+_csp = [finq[c] for c in ("CSP-2", "CSP-3", "CSP-4") if c in finq]
+if _csp:
+    finq["CSP"]["n"] = sum(v["n"] for v in _csp); finq["CSP"]["area"] = sum(v["area"] for v in _csp)
 # 'tower' = typical levels 1-5, 'area' = all levels (B/G/R use a generic room-kind -> finish mapping, see docs/PROGRESS.md)
 M["finq"] = {k: {"n": v["n"], "area": round(v["area"], 1) if v["area"] > 0 else None, "tower": round(v["tower"], 1) if v["tower"] > 0 else None} for k, v in finq.items()}
 
@@ -859,7 +886,7 @@ M["ral"] = {
          "flag": "تعارض: في A500 المستخرج W12 = كسوة بورسلين 60×120، والدهان الأكريليك الخارجي هو W11 — بانتظار تأكيدك"},
         {"code": "W10", "cat": "دهان المواقف", "space": "جدران المواقف", "system": "Semi epoxy", "finish": "Semi Gloss", "ral": "RAL xxxx"},
         {"code": "CSP-3", "cat": "طلاء أرضيات المواقف", "space": "الممر", "system": "PU heavy-duty coating", "finish": "Anti-slip", "ral": "RAL xxxx",
-         "flag": "A500 المستخرج يذكر CSP دون ترقيم فرعي (2/3/4) — بانتظار تأكيدك"},
+         "flag": "A500 (قُرئ مباشرة من الورقة) يعرّف CSP-2 المنحدر وCSP-3 الممر وCSP-4 مواقف السيارات والمشاة؛ والبند الواحد في BOQ (1,190 م²) يجمعها"},
         {"code": "CSP-2", "cat": "طلاء أرضيات المواقف", "space": "المنحدر", "system": "PU anti-slip coating", "finish": "Anti-slip", "ral": "RAL xxxx"},
         {"code": "CSP-4", "cat": "طلاء أرضيات المواقف", "space": "مواقف السيارات", "system": "PU deck coating", "finish": "Smooth finish", "ral": "RAL xxxx"},
         {"code": "CPF-1", "cat": "خطوط المواقف", "space": "خطوط المرور", "system": "Polyurethane line marking", "finish": "Gloss", "ral": "RAL xxxx"},

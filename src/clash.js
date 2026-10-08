@@ -143,7 +143,9 @@ function initClash(ctx){
       const t=Math.min(1,T.t); const px=a.x+dx*t,py=a.y+dy*t,pz=a.z+dz*t; camera.position.set(px,py,pz); const nxt=T.pts[Math.min(T.pts.length-1,T.i+2)]; const tgt=(T.i>=T.pts.length-3)?T.look:new THREE.Vector3(nxt.x,Math.min(nxt.y,py),nxt.z); controls.target.copy(tgt); camera.lookAt(tgt); wake(300); }
   }
   function updatePin(){ if(!pinEl||cur<0||!marker||!marker.visible){ if(pinEl) pinEl.style.display='none'; return; }
-    const v=marker.position.clone().project(camera); if(v.z>1||v.z<-1||Math.abs(v.x)>1.1||Math.abs(v.y)>1.1){pinEl.style.display='none';return;} const r=$('view').getBoundingClientRect(); pinEl.style.display='block'; pinEl.style.left=((v.x+1)/2*r.width+14)+'px'; pinEl.style.top=((1-v.y)/2*r.height-18)+'px'; }
+    const v=marker.position.clone().project(camera); if(v.z>1||v.z<-1||Math.abs(v.x)>1.1||Math.abs(v.y)>1.1){pinEl.style.display='none';return;} const r=$('view').getBoundingClientRect(); let top=(1-v.y)/2*r.height-18, lim=1e9; const inf=$('info');
+    if(inf&&inf.classList.contains('on')){ const ir=inf.getBoundingClientRect(); if(ir.width>=r.width*0.9&&Math.abs(ir.bottom-r.bottom)<6) lim=ir.top-r.top; }          /* phones: never over the bottom sheet */
+    if(top+18>lim-4){pinEl.style.display='none';return;} pinEl.style.display='block'; pinEl.style.left=((v.x+1)/2*r.width+14)+'px'; pinEl.style.top=Math.min(top,lim-46)+'px'; }
   /* UI */
   function stBadge(st){ const col={open:'#8b949e',checking:'#bf8700',resolved:'#1a7f37',accepted:'#0969da',false:'#6e7781',design:'#cf222e'}[st]||'#8b949e'; return `<span class="stb" style="background:${col}">${esc(ST[st]||st)}</span>`; }
   function listHTML(){
@@ -180,8 +182,8 @@ function initClash(ctx){
   function show(i){
     cur=i; const c=C[i]; ensureVisible(c.a); ensureVisible(c.b); clearRoute(); setGhost(true,ghostOp,[c.l]); clearHL(); highlight([c.a],0xff8a00,true,0.32); addHL([c.b],0x2f81f7,true,0.28); placeMarker(c);
     const p=new THREE.Vector3(c.pt[0],c.pt[1],c.pt[2]); const dirv=new THREE.Vector3(-0.55,0.35,0.75).normalize(); flyTo(p.clone().addScaledVector(dirv,3.2),p); document.body.classList.remove('panel-open');
-    $('clashDetail').innerHTML=detailHTML(c); $('clashDetail').style.display='block'; bindDetail(c); refreshList(); updatePin(); if(pinEl) pinEl.innerHTML=`◎ ${esc(c.id||'')}<br><small>${esc(LVL[c.l].name)} · ${(c.pt[1]-LVL[c.l].ffl).toFixed(2)} م فوق الأرضية</small>`; }
-  function endFocus(){ cur=-1; setGhost(false); clearHL(); clearMarker(); clearRoute(); $('clashDetail').style.display='none'; $('clashDetail').innerHTML=''; refreshList(); wake(); }
+    const dd=$('clashDetail'); if(dd){ dd.innerHTML=detailHTML(c); dd.style.display='block'; bindDetail(c); } refreshList(); updatePin(); if(pinEl) pinEl.innerHTML=`◎ ${esc(c.id||'')}<br><small>${esc(LVL[c.l].name)} · ${(c.pt[1]-LVL[c.l].ffl).toFixed(2)} م فوق الأرضية</small>`; }
+  function endFocus(){ cur=-1; setGhost(false); clearHL(); clearMarker(); clearRoute(); const dd=$('clashDetail'); if(dd){dd.style.display='none'; dd.innerHTML='';} refreshList(); wake(); }
   function bindDetail(c){
     const d=$('clashDetail');
     d.querySelectorAll('a[data-f]').forEach(a=>a.onclick=ev=>{ev.preventDefault(); const ei=+a.dataset.f; clearHL(); highlight([ei],ei===c.a?0xff8a00:0x2f81f7,true,0.35); const bb=ctx.bboxOf([ei]); const p=new THREE.Vector3(bb.c[0],bb.c[1],bb.c[2]); flyTo(p.clone().add(new THREE.Vector3(-0.55,0.4,0.7).normalize().multiplyScalar(Math.max(2.5,bb.r*2.4))),p);});
@@ -192,7 +194,7 @@ function initClash(ctx){
     $('clTour').onclick=()=>{ if(!route){route=buildRoute(c);} $('clSteps').innerHTML=stepsHTML(route); startTour(c); };
     $('clMySave').onclick=()=>{ const st=$('clMySt').value,tx=$('clMyTx').value.trim(); setLocal(c.id,(st||tx)?{st,tx,ts:new Date().toISOString()}:null); toast('حُفظت ملاحظتك على هذا الجهاز'); refreshList(); };
   }
-  function refreshList(){ const box=$('clashBox'); const top=box.scrollTop; box.innerHTML=listHTML(); box.scrollTop=top; }
+  function refreshList(){ const box=$('clashBox'); if(!box) return; const top=box.scrollTop; box.innerHTML=listHTML(); box.scrollTop=top; }
   function plan(){
     const list=C.map((c,i)=>[c,i]).filter(x=>(kFilter==='*'||x[0].k===kFilter)&&(stFilter==='*'||(x[0].st||'open')===stFilter)).slice(0,60); const order=[]; const order_l=M.levels.map(l=>l.id);
     const byL={}; list.forEach(x=>(byL[x[0].l]=byL[x[0].l]||[]).push(x)); let cum=0,h='<div class="note"><b>خطة تفتيش مرتّبة:</b> حسب الطابق ثم الأقرب فالأقرب (المسافة تقريب مستقيم). انقر عنصرًا لفتحه.</div><ol class="steps">';
@@ -203,15 +205,24 @@ function initClash(ctx){
     C.forEach(c=>{const l=getLocal(c.id); const [px,py]=planXY(c); rows.push([c.id,c.l,K[c.k]||c.k,c.ea,c.eb,px,py,(c.pt[1]-LVL[c.l].ffl).toFixed(2),ST[c.st||'open']||'',l&&l.st?ST[l.st]:'',l&&l.tx?l.tx:'']);});
     const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='c4_clash_inspection.csv'; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }
   function build(){
-    const box=$('clashBox'); if(!C.length){box.innerHTML='<div class=muted>لا توجد تعارضات محسوبة في هذا الإصدار من النموذج.</div>';return;}
-    pinEl=$('clashPin'); box.innerHTML=listHTML();
+    pinEl=$('clashPin'); window.addEventListener('pointerdown',ev=>{ if(tour&&ev.target&&ev.target.closest&&ev.target.closest('#view')) {tour=null; toast('أُوقفت الجولة');} },true);
+    const box=$('clashBox'); if(!box) return;   /* the old list UI was replaced by src/issues.js: this module is now the engine (marker, route, walking tour) */
+    if(!C.length){box.innerHTML='<div class=muted>لا توجد تعارضات محسوبة في هذا الإصدار من النموذج.</div>';return;}
+    box.innerHTML=listHTML();
     box.onclick=ev=>{ const ch=ev.target.closest('.chip[data-k]'); if(ch){kFilter=ch.dataset.k;shown=120;refreshList();return;} const cs=ev.target.closest('.chip[data-s]'); if(cs){stFilter=cs.dataset.s;shown=120;refreshList();return;}
       if(ev.target.closest('#clMore')){shown+=200;refreshList();return;} if(ev.target.closest('#clPlan')){plan();return;} if(ev.target.closest('#clExport')){exportCSV();return;}
       const r=ev.target.closest('.res[data-c]'); if(r) show(+r.dataset.c); };
-    window.addEventListener('pointerdown',ev=>{ if(tour&&ev.target&&ev.target.closest&&ev.target.closest('#view')) {tour=null; toast('أُوقفت الجولة');} },true);
   }
   build();
-  window.__nav=gridOf; return {show,endFocus,frame,get current(){return cur;},buildRoute};
+  /* engine API used by src/issues.js (call show(i) first: stepsHTML reads the focused clash) */
+  function showRoute(c){ clearRoute(); route=buildRoute(c); drawRoute(route,c);
+    const pts=[]; route.legs.forEach(L=>{ if(L.kind==='walk') L.pts.forEach(p=>pts.push(p)); }); wake(1500);
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; pts.concat([[c.pt[0]*100,-c.pt[2]*100]]).forEach(p=>{x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);});
+    const cx=(x0+x1)/2*S,cz=-(y0+y1)/2*S,r=Math.max(6,Math.hypot(x1-x0,y1-y0)*S*0.7);
+    flyTo(new THREE.Vector3(cx-r*0.3,LVL[c.l].ffl+r*1.1,cz+r*0.9),new THREE.Vector3(cx,LVL[c.l].ffl,cz),900);
+    return stepsHTML(route); }
+  function runTour(c){ if(!route) route=buildRoute(c); const h=stepsHTML(route); startTour(c); return h; }
+  window.__nav=gridOf; return {show,endFocus,frame,get current(){return cur;},buildRoute,showRoute,runTour,clearRoute,placeMarker,clearMarker};
 }
 window.initClash=initClash;
 })();

@@ -20,7 +20,7 @@ ORDER = {"d": 0, "v": 1, "a": 2}
 # z grade per category (sub-category overrides first)
 Z_BY_CAT = {
     "S.beam": "v", "S.pile": "v", "S.ramp": "v", "S.": "d",
-    "A.ceil": "v", "A.rail": "v", "A.fix": "v", "A.stage": "s", "A.": "d",
+    "A.ceil": "v", "A.rail": "v", "A.fix": "v", "A.wfin": "a", "A.stage": "s", "A.": "d",
     "M.equip": "a", "M.duct": "a", "M.pipe": "a", "M.damper": "a", "M.outlet": "v", "M.fan": "v",
     "E.tray": "a", "E.gen": "d", "E.": "v",
     "P.tank": "d", "P.pump": "d", "P.fix": "v", "P.heater": "v", "P.": "a",
@@ -28,7 +28,7 @@ Z_BY_CAT = {
 # types whose elevation follows from the element they hang on (so 'derived', not assumed)
 Z_TYPE = {"sprk_pendent": "v", "sprk_upright": "v", "sprk_double": "v", "sprk_drop": "a"}
 # categories whose plan position is derived (read from a symbol with a rule) rather than copied from an outline
-XY_DERIVED_CATS = ("A.fix", "A.win", "P.fix")
+XY_DERIVED_CATS = ("A.fix", "A.win", "P.fix", "A.wfin")
 
 
 def _by_prefix(table, c):

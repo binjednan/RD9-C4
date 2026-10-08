@@ -22,6 +22,9 @@ function initHub(ctx){
   h+=`<button class=kpi data-act="issues:clash" title="افتح مركز التعارضات"><b>${ic.clash.c+ic.clash.k}</b><span>تعارض يستحق المتابعة من ${ic.clash.c+ic.clash.k+ic.clash.m}</span><div class=sub><span class=pill style="background:#D55E00">${ic.clash.c} مؤكد</span><span class=pill style="background:#E69F00">${ic.clash.k} مرشح</span></div></button>`;
   h+=`<button class=kpi data-act="issues:guess" title="افتح قائمة التخمينات"><b>${ic.guess.items}</b><span>قرار تخمين فردي + ${ic.guess.rules} افتراضًا عامًا</span><div class=sub><span class=pill style="background:#0072B2">${ic.guess.impact.high} مرتفع الأثر</span></div></button>`;
   h+=`</div>`;
+  // ---- guided tours
+  const tl=(window.TOURS&&window.TOURS.list)||[];
+  if(tl.length) h+=`<h3>جولات موجّهة <small class=muted>(كاميرا ونص لكل محطة)</small></h3><div class=tours>`+tl.map(t=>`<button class=tourc data-act="tour:${esc(t.id)}"><b>${esc(t.t)}</b><span>${esc(t.d)}</span><em class=pill style="background:#1f6feb">${t.n} محطات</em></button>`).join('')+`</div>`;
   // ---- the building at a glance
   h+=`<h3>المبنى بنظرة: موثوقية كل طابق <small class=muted>(اضغط طابقًا لعزله)</small></h3><div class=lvstack>`;
   inv.levels.slice().reverse().forEach(l=>{const q=l.q||{}; const n=l.n||1; const c=l.clash||{};
@@ -47,6 +50,7 @@ function initHub(ctx){
     if(a==='lens'){setLens(v); toast('عدسة «'+({layer:'التخصصات',grade:'موثوقية البيانات'}[v]||v)+'» — الأيقونة في «العرض ▾»',2600);}
     else if(a==='issues'){openSec('pIssues',{scroll:true}); if(window.ISSUES) window.ISSUES.open(v);}
     else if(a==='level'){ if(v==='all') showAllLevels(); else onlyLevel(v); }
+    else if(a==='tour'){ if(window.TOURS) window.TOURS.start(v); }
   });
 }
 window.initHub=initHub;

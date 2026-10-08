@@ -44,15 +44,15 @@ const clipX=new THREE.Plane(new THREE.Vector3(-1,0,0),1000);
 renderer.clippingPlanes=[clipY,clipX];
 
 /* ---------- shader patch: unit isolation ---------- */
-const U={iso:{value:-1},maskOn:{value:0},mask:{value:null},maskBox:{value:new THREE.Vector4(0,-21,34,23)},lensOn:{value:0},lensPal:{value:Array.from({length:16},()=>new THREE.Vector3(0.86,0.89,0.93))}};
+const U={iso:{value:-1},maskOn:{value:0},mask:{value:null},maskBox:{value:new THREE.Vector4(0,-21,34,23)},lensOn:{value:0},mono:{value:0},lensPal:{value:Array.from({length:16},()=>new THREE.Vector3(0.86,0.89,0.93))}};
 function patch(mat){
   mat.onBeforeCompile=(sh)=>{
-    sh.uniforms.uIso=U.iso; sh.uniforms.uMaskOn=U.maskOn; sh.uniforms.uMask=U.mask; sh.uniforms.uMaskBox=U.maskBox; sh.uniforms.uLensOn=U.lensOn; sh.uniforms.uLensPal=U.lensPal;
+    sh.uniforms.uIso=U.iso; sh.uniforms.uMaskOn=U.maskOn; sh.uniforms.uMask=U.mask; sh.uniforms.uMaskBox=U.maskBox; sh.uniforms.uLensOn=U.lensOn; sh.uniforms.uLensPal=U.lensPal; sh.uniforms.uMono=U.mono;
     sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec2 aUnit; attribute float aClip; attribute float aHide; attribute float aLens; uniform vec3 uLensPal[16]; uniform float uLensOn; varying vec2 vUnit; varying float vClip; varying vec3 vWPos; varying vec3 vLensC; varying float vLensK;')
       .replace('#include <begin_vertex>','#include <begin_vertex>\nvUnit=aUnit; vClip=aClip; vWPos=(modelMatrix*vec4(transformed,1.0)).xyz; { int li=(aLens>15.5)?0:int(aLens+0.5); vLensC=uLensPal[li]; vLensK=(aLens<0.5)?0.0:1.0; }')
       .replace('#include <project_vertex>','#include <project_vertex>\n if(aHide>0.5 || (uLensOn>0.5 && aLens>254.5)) gl_Position=vec4(2.0,2.0,2.0,1.0);');
-    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vUnit; varying float vClip; varying vec3 vWPos; varying vec3 vLensC; varying float vLensK; uniform float uLensOn; uniform float uIso; uniform float uMaskOn; uniform sampler2D uMask; uniform vec4 uMaskBox;')
-      .replace('#include <color_fragment>','#include <color_fragment>\n if(uLensOn>0.5){ vec3 lb=diffuseColor.rgb; float lu=dot(lb,vec3(0.299,0.587,0.114)); diffuseColor.rgb=(vLensK>0.5)?vLensC*(0.56+0.5*lu):mix(lb,vec3(0.88,0.9,0.93),0.76); }')
+    sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vUnit; varying float vClip; varying vec3 vWPos; varying vec3 vLensC; varying float vLensK; uniform float uLensOn; uniform float uMono; uniform float uIso; uniform float uMaskOn; uniform sampler2D uMask; uniform vec4 uMaskBox;')
+      .replace('#include <color_fragment>','#include <color_fragment>\n { vec3 lb=diffuseColor.rgb; float lu=clamp(dot(lb,vec3(0.299,0.587,0.114)),0.0,1.0); vec3 mn=vec3(mix(0.50,0.97,pow(lu,0.75)));\n if(uLensOn>0.5){ diffuseColor.rgb=(vLensK>0.5)?vLensC*(0.62+0.38*lu):(uMono>0.5?mn:mix(lb,vec3(0.88,0.9,0.93),0.76)); } else if(uMono>0.5){ diffuseColor.rgb=mn; } }')
       .replace('void main() {','void main() {\n if(uIso>-0.5 && vClip<0.5 && abs(vUnit.x-uIso)>0.5 && abs(vUnit.y-uIso)>0.5) discard;\n if(uIso>-0.5 && vClip>0.5){ vec2 uv=(vWPos.xz-uMaskBox.xy)/uMaskBox.zw; if(uv.x<0.||uv.x>1.||uv.y<0.||uv.y>1.||texture2D(uMask,uv).r<0.5) discard; }');
   };
   mat.customProgramCacheKey=()=> 'bimpatch';
@@ -158,7 +158,7 @@ const lvlVis={}; M.levels.forEach(l=>lvlVis[l.id]=true);
 const layerOp={}; M.layers.forEach(L=>layerOp[L.id]=1);
 const catOp={}; Object.keys(CATS).forEach(c=>catOp[c]=1);
 const stageVis={all:true}; Object.keys(stageCount).forEach(k=>stageVis[k]=true);
-let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, focusSamples=false, CLASH=null;
+let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, focusSamples=false, CLASH=null, ISSUES=null;
 const stageOn=k=>stageVis.all&&stageVis[k]!==false;
 function groupVisible(G){
   if(G.stage&&!stageOn(G.stage)) return false;
@@ -175,10 +175,31 @@ function applyVis(){
   }
   if(LOD) LOD.invalidate();
   updateGlow();
+  if(window.LOOK) window.LOOK.dirty();
   wake();
 }
-function resize(){const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
-window.addEventListener('resize',resize); window.addEventListener('orientationchange',()=>setTimeout(resize,250)); resize(); if(window.ResizeObserver) new ResizeObserver(()=>resize()).observe(wrap);
+/* phones: the bottom sheet (portrait) or the side card (landscape) covers part of the canvas — the frame's centre moves to the part that stays visible by a projection offset
+   (so picking, projected labels and pins stay consistent with what is drawn); it eases in and out with the card */
+let inset={x:0,y:0};
+function insetWant(){
+  const el=$('info'); if(!el||!el.classList.contains('on')||!window.matchMedia||!window.matchMedia('(max-width:860px)').matches) return [0,0];
+  const vr=wrap.getBoundingClientRect(),r=el.getBoundingClientRect(); if(!vr.width||!vr.height||!r.height) return [0,0];
+  if(r.width>=vr.width*0.9&&Math.abs(r.bottom-vr.bottom)<6) return [0,Math.min(r.height,vr.height*0.7)/2];
+  if(Math.abs(r.right-vr.right)<6&&r.height>vr.height*0.4) return [Math.min(r.width,vr.width*0.6)/2,0];
+  return [0,0];
+}
+function applyInset(){
+  const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);
+  if(Math.abs(inset.x)<0.5&&Math.abs(inset.y)<0.5){ inset.x=0; inset.y=0; if(camera.view&&camera.view.enabled) camera.clearViewOffset(); }
+  else camera.setViewOffset(w,h,inset.x,inset.y,w,h);
+}
+function stepInset(dt){
+  const t=insetWant(),dx=t[0]-inset.x,dy=t[1]-inset.y; if(Math.abs(dx)<0.5&&Math.abs(dy)<0.5&&inset.x===t[0]&&inset.y===t[1]) return;
+  if(Math.abs(dx)<0.5&&Math.abs(dy)<0.5){ inset.x=t[0]; inset.y=t[1]; } else { const k=1-Math.exp(-Math.min(dt||0.016,0.1)*14); inset.x+=dx*k; inset.y+=dy*k; wake(300); }
+  applyInset();
+}
+function resize(){const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();applyInset();wake();}
+window.addEventListener('resize',resize); window.addEventListener('orientationchange',()=>setTimeout(resize,250)); resize(); if(window.ResizeObserver){ new ResizeObserver(()=>resize()).observe(wrap); new ResizeObserver(()=>wake(700)).observe($('info')); }
 
 /* ---------- lenses (src/lens.js) ---------- */
 let LENS=null;
@@ -187,11 +208,23 @@ function setLens(m,opt){ if(!LENS) return; LENS.set(m,opt); document.querySelect
 /* ---------- picking ---------- */
 const ray=new THREE.Raycaster(); const mouse=new THREE.Vector2();
 function offOf(ei){const e=M.els[ei];const lv=LVL[e.l];const G=groups[elRange[ei].gk];return explode*(lv?lv.idx:0)+((G&&G.dy)||0);}
+/* elements hidden by the owner («إخفاء العنصر», src/notes.js): bit 2 of the per-vertex aHide flag (bit 1 belongs to the detail swap, which keeps bit 2 intact) */
+const uHid=new Set();
+function setUserHidden(idxs,on){
+  const touched=new Set();
+  idxs.forEach(ei=>{ const rg=elRange[ei]; if(!rg) return; const G=groups[rg.gk]; if(!G||!G.hideAttr) return; if(on) uHid.add(ei); else uHid.delete(ei);
+    const a=G.hideAttr.array; for(let i=rg.start*3,n=(rg.start+rg.count)*3;i<n;i++) a[i]=on?(a[i]|2):(a[i]&1); touched.add(G); });
+  touched.forEach(G=>{G.hideAttr.needsUpdate=true;}); if(LOD) LOD.invalidate(); if(window.LOOK) window.LOOK.dirty(); wake();
+}
 function elVisible(ei){
+  if(uHid.size&&uHid.has(ei)) return false;
+  if(U.lensOn.value>0.5&&LENS&&LENS.classOf(ei)>254.5) return false;   // hidden by the lens («عزل»): it is neither drawn, picked nor highlighted
   const e=M.els[ei]; const G=groups[elRange[ei].gk]; if(!G||!G.mesh||!G.mesh.visible) return false;
   if(isoUnit!==null){const a=uidx(e.u),b=uidx(e.u2); if(a!==isoUnit&&b!==isoUnit) return false;}
   return true;
 }
+/* what a click may select: visible, and — while a lens class is isolated or «عزل» is on — only what the lens concerns (dimmed elements let the click pass through to the isolated ones behind them) */
+function elPickable(ei){ if(!elVisible(ei)) return false; if(LENS&&LENS.restrict&&LENS.classOf(ei)<0.5) return false; return true; }
 function rayAABB(o,d,bb,off){let tmin=0,tmax=1e9;for(let i=0;i<3;i++){const lo=bb[i]+(i===1?off:0),hi=bb[i+3]+(i===1?off:0);const oi=o[i],di=d[i];if(Math.abs(di)<1e-9){if(oi<lo||oi>hi)return -1;}else{let t1=(lo-oi)/di,t2=(hi-oi)/di;if(t1>t2){const t=t1;t1=t2;t2=t;}if(t1>tmin)tmin=t1;if(t2<tmax)tmax=t2;if(tmin>tmax)return -1;}}return tmin;}
 function rayTri(o,d,a,b,c){const e1=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],e2=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];const p=[d[1]*e2[2]-d[2]*e2[1],d[2]*e2[0]-d[0]*e2[2],d[0]*e2[1]-d[1]*e2[0]];const det=e1[0]*p[0]+e1[1]*p[1]+e1[2]*p[2];if(Math.abs(det)<1e-12)return -1;const iv=1/det;const t=[o[0]-a[0],o[1]-a[1],o[2]-a[2]];const u=(t[0]*p[0]+t[1]*p[1]+t[2]*p[2])*iv;if(u<0||u>1)return -1;const q=[t[1]*e1[2]-t[2]*e1[1],t[2]*e1[0]-t[0]*e1[2],t[0]*e1[1]-t[1]*e1[0]];const v=(d[0]*q[0]+d[1]*q[1]+d[2]*q[2])*iv;if(v<0||u+v>1)return -1;const tt=(e2[0]*q[0]+e2[1]*q[1]+e2[2]*q[2])*iv;return tt>1e-4?tt:-1;}
 function pickHit(clientX,clientY){
@@ -200,7 +233,7 @@ function pickHit(clientX,clientY){
   ray.setFromCamera(mouse,camera); const o=[ray.ray.origin.x,ray.ray.origin.y,ray.ray.origin.z], d=[ray.ray.direction.x,ray.ray.direction.y,ray.ray.direction.z];
   const cand=[];
   for(let ei=0;ei<M.els.length;ei++){
-    if(!elVisible(ei)) continue;
+    if(!elPickable(ei)) continue;
     if(effOpacity(groups[elRange[ei].gk])<0.2) continue; // nearly transparent sections let the click pass through
     const off=offOf(ei);
     const t=rayAABB(o,d,elBB.subarray(ei*6,ei*6+6),off); if(t>=0) cand.push([t,ei,off]);
@@ -263,14 +296,28 @@ controls.onHome=goHome; controls.onFocus=()=>{if(selIdx>=0) flyToBox(bboxOf(selS
 function row(k,v){return `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;}
 const DESK=window.matchMedia('(min-width:861px)'); let infoMin=false;
 function infoDocked(){return DESK.matches&&!document.body.classList.contains('dock-off');}
-function hideInfo(){['info','infoDock'].forEach(k=>{$(k).classList.remove('on');$(k).innerHTML='';}); document.body.classList.remove('info-open');}
+/* the issue drawer (src/issues.js) shares the info dock with the element card: drawerHTML !== null while the drawer is what the dock shows */
+let drawerHTML=null, drawerBind=null;
+function hideInfo(){drawerHTML=null; drawerBind=null; ['info','infoDock'].forEach(k=>{$(k).classList.remove('on');$(k).innerHTML='';}); document.body.classList.remove('info-open');}
+function renderDrawer(){
+  if(drawerHTML===null) return; const docked=infoDocked(), el=docked?$('infoDock'):$('info'), other=docked?$('info'):$('infoDock');
+  other.classList.remove('on'); other.innerHTML=''; el.innerHTML=drawerHTML; el.classList.remove('min'); el.classList.add('on'); el.scrollTop=0;
+  document.body.classList.toggle('info-open',!docked); document.body.classList.remove('panel-open'); if(drawerBind) drawerBind(el); wake();
+}
+function showDrawer(html,bind){drawerHTML=html; drawerBind=bind||null; renderDrawer();}
+function hideDrawer(){if(drawerHTML!==null) hideInfo();}
+function refreshInfo(){if(drawerHTML!==null) renderDrawer(); else if(selIdx>=0) showInfo(selIdx);}
 function showInfo(ei){
+  drawerHTML=null; drawerBind=null;
   const e=M.els[ei]; const T=TYPES[e.t]||{}; const c=CATS[e.c]; const lv=LVL[e.l];
   const unit=e.u?UNITS[unitIndex[e.u]]:null; const st=stageKind(e);
   const sec=(t,body,open)=>`<details class=idet${open?' open':''}><summary>${t}</summary>${body}</details>`;
   let h=`<div class=ih><b>${esc(T.n||c.name)}</b><span class=ihb><button id=icol type=button aria-label="طيّ التفاصيل أو فردها" title="طيّ / فرد">▴</button><button id=icl type=button aria-label="إغلاق" title="إلغاء التحديد">×</button></span></div>`;
   h+=`<div class=isub><code>${esc(e.id)}</code><span>${esc(lv.name)} (${lv.ffl>0?'+':''}${lv.ffl.toFixed(2)})</span>${unit?`<span>${esc(unit.name)}</span>`:''}</div><div class=ibody>`;
   h+=`<div class=tags><span style="background:${c.color}22;color:${c.color}">${esc(LAYER[c.layer].name)}</span><span>${esc(c.name)}</span>${st?'<span style="background:#fff1f0;color:#cf222e">كمالية إخراجية — للعرض لا للتنفيذ</span>':''}</div>`;
+  {const q=e.q,P=window.LENS_PAL; if(q&&P){ const nm=['الموضع','المنسوب','المواصفة']; h+=`<div class=relq title="موثوقية بيانات هذا العنصر: موثّق من المخطط · مشتق بقاعدة · تخمين · إخراجي">`+[0,1,2].map(i=>{const g=P.GRADE[q[i]]||P.GRADE.d; return `<span class="is-pill st" style="background:${g.c};color:#0b2a3d" title="${esc(g.h)}">${nm[i]}: ${esc(g.n)}</span>`;}).join('')+`</div>`;}}
+  if(window.NOTES&&window.NOTES.infoHTML) h+=window.NOTES.infoHTML(ei);   // hide / note actions come first: always in reach, the drawing follows
+  h+=`<div class=ithumb id=ithumb hidden></div>`;
   h+=sec('الهوية',`<table>`+row('الرمز التعريفي (ID)',`<code>${esc(e.id)}</code>`)+(e.mark?row('الوسم / Tag',`<code>${esc(e.mark)}</code>`):'')+row('الطابق',esc(lv.name)+` (${lv.ffl>0?'+':''}${lv.ffl.toFixed(2)})`)+(unit?row('الوحدة',esc(unit.name)):'')+`</table>`,true);
   const sp=(T.sp||[]).slice(); const at=e.a||{};
   const extra=[]; for(const k in at){ if(k==='fin'||k==='assumed'||at[k]===null||at[k]===''||(Array.isArray(at[k])&&!at[k].length)) continue; extra.push([ATTR[k]||k,esc(fmtVal(at[k]))]); }
@@ -283,13 +330,14 @@ function showInfo(ei){
   const cf=CONF[T.cf||'doc']; const srcs=(e.s||[]).map(i=>M.sp[i]).concat(T.sr||[]);
   h+=sec(`مصدر البيانات <span class=cf style="background:${cf[1]}1a;color:${cf[1]}">${cf[0]}</span>`,`<div class=src><ul>`+srcs.map(s=>`<li>${esc(s)}</li>`).join('')+`</ul></div>`,false);
   const grp=e.grp&&grpMap[e.grp]?grpMap[e.grp].length:0; if(grp>1) h+=`<div class=muted>جزء من مجموعة (${grp} عنصر)</div>`;
+  if(window.ISSUES&&ISSUES.infoHTML) h+=ISSUES.infoHTML(ei);
   h+=`</div>`;
   /* ONE dock: on a desktop the card lives at the top of the side panel (no second floating panel over the model); on phones / with the panel hidden it is a compact card or bottom sheet */
   const docked=infoDocked(), el=docked?$('infoDock'):$('info'), other=docked?$('info'):$('infoDock');
   other.classList.remove('on'); other.innerHTML='';
   el.innerHTML=h; el.classList.toggle('min',infoMin); el.classList.add('on'); el.scrollTop=0;
   document.body.classList.toggle('info-open',!docked); document.body.classList.remove('panel-open');
-  $('icl').onclick=()=>{select(-1);}; $('icol').onclick=()=>{infoMin=!infoMin; el.classList.toggle('min',infoMin);};
+  $('icl').onclick=()=>{select(-1);}; $('icol').onclick=()=>{infoMin=!infoMin; el.classList.toggle('min',infoMin);}; if(window.THUMBS) THUMBS.fill($('ithumb'),ei);
   wake();
 }
 function select(ei,fit=false){
@@ -303,6 +351,8 @@ cv.addEventListener('pointerdown',ev=>{downXY=[ev.clientX,ev.clientY,ev.button];
 cv.addEventListener('pointerup',ev=>{
   if(!downXY) return; const d=downXY; downXY=null;
   if(d[2]!==0||Math.hypot(ev.clientX-d[0],ev.clientY-d[1])>6||controls.lastGestureMulti) return;
+  if(window.ISSUES&&window.ISSUES.tap&&window.ISSUES.tap(ev.clientX,ev.clientY)) return;
+  if(window.NOTES&&window.NOTES.tap&&window.NOTES.tap(ev.clientX,ev.clientY)) return;
   const ei=pick(ev.clientX,ev.clientY); const now=performance.now();
   if(ev.pointerType!=='mouse'){ // touch / pen: manual double-tap = focus on the element
     if(now-lastTap.t<380&&Math.hypot(ev.clientX-lastTap.x,ev.clientY-lastTap.y)<28){touchDbl=now;lastTap.t=0; lastClick={t:now,ei}; if(ei>=0) select(ei,true); return;}
@@ -325,7 +375,7 @@ function ensureVisible(ei){
   const st=stageKind(e); if(st){stageVis.all=true;stageVis[st]=true;syncStageBox();}
   applyVis();
 }
-function focusEl(ei){ensureVisible(ei); select(ei,true); document.body.classList.remove('panel-open');}
+function focusEl(ei){ensureVisible(ei); select(ei,true); document.body.classList.remove('panel-open'); if(uHid.has(ei)) toast('هذا العنصر مخفي — افتح بطاقته واضغط «إظهار العنصر»',3200);}
 
 /* ---------- UI: layers (visibility + per-section / per-branch opacity) ---------- */
 const lp=$('layers');
@@ -426,7 +476,7 @@ function runSearch(raw){
 }
 let qT=0; $('q').addEventListener('input',ev=>{clearTimeout(qT);qT=setTimeout(()=>runSearch(ev.target.value),130); if(ev.target.value.trim()) openSec('pSearch',{scroll:true});});
 $('q').addEventListener('focus',()=>{if($('q').value.trim()) openSec('pSearch',{scroll:false});});
-{const bu=$('accN_pUnits'); if(bu) bu.textContent=String(UNITS.length); const bc=$('accN_pClash'); if(bc) bc.textContent=String((M.clashes||[]).length);}
+{const bu=$('accN_pUnits'); if(bu) bu.textContent=String(UNITS.length);}   // the issue centre (src/issues.js) writes its own badge
 $('qres').addEventListener('click',ev=>{const r=ev.target.closest('.res'); if(!r) return; document.querySelectorAll('#qres .res.sel').forEach(x=>x.classList.remove('sel')); r.classList.add('sel'); focusEl(+r.dataset.i);});
 $('qinfo').addEventListener('click',ev=>{if(ev.target.id!=='qhl') return; lastHits.forEach(ensureVisible); select(-1); clearHL(); addHL(lastHits,HL_BLUE,lastHits.length<300); flyToBox(bboxOf(lastHits)); document.body.classList.remove('panel-open');});
 runSearch('');
@@ -437,12 +487,13 @@ function buildMat(){
   const byMat={},byFin={}; M.els.forEach((e,i)=>{const m=e.m||'conc'; (byMat[m]=byMat[m]||[]).push(i); ((e.a&&e.a.fin)||[]).forEach(f=>(byFin[f]=byFin[f]||[]).push(i));});
   let h=`<h3>دليل المواد (اضغط لإبراز كل عناصرها)</h3>`;
   Object.keys(MATS).filter(k=>byMat[k]&&!k.startsWith('fin_')).sort((a,b)=>byMat[b].length-byMat[a].length).forEach(k=>{const m=MATS[k]; h+=`<div class=mrow data-mat="${esc(k)}"><span class=sw style="background:${m.color};${m.opacity?'opacity:'+Math.max(m.opacity,0.45):''}"></span><div><b>${esc(m.name)}</b><small>${m.code?esc(m.code):''}</small></div><span class=n>${byMat[k].length}</span></div>`;});
+  ['CSP-2','CSP-3','CSP-4'].forEach(c=>{ (byFin[c]||[]).forEach(i=>{ (byFin.CSP=byFin.CSP||[]).push(i); }); });   // BOQ prices the three car-park systems as one item «CSP»
   const fins=Object.keys(M.fin||{}).filter(f=>byFin[f]||(M.finq&&M.finq[f]));
   if(fins.length){
     h+=`<h3>رموز التشطيب (A500) ومطابقة الكميات مع BOQ</h3><div class=note>كمية BOQ مأخوذة من جدول الكميات. «النموذج» مساحة محسوبة من هندسة العناصر لما أمكن (أرضيات وأسقف)؛ الفروق تحتاج مراجعة ولا تعني خطأ بالضرورة.</div>`;
     fins.sort((a,b)=>a.localeCompare(b,'en',{numeric:true})).forEach(f=>{const d=M.fin[f],q=M.finq&&M.finq[f]; const n=(byFin[f]||[]).length;
-      let qr=`<div class=qrow><span>BOQ: <b>${d[4]} ${esc(d[3])}</b></span>`;
-      if(q&&q.area!=null){const df=(q.area-d[4])/d[4]*100; qr+=`<span>النموذج: <b>${q.area.toLocaleString('en')} م²</b>${q.tower!=null&&q.tower!==q.area?` <small>(الطوابق 1–5: ${q.tower.toLocaleString('en')})</small>`:''}</span><span class="${Math.abs(df)>10?'bad':'ok'}"><b>${df>0?'+':''}${df.toFixed(0)}%</b></span>`;} else qr+=`<span>النموذج: <b>—</b></span>`;
+      const own=d[4]!=null&&d[4]>0; let qr=`<div class=qrow><span>BOQ: ${own?`<b>${d[4]} ${esc(d[3])}</b>`:'<b>ضمن بند «CSP» الواحد</b>'}</span>`;
+      if(q&&q.area!=null){qr+=`<span>النموذج: <b>${q.area.toLocaleString('en')} م²</b>${q.tower!=null&&q.tower!==q.area?` <small>(الطوابق 1–5: ${q.tower.toLocaleString('en')})</small>`:''}</span>`; if(own){const df=(q.area-d[4])/d[4]*100; qr+=`<span class="${Math.abs(df)>10?'bad':'ok'}"><b>${df>0?'+':''}${df.toFixed(0)}%</b></span>`;}} else qr+=`<span>النموذج: <b>—</b></span>`;
       qr+='</div>';
       h+=`<div class=mrow data-fin="${esc(f)}"><span class=sw style="background:${d[1]}"></span><div><b>${esc(f)} — ${esc(d[0])}</b><small>بند BOQ ${esc(d[2])}</small>${qr}</div><span class=n>${n}</span></div>`;});
   }
@@ -462,7 +513,7 @@ buildMat();
 /* ---------- clash list ---------- */
 function setGhost(on,op,levels,samples){focusGhost=!!on; if(op!==undefined) focusOp=op; focusLevels=on?(levels||null):null; focusSamples=!!(on&&samples); applyVis();}
 function buildClash(){
-  if(!window.initClash){$('clashBox').innerHTML='<div class=muted>وحدة التعارضات غير محمّلة.</div>';return;}
+  if(!window.initClash){const cb=$('clashBox'); if(cb) cb.innerHTML='<div class=muted>وحدة التعارضات غير محمّلة.</div>'; return;}
   CLASH=initClash({M,THREE,scene,camera,controls,$,esc,LVL,UNITS,wake,flyTo,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf});
 }
 buildClash();
@@ -483,13 +534,14 @@ $('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إ
 
 /* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
 if(window.SampleLOD&&window.__SAMPLES__){
-  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,exploded:()=>explode!==0,liftRunning:()=>liftSim,
-    unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});
+  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,mono:U.mono,exploded:()=>explode!==0,liftRunning:()=>liftSim,
+    unitVisible:u=>U.lensOn.value<0.5&&u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});   // detailed samples keep their own colours, so they are off while a lens colours / isolates the model
   const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod');}catch(e){} if(saved==='0'){chk.checked=false; LOD.setEnabled(false);}
     const rb=$('rebarChk'); if(rb){ let sv=null; try{sv=localStorage.getItem('c4rebar');}catch(e){} if(sv==='1'){rb.checked=true; LOD.setRebar(true);}
       rb.onchange=ev=>{LOD.setRebar(ev.target.checked); try{localStorage.setItem('c4rebar',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب من الأعمدة والجسور والجدران يظهر حديد التسليح داخل الخرسانة الشفافة':'الخرسانة تبقى مصمتة عند التقريب (حديد التسليح مخفي)');};}
     chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب يُستبدل المجسم المبسّط بعينة تفصيلية':'عُطّل استبدال العينات التفصيلية');}; }
 }
+if(window.initThumbs) window.THUMBS=initThumbs({M,THREE,LOD,groups,elRange,elBB,esc});   // the model's own drawing of a component (src/thumbs.js)
 if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>';
 /* ---------- toolbar: modes, views, fullscreen, performance, help ---------- */
 document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>controls.setMode(b.dataset.m));
@@ -516,15 +568,15 @@ document.addEventListener('click',ev=>{if(!ev.target.closest('#viewMenu,#moreMen
 const FS_OK=document.fullscreenEnabled||document.webkitFullscreenEnabled; if(!FS_OK) $('btnFs').style.display='none';
 $('btnFs').onclick=()=>{const d=document,el=d.documentElement; if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d);} else (el.requestFullscreen||el.webkitRequestFullscreen).call(el);};
 document.addEventListener('fullscreenchange',()=>{$('btnFs').classList.toggle('on',!!document.fullscreenElement);setTimeout(resize,150);});
-function setPerf(on,auto){perfMode=on; renderer.setPixelRatio(ratioFor()); resize(); $('btnPerf').classList.toggle('on',on); $('btnPerf').setAttribute('aria-pressed',on); $('perfChk').checked=on; try{localStorage.setItem('c4perf',on?'1':'0');}catch(e){} if(auto) toast('فُعّل وضع الأداء تلقائيًا لسلاسة العرض (يمكن إيقافه من زر «أداء»)',4500);}
+function setPerf(on,auto){perfMode=on; renderer.setPixelRatio(ratioFor()); resize(); if(window.LOOK) window.LOOK.set(window.LOOK.white?'white':'mat',{force:true,quiet:true}); $('btnPerf').classList.toggle('on',on); $('btnPerf').setAttribute('aria-pressed',on); $('perfChk').checked=on; try{localStorage.setItem('c4perf',on?'1':'0');}catch(e){} if(auto) toast('فُعّل وضع الأداء تلقائيًا لسلاسة العرض (يمكن إيقافه من زر «أداء»)',4500);}
 $('btnPerf').onclick=()=>setPerf(!perfMode); $('perfChk').onchange=ev=>setPerf(ev.target.checked);
 $('ptrKind').onchange=ev=>{controls.pointerKind=ev.target.value;};
 const helpOpen=on=>$('help').classList.toggle('on',on); $('btnHelp').onclick=()=>helpOpen(true); $('helpBtn2').onclick=()=>helpOpen(true); $('helpClose').onclick=()=>helpOpen(false); $('help').onclick=ev=>{if(ev.target===$('help')) helpOpen(false);};
-window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else{ closeMenus(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
-function setDock(off,noSave){document.body.classList.toggle('dock-off',!!off); const b=$('dockBtn'); b.textContent=off?'\u2039':'\u203A'; b.setAttribute('aria-expanded',off?'false':'true'); if(!noSave){try{localStorage.setItem('c4dock',off?'1':'0');}catch(e){}} if(selIdx>=0) showInfo(selIdx); setTimeout(resize,40);}
+window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else{ closeMenus(); if(window.TOURS&&TOURS.active) TOURS.stop(); else if(ISSUES&&ISSUES.active) ISSUES.close(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
+function setDock(off,noSave){document.body.classList.toggle('dock-off',!!off); const b=$('dockBtn'); b.textContent=off?'\u2039':'\u203A'; b.setAttribute('aria-expanded',off?'false':'true'); if(!noSave){try{localStorage.setItem('c4dock',off?'1':'0');}catch(e){}} refreshInfo(); setTimeout(resize,40);}
 $('dockBtn').onclick=()=>setDock(!document.body.classList.contains('dock-off'));
 {let sv=null; try{sv=localStorage.getItem('c4dock');}catch(e){} if(sv==='1') setDock(true,true);}
-DESK.addEventListener?DESK.addEventListener('change',()=>{if(selIdx>=0) showInfo(selIdx);}):DESK.addListener(()=>{if(selIdx>=0) showInfo(selIdx);});
+DESK.addEventListener?DESK.addEventListener('change',refreshInfo):DESK.addListener(refreshInfo);
 $('fab').onclick=()=>document.body.classList.add('panel-open'); $('panelClose').onclick=()=>document.body.classList.remove('panel-open');
 
 
@@ -565,6 +617,7 @@ function applyPreset(name){
   hemi.color.set(P.hs); hemi.groundColor.set(P.hg); hemi.intensity=P.hi; sun.color.set(P.sc); sun.intensity=P.si; sun2.intensity=P.s2; sun.position.set(P.sp[0],P.sp[1],P.sp[2]);
   document.querySelectorAll('#viewMenu button[data-l]').forEach(b=>{if(b.dataset.l!=='lamps') b.classList.toggle('on',b.dataset.l===name);});
   if(name!=='day'&&!lightsOn) setLightsOn(true); else if(name==='day'&&lightsOn&&!lampsPinned) setLightsOn(false);
+  if(window.LOOK){ window.LOOK.afterPreset(); if(window.LOOK.setFog) window.LOOK.setFog(); }
   wake();
 }
 function stepPLights(now){
@@ -580,12 +633,15 @@ let frames=0,tLast=performance.now(),tPrev=performance.now(),perfProbe={t0:0,f:0
 function loop(){requestAnimationFrame(loop);
   const now=performance.now(),dt=Math.min(0.1,(now-tPrev)/1000); tPrev=now;
   if(fly){stepFly();wake(300);}
+  stepInset(dt);
   if(controls.update()) wake(300);
   if(liftSim&&lifts.length){stepLifts(dt);wake(300);}
   if(LOD&&LOD.update()) wake(300);
   stepPLights(now);
   if(CLASH) CLASH.frame(now,dt);
-  if(now<awakeUntil){renderer.render(scene,camera);frames++;
+  if(ISSUES) ISSUES.frame(now,dt);
+  if(window.NOTES) window.NOTES.frame();
+  if(now<awakeUntil){ if(window.LOOK) window.LOOK.render(); else renderer.render(scene,camera); frames++;
     if(!perfProbe.done){ if(!perfProbe.t0&&now>0) {perfProbe.t0=now+900;} if(now>perfProbe.t0){perfProbe.f++; if(now>perfProbe.t0+2200){perfProbe.done=true; const fps=perfProbe.f*1000/(now-perfProbe.t0); let saved=null; try{saved=localStorage.getItem('c4perf');}catch(e){} if(saved===null&&fps<18&&!perfMode) setPerf(true,true);}}}
   }
   if(now-tLast>1000){$('fps').textContent=frames?Math.round(frames*1000/(now-tLast))+' fps · ':'';frames=0;tLast=now;}
@@ -593,10 +649,18 @@ function loop(){requestAnimationFrame(loop);
 {let saved=null; try{saved=localStorage.getItem('c4perf');}catch(e){} if(saved==='1') setPerf(true,false); else if(saved==='0') perfProbe.done=true;}
 wake(4200); loop(); applyVis();
 {const L=$('loader'); if(L){L.classList.add('off'); setTimeout(()=>L.remove(),600);} }
-if(window.initLens) LENS=initLens({M,THREE,groups,elRange,U,applyVis,wake,CATS,LAYER,LVL,$,esc});
+if(window.initLens) LENS=initLens({M,THREE,groups,elRange,U,applyVis,wake,CATS,LAYER,LVL,$,esc,setLook:m=>{ if(window.LOOK) window.LOOK.set(m); }});
 /* overview hub (src/hub.js): tiles are doors to lenses / the issue centre / a single level */
 function onlyLevel(id){ M.levels.forEach(l=>setLvlVis(l.id,l.id===id)); applyVis(); const idx=[]; M.els.forEach((e,i)=>{if(e.l===id&&e.c[0]!=='A'||e.l===id&&e.c==='A.wall') idx.push(i);}); if(idx.length) flyToBox(bboxOf(idx),[-0.55,0.75,0.65]); document.body.classList.remove('panel-open'); toast('عُزل الطابق «'+LVL[id].name+'» — «إظهار كل الطوابق» للعودة',2600); }
 function showAllLevels(){ M.levels.forEach(l=>setLvlVis(l.id,true)); applyVis(); goHome(); }
+/* guided tours (src/tours.js): a stop = visibility + lens + highlight + camera + caption */
+if(window.initTours) window.TOURS=initTours({M,THREE,camera,controls,$,esc,UNITS,CATS,wake,flyTo,flyToBox,bboxOf,highlight,clearHL,setLens,LENS,viewPreset,isolate,exitIso,isoActive:()=>isoUnit!==null,applyVis,setLvlVis,setCatVis,lvlVis,catVis,setGhost,select,toast,closeMenus});
 if(window.initHub) initHub({M,$,esc,LVL,setLens,openSec,onlyLevel,showAllLevels,PAL:window.LENS_PAL,toast});
+/* issue centre (src/issues.js): clashes and best-guess decisions with one shared design */
+if(window.initIssues){ ISSUES=initIssues({M,THREE,scene,camera,controls,renderer,$,esc,normAr,LVL,LAYER,CATS,TYPES,UNITS,wake,flyTo,flyToBox,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf,setLens,openSec,onlyLevel,showAllLevels,elVisible,levelVisible:l=>lvlVis[l]!==false,exploded:()=>explode!==0,showDrawer,hideDrawer,CLASH,LENS,PAL:window.LENS_PAL,PlanMap:window.PlanMap}); window.ISSUES=ISSUES; }
+/* white / grey look with soft shadows and depth (src/look.js) */
+if(window.initLook) window.LOOK=initLook({THREE,renderer,scene,camera,U,groups,hemi,sun,sun2,wake,toast,$,LP,getPreset:()=>lightPreset,isPerf:()=>perfMode,clipActive:()=>clipYv<999||clipXv<999,getLens:()=>LENS,lodMats:()=>(LOD&&LOD.mats)?Object.keys(LOD.mats).map(k=>LOD.mats[k]):[]});
+/* owner's notes + hide (src/notes.js) */
+if(window.initNotes){ window.NOTES=initNotes({M,THREE,scene,camera,renderer,$,esc,LVL,UNITS,TYPES,CATS,wake,toast,bboxOf,grpMap,userHidden:uHid,setUserHidden,sel:()=>({idx:selIdx,set:selSet}),clearHL,highlight,focusEl,flyTo,levelVisible:l=>lvlVis[l]!==false,openSec}); }
 $('stat').textContent=M.els.length.toLocaleString('en')+' عنصر';
-window.__dbg={setLens,get LENS(){return LENS;},setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};
+window.__dbg={setLens,get LENS(){return LENS;},setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},get ISSUES(){return ISSUES;},get NOTES(){return window.NOTES;},get LOOK(){return window.LOOK;},uHid,setUserHidden,get selIdx(){return selIdx;},flyToBox,bboxOf,flyTo,scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};

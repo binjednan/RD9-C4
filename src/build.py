@@ -5,7 +5,7 @@ WWW=os.path.dirname(os.path.abspath(__file__))
 OUT_DIR=os.path.dirname(WWW)
 def rd(n): return open(os.path.join(WWW,n),encoding="utf-8").read()
 # libraries / modules loaded before app.js, in order (each one registers itself on window)
-MODS=["three.min.js","engine.js","controls.js","detail.js","lens.js","planmap.js","thumbs.js","clash.js","issues.js","hub.js","samples-ui.js"]
+MODS=["three.min.js","engine.js","controls.js","detail.js","lens.js","planmap.js","thumbs.js","clash.js","issues.js","tours.js","notes.js","look.js","hub.js","samples-ui.js"]
 MODS=[m for m in MODS if os.path.exists(os.path.join(WWW,m))]
 tpl=rd("template.html")
 ver=datetime.datetime.now().strftime("v%Y.%m.%d-%H%M")

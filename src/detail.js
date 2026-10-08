@@ -135,6 +135,7 @@ class SampleLOD{
     for(const k of Object.keys(cls)){const c=cls[k]; let m;
       if(c.basic) m=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
       else m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:c.rough!==undefined?c.rough:0.8,metalness:c.metal||0,side:THREE.DoubleSide,transparent:c.opacity!==undefined&&c.opacity<1,opacity:c.opacity!==undefined?c.opacity:1,depthWrite:!(c.opacity!==undefined&&c.opacity<1)});
+      if(ctx.mono){ m.onBeforeCompile=sh=>{ sh.uniforms.uMono=ctx.mono; sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uMono;').replace('#include <color_fragment>','#include <color_fragment>\n if(uMono>0.5){ float lu=clamp(dot(diffuseColor.rgb,vec3(0.299,0.587,0.114)),0.0,1.0); diffuseColor.rgb=vec3(mix(0.50,0.97,pow(lu,0.75))); }'); }; m.customProgramCacheKey=()=>'lodmono'; }   // the white look turns the detailed samples white / grey too
       this.mats[k]=m;}
     for(const k of Object.keys(this.lib.samples)) if(this.lib.samples[k].cat==='structure') this.structSids.add(k);
     this.index();
@@ -217,7 +218,7 @@ class SampleLOD{
   setEnabled(on){this.enabled=!!on; this.dirty=true; if(!on) this.clear();}
   invalidate(){this.dirty=true;}
   clear(){for(const [i,u] of this.active) this.hide(u,false); this.active.clear(); for(const e of this.entries.values()){for(const m of Object.values(e.meshes)) m.count=0;} if(this.pathMeshes) for(const m of Object.values(this.pathMeshes)) m.visible=false; this.c.wake(); this.stat.active=0;}
-  hide(u,on){const c=this.c; for(const ei of u.eis){const rg=c.elRange[ei]; const G=c.groups[rg.gk]; if(!G||!G.hideAttr) continue; const arr=G.hideAttr.array; arr.fill(on?1:0,rg.start*3,(rg.start+rg.count)*3); G.hideAttr.needsUpdate=true;}}
+  hide(u,on){const c=this.c; for(const ei of u.eis){const rg=c.elRange[ei]; const G=c.groups[rg.gk]; if(!G||!G.hideAttr) continue; const arr=G.hideAttr.array; for(let i=rg.start*3,n=(rg.start+rg.count)*3;i<n;i++) arr[i]=(arr[i]&2)|(on?1:0); G.hideAttr.needsUpdate=true;}}   // bit 1 = swapped for its detailed sample; bit 2 = hidden by the owner (src/notes.js) and must survive the swap
   entryFor(u){
     let e=this.entries.get(u.key); if(e) return e;
     const smp=this.lib.samples[u.sid]; const bufs=buildBufs(smp,u.vars); e={geoms:{},meshes:{},cap:0,units:[]};
