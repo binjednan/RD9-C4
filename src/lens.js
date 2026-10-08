@@ -82,6 +82,7 @@ function initLens(ctx){
   // legend interaction: click a class = colour it / stop colouring it (several allowed); «عزل» hides the rest; «تلوين الكل» (white look) colours every class; «أبيض / ألوان المواد» flips the look
   function toggleClass(i){ if(sel.has(i)) sel.delete(i); else sel.add(i); repaint(); renderLegend(); applyVis(); }
   function refresh(){ if(mode==='off') return; repaint(); renderLegend(); applyVis(); }
+  function setSelection(arr){ sel=new Set((arr||[]).filter(i=>i>=1&&i<=legend.length)); repaint(); renderLegend(); applyVis(); }
   const box=$('lensLegend');
   if(box) box.addEventListener('click',ev=>{const b=ev.target.closest('[data-lg],[data-lgi]'); if(!b) return;
     if(b.dataset.lg==='off'){set('off'); const bt=document.querySelectorAll('#viewMenu button[data-lens]'); bt.forEach(x=>x.classList.toggle('on',x.dataset.lens==='off')); return;}
@@ -92,7 +93,7 @@ function initLens(ctx){
   });
   /* the class of one element as painted (0 = not concerned, 255 = hidden, -1 when no lens is on): the picker skips what the lens hides and, while classes are chosen or «عزل» is on, what it only dims */
   function classOf(ei){ if(U.lensOn.value<0.5) return -1; const rg=elRange[ei]; if(!rg) return 0; const G=groups[rg.gk]; return (G&&G.lensAttr)?G.lensAttr.array[rg.start*3]:0; }
-  return {set,refresh,classOf,get restrict(){return mode!=='off'&&(hideRest||sel.size>0);},get hideRest(){return hideRest;},get solo(){return sel.size;},get selected(){return [...sel];},get mode(){return mode;},modes:Object.keys(MODES).map(k=>({id:k,n:MODES[k].n,d:MODES[k].d})),GRADE,TIER,CONF,OKABE,tierOf,guessInfo,legendOf:()=>legend};
+  return {set,refresh,setSelection,classOf,get restrict(){return mode!=='off'&&(hideRest||sel.size>0);},get hideRest(){return hideRest;},get solo(){return sel.size;},get selected(){return [...sel];},get mode(){return mode;},modes:Object.keys(MODES).map(k=>({id:k,n:MODES[k].n,d:MODES[k].d})),GRADE,TIER,CONF,OKABE,tierOf,guessInfo,legendOf:()=>legend};
 }
 window.initLens=initLens; window.LENS_PAL={GRADE,TIER,CONF,OKABE};
 })();

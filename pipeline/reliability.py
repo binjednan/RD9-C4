@@ -43,6 +43,7 @@ def grade(e, T):
     """returns the three-letter code of one element"""
     a = e.get("a") or {}; c = e["c"]; t = T.get(e.get("t"), {})
     if c == "A.stage" or e.get("stage"): return "sss"
+    if a.get("connector"): return "vvv"                       # derived link between two documented ends (pipeline/connectors.py)
     spec = LET.get(t.get("cf") or "doc", "d")
     if a.get("assumed") and spec != "a": spec = "a" if c not in ("A.floor",) else spec
     if c == "M.duct" and "افتراضي" in str(a.get("size_note") or ""): spec = "a"

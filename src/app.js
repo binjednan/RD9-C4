@@ -39,6 +39,10 @@ controls.target.copy(HOME.tgt); camera.lookAt(HOME.tgt);
 const hemi=new THREE.HemisphereLight(0xffffff,0x8a8f98,0.85); scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffffff,0.75); sun.position.set(-40,70,30); scene.add(sun);
 const sun2=new THREE.DirectionalLight(0xffffff,0.25); sun2.position.set(50,30,-40); scene.add(sun2);
+/* bounce light from below (owner 2026-10-08: the camera may now look up at the undersides): created with the other lights so the materials compile once; its intensity is 0 above the horizon and rises
+   to full at about 19° under it, so the undersides of slabs / soffits / the raft read clearly instead of being lit by the hemisphere's ground colour alone. It casts no shadow. */
+const under=new THREE.DirectionalLight(0xffffff,0); under.position.set(0,-60,9); scene.add(under);
+function stepUnder(){ const o=camera.position.y-controls.target.y, r=Math.max(camera.position.distanceTo(controls.target),1e-3); const k=THREE.MathUtils.clamp(-o/r*3.2,0,1), I=k*(lightPreset==='night'?0.22:0.62); if(Math.abs(under.intensity-I)>0.003) under.intensity=I; }
 const clipY=new THREE.Plane(new THREE.Vector3(0,-1,0),1000);
 const clipX=new THREE.Plane(new THREE.Vector3(-1,0,0),1000);
 renderer.clippingPlanes=[clipY,clipX];
@@ -140,16 +144,16 @@ function buildAll(){
 }
 buildAll();
 
-/* ---------- ghost envelope (shown while a unit is isolated) ---------- */
+/* ---------- context envelope (shown while a unit is isolated): OUTLINES ONLY ----------
+   owner 2026-10-08: «عند عرض الوحدات هذه الطبقات تعيق النظر» — the translucent filled box of every level (two faces each, nine levels) stacked into a haze over the isolated unit. What it is for is only to show
+   where the unit sits in the building, so the fills are gone and the nine boxes are drawn as thin edge lines in one draw call. */
 const ghost=new THREE.Group(); ghost.visible=false; scene.add(ghost);
 (function(){
-  const gm=new THREE.MeshBasicMaterial({color:0x6a7f95,transparent:true,opacity:0.10,depthWrite:false,side:THREE.DoubleSide});
-  const lm=new THREE.LineBasicMaterial({color:0x5b6f85,transparent:true,opacity:0.55});
-  (M.env||[]).forEach(r=>{
-    const w=(r[2]-r[0])*S,d=(r[3]-r[1])*S,h=r[5]-r[4];
-    const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),gm); b.position.set((r[0]+r[2])/2*S,(r[4]+r[5])/2,-(r[1]+r[3])/2*S); ghost.add(b);
-    const e=new THREE.LineSegments(new THREE.EdgesGeometry(b.geometry),lm); e.position.copy(b.position); ghost.add(e);
-  });
+  const pos=[], E=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  (M.env||[]).forEach(r=>{ const x0=r[0]*S,x1=r[2]*S,z0=-r[3]*S,z1=-r[1]*S,y0=r[4],y1=r[5];
+    const c=[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1],[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]]; E.forEach(e=>{ pos.push(c[e[0]][0],c[e[0]][1],c[e[0]][2],c[e[1]][0],c[e[1]][1],c[e[1]][2]); }); });
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0x5b6f85,transparent:true,opacity:0.4})); l.frustumCulled=false; l.raycast=()=>{}; ghost.add(l);
 })();
 
 /* ---------- visibility + per-section opacity ---------- */
@@ -245,10 +249,10 @@ function pickHit(clientX,clientY){
     const [t0,ei,off]=cand[k]; const rg=elRange[ei]; const G=groups[rg.gk]; const P=G.posArr;
     for(let tri=rg.start;tri<rg.start+rg.count;tri++){
       const i=tri*9; const a=[P[i],P[i+1]+off,P[i+2]],b=[P[i+3],P[i+4]+off,P[i+5]],c=[P[i+6],P[i+7]+off,P[i+8]];
-      const t=rayTri(o,d,a,b,c); if(t>0){const hp=[o[0]+d[0]*t,o[1]+d[1]*t,o[2]+d[2]*t]; if(hp[1]>clipYv||hp[0]>clipXv) continue; if(!best||t<best[0]) best=[t,ei];}
+      const t=rayTri(o,d,a,b,c); if(t>0){const hp=[o[0]+d[0]*t,o[1]+d[1]*t,o[2]+d[2]*t]; if(hp[1]>clipYv||hp[0]>clipXv) continue; if(!best||t<best[0]) best=[t,ei,a,b,c];}
     }
   }
-  return best?{ei:best[1],t:best[0],pt:new THREE.Vector3(o[0]+d[0]*best[0],o[1]+d[1]*best[0],o[2]+d[2]*best[0])}:null;
+  return best?{ei:best[1],t:best[0],pt:new THREE.Vector3(o[0]+d[0]*best[0],o[1]+d[1]*best[0],o[2]+d[2]*best[0]),tri:[best[2],best[3],best[4]]}:null;
 }
 function pick(clientX,clientY){const h=pickHit(clientX,clientY);return h?h.ei:-1;}
 controls.hitTest=(x,y)=>{const h=pickHit(x,y);return h?h.pt:null;};
@@ -351,6 +355,7 @@ cv.addEventListener('pointerdown',ev=>{downXY=[ev.clientX,ev.clientY,ev.button];
 cv.addEventListener('pointerup',ev=>{
   if(!downXY) return; const d=downXY; downXY=null;
   if(d[2]!==0||Math.hypot(ev.clientX-d[0],ev.clientY-d[1])>6||controls.lastGestureMulti) return;
+  if(window.MEASURE&&window.MEASURE.tap&&window.MEASURE.tap(ev.clientX,ev.clientY)) return;
   if(window.ISSUES&&window.ISSUES.tap&&window.ISSUES.tap(ev.clientX,ev.clientY)) return;
   if(window.NOTES&&window.NOTES.tap&&window.NOTES.tap(ev.clientX,ev.clientY)) return;
   const ei=pick(ev.clientX,ev.clientY); const now=performance.now();
@@ -420,11 +425,17 @@ buildStageBox();
 /* ---------- units ---------- */
 const up=$('units');
 (function(){
+  /* the buttons follow the plan, north row first and west on the left (owner 2026-10-08: «3 2 1 / 4 5 6»): rows are found from the unit rectangles (plan y grows to the north, a gap of more than 5 m
+     starts a new row), each row runs west → east; the grid is laid out left-to-right (.ur{direction:ltr}) so the first button of a row is the western one */
+  const planOrder=list=>{ const cen=u=>{ const r=u.rects||[]; if(!r.length) return [0,0]; let sx=0,sy=0; r.forEach(a=>{ sx+=(a[0]+a[2])/2; sy+=(a[1]+a[3])/2; }); return [sx/r.length,sy/r.length]; };
+    const a=list.map(u=>({u,c:cen(u)})).sort((p,q)=>q.c[1]-p.c[1]), rows=[];
+    a.forEach(o=>{ const L=rows[rows.length-1]; if(L&&Math.abs(L.y-o.c[1])<500) L.items.push(o); else rows.push({y:o.c[1],items:[o]}); });
+    return [].concat(...rows.map(r=>r.items.sort((p,q)=>p.c[0]-q.c[0]).map(o=>o.u))); };
   const byLvl={}; UNITS.forEach(u=>{(byLvl[u.level]=byLvl[u.level]||[]).push(u);});
   Object.keys(byLvl).sort((a,b)=>LVL[b].idx-LVL[a].idx).forEach(l=>{
     const h=document.createElement('div'); h.className='uh'; h.textContent='الطابق '+LVL[l].name; up.appendChild(h);
     const row=document.createElement('div'); row.className='ur';
-    byLvl[l].forEach(u=>{const b=document.createElement('button'); b.className='ub'; b.dataset.u=u.id; b.innerHTML=`<b>${u.name}</b><i>${u.bed!=null?u.bed+' غ.ن · ':''}${u.gross?u.gross+' م²':''}</i>`; b.onclick=()=>isolate(u.id); row.appendChild(b);});
+    planOrder(byLvl[l]).forEach(u=>{const b=document.createElement('button'); b.className='ub'; b.dataset.u=u.id; b.innerHTML=`<b>${u.name}</b><i>${u.bed!=null?u.bed+' غ.ن · ':''}${u.gross?u.gross+' م²':''}</i>`; b.onclick=()=>isolate(u.id); row.appendChild(b);});
     up.appendChild(row);
   });
 })();
@@ -433,7 +444,9 @@ function makeMask(u){
   const W=34*20,H=23*20; const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,W,H); x.fillStyle='#fff';
   (u.rects||[]).forEach(r=>{
     const px0=(r[0]/100-0.25)*20, px1=(r[2]/100+0.25)*20; const pz0=((-r[3]/100-0.25)-(-21))*20, pz1=((-r[1]/100+0.25)-(-21))*20; x.fillRect(px0,pz0,px1-px0,pz1-pz0);});
-  const t=new THREE.CanvasTexture(c); t.minFilter=THREE.LinearFilter; t.magFilter=THREE.LinearFilter; return t;
+  /* flipY=false: the shader reads v = (z − maskBox.y) / maskBox.w, and the canvas is drawn with row = (z + 21)·20 from the top — with the default flipY=true the image was sampled upside down, so the
+   structural slab / beam pieces kept by the isolation appeared in the MIRRORED place (the floor of the unit across the corridor) instead of under the isolated unit (owner 2026-10-08) */
+  const t=new THREE.CanvasTexture(c); t.flipY=false; t.minFilter=THREE.LinearFilter; t.magFilter=THREE.LinearFilter; return t;
 }
 let ceilWasOn=true;
 function isolate(uid){
@@ -457,7 +470,8 @@ var toggleSec=function(sec){const on=!sec.classList.contains('on'); sec.classLis
   if(on) setTimeout(()=>{const c=$('acc'); if(c&&sec.offsetTop<c.scrollTop) c.scrollTo({top:sec.offsetTop-2,behavior:'smooth'});},30);};
 function syncNav(){document.querySelectorAll('#secnav button').forEach(b=>{const sec=document.querySelector('.acc[data-sec="'+b.dataset.go+'"]'); b.classList.toggle('on',!!(sec&&sec.classList.contains('on')));});}
 const _openSec=openSec, _toggleSec=toggleSec; openSec=function(id,opt){_openSec(id,opt); syncNav();}; toggleSec=function(sec){_toggleSec(sec); syncNav();};
-document.querySelectorAll('#secnav button').forEach(b=>b.onclick=()=>{const sec=document.querySelector('.acc[data-sec="'+b.dataset.go+'"]'); if(sec&&sec.classList.contains('on')&&$('acc').scrollTop+4<sec.offsetTop-2){ $('acc').scrollTo({top:sec.offsetTop-2,behavior:'smooth'}); } else openSec(b.dataset.go,{scroll:true,focus:true});});
+/* a chip is a switch (owner 2026-10-08): the first press opens its section and goes to it, the second press closes it — it no longer just scrolls to an open section so it has to be closed by hand */
+document.querySelectorAll('#secnav button').forEach(b=>b.onclick=()=>{const sec=document.querySelector('.acc[data-sec="'+b.dataset.go+'"]'); if(!sec) return; if(sec.classList.contains('on')) toggleSec(sec); else openSec(b.dataset.go,{scroll:true,focus:true});});
 document.querySelectorAll('.acc-h').forEach(h=>h.onclick=()=>toggleSec(h.parentElement));
 syncNav();
 {const st=accState(); if(st&&Array.isArray(st)){document.querySelectorAll('.acc').forEach(x=>{const on=st.includes(x.dataset.sec); x.classList.toggle('on',on); x.querySelector('.acc-h').setAttribute('aria-expanded',on?'true':'false');}); syncNav();}}
@@ -549,8 +563,8 @@ document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>controls.set
 function setModes(on,noSave){document.body.classList.toggle('modes-on',!!on); $('btnModes').classList.toggle('on',!!on); if(!on) controls.setMode('rotate'); if(!noSave){try{localStorage.setItem('c4modes',on?'1':'0');}catch(e){}}}
 {let sv=null; try{sv=localStorage.getItem('c4modes');}catch(e){} setModes(sv===null?!matchMedia('(pointer:coarse)').matches:sv==='1',true);}
 $('btnModes').onclick=()=>setModes(!document.body.classList.contains('modes-on'));
-{const pc=$('pinchChk'); let sv=null; try{sv=localStorage.getItem('c4pinch');}catch(e){} controls.pinchInZooms=sv!=='0'; pc.checked=controls.pinchInZooms;
-  pc.onchange=ev=>{controls.pinchInZooms=ev.target.checked; try{localStorage.setItem('c4pinch',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'اللمس: تقريب الإصبعين من بعضهما = تقريب (Zoom in)':'اللمس: تباعد الإصبعين = تقريب (الاتجاه المعتاد)');};}
+{const pc=$('pinchChk'); let sv=null; try{sv=localStorage.getItem('c4pinch2');}catch(e){} controls.pinchInZooms=sv==='1'; pc.checked=controls.pinchInZooms;   // c4pinch2: the old key (c4pinch) held the previous default and is ignored
+  pc.onchange=ev=>{controls.pinchInZooms=ev.target.checked; try{localStorage.setItem('c4pinch2',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'اللمس: تقريب الإصبعين من بعضهما = تقريب (عكس المعتاد)':'اللمس: تباعد الإصبعين = تقريب (الاتجاه المعتاد)');};}
 controls.addEventListener('mode',ev=>{document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===ev.mode));wake();});
 const MENU_IDS=['viewMenu','moreMenu'];
 function closeMenus(except){MENU_IDS.forEach(m=>{if(m!==except) $(m).classList.remove('on');});}
@@ -572,7 +586,7 @@ function setPerf(on,auto){perfMode=on; renderer.setPixelRatio(ratioFor()); resiz
 $('btnPerf').onclick=()=>setPerf(!perfMode); $('perfChk').onchange=ev=>setPerf(ev.target.checked);
 $('ptrKind').onchange=ev=>{controls.pointerKind=ev.target.value;};
 const helpOpen=on=>$('help').classList.toggle('on',on); $('btnHelp').onclick=()=>helpOpen(true); $('helpBtn2').onclick=()=>helpOpen(true); $('helpClose').onclick=()=>helpOpen(false); $('help').onclick=ev=>{if(ev.target===$('help')) helpOpen(false);};
-window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else{ closeMenus(); if(window.TOURS&&TOURS.active) TOURS.stop(); else if(ISSUES&&ISSUES.active) ISSUES.close(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
+window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else if(window.MEASURE&&window.MEASURE.esc&&window.MEASURE.esc()){} else{ closeMenus(); if(window.TOURS&&TOURS.active) TOURS.stop(); else if(ISSUES&&ISSUES.active) ISSUES.close(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
 function setDock(off,noSave){document.body.classList.toggle('dock-off',!!off); const b=$('dockBtn'); b.textContent=off?'\u2039':'\u203A'; b.setAttribute('aria-expanded',off?'false':'true'); if(!noSave){try{localStorage.setItem('c4dock',off?'1':'0');}catch(e){}} refreshInfo(); setTimeout(resize,40);}
 $('dockBtn').onclick=()=>setDock(!document.body.classList.contains('dock-off'));
 {let sv=null; try{sv=localStorage.getItem('c4dock');}catch(e){} if(sv==='1') setDock(true,true);}
@@ -637,10 +651,12 @@ function loop(){requestAnimationFrame(loop);
   if(controls.update()) wake(300);
   if(liftSim&&lifts.length){stepLifts(dt);wake(300);}
   if(LOD&&LOD.update()) wake(300);
-  stepPLights(now);
+  stepPLights(now); stepUnder();
   if(CLASH) CLASH.frame(now,dt);
   if(ISSUES) ISSUES.frame(now,dt);
   if(window.NOTES) window.NOTES.frame();
+  if(window.MEASURE) window.MEASURE.frame();
+  if(window.SECTIONS) window.SECTIONS.frame();
   if(now<awakeUntil){ if(window.LOOK) window.LOOK.render(); else renderer.render(scene,camera); frames++;
     if(!perfProbe.done){ if(!perfProbe.t0&&now>0) {perfProbe.t0=now+900;} if(now>perfProbe.t0){perfProbe.f++; if(now>perfProbe.t0+2200){perfProbe.done=true; const fps=perfProbe.f*1000/(now-perfProbe.t0); let saved=null; try{saved=localStorage.getItem('c4perf');}catch(e){} if(saved===null&&fps<18&&!perfMode) setPerf(true,true);}}}
   }
@@ -660,7 +676,19 @@ if(window.initHub) initHub({M,$,esc,LVL,setLens,openSec,onlyLevel,showAllLevels,
 if(window.initIssues){ ISSUES=initIssues({M,THREE,scene,camera,controls,renderer,$,esc,normAr,LVL,LAYER,CATS,TYPES,UNITS,wake,flyTo,flyToBox,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf,setLens,openSec,onlyLevel,showAllLevels,elVisible,levelVisible:l=>lvlVis[l]!==false,exploded:()=>explode!==0,showDrawer,hideDrawer,CLASH,LENS,PAL:window.LENS_PAL,PlanMap:window.PlanMap}); window.ISSUES=ISSUES; }
 /* white / grey look with soft shadows and depth (src/look.js) */
 if(window.initLook) window.LOOK=initLook({THREE,renderer,scene,camera,U,groups,hemi,sun,sun2,wake,toast,$,LP,getPreset:()=>lightPreset,isPerf:()=>perfMode,clipActive:()=>clipYv<999||clipXv<999,getLens:()=>LENS,lodMats:()=>(LOD&&LOD.mats)?Object.keys(LOD.mats).map(k=>LOD.mats[k]):[]});
+/* saved views + shareable link (src/views.js) */
+if(window.initViews) window.VIEWS=initViews({THREE,renderer,camera,controls,$,esc,wake,toast,M,CATS,lvlVis,catVis,UNITS,flyTo,applyVis,setLvlVis,setCatVis,isolate,exitIso,getIso:()=>isoUnit!==null?UNITS[isoUnit].id:null,getLens:()=>LENS,setLens,getPreset:()=>lightPreset,applyPreset,
+  getClip:()=>({y:+$('clipY').value,x:+$('clipX').value}),setClip:(y,x)=>{ $('clipY').value=y; $('clipX').value=x; $('clipY').dispatchEvent(new Event('input')); $('clipX').dispatchEvent(new Event('input')); },
+  getExplode:()=>+$('expl').value,setExplode:v=>{ $('expl').value=v; $('expl').dispatchEvent(new Event('input')); },selIdxOf:()=>selIdx,select,render:()=>{ if(window.LOOK) window.LOOK.render(); else renderer.render(scene,camera); }});
+/* measure tool (src/measure.js) */
+if(window.initMeasure) window.MEASURE=initMeasure({THREE,scene,camera,renderer,$,pickHit,wake,toast,esc});
+/* visible section planes + plan-cut chips (src/sections.js) */
+if(window.initSections) window.SECTIONS=initSections({THREE,scene,camera,$,M,wake,viewPreset,elBB});
 /* owner's notes + hide (src/notes.js) */
 if(window.initNotes){ window.NOTES=initNotes({M,THREE,scene,camera,renderer,$,esc,LVL,UNITS,TYPES,CATS,wake,toast,bboxOf,grpMap,userHidden:uHid,setUserHidden,sel:()=>({idx:selIdx,set:selSet}),clearHL,highlight,focusEl,flyTo,levelVisible:l=>lvlVis[l]!==false,openSec}); }
 $('stat').textContent=M.els.length.toLocaleString('en')+' عنصر';
-window.__dbg={setLens,get LENS(){return LENS;},setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},get ISSUES(){return ISSUES;},get NOTES(){return window.NOTES;},get LOOK(){return window.LOOK;},uHid,setUserHidden,get selIdx(){return selIdx;},flyToBox,bboxOf,flyTo,scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};
+/* system life-cycle tests (src/life.js, data: M.lifecycle from pipeline/lifecycle.py) */
+if(window.initLife) window.LIFE=initLife({M,$,esc,LVL,UNITS,TYPES,setLens,LENS,wake,flyToBox,bboxOf,highlight,clearHL,select,toast,grpMap,openSec});
+/* first-visit hint (src/hint.js) */
+if(window.initHint) window.HINT=initHint({$,wake});
+window.__dbg={setLens,get LENS(){return LENS;},setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},get ISSUES(){return ISSUES;},get NOTES(){return window.NOTES;},get LOOK(){return window.LOOK;},get MEASURE(){return window.MEASURE;},get SECTIONS(){return window.SECTIONS;},get LIFE(){return window.LIFE;},get VIEWS(){return window.VIEWS;},uHid,setUserHidden,get selIdx(){return selIdx;},flyToBox,bboxOf,flyTo,scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};

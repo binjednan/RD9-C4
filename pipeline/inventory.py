@@ -12,22 +12,36 @@ PAT = re.compile(r"\b(ARCH1|ARCH2|STR|MECH1|MECH2|ELEC1|ELEC2)\s*(?:p|P|ص)\s*(\
 KIND_WORDS = [("notes", ("NOTES", "LEGEND", "CALCULATION", "SCHEDULE OF", "KEY")), ("schedule", ("SCHEDULE", "TABLE", "BOQ")), ("diagram", ("DIAGRAM", "SCHEMATIC", "RISER")),
               ("section", ("SECTION", "ELEVATION", "FACADE")), ("detail", ("DETAIL",)), ("plan", ("PLAN", "LAYOUT", "LOADING"))]
 KIND_AR = {"plan": "مسقط", "section": "مقطع / واجهة", "detail": "تفصيل", "schedule": "جدول", "diagram": "مخطط تخطيطي", "notes": "ملاحظات / مفتاح", "other": "أخرى"}
-# what each feature needs in the sources to count as implemented  (file, regex)
+# what each feature needs in the sources to count as implemented  (group, text, file, regex, note)
+# note: "new" = a capability the owner asked for that is not obvious on screen · "warn" = a behaviour worth knowing before relying on the model · None = ordinary (listed in docs/INVENTORY.md only —
+# the viewer's overview shows only what needs a note, owner 2026-10-08: «اذكر ما يحتاج للتنويه فقط»; a feature whose code is missing is always shown)
 FEATURES = [
-    ("3D", "نموذج ثلاثي الأبعاد بالمجسمات المجمّعة (Three.js) في ملف واحد", "app.js", r"buildAll\("),
-    ("3D", "تحكم بالكاميرا: ماوس / تراك باد / لمس (إصبع تدوير، إصبعان تحريك وقرص)", "controls.js", r"pinchInZooms"),
-    ("3D", "قص أفقي وطولي وتفكيك الطوابق وعزل الوحدات (شقق)", "app.js", r"clipY|exitIso"),
-    ("3D", "إضاءة: نهار / غروب / ليل + تشغيل المصابيح", "app.js", r"applyPreset"),
-    ("اللوحة", "لوحة جانبية واحدة بأقسام قابلة للطيّ مع بحث سريع", "app.js", r"toggleSec"),
-    ("اللوحة", "بطاقة العنصر المحدد أعلى اللوحة (أقسام قابلة للطيّ، مصدر كل بيان)", "app.js", r"infoDock"),
-    ("اللوحة", "إخفاء اللوحة بزر وتذكّر الحالة", "app.js", r"setDock"),
-    ("التحليل", "تعارضات: قائمة بحالات ومسار وصول وجولة مشي", "clash.js", r"startTour"),
-    ("التحليل", "تصنيف التعارضات (مؤكد / مرشح اختلاف منسوب / هامشي) ومجموعات", "pipeline/clash_tiers.py", r"def classify"),
-    ("التحليل", "سجل التخمينات وأفضل موضع للمكوّنات بلا حامل", "pipeline/guesses.py", r"def relocate"),
-    ("التحليل", "درجة موثوقية لكل عنصر (موثّق / مشتق / تخمين / إخراجي)", "pipeline/reliability.py", r"def assign"),
-    ("العينات", "مكتبة عينات تفصيلية بمعاينة منفردة وانتقال إلى الموضع", "samples-ui.js", r"openPreview"),
-    ("العينات", "حديد التسليح بالأسياخ المستديرة عند الطلب", "detail.js", r"setRebar"),
-    ("الواجهة", "تبديل ما يفعله السحب بإصبع واحد (أزرار الوضع)", "app.js", r"setModes"),
+    ("المظهر", "مظهر «أبيض ورمادي» بظلال ناعمة وعمق، واختيار قسم في العدسة يُلوّنه وحده (العرض ▾ ← المظهر)", "look.js", r"initLook", "new"),
+    ("المظهر", "«عزل» في العدسة: يبقى ما اخترته وحده، ولا يُحدَّد بالنقر إلا المعزول", "lens.js", r"hideRest", "new"),
+    ("الكاميرا", "دوران حرّ بالسحب حتى أسفل المبنى لرؤية بطون البلاطات والسقوف والأساس", "controls.js", r"Math\.PI-0\.02", "new"),
+    ("القص", "مستوى قص مرئي، وأزرار «مسقط الطابق» تقصّ عند +1.20 م وتنظر من أعلى", "sections.js", r"initSections", "new"),
+    ("الأدوات", "إخفاء أي عنصر (H) وكتابة ملاحظة عليه لتنفيذها في التعديلات القادمة", "notes.js", r"initNotes", "new"),
+    ("الأدوات", "قياس المسافة بين نقطتين تلتصق بأقرب ركن (M)", "measure.js", r"initMeasure", "new"),
+    ("الأدوات", "حفظ المناظير ونسخ رابط يعيد المنظور نفسه لمن يفتحه", "views.js", r"initViews", "new"),
+    ("تنبيه", "الملاحظات والمناظير تُحفظ في هذا المتصفح فقط؛ انسخها (أو انسخ الرابط) لتبقى", "notes.js", r"c4notes", "warn"),
+    ("تنبيه", "الظلال والعمق تتوقفان أثناء القص وفي وضع الأداء", "look.js", r"clipActive", "warn"),
+    ("تنبيه", "الكماليات الإخراجية (أثاث وأشجار وسيارات) للعرض لا للتنفيذ، وتُخفى من «الأقسام»", "app.js", r"STAGE_KINDS", "warn"),
+    ("تنبيه", "الخوازيق تُعرض 30 سم تحت اللبشة للدلالة فقط (الطول الفعلي 13 م)", "pipeline/post_model.py", r"يُعرض 30 سم فقط", "warn"),
+    ("تنبيه", "صور العينات مرخّصة ومنسوبة لأصحابها (docs/PHOTO_CREDITS.md)", "samples-ui.js", r"photoFigure", "warn"),
+    ("3D", "نموذج ثلاثي الأبعاد بالمجسمات المجمّعة (Three.js) في ملف واحد", "app.js", r"buildAll\(", None),
+    ("3D", "تحكم بالكاميرا: ماوس / تراك باد / لمس (إصبع تدوير، إصبعان تحريك وقرص)", "controls.js", r"pinchInZooms", None),
+    ("3D", "قص أفقي وطولي وتفكيك الطوابق وعزل الوحدات (شقق)", "app.js", r"clipY|exitIso", None),
+    ("3D", "إضاءة: نهار / غروب / ليل + تشغيل المصابيح", "app.js", r"applyPreset", None),
+    ("اللوحة", "لوحة جانبية واحدة بأقسام قابلة للطيّ مع بحث سريع", "app.js", r"toggleSec", None),
+    ("اللوحة", "بطاقة العنصر المحدد أعلى اللوحة (أقسام قابلة للطيّ، مصدر كل بيان)", "app.js", r"infoDock", None),
+    ("اللوحة", "إخفاء اللوحة بزر وتذكّر الحالة", "app.js", r"setDock", None),
+    ("التحليل", "تعارضات: قائمة بحالات ومسار وصول وجولة مشي", "clash.js", r"startTour", None),
+    ("التحليل", "تصنيف التعارضات (مؤكد / مرشح اختلاف منسوب / هامشي) ومجموعات", "pipeline/clash_tiers.py", r"def classify", None),
+    ("التحليل", "سجل التخمينات وأفضل موضع للمكوّنات بلا حامل", "pipeline/guesses.py", r"def relocate", None),
+    ("التحليل", "درجة موثوقية لكل عنصر (موثّق / مشتق / تخمين / إخراجي)", "pipeline/reliability.py", r"def assign", None),
+    ("العينات", "مكتبة عينات تفصيلية بمعاينة منفردة وانتقال إلى الموضع", "samples-ui.js", r"openPreview", None),
+    ("العينات", "حديد التسليح بالأسياخ المستديرة عند الطلب", "detail.js", r"setRebar", None),
+    ("الواجهة", "تبديل ما يفعله السحب بإصبع واحد (أزرار الوضع)", "app.js", r"setModes", None),
 ]
 LOC_GROUPS = [("pipeline", "pipeline/*.py"), ("samples", "pipeline/samples/*.py"), ("viewer", "src/*.js"), ("template", "src/template.html")]
 
@@ -88,9 +102,9 @@ def closure():
 
 def features():
     out = []
-    for grp, title, f, rx in FEATURES:
+    for grp, title, f, rx, note in FEATURES:
         p = os.path.join(ROOT, f) if "/" in f else os.path.join(ROOT, "src", f)
-        out.append({"g": grp, "t": title, "ok": bool(re.search(rx, _read(p)))})
+        out.append({"g": grp, "t": title, "ok": bool(re.search(rx, _read(p))), "n": note})
     return out
 
 
@@ -173,8 +187,10 @@ def write_doc(M):
     stn = {"closed": "مغلق", "partial": "جزئي", "open": "مفتوح"}
     for r in inv["closure"]: P(f"| {r['id']} | {stn[r['st']]} | {r['title']} |")
     P("")
-    P("## 4) العارض (الواجهة)"); P(""); P("| المجال | الميزة | موجودة |"); P("|---|---|---|")
-    for f in inv["features"]: P(f"| {f['g']} | {f['t']} | {'نعم' if f['ok'] else 'لا'} |")
+    P("## 4) العارض (الواجهة)"); P(""); P("«نظرة عامة» تعرض ما يحتاج تنويهًا فقط (جديد بطلب المالك أو تنبيه)؛ الجدول كاملًا هنا."); P("")
+    P("| المجال | الميزة | موجودة | في النظرة |"); P("|---|---|---|---|")
+    nt = {"new": "جديد", "warn": "تنبيه", None: "—"}
+    for f in inv["features"]: P(f"| {f['g']} | {f['t']} | {'نعم' if f['ok'] else 'لا'} | {nt[f['n']]} |")
     P("")
     c = inv["code"]
     P("## 5) الشيفرة والتوثيق والمخرجات"); P("")

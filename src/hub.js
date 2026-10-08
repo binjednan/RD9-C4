@@ -40,11 +40,14 @@ function initHub(ctx){
   h+=`<h3>المخططات المستعملة <small class=muted>${sh.used} من ${sh.total} ورقة (${pct(sh.used,sh.total)}%)</small></h3><div class=srcs>`;
   sh.sets.forEach(s=>{h+=`<div class=srow><span>${esc(s.name)}</span><span class=pbar><i style="width:${pct(s.used,s.pages)}%"></i></span><b>${s.used}/${s.pages}</b></div>`;});
   h+=`</div>`;
-  const un=sh.list.filter(r=>!r.c&&['plan','detail','section'].includes(r.k)).length;
-  h+=`<div class=note>${un} ورقة مسقط/تفصيل/مقطع لم يُستخرج منها شيء بعد — قائمة الجرد الكاملة في <code>docs/INVENTORY.md</code>.</div>`;
+  /* the sheets nothing has been taken from yet (plans, details, sections), grouped by drawing set — a to-do list that is measured on every build, not typed by hand */
+  const unl=sh.list.filter(r=>!r.c&&['plan','detail','section'].includes(r.k)), KA={plan:'مسقط',detail:'تفصيل',section:'مقطع / واجهة'};
+  h+=`<details class=unused><summary>${unl.length} ورقة مسقط/تفصيل/مقطع لم يُستخرج منها شيء بعد <small class=muted>(اضغط للقائمة)</small></summary>`+sh.sets.map(s=>{ const rows=unl.filter(r=>r.s===s.id); return rows.length?`<div class=unh>${esc(s.name)} <small class=muted>${rows.length}</small></div>`+rows.map(r=>`<div class=unr><code>ص${r.p}</code><b>${esc(r.no||'—')}</b><span>${esc(r.t)}</span><em>${KA[r.k]||''}</em></div>`).join(''):''; }).join('')+`<div class=note>قائمة الجرد الكاملة في <code>docs/INVENTORY.md</code>.</div></details>`;
   // ---- features present
-  const f=inv.features||[]; const ok=f.filter(x=>x.ok).length;
-  h+=`<h3>إمكانات العارض <small class=muted>${ok}/${f.length}</small></h3><ul class=feat>`+f.map(x=>`<li class="${x.ok?'ok':'no'}">${esc(x.t)}</li>`).join('')+`</ul>`;
+  /* only what needs a note (owner 2026-10-08: «اذكر ما يحتاج للتنويه فقط»): capabilities he asked for that are not obvious on screen («جديد»), behaviours worth knowing («تنبيه»), and anything whose code is missing;
+     the ordinary features stay in docs/INVENTORY.md (pipeline/inventory.py FEATURES) */
+  const f=(inv.features||[]).filter(x=>x.n||!x.ok); const tag={new:['جديد','ok'],warn:['تنبيه','warn']};
+  if(f.length) h+=`<h3>ما يحتاج تنويهًا في العارض <small class=muted>${f.length}</small></h3><ul class=feat>`+f.map(x=>{ const t=x.ok?(tag[x.n]||['','ok']):['غير موجود','no']; return `<li class="${t[1]}"><em>${t[0]}</em> ${esc(x.t)}</li>`; }).join('')+`</ul>`;
   box.innerHTML=h;
   box.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]'); if(!b) return; const [a,v]=b.dataset.act.split(':');
     if(a==='lens'){setLens(v); toast('عدسة «'+({layer:'التخصصات',grade:'موثوقية البيانات'}[v]||v)+'» — الأيقونة في «العرض ▾»',2600);}

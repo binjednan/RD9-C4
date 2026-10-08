@@ -125,6 +125,8 @@ function initLook(ctx){
     const w=mode==='white'; if(w===white&&!(opt&&opt.force)) return; white=w; save(); apply(false);
     if(!(opt&&opt.quiet)) toast(w?'المظهر الأبيض والرمادي: اختر قسمًا في العدسة ليُلوَّن وحده':'عادت ألوان المواد',2600);
   }
+  function snapshot(){ return {w:white?1:0,s:shadowsOn?1:0,e:edgesOn?1:0}; }
+  function restore(o){ white=!!(o&&o.w); shadowsOn=!(o&&o.s===0); edgesOn=!(o&&o.e===0); save(); apply(false); }
   function setFlag(k,on){ if(k==='shadows') shadowsOn=on; else if(k==='edges') edgesOn=on; save(); apply(false); }
   function ui(){
     document.querySelectorAll('#viewMenu [data-look]').forEach(b=>b.classList.toggle('on',(b.dataset.look==='white')===white));
@@ -134,7 +136,7 @@ function initLook(ctx){
   const vm=$('viewMenu'); if(vm) vm.addEventListener('click',ev=>{ const b=ev.target.closest('[data-look],[data-lk]'); if(!b||b.disabled) return; ev.stopPropagation();
     if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
   apply(true);
-  return {set,render,dirty(){ dirtyShadow=true; },afterPreset:lights,setFog:fog,get active(){ return white; },get edges(){ return white&&edgesOn&&!isPerf()&&postOk!==false; },get white(){ return white; },
+  return {set,snapshot,restore,render,dirty(){ dirtyShadow=true; },afterPreset:lights,setFog:fog,get active(){ return white; },get edges(){ return white&&edgesOn&&!isPerf()&&postOk!==false; },get white(){ return white; },
     state(){ return {white,shadowsOn,edgesOn,shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,fog:!!scene.fog,mono:U.mono.value}; }};
 }
 window.initLook=initLook;

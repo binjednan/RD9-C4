@@ -26,6 +26,7 @@ SRC = os.path.join(os.path.dirname(HERE), "src", "model.json")
 M = json.load(open(SRC, encoding="utf-8"))
 els = M["els"]
 els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]      # accessories of pipeline/extras.py are rebuilt below (keep them out of every earlier pass)
+els[:] = [e for e in els if not re.search(r"-K\d{4}$", e["id"])]      # derived connectors of pipeline/connectors.py are rebuilt at the end (keep them out of every earlier pass)
 # the apartment windows are rebuilt from the approved schedule (A801/A802 + A1500): keep the old single-slab modules (saved once to data/win_modules.json) out of every pass
 import arch_windows as _AW
 _AW.modules(M)
@@ -1047,9 +1048,15 @@ _CITE_FIX = {"STR p24 (S-141)": "STR p24 (S-19 TOP ROOF SLAB LAYOUT)", "ARCH2 ص
 for _i, _s in enumerate(M["sp"]):
     if _s in _CITE_FIX: M["sp"][_i] = _CITE_FIX[_s]
 
+# derived connections between the parts of each system (the last pipe / duct piece the plans imply): added AFTER the clash pass so they never show up as clashes, BEFORE the grading
+import connectors as _CN
+_CN.build(M, verbose=True)
 import reliability as _REL
 _REL.assign(M)
 _GS.registry(M, els)
+# life-cycle tests: switch every system on from its sources and record what is really connected (viewer: «اختبارات دورة الحياة»; docs/LIFECYCLE_TESTS.md)
+import lifecycle as _LC
+_LC.apply(M, verbose=True)
 import inventory as _INV
 _INV.build(M); _INV.write_doc(M)
 json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False)
