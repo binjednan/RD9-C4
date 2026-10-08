@@ -79,11 +79,19 @@ def pt_box(p, c, h):
 
 
 def seg_box(a, b, c, h, n=16):
-    best = (1e9, a, a)
-    for i in range(n + 1):
-        t = i / n; p = (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
-        d, q = pt_box(p, c, h)
-        if d < best[0]: best = (d, p, q)
+    """distance from the segment a–b to an axis-aligned box (centre c, half sizes h) -> (distance, point on the segment, point on the box).  The distance from a point of a line to a convex set is a convex function
+    of the parameter, so a ternary search is exact.  (It was a 16-sample scan: a long duct passing through a thin grille between two samples read as 4 cm apart and a connected terminal stayed dark.)"""
+    def f(t):
+        p = (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t); d, q = pt_box(p, c, h); return d, p, q
+    lo, hi = 0.0, 1.0
+    for _ in range(40):
+        m1 = lo + (hi - lo) / 3.0; m2 = hi - (hi - lo) / 3.0
+        if f(m1)[0] <= f(m2)[0]: hi = m2
+        else: lo = m1
+    best = f((lo + hi) / 2.0)
+    for t in (0.0, 1.0):
+        r = f(t)
+        if r[0] < best[0]: best = r
     return best
 
 
@@ -138,6 +146,7 @@ def _grp(e): return e.get("grp") or e["id"]
 
 # Every system: sources (where it is switched on), conductors (pipes / ducts / conduits and in-line valves / dampers), terminals (where it is used).
 # `variants` are separate conductor networks that must ALL reach a terminal (chilled-water supply and return).  `sink=True` runs the flow backwards (drainage: from the outlet to the fixtures).
+VENT_T = ("duct_ea", "duct_fa", "riser_ea", "riser_fa", "damper_ea", "damper_fa", "duct_flex_ea", "duct_flex_fa")       # the ventilation network (pipeline/vent_build.py) is tested apart from the supply air
 BOARDS_T = ("det_db", "e_P18")                                   # distribution boards: wired from their circuits, boundary of what the drawings connect
 def _is_board(e): return (e["c"] == "E.panel" and _t(e) == "det_db") or _t(e) == "e_P18"
 def _elec_load(e):
@@ -170,9 +179,19 @@ SYSTEMS = [
     dict(id="air", name="هواء التغذية", icon="≋", color="#56B4E9",
          desc="وحدات FCU / FAHU ← مجاري الهواء والمخمّدات ← الناشرات وفتحات التغذية (الراجع عبر السقف المستعار بلا مجاري مرسومة)",
          source=lambda e: e["c"] == "M.equip" and _t(e) in ("fcu", "fahu"),
-         variants=[("الشبكة", lambda e: e["c"] in ("M.duct", "M.damper"))],
+         variants=[("الشبكة", lambda e: e["c"] in ("M.duct", "M.damper") and _t(e) not in VENT_T)],
          terminal=lambda e: e["c"] == "M.outlet" and _t(e) in ("diff_supply", "grille_supply"),
          term_name=lambda e: "ناشر تغذية" if _t(e) == "diff_supply" else "فتحة تغذية", source_name="FCU / FAHU", conductor_name="مجرى هواء"),
+    dict(id="vent_fa", name="التهوية — الهواء النقي", icon="⇣", color="#4d9a73",
+         desc="وحدة معالجة الهواء النقي FAHU على السطح ← صاعد الهواء النقي (ينزل حتى البدروم) ← مجاري كل طابق ومخمّداتها ← الشبكات السلكية عند نهايات المجاري (المرسوم في مخططات التهوية VE-100…VE-105)",
+         source=lambda e: e["c"] == "M.equip" and _t(e) == "fahu",
+         variants=[("الشبكة", lambda e: (e["c"] == "M.duct" and _t(e) in ("duct_fa", "riser_fa", "duct_flex_fa")) or (e["c"] == "M.damper" and _t(e) == "damper_fa"))],
+         terminal=lambda e: e["c"] == "M.outlet" and _t(e) == "grille_fa", term_name=lambda e: "شبكة هواء نقي", source_name="FAHU", conductor_name="مجرى هواء نقي"),
+    dict(id="vent_ea", name="التهوية — الشفط", icon="⇡", color="#b0763a", sink=True,
+         desc="الناشرات وشبكات الشفط في الحمامات والمطابخ ← مجاري الشفط ومخمّداتها ← صاعد الشفط ← قسم الشفط في وحدة FAHU على السطح (الاتجاه معكوس: يُختبر الوصل من المصدر نحو الناشرات)",
+         source=lambda e: e["c"] == "M.equip" and _t(e) == "fahu",
+         variants=[("الشبكة", lambda e: (e["c"] == "M.duct" and _t(e) in ("duct_ea", "riser_ea", "duct_flex_ea")) or (e["c"] == "M.damper" and _t(e) == "damper_ea"))],
+         terminal=lambda e: e["c"] == "M.outlet" and _t(e) in ("diff_extract", "grille_ea"), term_name=lambda e: "ناشر شفط" if _t(e) == "diff_extract" else "شبكة شفط", source_name="FAHU (قسم الشفط)", conductor_name="مجرى شفط"),
     dict(id="cold", joint_end_only=False, name="المياه الباردة", icon="💧", color="#06b6d4",
          desc="خزان المياه المنزلي ← مواسير المياه الباردة والمحابس ← مداخل الأجهزة الصحية والسخانات",
          source=lambda e: e["c"] == "P.tank" and _t(e) == "tank_water" and _m(e) == "DT",

@@ -30,6 +30,7 @@ els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]      # accessor
 els[:] = [e for e in els if not re.search(r"-K\d{4}$", e["id"])]      # derived connectors of pipeline/connectors.py are rebuilt at the end (keep them out of every earlier pass)
 els[:] = [e for e in els if not re.search(r"-V\d{4}$", e["id"])]      # inferred risers of pipeline/risers.py (suffix V; L belongs to the landscape elements) are rebuilt at the end (keep them out of every earlier pass)
 els[:] = [e for e in els if not re.search(r"-W\d{4}$", e["id"])]      # electrical conductors / boards of pipeline/elec_build.py (suffix W) are rebuilt at the end
+els[:] = [e for e in els if not re.search(r"-VT\d{4}$", e["id"])]     # ventilation ducts / diffusers / dampers / risers of pipeline/vent_build.py (suffix VT) are rebuilt before the support analysis
 # the apartment windows are rebuilt from the approved schedule (A801/A802 + A1500): keep the old single-slab modules (saved once to data/win_modules.json) out of every pass
 import arch_windows as _AW
 _AW.modules(M)
@@ -722,6 +723,10 @@ import arch_ceilings as _AC
 _ac = _AC.rebuild(M, els, LV)
 print("ceilings rebuilt (A1401/A1601):", _ac["ceilings"], "plates | devices moved:", _ac["devices_moved"], _ac["by_level"])
 M["els"] = els
+# ventilation (MECH1 p23–29: extract + fresh-air ducts, diffusers, wire-mesh grilles, dampers, risers): built after the ceilings (the diffusers sit under their plates) and BEFORE the support analysis (rods / hangers)
+import vent_build as _VT
+_VT.build(M, els, verbose=True)
+M["els"] = els
 
 _S = _SUP.Support(els, M["levels"], _wt)
 _cnt = collections.Counter()
@@ -886,6 +891,7 @@ M["types"].update(RS_TYPES)
 M["types"].update(ER_TYPES)
 M["types"].update(EXT["types"])
 M["types"].update(_AC.types())
+M["types"].update(_VT.TYPES)                                           # ventilation types (cards written in pipeline/vent_build.py)
 # cards for every remaining type (structure, finishes, ducts, pipes, valves, sprinklers, site, planting): pipeline/kb_types.py — never overrides a card defined above
 import kb_types as _KBT
 _kb_new = _KBT.build(M)

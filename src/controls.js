@@ -8,7 +8,9 @@
    - touch (tablets): one finger = rotate (the bottom mode buttons can change it), two fingers moving TOGETHER = pan, two fingers moving APART = zoom in, moving TOWARD each
      other = zoom out (the usual direction; owner 2026-10-08 reversed the 2026-10-07 setting — pinchInZooms=true brings the old one back: toward each other = zoom in). A two-finger gesture is classified once (pan or zoom),
      so a pan never zooms and a pinch never drifts; after a short pause the next movement is classified again.
-   - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.        */
+   - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.
+   - the orbit pivot (owner 2026-10-08): when `pivotFn()` returns a point (the viewer returns the selected element's centre) the rotation turns the whole view RIGIDLY about it, so it keeps its place on the
+     screen while the camera swings around it; when it returns null (nothing selected) the orbit turns about the look-at point exactly as before.        */
 class CameraRig extends THREE.EventDispatcher{
   constructor(camera,dom){
     super();
@@ -19,6 +21,8 @@ class CameraRig extends THREE.EventDispatcher{
     this.bounds=new THREE.Box3(new THREE.Vector3(-30,-10,-85),new THREE.Vector3(85,48,35));   // y ≥ −10: the raft (−5.4 m at its lowest) and the pile stubs can be reached and orbited
     this.mode='rotate'; this.pointerKind='auto'; this.rotateSpeed=1; this.zoomSpeed=1; this.padSpeed=1;
     this.onHome=null; this.onFocus=null; this.lastGestureMulti=false; this.pinchInZooms=false;
+    this.pivotFn=null; this.onPivot=null;      // () => THREE.Vector3|null — what the orbit turns around; onPivot(P) is told each time it is used (the viewer shows a marker)
+    this._q=new THREE.Quaternion();
     this._ptrs=new Map(); this._drag=null; this._pinch=null; this._vel={th:0,ph:0}; this._keys=new Set();
     this._t=performance.now(); this._lastPad=0; this._wheelTimer=0; this._started=false; this._gs=1;
     this._o=new THREE.Vector3(); this._f=new THREE.Vector3(); this._r=new THREE.Vector3(); this._u=new THREE.Vector3(); this._d=new THREE.Vector3();
@@ -32,7 +36,23 @@ class CameraRig extends THREE.EventDispatcher{
   }
   _clampTarget(){const t=this.target,b=this.bounds,x=t.x,y=t.y,z=t.z; t.clamp(b.min,b.max); if(t.x!==x||t.y!==y||t.z!==z){this.camera.position.add(this._o.set(t.x-x,t.y-y,t.z-z));}}
   /* ---- primitive motions ---- */
-  rotate(dth,dph){const s=this._sph();this._setSph(s.r,s.ph+dph,s.th+dth);}
+  rotate(dth,dph){
+    const P=this.pivotFn?this.pivotFn():null; if(P){ this._rotateAbout(P,dth,dph); if(this.onPivot) this.onPivot(P); return; }
+    const s=this._sph();this._setSph(s.r,s.ph+dph,s.th+dth);
+  }
+  /* rigid turn of camera and look-at point about the vertical axis through P (dth) and about the camera's right axis through P (dph): P keeps its place on the screen.
+     The polar angle of the camera relative to its look-at point changes by exactly dph, so the same limits (straight above … straight below) apply. */
+  _rotateAbout(P,dth,dph){
+    const cam=this.camera.position,tg=this.target;
+    const s=this._sph(); dph=THREE.MathUtils.clamp(s.ph+dph,this.minPolarAngle,this.maxPolarAngle)-s.ph;
+    if(dth){ const c=Math.cos(dth),sn=Math.sin(dth); let x=cam.x-P.x,z=cam.z-P.z; cam.x=P.x+x*c+z*sn; cam.z=P.z-x*sn+z*c; x=tg.x-P.x; z=tg.z-P.z; tg.x=P.x+x*c+z*sn; tg.z=P.z-x*sn+z*c; }
+    if(dph){
+      const f=this._f.copy(tg).sub(cam).normalize(), ax=this._r.crossVectors(f,this.camera.up), l=ax.length();
+      if(l>1e-6){ ax.divideScalar(l); this._q.setFromAxisAngle(ax,dph);
+        const o=this._o; o.copy(cam).sub(P).applyQuaternion(this._q).add(P); cam.copy(o); o.copy(tg).sub(P).applyQuaternion(this._q).add(P); tg.copy(o); }
+    }
+    this.camera.lookAt(tg);
+  }
   pan(dxPx,dyPx){
     const h=Math.max(this.dom.clientHeight,200),s=this._sph(),k=2*s.r*Math.tan(THREE.MathUtils.degToRad(this.camera.fov/2))/h;
     this._f.copy(this.target).sub(this.camera.position).normalize(); this._r.crossVectors(this._f,this.camera.up).normalize(); this._u.crossVectors(this._r,this._f).normalize();

@@ -94,6 +94,7 @@ class Support:
         """-> dict(kind, ...) kind in ok | rod | hang | stand | float | skip"""
         e = self.els[i]; g = e["g"]; z0, z1 = zr(g)
         if z0 is None: return {"kind": "skip"}
+        if (e.get("a") or {}).get("shaft"): return {"kind": "ok"}                    # a ventilation riser (pipeline/vent_build.py) stands through the slabs it passes: carried by them, never «relocated»
         if g[0] in ("t", "d"):
             # under the floor finish and resting on a slab / raft just below: buried in the screed (basement drains: DR-100 floor traps + bedding details) -> nothing hangs it
             ffl_ = self.LV[e["l"]]["ffl"]; pts_ = g[1]

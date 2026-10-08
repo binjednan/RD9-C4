@@ -295,6 +295,19 @@ function viewPreset(name){
 }
 controls.addEventListener('start',()=>{fly=null;closeMenus();});
 controls.onHome=goHome; controls.onFocus=()=>{if(selIdx>=0) flyToBox(bboxOf(selSet));};
+/* orbit pivot (owner 2026-10-08, «مبدأ التدوير»): when an element is selected the view turns about THAT element (the centre of its box; the whole group of a grouped element); when nothing is selected the
+   orbit is exactly what it was before (it turns about the point the camera looks at: controls.js, pivotFn returns null).  The turn about a selection is rigid, so the element keeps its place on the screen;
+   a small ring marks it while (and shortly after) the view turns. */
+const pivotV=new THREE.Vector3();
+controls.pivotFn=()=>{
+  if(selIdx>=0&&selSet.length){ const b=bboxOf(selSet); return pivotV.set(b.c[0],b.c[1]+offOf(selSet[0]),b.c[2]); }
+  return null;
+};
+const pvTex=(()=>{ const c=document.createElement('canvas'); c.width=c.height=64; const g=c.getContext('2d'); g.lineWidth=9; g.strokeStyle='rgba(18,28,48,0.92)'; g.beginPath(); g.arc(32,32,20,0,6.2832); g.stroke(); g.lineWidth=4; g.strokeStyle='rgba(255,255,255,0.98)'; g.beginPath(); g.arc(32,32,20,0,6.2832); g.stroke(); g.fillStyle='rgba(18,28,48,0.92)'; g.beginPath(); g.arc(32,32,8,0,6.2832); g.fill(); g.fillStyle='rgba(230,120,20,1)'; g.beginPath(); g.arc(32,32,5,0,6.2832); g.fill(); return new THREE.CanvasTexture(c); })();   // dark + white ring, orange centre: readable on any colour
+const pvGeo=new THREE.BufferGeometry(); pvGeo.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0],3));
+const pvPts=new THREE.Points(pvGeo,new THREE.PointsMaterial({map:pvTex,size:36,sizeAttenuation:false,transparent:true,depthTest:false,depthWrite:false,alphaTest:0.05}));
+pvPts.renderOrder=1007; pvPts.frustumCulled=false; pvPts.visible=false; pvPts.raycast=()=>{}; scene.add(pvPts);
+let pvT=0; controls.onPivot=P=>{ pvPts.position.copy(P); pvPts.visible=true; clearTimeout(pvT); pvT=setTimeout(()=>{ pvPts.visible=false; wake(); },650); };
 
 /* ---------- info panel ---------- */
 function row(k,v){return `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;}

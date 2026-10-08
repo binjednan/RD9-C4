@@ -23,6 +23,7 @@ ID_RE = re.compile(r"-K\d{4}$")
 SRC_TEXT = "وصلة مشتقة من المسقط: الماسورة تنتهي عند الجهاز في الرسم؛ النزول الرأسي والوصلة الأخيرة مشتقان من منسوبَي الطرفين (اختبارات دورة الحياة، pipeline/connectors.py)"
 # type / material of a connector by the category of the conductor it continues
 CONN = {"P.cold": ("pipe_cold", "p_cold"), "P.hot": ("pipe_hot", "p_hot"), "P.drain": ("pipe_waste", "p_waste"), "P.ff": ("pipe_ff", "p_ff"), "M.duct": ("duct_flex", "m_duct")}
+CONN_SYS = {"vent_ea": ("duct_flex_ea", "m_duct_ea"), "vent_fa": ("duct_flex_fa", "m_duct_fa")}     # the ventilation ducts have their own types: the supply-air test must not count their flexible pieces
 
 
 def _ends(e):
@@ -129,6 +130,7 @@ def build(M, verbose=False):
         eh = els[host]; eo = els[other]
         ct, cm = CONN.get(eh["c"], (eh["t"], eh["m"]))
         if eh["c"] == "M.pipe": ct, cm = eh["t"], eh["m"]
+        if sysid in CONN_SYS: ct, cm = CONN_SYS[sysid]
         if vtype: ct = vtype
         if cm not in M["mats"]: cm = eh["m"]
         counter[(eh["c"], eh["l"])] += 1
