@@ -8,9 +8,10 @@
 function initLife(ctx){
   const {M,$,esc,LVL,UNITS,TYPES,setLens,LENS,wake,flyToBox,bboxOf,highlight,clearHL,select,toast,grpMap,openSec}=ctx;
   const box=$('lifeBox'); const LC=M.lifecycle; if(!box) return null;
-  if(!LC||!LC.systems||!LC.systems.length){ box.innerHTML='<div class="muted">لا نتائج اختبارات في هذا النموذج (شغّل pipeline/lifecycle.py).</div>'; return null; }
-  const CLS=[{k:'src',n:'مصدر',c:'#0072B2',h:'نقطة تشغيل النظام (خزان، مبرّد، سخان، لوحة …)'},{k:'con',n:'موصل مُغذّى',c:'#56B4E9',h:'ماسورة أو مجرى أو موصل موصول فعليًا بالمصدر'},
-    {k:'ok',n:'نهاية مُغذّاة',c:'#009E73',h:'جهاز موصول بالمصدر عبر هندسة فعلية'},{k:'bad',n:'نهاية غير موصولة',c:'#D55E00',h:'جهاز لا يصله المصدر — اختبار فاشل'},{k:'orph',n:'موصل يتيم',c:'#DB7F4A',h:'ماسورة أو مجرى لا يصل إلى أي مصدر أو نقطة دخول'},{k:'edge',n:'نقطة دخول',c:'#CC79A7',h:'حدّ ما هو مرسوم في النموذج: ما قبله (مضخات، خزان سطح، مخرج…) غير مرسوم، فالتوزيع يُختبر منه'}];
+  if(!LC||!LC.systems||!LC.systems.length){ box.innerHTML='<div class="muted">لا تتوفر نتائج اختبار الشبكات في هذه النسخة.</div>'; return null; }
+  const RP=(M.displayPalette||window.C4_PALETTE).lifecycle;
+  const CLS=[{k:'src',n:'مصدر',c:RP.src,h:'نقطة تشغيل ممثلة في المجسم'},{k:'con',n:'موصل مُغذّى',c:RP.con,h:'تماس هندسي بالمصدر ضمن تسامح النموذج، وليس اعتماد تشغيل موقعي'},
+    {k:'ok',n:'نهاية تجتاز مسار المجسم',c:RP.ok,h:'مسار داخل المجسم ضمن سماحة الاختبار'},{k:'bad',n:'نهاية غير موصولة',c:RP.bad,h:'اختبار المجسم لا يجد مسارًا من المصدر'},{k:'orph',n:'موصل يتيم',c:RP.orph,h:'لا يصل إلى مصدر أو نقطة دخول في المجسم'},{k:'edge',n:'نقطة دخول',c:RP.edge,h:'حد توزيع ممثل؛ لا يثبت تشغيل ما قبله'}];
   let cur=0, timer=0, playing=false, T=0, hideOther=false, finalMode=false; const sys=()=>LC.systems[cur];
   const lvName=l=>(LVL[l]&&LVL[l].name)||l;
   const total=(s)=>s.tests.length, passN=s=>s.tests.filter(t=>t.p).length;
@@ -37,29 +38,35 @@ function initLife(ctx){
   function stop(keep){ playing=false; clearInterval(timer); timer=0; const b=$('lfPlay'); if(b){ b.textContent='▶ تشغيل الدورة'; b.classList.remove('on'); } if(!keep) setBar(0); }
   function setBar(v){ const r=$('lfBar'); if(r) r.value=v; const t=$('lfBarT'); if(t) t.textContent=Math.round(v)+'%'; }
   function play(){
-    const s=sys(), P=prep(s); if(!s.ri.length){ toast('لا مصدر موصول في هذا النظام — لا شيء يُضاء'); paint(0,true); return; }
+    const s=sys(), P=prep(s); if(!s.ri.length){ toast('لا يجد الاختبار مصدرًا متصلًا في هذا المجسم؛ لا يُضاء مسار'); paint(0,true); return; }
     stop(true); playing=true; finalMode=false; T=0; const b=$('lfPlay'); if(b){ b.textContent='⏸ إيقاف'; b.classList.add('on'); }
     const t0=performance.now(), dur=7000, max=Math.max(P.maxD,1);
     paint(0,false); wake(dur+500);
     timer=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/dur), e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2; T=e*max; setBar(e*100); if(k>=1){ stop(true); setBar(100); finalMode=true; paint(max,true); result(); } else paint(T,false); wake(400); },120);
   }
-  function result(){ const s=sys(); toast(s.icon+' '+s.name+': '+s.cnt.ok.toLocaleString('en')+' من '+s.cnt.ter.toLocaleString('en')+' نهاية مُغذّاة'+(s.cnt.ter-s.cnt.ok?' — '+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+' غير موصولة':'')+(s.cnt.orph?' · '+s.cnt.orph.toLocaleString('en')+' موصل يتيم':''),5200); }
+  function result(){ const s=sys(); toast(s.icon+' '+s.name+': '+s.cnt.ok.toLocaleString('en')+' من '+s.cnt.ter.toLocaleString('en')+' نهاية تجتاز مسار المجسم'+(s.cnt.ter-s.cnt.ok?' — '+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+' غير موصولة':'')+(s.cnt.orph?' · '+s.cnt.orph.toLocaleString('en')+' موصل يتيم':''),5200); }
   function showFinal(){ stop(true); const s=sys(), P=prep(s); finalMode=true; setBar(100); paint(Math.max(P.maxD,1),true); wake(800); }
   function focusUnits(keys,color){ const s=sys(), P=prep(s); const idx=[]; keys.forEach(k=>{ (P.bad.get(k)||[]).forEach(i=>P.expand(i).forEach(j=>idx.push(j))); }); if(!idx.length) return; const u=[...new Set(idx)]; if(select) select(-1); highlight(u,color||0xd55e00,true,0.5); flyToBox(bboxOf(u)); }
   /* ---- panel ---- */
   const pct=(a,b)=>b?Math.round(a*100/b):0;
   function render(){
     const all=LC.systems.reduce((a,s)=>a+total(s),0), pass=LC.systems.reduce((a,s)=>a+passN(s),0);
-    let h='<div class="lf-top"><b>'+pass+' من '+all+' اختبارًا ناجح</b><small class="muted">بناء '+esc(LC.built||'')+' · فجوة التلامس المقبولة '+Math.round(LC.tol*100)+' سم</small></div>';
-    h+='<p class="muted lf-how">يُشغَّل كل نظام من مصادره، ولا يُضاء إلا ما هو موصول بالمصدر عبر هندسة فعلية في النموذج (مواسير ومجاري وموصلات ومحابس تتلامس). ما لا يصل يبقى مظلمًا ويُحسب فشلًا ويظهر في القائمة لتراجعه.</p>';
-    h+='<div class="lf-cards">'+LC.systems.map((s,i)=>{ const p=pct(s.cnt.ok,s.cnt.ter), np=passN(s); return '<button type="button" class="lf-card'+(i===cur?' on':'')+'" data-lf="sel" data-i="'+i+'" style="--lc:'+esc(s.color)+'"><span class="lf-ic">'+esc(s.icon)+'</span><b>'+esc(s.name)+'</b><span class="lf-pb"><i style="width:'+p+'%"></i></span><small>'+s.cnt.ok.toLocaleString('en')+' / '+s.cnt.ter.toLocaleString('en')+' موصول'+(s.cnt.edge?' من نقاط الدخول':'')+' · '+np+'/'+total(s)+' اختبار</small></button>'; }).join('')+'</div>';
+    let h='<div class="lf-top"><b>'+pass+' من '+all+' اختبار شبكة يجتاز فحص المجسم</b><small class="muted">بناء '+esc(LC.built||'')+' · سماحة اختبار المجسم '+Math.round(LC.tol*100)+' سم</small></div>';
+    h+='<p class="muted lf-how">يحاكي الاختبار المسار من المصدر أو نقطة الدخول عبر موصلات المجسم ضمن سماحته، بما فيها الوصلات المشتقة. المسار المنقطع يبقى مظلمًا ويظهر للمراجعة. النتيجة لا تثبت التلامس الفعلي أو التركيب أو التشغيل في الموقع.</p>';
+    const cardOf=(s,i)=>{ const p=pct(s.cnt.ok,s.cnt.ter), np=passN(s); return '<button type="button" class="lf-card'+(i===cur?' on':'')+'" data-lf="sel" data-i="'+i+'" style="--lc:'+esc(s.color)+'"><span class="lf-ic">'+esc(s.icon)+'</span><b>'+esc(s.name)+'</b><span class="lf-pb"><i style="width:'+p+'%"></i></span><small>'+s.cnt.ok.toLocaleString('en')+' / '+s.cnt.ter.toLocaleString('en')+' موصول'+(s.cnt.edge?' من نقاط الدخول':'')+' · '+np+'/'+total(s)+' اختبار</small></button>'; };
+    const gOrder=[], gIdx={}; LC.systems.forEach((s,i)=>{ const g=s.grp||''; if(!(g in gIdx)){ gIdx[g]=[]; gOrder.push(g); } gIdx[g].push(i); });
+    h+='<div class="lf-cards">'+gOrder.map(g=>{
+      if(!g) return gIdx[g].map(i=>cardOf(LC.systems[i],i)).join('');
+      const ids=gIdx[g], ok=ids.reduce((a,i)=>a+LC.systems[i].cnt.ok,0), ter=ids.reduce((a,i)=>a+LC.systems[i].cnt.ter,0), np=ids.reduce((a,i)=>a+passN(LC.systems[i]),0), nt=ids.reduce((a,i)=>a+total(LC.systems[i]),0), note=(LC.groups&&LC.groups[g])||'';
+      return '<div class="lf-grp"><div class="lf-gh"><b>'+esc(g)+'</b><span>'+ok.toLocaleString('en')+' / '+ter.toLocaleString('en')+' موصول · '+np+'/'+nt+' اختبار</span></div>'+(note?'<small class="muted">'+esc(note)+'</small>':'')+'<div class="lf-gc">'+ids.map(i=>cardOf(LC.systems[i],i)).join('')+'</div></div>';
+    }).join('')+'</div>';
     const s=sys(), P=prep(s);
     h+='<div class="lf-det"><h4>'+esc(s.icon)+' '+esc(s.name)+'</h4><p class="muted">'+esc(s.desc)+'</p>';
     h+='<div class="lf-ctl"><button type="button" id="lfPlay" class="lf-pri" data-lf="play">▶ تشغيل الدورة</button><button type="button" data-lf="final">النتيجة</button><button type="button" data-lf="hide" class="'+(hideOther?'on':'')+'" title="إخفاء كل ما ليس من هذا النظام">عزل النظام</button><button type="button" data-lf="off">إيقاف التلوين</button></div>';
     h+='<div class="lf-bar"><input id="lfBar" type="range" min="0" max="100" value="0" aria-label="تقدّم الدورة"><span id="lfBarT">0%</span></div>';
     h+='<table class="lf-t"><tbody>'+s.tests.map(t=>'<tr class="'+(t.p?'ok':'no')+'"><td class="lf-st">'+(t.p?'✔':'✖')+'</td><td>'+esc(t.n)+'</td><td class="lf-n">'+t.ok.toLocaleString('en')+' / '+t.of.toLocaleString('en')+'</td></tr>').join('')+'</tbody></table>';
     const d=s.cnt, iso=d.isl||0;
-    h+='<div class="lf-diag">'+(s.cnt.edge?'<span title="حدّ ما هو مرسوم في النموذج">نقاط دخول <b>'+s.cnt.edge.toLocaleString('en')+'</b> · السلسلة الكاملة من المصدر <b>'+(s.cnt.chain||0).toLocaleString('en')+'</b>/'+s.cnt.ter.toLocaleString('en')+'</span>':'')+(s.cnt.ter-s.cnt.ok?'<span>غير موصولة <b>'+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+'</b></span>':'')+(d.orph?'<span>موصلات يتيمة <b>'+d.orph.toLocaleString('en')+'</b></span>':'')+(d.near?'<span title="يوجد موصل من النظام قربها في المسقط">وصلة أخيرة ناقصة <b>'+d.near+'</b></span>':'')+(d.far?'<span title="لا شيء موثّق قربها">لا شيء قربها <b>'+d.far+'</b></span>':'')+'</div>';
+    h+='<div class="lf-diag">'+(s.cnt.edge?'<span title="حدّ ما هو مرسوم في النموذج">نقاط دخول <b>'+s.cnt.edge.toLocaleString('en')+'</b> · السلسلة الكاملة من المصدر <b>'+(s.cnt.chain||0).toLocaleString('en')+'</b>/'+s.cnt.ter.toLocaleString('en')+'</span>':'')+(s.cnt.ter-s.cnt.ok?'<span>غير موصولة <b>'+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+'</b></span>':'')+(d.orph?'<span>موصلات يتيمة <b>'+d.orph.toLocaleString('en')+'</b></span>':'')+(d.near?'<span title="يوجد موصل من النظام قربها في المسقط">وصلة أخيرة ناقصة <b>'+d.near+'</b></span>':'')+(d.far?'<span title="لا يجد اختبار المجسم موصلًا قريبًا">لا شيء قربها <b>'+d.far+'</b></span>':'')+'</div>';
     // failing list
     const keys=[...P.bad.keys()];
     if(keys.length){
@@ -71,7 +78,7 @@ function initLife(ctx){
         if(byL[l].length>40) h+='<small class="muted">و'+(byL[l].length-40)+' أخرى</small>';
         h+='</details>'; });
       h+='</div>';
-    } else h+='<div class="lf-allok">كل نهايات هذا النظام موصولة بمصدره.</div>';
+    } else h+='<div class="lf-allok">كل نهايات هذا النظام تجتاز اختبار مسار المجسم ضمن سماحته.</div>';
     h+='</div>';
     box.innerHTML=h; setBar(finalMode?100:0);
   }

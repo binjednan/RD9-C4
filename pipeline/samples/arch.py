@@ -138,7 +138,7 @@ def make():
                facts=[["الورقة والإطار", "ألمنيوم مطلي بالمسحوق"], ["التهوية", "ريش لوفر ثابتة"]], asm=ASM_DOOR + ["عدد الأوراق وارتفاع حقل اللوفر وزاوية الريش: افتراض (غير مفصّلة في الجدول)"],
                varmap={"T": "wall_cm"}, defaults={"T": 20}, dims={"W": 226, "D": 4, "H": 345, "T": 20}))
     add(sample("door_D16", "باب فولاذ — درج التنسيق الخارجي", "Steel hatch door D16", "architecture", door_steel(closer=False, fire=False), place={"mode": "rect", "anchor": "bottom"},
-               lod=5.0, conf="derived", src=SRC, asm=ASM_DOOR, defaults={"T": 20}, varmap={"T": "wall_cm"}, dims={"W": 121, "D": 4, "H": 105, "T": 20}))
+               lod=5.0, conf="derived", src=["ARCH2 ص5 A604 / BOQ ص8 البند8.3.12"], asm=ASM_DOOR + ["هذه عينة إجرائية عامة وليست جسم D16 المرسوم أو مقاسات تصنيعه؛ تمثيله في المجسم مستقل من المسقط.", "A604 يحدد فتحة125×110سم ومقاومة90دقيقة؛ BOQ يطبع125X1100mm وN/A. التعارضان لم يحسما."], defaults={"T": 20}, varmap={"T": "wall_cm"}, dims={"W": 121, "D": 4, "H": 105, "T": 20}))
     return out
 
 RULES = [{"c": "A.door", "t": f"door_{c}", "s": f"door_{c}"} for c in ["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12","D13","D14","D15","D16"]]

@@ -18,7 +18,7 @@ class CameraRig extends THREE.EventDispatcher{
     /* the orbit is free over the whole sphere (owner 2026-10-08: «لا يمكن النظر إلى الأعلى ولا رؤية أي مكوّن من أسفل»): from straight above (0.02 rad) to straight below (π − 0.02 rad),
        so the undersides of slabs, the soffits, the raft and the piles can be looked at; the small margin at both poles keeps lookAt() away from the degenerate vertical case. */
     this.minDistance=0.15; this.maxDistance=260; this.minSurface=0.25; this.hitTest=null; this.minPolarAngle=0.02; this.maxPolarAngle=Math.PI-0.02;
-    this.bounds=new THREE.Box3(new THREE.Vector3(-30,-10,-85),new THREE.Vector3(85,48,35));   // y ≥ −10: the raft (−5.4 m at its lowest) and the pile stubs can be reached and orbited
+    this.bounds=new THREE.Box3(new THREE.Vector3(-30,-25,-85),new THREE.Vector3(85,48,35));   // y ≥ −10: the raft (−5.4 m at its lowest) and the pile stubs can be reached and orbited
     this.mode='rotate'; this.pointerKind='auto'; this.rotateSpeed=1; this.zoomSpeed=1; this.padSpeed=1;
     this.onHome=null; this.onFocus=null; this.lastGestureMulti=false; this.pinchInZooms=false;
     this.pivotFn=null; this.onPivot=null;      // () => THREE.Vector3|null — what the orbit turns around; onPivot(P) is told each time it is used (the viewer shows a marker)

@@ -74,9 +74,12 @@ def slab_plain():
             rep(box(("-W/2", "H", "-D/2"), ("W/2", "H+0.05", "-D/2+0.3"), "#8e8c85", "matte", n="خط فوّاصل الصب (Formwork line)"), "floor(D/120)+1", (0, 0, 120))]
 
 def pile():
-    return [cyl((0, 0, 0), 30, "H", "#b4b4ae", "ghost", seg=24, n="خازوق خرساني ⌀60 سم — يُعرض 30 سم فقط تحت اللبشة"),
-            rep(cyl((f"20*cos(i*PI/4)", 3, f"20*sin(i*PI/4)"), 1.0, "H-3", REBAR, "metal", seg=8, n="قضيب رئيسي (حسب جدول الخوازيق — غير متوفر في الملفات المستخرجة)"), 8, (0, 0, 0)),
-            tor((0, 6, 0), 21, 0.5, TIE, ax="y", m="metal", n="حلزون تقييد (Spiral)")]
+    # Only P1: S-7 literally specifies 60cm, 13m, 10T16 and a T10 spiral.
+    # Bar placement/ends and the single symbolic hoop are unnumbered proxies.
+    neutral = "#c9d1d9"       # new neutral display colour, not physical concrete/steel colour
+    return [cyl((0, 0, 0), 30, "H", neutral, "ghost", seg=24, n="جسم P1 قطر60سم وطول تصميم13م — لون محايد للعرض"),
+            rep(cyl(("20*cos(i*2*PI/10)", 3, "20*sin(i*2*PI/10)"), 0.8, "H-6", neutral, "metal", seg=8, n="10T16 من S-7؛ توزيع القضبان وأطوال نهاياتها تمثيل غير مرقم"), 10, (0, 0, 0)),
+            tor((0, 6, 0), 21, 0.5, neutral, ax="y", m="metal", n="T10 spiral من S-7؛ حلقة واحدة رمزية لا تثبت خطوة الحلزون أو شكله الطولي")]
 
 COLS = {"C1": (34, 32, 12), "C2": (34, 20, 10), "C3": (24, 20, 10), "C4": (12, 20, 10), "C5": (20, 32, 12), "C6": (30, 25, 10), "C7": (28, 25, 10), "C8": (32, 25, 10), "C9": (32, 25, 10), "C10": (12, 20, 10), "C11": (10, 20, 10)}
 CSZ = {"C1": (30, 160), "C2": (30, 160), "C3": (25, 150), "C4": (50, 50), "C5": (60, 60), "C6": (30, 140), "C7": (20, 140), "C8": (20, 160), "C9": (20, 160), "C10": (20, 70), "C11": (20, 60)}
@@ -102,7 +105,7 @@ def make():
     for k in ("B1", "B2", "B3", "B4", "B5", "B6", "B7", "None", "B1*"):
         out[f"beam_{k}"] = out["beam"]
     add(sample("slab_T", "بلاطة السطح العلوي T (25 سم)", "Top roof slab", "structure", slab_plain(), place={"mode": "rect", "anchor": "bottom"}, lod=8.0, conf="derived", src=["STR ص24: مخطط بلاطة السطح العلوي"], facts=[["السماكة", "25 سم"]], asm=["تسليح البلاطة: «refer to plan» — غير مفصّل في الملفات المستخرجة؛ تُعرض الخرسانة فقط"], dims={"W": 600, "D": 300, "H": 25}))
-    add(sample("pile", "خازوق خرساني ⌀60 سم", "Concrete pile", "structure", pile(), place={"mode": "cyl", "anchor": "bottom"}, lod=8.0, conf="derived", src=["STR ص11: مخطط الأساسات", "STR ص12: تفاصيل الأساسات S-8"], facts=[["القطر", "60 سم"], ["الطول الفعلي", "13 م (يُعرض 30 سم)"]], asm=["تسليح الخازوق: غير متوفر في الملفات المستخرجة؛ القضبان الـ8 والحلزون توضيحية — يحتاج جدول الخوازيق"], dims={"W": 60, "D": 60, "H": 30}))
+    add(sample("pile", "خازوق P1 قطر60سم وطول تصميم13م — 10T16/T10", "P1 pile source design dimensions", "structure", pile(), place={"mode": "cyl", "anchor": "bottom"}, lod=8.0, conf="derived", src=["STR ص11 S-7: PILE DETAILS texttrace115 ودوائر P1", "STR ص12 S-8: SECTION1-B PC1، غرس الرأس غير مرقم"], facts=[["القطر النصي", "Pile diameter (P1) = 0.6m"], ["طول التصميم النصي", "Pile length = 13m"], ["التسليح النصي", "10T16 main steel / T10 spiral؛ يعاد تصميمه من شركة الخوازيق"]], asm=["توزيع القضبان على دائرة نصف قطرها20سم، بداية ونهاية القضبان3سم: تمثيل عرض لا أبعاد مثبتة؛ الغطاء والغرس والتراكبات تحتاج تفاصيلها.", "حلقةT10 واحدة تمثل رمز الحلزون؛ الخطوة والتوزيع الطولي غير مرقمين ولا يُختلق لهما تباعد.", "منسوب جسم العرض مشتق من أسفلPC1؛ لا يثبت منسوب القطع أو غرس الرأس أو التنفيذ بالموقع.", "اللون المحايد للعرض فقط؛ درجة الخلطة والتشطيب واللون الفعلي غير محددة في تفاصيل الخازوق المراجعة."], dims={"W": 60, "D": 60, "H": 1300}))
     # catalog-only samples (continuous slabs / raft: far too large to swap)
     for k, nm, thk in (("raft80", "لبشة 80 سم", 80), ("raft150", "لبشة 150 سم", 150)):
         add(sample(k, f"{nm} — خرسانة Fcu 40 مع طبقات العزل (قطاع S-8)", f"Raft {thk} cm (section)", "structure",

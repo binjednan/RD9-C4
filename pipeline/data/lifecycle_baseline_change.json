@@ -1,0 +1,19 @@
+{
+  "metric": "drain.orph",
+  "before": 694,
+  "after": 691,
+  "meaning": "reached conductors, not orphan count",
+  "reason_ar": "إعادة 6 مصائد/فتحات إلى رموز المصدر أزالت 6 موصلات مشتقة إلى مواضع نص خاطئة وأضافت 2 للمصائد الصحيحة؛ تحسن بلوغ CO74. لم يفقد أي عنصر مرسوم بلوغه.",
+  "drawn_reach_losses": 0,
+  "drawn_reach_gains": [
+    "P.drain-B-M0074"
+  ],
+  "distribution_before": 134,
+  "distribution_after": 134,
+  "chain_before": 0,
+  "chain_after": 0,
+  "orphan_count_before": 700,
+  "orphan_count_after": 699,
+  "evidence": "drain-normalized-connectivity-delta.json",
+  "tolerance_m": 0.04
+}

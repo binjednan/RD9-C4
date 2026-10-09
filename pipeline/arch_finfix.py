@@ -16,7 +16,8 @@ The finish cells of the model (one rectangle per cell of the A500 grid) took the
 Everything is idempotent (a second run finds every piece inside one zone and changes nothing) and every changed element carries a['fin_guess'] where the result is still an approximation
 (zone borders read from hatch strokes, ±10 cm) so guesses.registry() lists it in the viewer's guesses list.
 """
-import os, re, json, copy
+import os, re, json, copy, hashlib
+from shapely import normalize
 from shapely.geometry import Polygon, box, MultiPolygon, LineString
 from shapely.ops import unary_union
 import finishes as FN
@@ -44,6 +45,44 @@ KINDS = {                                                        # kind -> (code
     "bay": ("CSP-4", ["CAR PARK BAYS"], NOTE_BAY, "zone"),
     "driveway": ("CSP-3", ["DRIVE WAY"], NOTE_DRIVE, "zone"),
 }
+
+CACHE_VERSION = 1
+
+
+def _digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
+def _xy_proof(g):
+    """Exact serialized XY, canonical only; no buffering or coordinate rounding."""
+    if g[0] == "p":
+        p = Polygon(g[1], g[4] if len(g) > 4 and g[4] else None)
+    elif g[0] == "r":
+        p = box(min(g[1], g[3]), min(g[2], g[4]), max(g[1], g[3]), max(g[2], g[4]))
+    else:
+        return None
+    return hashlib.sha256(normalize(p).wkb).hexdigest()
+
+
+def _class_proof(e):
+    a = e.get("a") or {}
+    return _digest({"c": e["c"], "l": e["l"], "t": e.get("t"), "m": e.get("m"), "mark": e.get("mark"),
+                    "kind": a.get("kind"), "fin": a.get("fin"), "room": a.get("room"), "note": a.get("note"), "fin_guess": a.get("fin_guess")})
+
+
+def _source_proof(Z, ramp):
+    # Includes the actual source regions, the actual ramp footprint, and every
+    # numerical rule used by this finish classifier. This is not a tolerance.
+    return _digest({"version": CACHE_VERSION, "zones": Z,
+                    "ramp_xy_sha256": hashlib.sha256(normalize(ramp).wkb).hexdigest(),
+                    "rules": {"minimum_zone_piece_cm2": MIN_PIECE, "dust_cm2": DUST,
+                              "serialization_decimals": 1, "minimum_hole_cm2": 200,
+                              "open_kinds": OPEN, "classification": KINDS}})
+
+
+def _cache(e, source_sha):
+    e.setdefault("a", {})["finfix_proof"] = {"version": CACHE_VERSION, "source_sha256": source_sha,
+                                               "xy_sha256": _xy_proof(e["g"]), "classification_sha256": _class_proof(e)}
 
 
 def _poly(g):
@@ -131,11 +170,23 @@ def apply(M, els):
     Z, lobby, pav, bay = _zones(); si = _pool_idx(M, SRC)
     els[:] = [e for e in els if not (e["c"] == "A.floor" and re.search(r"-RAMP$", e["id"]))]
     ramp = _ramp_foot(els, "B"); stats = {"lobby": 0, "walkway": 0, "bay": 0, "driveway": 0, "split": 0, "under_ramp_removed": 0, "rooms": 0}; area = {"under_ramp_m2": 0.0}
+    source_sha = _source_proof(Z, ramp)
+    cache_log = {"version": CACHE_VERSION, "source_sha256": source_sha, "hits": 0, "misses": 0, "changes": [],
+                 "basis_ar": "بصمة حدود XY الدقيقة بعد القص، ومناطق A101 والمنحدر وقواعد القص والتصنيف؛ يتوقف تكرار قص الناتج المقرب نفسه. يتغير الدليل عند تغيير أي مدخل، ولا تتغير سماحة أو إحداثيات المصدر."}
     used = {e["id"] for e in els}; add = []; drop = set()
     for e in els:
         if e["c"] != "A.floor" or e["l"] != "B": continue
         a = e.get("a") or {}
         if a.get("kind") not in OPEN or e["g"][0] not in ("p", "r"): continue
+        proof = a.get("finfix_proof") or {}
+        xy_sha, class_sha = _xy_proof(e["g"]), _class_proof(e)
+        reasons = [key for key, actual in (("version", CACHE_VERSION), ("source_sha256", source_sha),
+                                           ("xy_sha256", xy_sha), ("classification_sha256", class_sha)) if proof.get(key) != actual]
+        if not reasons:
+            cache_log["hits"] += 1
+            if a.get("kind") in stats: stats[a["kind"]] += 1
+            continue
+        cache_log["misses"] += 1
         P = _poly(e["g"])
         if P is None or P.is_empty or P.area < DUST: drop.add(e["id"]); continue                 # degenerate leftovers of an earlier split
         z0, z1 = _z(e["g"]); pieces = _split(P, lobby, ramp, pav, bay); base = re.sub(r"(-[LPZ]\d+)+$", "", e["id"]); first = True; n = 0
@@ -151,6 +202,13 @@ def apply(M, els):
                     while nid in used: n += 1; nid = f"{base}-Z{n}"
                     used.add(nid); tgt = copy.deepcopy(proto); tgt["id"] = nid; add.append(tgt); stats["split"] += 1
                 tgt["g"] = _as_geom(q, z0, z1); _set_fin(tgt, code, kind, list(rooms), note, guess); _src(tgt, si); stats[kind] += 1
+                _cache(tgt, source_sha)
+                after = _poly(tgt["g"])
+                cache_log["changes"].append({"id": tgt["id"], "input_id": proto["id"], "reason": reasons,
+                                             "before_xy_sha256": xy_sha, "after_xy_sha256": _xy_proof(tgt["g"]),
+                                             "input_kind": proto.get("a", {}).get("kind"), "output_kind": kind,
+                                             "symmetric_difference_cm2": P.symmetric_difference(after).area,
+                                             "hausdorff_cm": P.hausdorff_distance(after)})
         if first: drop.add(e["id"])                       # the whole cell lies under the ramp: no finish plate
     els[:] = [e for e in els if e["id"] not in drop]
     els.extend(add)
@@ -166,4 +224,5 @@ def apply(M, els):
                     _set_fin(e, FN.BY_KIND[kind][0], kind, a.get("room"), NOTE_ROOM, "room"); stats["rooms"] += 1; break
     stats["ramp_plates_m2"] = round(sum(p["a"]["area_m2"] for p in plates), 1); stats["under_ramp_m2"] = round(area["under_ramp_m2"], 1)
     stats["zones_src"] = Z["source"]
+    M.setdefault("meta", {})["finfix_cache"] = cache_log
     return stats

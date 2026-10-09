@@ -10,6 +10,25 @@ class Group{
   tri(a,b,c,u1,u2,mi){const n=triNormal(a,b,c);for(const p of [a,b,c]){this.pos.push(p[0],p[1],p[2]);this.nrm.push(n[0],n[1],n[2]);this.unit.push(u1,u2);this.mat.push(mi);this.clip.push(this.cl);}this.n++;}
   quad(a,b,c,d,u1,u2,mi){this.tri(a,b,c,u1,u2,mi);this.tri(a,c,d,u1,u2,mi);}
 }
+// Indexed source surfaces: plan coordinates are cm, elevation is m. Preserve
+// the supplied faces and winding; do not infer thickness, caps or extra faces.
+function indexedMesh(g,vertices,faces,u1,u2,mi){
+  if(!Array.isArray(vertices)||!vertices.length||!Array.isArray(faces)||!faces.length) throw new Error('mesh requires vertices and triangle faces');
+  const pts=vertices.map((p,i)=>{
+    if(!Array.isArray(p)||p.length!==3||!p.every(Number.isFinite)) throw new Error('mesh invalid vertex '+i);
+    return W(p[0],p[1],p[2]);
+  });
+  // Validate the whole primitive before emitting any part of it.
+  faces.forEach((f,i)=>{
+    if(!Array.isArray(f)||f.length!==3||!f.every(j=>Number.isInteger(j)&&j>=0&&j<pts.length)||new Set(f).size!==3) throw new Error('mesh invalid face '+i);
+    const a=pts[f[0]],b=pts[f[1]],c=pts[f[2]],ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];
+    const area2=Math.hypot(uy*vz-uz*vy,uz*vx-ux*vz,ux*vy-uy*vx);
+    if(!Number.isFinite(area2)||area2===0) throw new Error('mesh degenerate face '+i);
+  });
+  const n0=g.n;
+  faces.forEach(f=>g.tri(pts[f[0]],pts[f[1]],pts[f[2]],u1,u2,mi));
+  return g.n-n0;
+}
 function polyArea(p){let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1];}return a/2;}
 function dedupe(p){const o=[];for(const q of p){const l=o[o.length-1];if(!l||Math.abs(l[0]-q[0])>0.05||Math.abs(l[1]-q[1])>0.05)o.push(q);}if(o.length>2){const a=o[0],b=o[o.length-1];if(Math.abs(a[0]-b[0])<=0.05&&Math.abs(a[1]-b[1])<=0.05)o.pop();}return o;}
 function prism(g,poly,holes,z0,z1,u1,u2,mi){

@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Residential facade windows rebuilt from the approved window schedule (ARCH2 p14-15: A801 CW-07..CW-14, A802 CW-15..CW-19) and the wall section A1500.
+"""Residential facade windows rebuilt from the issued PDF window schedule (ARCH2 p14-15: A801 CW-07..CW-14, A802 CW-15..CW-19) and the wall section A1500.
 
-What the approved sheets say (read from the drawings, checked on 2026-10-05):
+Schedule literals (physical assembly/mounting acceptance remains separate):
   * every apartment window is 250 cm high: bottom row 60 + middle row 140 + top row 50, standing on a 60 cm block-work upstand with porcelain cladding (A1500: 60 + 250 = 310 clear height, floor-to-floor 350, slab 40)
   * cells: F = fixed vision glass, S = spandrel (non-vision) glass, a V symbol = hinged vent
   * powder-coated aluminium frame, Light Beige; reflective double-glazed glass 6-12-6 mm, Light Brown
   * CW-19 (stair window, 120 cm wide) is one continuous element 20.65 m high: 130 S, 100 S, 150 F, ... 185 F (from the top); its fixed panels centre on the landings of every floor
 The elevations are drawn from outside, left to right (CW-08 on the north wall and CW-09 on the south wall are mirror images and their vents land on the same x).
 
-modules() extracts the old window modules once (data/win_modules.json) so the rebuild stays idempotent: post_model removes the old window elements, build() emits the new ones.
+modules() retains cached identities only, then window_source_xy binds their
+anchors to original A103/A104 glyphs. post_model removes the old window
+elements and build() emits the derived assemblies with source limits stated.
 """
 import json, os, collections
+import window_source_xy as _SOURCE_XY
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODS = os.path.join(HERE, "data", "win_modules.json")
@@ -30,8 +33,10 @@ PAT = {
     "CW-17": dict(cols=[120, 110, 120], bot="SSS", mid="SVS", top="SSS"),
     "CW-18": dict(cols=[120, 110, 130], bot="SSS", mid="SVS", top="SSS"),
 }
-ROWS = (("bot", 0.60, 1.20), ("mid", 1.20, 2.60), ("top", 2.60, 3.12))      # z above FFL; sill below 0.60
 SILL_H = 0.60
+WINDOW_H = 2.50     # literal outer height, A801/A802; A1500 clear 0.60 + 2.50 = 3.10
+WINDOW_TOP = SILL_H + WINDOW_H
+ROWS = (("bot", 0.60, 1.20), ("mid", 1.20, 2.60), ("top", 2.60, WINDOW_TOP))
 # CW-19, bottom -> top (cm): F185 S100 F150 S100 S100 F150 ... S100 S130  (starts 10 cm under the first floor finish = slab top)
 CW19 = [("F", 185), ("S", 100), ("F", 150), ("S", 100), ("S", 100), ("F", 150), ("S", 100), ("S", 100), ("F", 150), ("S", 100), ("S", 100), ("F", 150),
         ("S", 100), ("S", 100), ("F", 150), ("S", 100), ("S", 130)]
@@ -55,7 +60,7 @@ MATS = {
 def modules(M):
     """old-style window modules -> list of dicts (saved once to data/win_modules.json)"""
     if os.path.exists(MODS):
-        return json.load(open(MODS, encoding="utf-8"))
+        return _SOURCE_XY.bind_modules(json.load(open(MODS, encoding="utf-8")))
     by = collections.defaultdict(list)
     for e in M["els"]:
         if e["c"] == "A.win" and e["t"].startswith("win_CW-") and e["t"] != "win_CW-G" and e.get("grp"):
@@ -68,7 +73,7 @@ def modules(M):
         out.append({"grp": grp, "t": vis["t"], "l": vis["l"], "side": a.get("side"), "x0": min(g[1], g[3]), "y0": min(g[2], g[4]), "x1": max(g[1], g[3]), "y1": max(g[2], g[4]),
                     "u": vis.get("u"), "u2": vis.get("u2"), "w": a.get("w_cm"), "h": a.get("h_cm"), "loc": a.get("loc")})
     json.dump(out, open(MODS, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    return out
+    return _SOURCE_XY.bind_modules(out)
 
 
 def is_old(e):
@@ -98,14 +103,26 @@ def build(M):
     L = {l["id"]: l for l in M["levels"]}
     mods = modules(M)
     els = []
+    source_member_ordinals = collections.defaultdict(int)
 
     def add(mod, geom, mat, part, typ=None, extra=None, stage=False):
         a = {"w_cm": mod["w"], "h_cm": mod["h"], "loc": mod["loc"], "side": mod["side"], "part": part}
+        a.update(source_outer_height_cm=2065 if mod['t']=='win_CW-19' else 250,
+                 source_height_reference='ARCH2 ص15 A802 CW-19' if mod['t']=='win_CW-19' else 'ARCH2 ص14–15 A801/A802 وص31 A1500: 60+250=310سم',
+                 source_outer_height_checked=True, source_module_XY_verified=False,
+                 source_absolute_Z_verified=False, source_frame_width_depth_verified=False,
+                 source_material_assignment_verified=False,
+                 assumed='موضع مجموعة النافذة XY وإسنادها إلى الواجهة لم يتحققا مستقلًا؛ FFL والبداية المطلقة يحتاجان تحققًا. عرض الإطار5سم وعمقه8سم وقطاع الضلفة والمقبض تفاصيل عرض افتراضية؛ الارتفاع الخارجي فقط مطابق للبعد المطبوع.')
         if extra: a.update(extra)
+        a.update(_SOURCE_XY.attributes(mod, source_member_ordinals[mod['grp']],
+                                       geom, typ or mod['t'], part))
+        source_member_ordinals[mod['grp']] += 1
         e = {"c": "A.win", "l": mod["l"], "g": geom, "mark": mod["t"][4:], "t": typ or mod["t"], "m": mat, "a": a,
              "src": [f"ARCH2 ص14–15 (A801/A802 جداول النوافذ {mod['t'][4:]})", "ARCH2 ص31 (A1500 مقطع الجدار 01: عتبة 60 + نافذة 250 = 310)"], "grp": mod["grp"]}
         if mod.get("u"): e["u"] = mod["u"]
         if mod.get("u2"): e["u2"] = mod["u2"]
+        if mod.get('_source_window'):
+            e['src'].append(f"{mod['_source_window']['source_page']} {mod['_source_window']['source_sheet']}: موضع مجموعة النافذة وخط الزجاج من الرمز الأصلي، لا من مركز الوسم")
         els.append(e)
 
     import zlib
@@ -125,14 +142,19 @@ def build(M):
             m19 = dict(mod, h=round((z - (L["1"]["ffl"] - 0.10)) * 100)); m19["w"] = 120
             add(m19, _box(o, u, n, 0, FRAME_W, -FRAME_D / 2, FRAME_D / 2, run[0][1], z), "frame_alu", "frame")
             add(m19, _box(o, u, n, length - FRAME_W, length, -FRAME_D / 2, FRAME_D / 2, run[0][1], z), "frame_alu", "frame")
-            for kind, za, zb in run:
-                add(m19, _box(o, u, n, FRAME_W, length - FRAME_W, -GLASS_T / 2, GLASS_T / 2, za + 0.025, zb - 0.025), "glass_vis" if kind == "F" else "glass_span", "glass" if kind == "F" else "spandrel")
-                add(m19, _box(o, u, n, 0, length, -FRAME_D / 2, FRAME_D / 2, zb - 0.025, zb + 0.025), "frame_alu", "frame")
+            for ri, (kind, za, zb) in enumerate(run):
+                final=ri==len(run)-1
+                # The final rail lies inside the 2065cm outer dimension;
+                # intermediate rails straddle their row boundaries as before.
+                rail_lo=zb-(0.05 if final else 0.025)
+                rail_hi=zb if final else zb+0.025
+                add(m19, _box(o, u, n, FRAME_W, length - FRAME_W, -GLASS_T / 2, GLASS_T / 2, za + 0.025, rail_lo), "glass_vis" if kind == "F" else "glass_span", "glass" if kind == "F" else "spandrel")
+                add(m19, _box(o, u, n, 0, length, -FRAME_D / 2, FRAME_D / 2, rail_lo, rail_hi), "frame_alu", "frame")
             continue
         pat = PAT.get(code)
         if not pat: continue
         cols = pat["cols"]
-        scale = length / float(sum(cols))                      # tolerance only (the sums match the drawing to the centimetre)
+        scale = length / float(sum(cols))                      # source module length is the literal schedule sum, not the rough opening
         edges = [0.0]
         for w in cols: edges.append(edges[-1] + w * scale)
         z0 = ffl + SILL_H
@@ -144,10 +166,10 @@ def build(M):
         for k, x in enumerate(edges):
             a0 = max(0.0, x - FRAME_W / 2) if 0 < k < len(edges) - 1 else (0.0 if k == 0 else length - FRAME_W)
             a1 = a0 + FRAME_W
-            add(mod, _box(o, u, n, a0, a1, -FRAME_D / 2, FRAME_D / 2, z0, ffl + 3.12), "frame_alu", "frame")
+            add(mod, _box(o, u, n, a0, a1, -FRAME_D / 2, FRAME_D / 2, z0, ffl + WINDOW_TOP), "frame_alu", "frame")
         for zr in (0.60, 1.20, 2.60):
             add(mod, _box(o, u, n, 0, length, -FRAME_D / 2, FRAME_D / 2, ffl + zr - 0.025 + (0.025 if zr == 0.60 else 0), ffl + zr + 0.025 + (0.025 if zr == 0.60 else 0)), "frame_alu", "frame")
-        add(mod, _box(o, u, n, 0, length, -FRAME_D / 2, FRAME_D / 2, ffl + 3.07, ffl + 3.12), "frame_alu", "frame")
+        add(mod, _box(o, u, n, 0, length, -FRAME_D / 2, FRAME_D / 2, ffl + WINDOW_TOP - FRAME_W/100.0, ffl + WINDOW_TOP), "frame_alu", "frame")
         # glass: consecutive cells of the same kind in a row are one plate
         for row, za, zb in ROWS:
             kinds = pat[row]; k = 0
@@ -155,7 +177,7 @@ def build(M):
                 j = k
                 while j + 1 < len(kinds) and kinds[j + 1] == kinds[k]: j += 1
                 a0 = edges[k] + FRAME_W / 2; a1 = edges[j + 1] - FRAME_W / 2
-                za2 = ffl + za + (0.05 if row == "bot" else 0.025); zb2 = ffl + (3.07 if row == "top" else zb - 0.025)
+                za2 = ffl + za + (0.05 if row == "bot" else 0.025); zb2 = ffl + (WINDOW_TOP - FRAME_W/100.0 if row == "top" else zb - 0.025)
                 kind = kinds[k]
                 if kind == "S":
                     add(mod, _box(o, u, n, a0, a1, -GLASS_T / 2, GLASS_T / 2, za2, zb2), "glass_span", "spandrel")
@@ -186,7 +208,7 @@ def types(M):
                    ["الأعمدة (من اليسار لليمين كما تُرى من الخارج)", " + ".join(str(w) for w in pat["cols"]) + f" = {sum(pat['cols'])} سم"],
                    ["الصف العلوي 50 سم", row("top")], ["الصف الأوسط 140 سم", row("mid")], ["الصف السفلي 60 سم", row("bot")],
                    ["الإطار", "ألمنيوم مطلي بالمسحوق — بيج فاتح (Light Beige)"], ["الزجاج", "مزدوج عاكس 6-12-6 مم — بني فاتح (Light Brown)"]],
-            "asm": ["عرض الإطار 5 سم وعمقه 8 سم وشكل المقبض افتراض بصري", "اتجاه الفتح الفعلي للخلية المفصلية (علوي/سفلي) غير محدد في الرمز V — بانتظار تأكيدك"],
+            "asm": ["عرض الإطار 5 سم وعمقه 8 سم وشكل المقبض افتراض بصري", "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة"],
             "sr": ["ARCH2 ص14–15 (A801/A802 جداول النوافذ)", "ARCH2 ص31 (A1500 مقطع الجدار 01)", "BOQ 8.4.1"]}
     out["win_CW-19"] = {
         "n": "نافذة السلم CW-19 — عنصر واحد متصل 20.65 م", "cf": "doc",

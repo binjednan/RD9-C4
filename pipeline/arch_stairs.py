@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Stairs vs concrete: openings and trims found by pipeline/audit_arch.py (a stair "passing through concrete").
+"""Retained landing-wall and ground-fill trims.
 
- 1. Stair 1 climbs to the top roof (T, F.F.L. +26.85): the 25 cm top-roof slab (S-19, z 26.40-26.65) covered the whole stairwell, so steps 16-20 and the upper landing pierced it.
-    An opening is cut where a step's head room (2.05 m) would reach the slab soffit.
- 2. A 10 cm block wall that separates the two flights ran on across the mid-landing (A.wall-G-1578 and its twins): it stops at the landing.
- 3. The ground-floor fill finish (floor_fill) covered the foot of the external stair 03: the stair footprint is cut out of it.
-All three are geometric (shapely) and idempotent: a second run finds nothing left to cut.
+The former TOP HEAD slab cut used a fictitious R-to-T flight and assumed
+headroom. A600/A601/A105/A106 show that T is the cover above the last R landing.
+Its controlled rollback is stair01_roof_source_correction; this module must not
+invent a top-roof opening. Existing wall/fill trimming remains unchanged.
 """
 import collections
 from shapely.geometry import Polygon, box
 from shapely.ops import unary_union
 
-HEAD = 2.05            # m of head room above every step
 MIN_AREA = 50.0        # cm2 of overlap that counts as a collision (slabs, finishes)
 MIN_AREA_WALL = 200.0  # walls: ignore 1 cm overlaps at the landing edge
 
@@ -58,23 +56,6 @@ def _replace(els, e, new_geom_poly, suffix_start=0):
 def fix(M, els):
     stats = collections.Counter()
     steps = [e for e in els if e["c"] == "S.stair" and e["g"][0] in ("p", "r")]
-    # 1) top-roof slab opening over the last flight of stair 1
-    rs = [e for e in steps if e["l"] == "R"]
-    slabs = [e for e in els if e["c"] == "S.slab" and e["l"] == "T" and e["g"][0] in ("p", "r")]
-    if rs and slabs:
-        soffit = min(_zr(s["g"])[0] for s in slabs)
-        need = []
-        for e in rs:
-            z0, z1 = _zr(e["g"])
-            if z1 + HEAD > soffit: need.append(_poly(e["g"]))
-        if need:
-            opening = unary_union([p for p in need if p is not None]).buffer(4)
-            for s in list(slabs):
-                P = _poly(s["g"])
-                if P is None or P.intersection(opening).area < MIN_AREA: continue
-                n = _replace(els, s, P.difference(opening))
-                s.setdefault("a", {})["opening_note"] = "فتحة لمرور الدرج 01 إلى السطح العلوي (ارتفاع الرأس 2.05 م فوق كل درجة)"
-                stats["T_slab_cut"] += 1
     # 2) walls that run through a landing / flight
     by_lv = collections.defaultdict(list)
     for e in steps: by_lv[e["l"]].append(e)

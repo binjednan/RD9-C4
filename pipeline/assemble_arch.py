@@ -288,13 +288,18 @@ def dogleg(add, name, well, x_flight, y_split, lvl_from, lvl_to, z0, z1, risers=
 
 def build_stairs(add):
     # Stair 1 (west core): well (95,760)-(655,1040); treads x 235..535
-    for lv in stair_levels("B","T"):
+    for lv in stair_levels("B","R"):
         i=LV_ORDER.index(lv)
-        if lv=="T": continue
+        if lv=="R": continue
         nxt=LV_ORDER[i+1]
         z0=FFL[lv]+(0.0 if lv!="B" else 0.0); z1=FFL[nxt]
         # use slab-top datum to avoid z-fighting: start at FFL
         dogleg(add,"درج 1",(95,760,655,1040),(235,535),900,lv,nxt,z0,z1,grp=f"STAIR1-{lv}",u=None)
+    # A600/A601 + A105/A106: R is the last landing; T is its cover.
+    # Reserve source-retired ordinals without emitting a fictitious R-to-T flight.
+    reserve = getattr(add, "reserve_ids", None)
+    if reserve is not None:
+        reserve("S.stair", 21)
     # Stair 2 (centre): from G to R; well (1535,520)-(2075,780); treads x 1655..1955 ; flights along x
     for lv in stair_levels("G","R"):
         i=LV_ORDER.index(lv)

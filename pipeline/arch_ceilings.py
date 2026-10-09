@@ -14,6 +14,8 @@ adds corridor / lobby trays, and moves the ceiling-mounted devices (lights, dete
 to a device is stored in a['ceil_dz'].
 """
 import collections
+import json
+from pathlib import Path
 from shapely.geometry import Polygon, box, Point
 from shapely.ops import unary_union
 from shapely.strtree import STRtree
@@ -33,6 +35,63 @@ DEV_CATS = {"E.light", "E.emerg", "E.fa"}
 DEV_TYPES = {"diff_supply", "diff_return", "sprk_pendent", "grille_return", "grille_supply"}
 PENDANTS = {"e_L12", "e_L13"}          # hook + rose + bulb hang from the plate: their top follows the plate, they are not lowered by the full 0.30 m
 SRC = ["ARCH2 ص29 (A1401 المساقط المعكوسة للأسقف)", "ARCH2 ص35 (A1601 سقف الممر وردهة المصاعد)", "ARCH2 ص34 (A1600 ردهة الأرضي)"]
+Z_GUARD_DATA_PATH = Path(__file__).with_name('data') / 'ceiling_source_guard_repairs.json'
+
+
+def _openings(slab):
+    """Keep the opening domain independent of hole-versus-notch encoding.
+
+    Only the six bounded, domain-preserving STP records can supply the former
+    rings. Their unchanged coordinates are exclusion masks, not new source
+    approval or a request to move a device to the nearest wall.
+    """
+    g = slab['g']
+    rings = g[4] if len(g) > 4 and g[4] else []
+    a = slab.get('a', {})
+    if a.get('top_roof_shaft_openings_source'):
+        # A source opening that crosses the edge of a plate is represented as
+        # a notch. Its cut mask cannot be recovered from interior rings alone.
+        from top_roof_shaft_openings_source import opening_polygons
+        return opening_polygons(slab)
+    if a.get('topology_repair') == 'touching_hole_to_exterior_notch':
+        from structural_topology_repairs import DATA_PATH
+        row = json.loads(DATA_PATH.read_text())['records'][slab['id']]
+        assert (slab['c'], slab['t'], slab['l']) == (row['category'], row['type'], row['level']), slab['id']
+        assert g == row['after_g'] and a.get('topology_domain_preserved'), slab['id']
+        before = row['before_g']
+        domain = Polygon(before[1]).difference(unary_union([Polygon(h) for h in before[4]]))
+        assert Polygon(g[1], g[4]).equals(domain), slab['id']
+        rings = before[4]
+    return [Polygon(h) for h in rings if len(h) >= 3]
+
+
+def _openings_by_level(els):
+    """Collect every plate's bounded opening masks, including upper roof parts."""
+    masks = collections.defaultdict(list)
+    for slab in els:
+        if slab['c'] == 'S.slab' and slab['g'][0] == 'p':
+            masks[slab['l']].extend(_openings(slab))
+    return masks
+
+
+def _restore_void_fallback_z(els):
+    """Cancel ten identified encoding-induced shifts; retain assumed Z."""
+    data = json.loads(Z_GUARD_DATA_PATH.read_text())
+    index = {e['id']: e for e in els}
+    changed = []
+    for eid, row in data['records'].items():
+        e = index[eid]; g = e['g']; a = e.setdefault('a', {})
+        assert (e['c'], e['t'], e['l'], g[0], g[3]) == (row['category'], row['type'], row['level'], row['kind'], row['radius_cm']), eid
+        assert a.get('source_locked_xy') and g[1:3] == row['source_xy_cm'], eid
+        assert g[4:6] in (row['unsupported_fallback_z_m'], row['retained_assumed_z_m']), eid
+        if g[4:6] == row['unsupported_fallback_z_m']:
+            assert a.get('ceil_dz') == row['unsupported_ceil_dz'], eid
+            g[4:6] = row['retained_assumed_z_m'][:]
+            a['ceil_dz'] = row['retained_assumed_ceil_dz']
+            changed.append(eid)
+        a['source_Z_verified'] = False
+        a['ceiling_encoding_z_rollback'] = data['scope_ar']
+    return changed
 
 
 def _poly(g):
@@ -125,6 +184,7 @@ def rebuild(M, els, LV):
     old_ceil = [e for e in els if e["c"] == "A.ceil" and e["g"][0] == "p"]
     els[:] = [e for e in els if e["c"] != "A.ceil"]
     slabs = {e["l"]: e for e in els if e["c"] == "S.slab" and e["g"][0] == "p"}
+    opening_masks = _openings_by_level(els)
     parts = collections.defaultdict(list)
     for e in els:
         if e["c"] == "S.slab" and e["g"][0] in ("p", "r"):
@@ -138,8 +198,8 @@ def rebuild(M, els, LV):
         if lv in ("B", "T"): continue
         k = ORDER.index(lv); nxt = ORDER[k + 1] if k + 1 < len(ORDER) else None
         holes = []
-        if nxt in slabs:
-            holes = [Polygon(h) for h in (slabs[nxt]["g"][4] if len(slabs[nxt]["g"]) > 4 and slabs[nxt]["g"][4] else []) if len(h) >= 3]
+        if nxt in opening_masks:
+            holes = opening_masks[nxt]
         above = slab_union.get(nxt)                            # the slab above (a plate only makes sense under it)
         cut_parts = holes + (elec if lv == "G" else [])
         cut = unary_union(cut_parts) if cut_parts else None
@@ -192,8 +252,9 @@ def rebuild(M, els, LV):
     for e in new: e["s"] = list(idx)
     kept = _stabilise_ids(old_ceil, new)
     els.extend(new)
+    rolled_back = _restore_void_fallback_z(els)
     n_dev = _move_devices(els, ceil_of, slabs, LV)
-    return {"ceilings": len(new), "ids_kept": kept, "devices_moved": n_dev, "by_level": dict(counter)}
+    return {"ceilings": len(new), "ids_kept": kept, "devices_moved": n_dev, "by_level": dict(counter), 'encoding_induced_z_rollback': rolled_back}
 
 
 def _mk(lv, counter, typ, cfin, geom, rooms, kind, part, H):
@@ -230,8 +291,12 @@ def _xy(g):
 
 
 def _move_devices(els, ceil_of, slabs, LV=None):
-    """lights / detectors / diffusers / pendent sprinklers follow their ceiling (device centre inside the plate); in the open colonnade they go up to the slab soffit;
-    devices that were hung in a stair / lift opening (no plate there any more) are fixed to the nearest wall of the opening"""
+    """Ceiling devices follow derived ceiling heights where a plate exists.
+
+    A source-bound device inside an opening retains drawn XY and assumed Z;
+    its mounting needs independent evidence. Unbound legacy wall placement is
+    an assumption only. Equivalent notch encoding must retain exclusion masks.
+    """
     trees = {}
     for lv, items in ceil_of.items():
         trees[lv] = (STRtree([q for q, _, _ in items]), items)
@@ -240,10 +305,11 @@ def _move_devices(els, ceil_of, slabs, LV=None):
     # openings of the slab above each level (stairs, lifts, shafts) and the walls around them
     order = ORDER
     holes = {}
+    opening_masks = _openings_by_level(els)
     for k, lv in enumerate(order[:-1]):
         nxt = order[k + 1]
-        if nxt in slabs and len(slabs[nxt]["g"]) > 4 and slabs[nxt]["g"][4]:
-            holes[lv] = [Polygon(h) for h in slabs[nxt]["g"][4] if len(h) >= 3]
+        if nxt in opening_masks:
+            holes[lv] = opening_masks[nxt]
     walls = collections.defaultdict(list)
     for e in els:
         if e["c"] in ("A.wall", "S.wall", "S.col") and e["g"][0] in ("p", "r"):
@@ -276,6 +342,12 @@ def _move_devices(els, ceil_of, slabs, LV=None):
                 if q.contains(pt):
                     hit = (H, fz); break
         in_hole = any(h.contains(pt) for h in holes.get(lvl, []))
+        if in_hole and a.get('source_locked_xy'):
+            if is_dev:
+                a.pop('mount_note', None)
+                a['source_mount_verified'] = False
+                a['mount_gap'] = 'الرمز في موضعه المرسوم داخل نطاق فتحة؛ لا سقف أو تفصيل تثبيت فريد. لم ينقل إلى أقرب جدار، وZ الحالي افتراضي يحتاج إثباتًا مستقلًا.'
+            continue
         if hit is not None and not in_hole:
             H, fz = hit
             if is_dev and (fz + OLD_H - 0.25 <= z1o <= fz + OLD_H + 0.05 or e["t"] in PENDANTS and fz + OLD_H - 0.6 <= z1o <= fz + OLD_H + 0.05):
@@ -285,6 +357,8 @@ def _move_devices(els, ceil_of, slabs, LV=None):
             else:
                 continue
         elif in_hole and is_dev and ffl is not None and (ffl + OLD_H - 0.25 <= z1o <= ffl + OLD_H + 0.05) and g[0] in ("b", "cyl"):
+            if a.get("source_locked_xy") or a.get("sys") or e["c"] in ("P.ff", "M.duct", "M.pipe", "P.cold", "P.hot", "P.drain"):
+                continue  # retain the drawn XY; a missing ceiling is a coordination finding
             # fix to the nearest wall of the opening, 9 cm off the face, top at 2.30 m above the landing
             wu = wall_u.get(lvl)
             if wu is None: continue

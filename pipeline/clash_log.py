@@ -68,6 +68,12 @@ def write_doc(M):
         out += ["| التاريخ | التعارض | الحقل | من | إلى | بواسطة | المصدر |", "|---|---|---|---|---|---|---|"]
         for h in reversed(L["history"][-60:]): out.append(f"| {h['ts']} | {h['id']} | {h['field']} | {h.get('old') or '—'} | {h['new']} | {h.get('by') or ''} | {h.get('src') or ''} |")
     if L["orphans"]: out += ["", "## مدخلات في السجل لا تطابق أي تعارض حالي (تحتاج مراجعة)", ""] + [f"- `{k}`" for k in L["orphans"]]
+    if M.get('drawingIssues'):
+        out += ['', '## مراجعة المواضع وتعارضات المصادر', '', 'تصحيح في النموذج لا يعني تصحيحًا منفذًا في الموقع؛ هذه السجلات مستقلة عن حالات التعارضات الهندسية أعلاه.', '', '| المعرف | الحالة | الموضع (X/Y سم، Z م) | المصدر | الخطأ أو التعارض والإجراء |', '|---|---|---|---|---|']
+        states={'corrected':'صحح في النموذج','confirmed_model_error':'خطأ مثبت في المجسم مقارنة بالمخطط؛ التصحيح معلق','source_conflict':'تعارض مصدر مفتوح','source_gap':'نقص مصدر','model_candidate':'تداخل مرشح يحتاج تنسيقًا'}
+        for d in M['drawingIssues']:
+            loc=str(d.get('level') or 'عام')+' / '+str(d.get('xy_cm') or 'بلا XY')+' / '+str(d.get('z_m') if d.get('z_m') is not None else 'غير محدد')
+            out.append('| '+d['id']+' | '+states[d['status']]+' | '+loc+' | '+d['source']+' | '+d['title']+': '+d['note'].replace('|','/')+' |')
     open(os.path.join(os.path.dirname(HERE), "docs", "CLASH_LOG.md"), "w", encoding="utf-8").write("\n".join(out) + "\n")
 
 def _cli():

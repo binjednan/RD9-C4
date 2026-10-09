@@ -26,7 +26,7 @@ function initThumbs(ctx){
   function geomGroup(ei){
     const rg=elRange[ei]; if(!rg) return null; const G=groups[rg.gk]; if(!G||!G.posArr) return null; const pos=G.posArr.slice(rg.start*9,(rg.start+rg.count)*9); if(!pos.length) return null;
     const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.BufferAttribute(pos,3)); bg.computeVertexNormals();
-    const mb=G.matBase,op=(mb.userData&&mb.userData.baseOpacity)||1,m=new THREE.MeshStandardMaterial({color:mb.color.clone(),roughness:0.85,metalness:0.05,side:THREE.DoubleSide,transparent:op<0.999,opacity:op});
+    const mb=G.matBase,op=(mb.userData&&mb.userData.baseOpacity)||1,m=new THREE.MeshStandardMaterial({color:new THREE.Color('#D4DADD'),roughness:0.85,metalness:0.05,side:THREE.DoubleSide,transparent:op<0.999,opacity:op});
     const me=new THREE.Mesh(bg,m); me.userData.own=true; const g=new THREE.Group(); g.add(me); g.add(edges(bg,30)); return g; }
   const unitByEl=new Map(); if(LOD&&LOD.units) LOD.units.forEach(u=>{ if(u.eis) u.eis.forEach(e=>{ if(!unitByEl.has(e)) unitByEl.set(e,u); }); });
   const defaultsOf=s=>{ const v=Object.assign({},s.defaults||{},s.dims||{}); if(s.kind==='path'&&v.L===undefined) v.L=120; return v; };

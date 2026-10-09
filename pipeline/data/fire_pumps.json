@@ -1,0 +1,466 @@
+{
+  "units": "cm; z in build is m",
+  "plan_page": 11,
+  "registration": {
+    "ox": -1619.8829999999998,
+    "oy": 5148.816,
+    "s": 3.538,
+    "nx": 17,
+    "ny": 11,
+    "nv": 19,
+    "nh": 12,
+    "ex": 9.279000000001133,
+    "ey": 6.598000000000411
+  },
+  "pumps": [
+    {
+      "mark": "FP-DP",
+      "kind": "diesel",
+      "bbox_cm": [
+        609.8,
+        1165.7,
+        662.8,
+        1273.6
+      ],
+      "source_region_cm": [
+        609,
+        1165,
+        664,
+        1274
+      ],
+      "source_strokes": 59,
+      "source_layer": "FIRE"
+    },
+    {
+      "mark": "FP-EP",
+      "kind": "electric",
+      "bbox_cm": [
+        713.4,
+        1176.8,
+        756.2,
+        1273.6
+      ],
+      "source_region_cm": [
+        712,
+        1176,
+        757,
+        1274
+      ],
+      "source_strokes": 73,
+      "source_layer": "FIRE"
+    },
+    {
+      "mark": "FP-JP",
+      "kind": "jockey",
+      "bbox_cm": [
+        758.8,
+        1267.6,
+        774.9,
+        1319.4
+      ],
+      "source_region_cm": [
+        758,
+        1267,
+        776,
+        1320
+      ],
+      "source_strokes": 15,
+      "source_layer": "FIRE"
+    }
+  ],
+  "pressure_vessel": {
+    "xy_cm": [
+      683.9,
+      1267.4
+    ],
+    "diameter_cm": 45.4
+  },
+  "header": {
+    "axis_cm": [
+      [
+        614.9,
+        1311.4
+      ],
+      [
+        767.1,
+        1311.4
+      ]
+    ],
+    "edge_rows_cm": {
+      "1305.8": [
+        [
+          749.0,
+          761.3
+        ],
+        [
+          653.9,
+          684.5
+        ],
+        [
+          722.3,
+          727.8
+        ],
+        [
+          702.3,
+          720.6
+        ],
+        [
+          741.8,
+          746.9
+        ],
+        [
+          729.9,
+          739.7
+        ],
+        [
+          643.7,
+          651.8
+        ],
+        [
+          632.3,
+          642.0
+        ],
+        [
+          623.4,
+          630.1
+        ],
+        [
+          614.9,
+          618.3
+        ]
+      ],
+      "1316.9": [
+        [
+          749.0,
+          761.3
+        ],
+        [
+          653.9,
+          684.9
+        ],
+        [
+          701.9,
+          720.6
+        ],
+        [
+          741.8,
+          746.9
+        ],
+        [
+          729.9,
+          739.7
+        ],
+        [
+          643.7,
+          651.8
+        ],
+        [
+          632.3,
+          642.0
+        ],
+        [
+          623.4,
+          630.1
+        ],
+        [
+          614.9,
+          618.3
+        ]
+      ]
+    },
+    "symbol_width_cm": 11.1
+  },
+  "branches_cm": [
+    [
+      [
+        637.1,
+        1272.7
+      ],
+      [
+        637.1,
+        1311.4
+      ]
+    ],
+    [
+      [
+        734.8,
+        1272.7
+      ],
+      [
+        734.8,
+        1311.4
+      ]
+    ],
+    [
+      [
+        767.1,
+        1269.8
+      ],
+      [
+        767.1,
+        1311.4
+      ]
+    ],
+    [
+      [
+        660.7,
+        1267.2
+      ],
+      [
+        660.7,
+        1311.4
+      ]
+    ]
+  ],
+  "label_inventory": {
+    "MECH2:11": [
+      {
+        "text": "(VERTICAL TURBINE TYPE)",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          377.3,
+          1836.4
+        ]
+      },
+      {
+        "text": "1- ELECTRIC PUMP",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          354.9,
+          1803.3
+        ]
+      },
+      {
+        "text": "750 GPM @ 10 BAR,88 KW",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          356.3,
+          1769.7
+        ]
+      },
+      {
+        "text": "2- DIESEL PUMP",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          348.0,
+          1736.6
+        ]
+      },
+      {
+        "text": "750 GPM @ 10 BAR,",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          342.2,
+          1703.1
+        ]
+      },
+      {
+        "text": "3-JOCKEY PUMP",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          354.1,
+          1670.0
+        ]
+      },
+      {
+        "text": "40 GPM @ 10 BAR, 5 kW",
+        "layer": "M_FF_TEXT",
+        "xy_cm": [
+          347.9,
+          1636.4
+        ]
+      }
+    ],
+    "MECH2:15": [
+      "FP-EP",
+      "FP-DP",
+      "FP-JP"
+    ]
+  },
+  "nonspatial_details": {
+    "MECH2:15": [
+      {
+        "text": "FIRE FIGHTING PUMP SET",
+        "layer": "M_WS_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "FIRE RESERVE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "RCC WATER TANKFOR FIRE RESERVE: 22500 USG",
+        "layer": "M_WS_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "FIRE RESERVE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "RCC WATER TANKFOR FIRE RESERVE: 22500 USG",
+        "layer": "M_WS_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø SPRINKLER LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø FFC LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "6\"Ø SPRINKLER LINE",
+        "layer": "M_FF_TEXT",
+        "xy_cm": null
+      }
+    ],
+    "MECH2:16": [
+      {
+        "text": "G.I. THREADED RODPIPEPIPE HANGERADJUSTABLE SWIVEL RINGTHREADED ANCHOR BOLT W/EXPANSION SHIELD",
+        "layer": "FIREFIGHTING",
+        "xy_cm": null
+      },
+      {
+        "text": "4\"x2 WAYCABINET DIMENSIONS6\"x4 WAYSURFACE TYPE",
+        "layer": "zcv-detail",
+        "xy_cm": null
+      },
+      {
+        "text": "PIPE HANGER DETAIL",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "PRESSURE 100 LTRS.",
+        "layer": "0",
+        "xy_cm": null
+      },
+      {
+        "text": "NON RETURN VALVEFLEXIBLE  COUPLINGPRESSURE GAUGEPRESSURE SWITCH",
+        "layer": "0",
+        "xy_cm": null
+      },
+      {
+        "text": "PRESSURE VESSELDIESEL ENGINE PUMP",
+        "layer": "0",
+        "xy_cm": null
+      },
+      {
+        "text": "FIRE FIGHTING PUMP SET",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "SURFACE TYPE FIRE HOSE REEL CABINET",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "RECESSED TYPE FIRE HOSE REEL CABINET",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "PRESSURE GAUGE(DOWNSTREAM)",
+        "layer": "P-FP-SPK-SL",
+        "xy_cm": null
+      },
+      {
+        "text": "ALARM PRESSURE SWITCH",
+        "layer": "P-FP-SPK-SL",
+        "xy_cm": null
+      },
+      {
+        "text": "PRESSURE GAUGE(UPSTREAM)",
+        "layer": "P-FP-SPK-SL",
+        "xy_cm": null
+      },
+      {
+        "text": "Alarm check Valve :-C/W Trim kits & retarding device-C/W Water Motor Alarm Gong-C/W Electric Alarm pressure switch-C/W Pressure Guages (Upstream & Down stream)-Interface with Fire alarm system-Comply with  UAE life safety code 2018/ Ch-9requirements",
+        "layer": "zcv-detail",
+        "xy_cm": null
+      },
+      {
+        "text": "PRESSURE GAUGE",
+        "layer": "P-FP-SPK-SL",
+        "xy_cm": null
+      },
+      {
+        "text": "ANY ZONE WITH PRESSURE MORE THAN 12 bar PRESSURE REDUCING VALVE",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "CLEAN AGENTCYLINDER",
+        "layer": "F-ANNO-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "CLEAN AGENT SYSTEM DETAILS",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "GENERATOR ROOM FOAM SYSTEM DETAILS",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "LPG DELUGE SYSTEM DETAILS",
+        "layer": "FF-TEXT",
+        "xy_cm": null
+      },
+      {
+        "text": "DIESEL GENERATOR ROOM,PARKING AREASMULTI-PURPOSE DRY POWDER(ONE)-4KgWHEELED TYPE FOAM(ONE)-13Gal.3",
+        "layer": "",
+        "xy_cm": null
+      }
+    ]
+  },
+  "limitations": [
+    "مخططا FF-105 وFF-106 بلا XY؛ لا هندسة مستخرجة منهما",
+    "نوع Vertical Turbine موثق نصيًا؛ رمز المجموعة مبسط",
+    "منسوب الوصلات وقطر المجمع غير معطيين؛ لا وصلة جديدة خارج المجموعة"
+  ]
+}

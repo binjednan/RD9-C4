@@ -11,7 +11,7 @@ those points and adds the vertical pipe between the levels — nothing else:
              alignment, size read from the pipes, elevation from the pipes' own ends), flagged on the card: «صاعد مستنتج من محاذاة نهايات المواسير على الطوابق»
 
 Ids end with -Vnnnn so post_model.py drops and rebuilds them on every run (idempotent).  Runs after the clash pass (risers cross slabs on purpose) and before connectors.py."""
-import os, re, sys, math, collections
+import os, re, sys, math, collections, copy, hashlib, json
 from shapely.geometry import Polygon, Point, box
 from shapely.ops import unary_union
 
@@ -20,6 +20,8 @@ ID_RE = re.compile(r"-V\d{4}$")
 FOOT_TOL = 15.0                     # cm  a riser that PASSES a level (no pipe end there) must stand inside that level's built footprint (walls, columns, floors, slabs) or touch it: a stack 25 cm outside the wall, in open air, is not a stack
 RADIUS = 25.0                       # cm  plan distance within which ends of one medium count as the same point (the plans of different levels are registered to a few centimetres, rings are drawn off-centre)
 SRC_TEXT = "صاعد مستنتج من محاذاة نهايات المواسير على الطوابق (نفس النقطة في المسقط على ثلاثة طوابق متتالية على الأقل بينها طابق غير نمطي؛ pipeline/risers.py) — الرسم يبيّن الموضع ولا يرسم الصاعد نفسه"
+DRAIN_SRC_TEXT = "قائم صرف مولّد من تجميع نهايات النموذج بين المستويات في pipeline/risers.py؛ XY متوسط عنقود نهايات ضمن 25 سم، وZ والقطر مشتقان من تلك النهايات. لا يثبت هذا موضع صاعد خام مستقل أو قطره أو اتصاله أو منسوبه من المخطط."
+DRAIN_LIMIT = "صاعد رأسي مشتق من نهايات النموذج؛ الربط بسجل سابق عند تطابق c/t/l/g كامل وفريد يثبت الهوية المشتقة فقط، ولا يثبت XY/Z أو جسمًا رأسيًا مرسومًا أو اتصالًا هيدروليكيًا."
 
 # medium -> (category, element types, material, minimum main diameter in mm, name)
 MEDIA = [
@@ -31,6 +33,90 @@ MEDIA = [
     ("waste", "P.drain", ("pipe_waste",), "p_waste", 75, "قائم صرف (Waste stack)"),
 ]
 TYPICAL = {"2", "3", "4", "5"}
+
+
+def canonical_identity(e):
+    """Exact identity of a derived segment; no distance or source-position test."""
+    return json.dumps([e['c'], e.get('t'), e['l'], e['g']], separators=(',', ':'))
+
+
+def canonical_identity_hash(e):
+    return hashlib.sha256(canonical_identity(e).encode()).hexdigest()
+
+
+def is_drain_riser(e):
+    """Recognize the drain outputs of this generator, not raw plan routes."""
+    return (e.get('c')=='P.drain' and e.get('t') in ('pipe_soil','pipe_waste')
+            and bool((e.get('a') or {}).get('riser')) and bool(ID_RE.search(e.get('id',''))))
+
+
+def derived_drain_bindings(M, els=None, records=None):
+    """Read-only current-to-historical mapping by unique exact c/t/l/g.
+
+    Historical V ordinals can be reused after an earlier medium changes count.
+    An ordinal alone is never a binding. Unmatched/ambiguous outputs remain
+    generated derivatives and carry no historical source-coordinate claim.
+    """
+    els=M['els'] if els is None else els
+    current=[e for e in els if is_drain_riser(e)]
+    old={eid:q for eid,q in (records or {}).items() if q.get('status')=='derived_vertical_riser'}
+    old_keys=collections.defaultdict(list);current_keys=collections.defaultdict(list)
+    for eid,q in old.items():
+        old_keys[canonical_identity({'c':q['category'],'t':q['type'],'l':q['level'],'g':q['reviewed_g']})].append(eid)
+    for e in current:current_keys[canonical_identity(e)].append(e['id'])
+    bindings={}
+    for e in current:
+        key=canonical_identity(e);hits=old_keys.get(key,[])
+        unique=len(hits)==1 and len(current_keys[key])==1
+        bindings[e['id']]={'current_id':e['id'],'historical_id':hits[0] if unique else None,
+            'canonical_identity_sha256':hashlib.sha256(key.encode()).hexdigest(),
+            'binding_status':'exact_unique' if unique else 'ambiguous' if hits else 'unmatched',
+            'candidate_historical_ids':hits,
+            'proof_scope':'derived_identity_only_not_drawn_XY_Z_or_contact'}
+    counts=collections.Counter(q['binding_status'] for q in bindings.values())
+    return {'schema':'c4.derived-drain-riser-bindings.v1','source_generation_module':'pipeline/risers.py',
+            'current_count':len(current),'historical_count':len(old),'exact_unique_count':counts['exact_unique'],
+            'unmatched_count':counts['unmatched'],'ambiguous_count':counts['ambiguous'],'bindings':bindings}
+
+
+def _annotate_derived_drain(e, binding=None, historical=None, inputs=None):
+    a=e.setdefault('a',{})
+    # These former direct-ID attributes could belong to a different V ordinal.
+    # Candidate plan primitives are retained separately and are never an anchor.
+    for key in ('source_locked_xy','source_page','source_transform','source_primitives','source_trace_record'):
+        a.pop(key,None)
+    a.update(source_trace_review=True,source_trace_status='derived_vertical_riser',
+        source_kind='derived_vertical_riser',derived=True,
+        source_generation_module='pipeline/risers.py',
+        source_generation_identity_sha256=canonical_identity_hash(e),
+        source_trace_limit=DRAIN_LIMIT,source_position_pending=True,source_position_review=DRAIN_LIMIT,
+        geometry_role='derived_riser_display',source_XY_verified=False,source_Z_verified=False,
+        source_dimensions_verified=False,source_material_verified=False,source_mount_verified=False,
+        source_ports_verified=False,source_contact_verified=False,
+        physical_geometry_status='derived_display_pending_source_riser_body_diameter_elevation_and_contact',
+        elevation_status='derived_from_model_end_elevations_unverified',
+        dimension_status='derived_from_largest_model_end_diameter_unverified',
+        material_status='not_specified_in_reviewed_source',finish_status='not_specified_in_reviewed_source')
+    if inputs is not None:a['source_generation_inputs']=copy.deepcopy(inputs)
+    a['source_derived_historical_record']=binding.get('historical_id') if binding else None
+    a['source_derived_binding_status']=binding.get('binding_status','unmatched') if binding else 'unmatched'
+    a.pop('source_derived_historical_candidate',None)
+    if historical is not None:
+        a['source_derived_historical_candidate']={'historical_id':historical['id'],
+            'reference':historical['source'],'source_primitives':copy.deepcopy(historical['source_primitives']),
+            'proof_scope':'nearby_plan_candidates_only_not_a_riser_position_or_Z_source'}
+
+
+def annotate_derived_drains(M, els=None, records=None):
+    """Metadata only: classify current generated drains and bind unique old data."""
+    els=M['els'] if els is None else els
+    report=derived_drain_bindings(M,els,records)
+    for e in els:
+        binding=report['bindings'].get(e['id'])
+        if binding is None:continue
+        historical=(records or {}).get(binding['historical_id']) if binding['historical_id'] else None
+        _annotate_derived_drain(e,binding,historical)
+    return report
 
 
 def _geom(e):
@@ -71,6 +157,8 @@ def build(M, verbose=False):
     sp = M["sp"]
     if SRC_TEXT not in sp: sp.append(SRC_TEXT)
     sidx = sp.index(SRC_TEXT)
+    if DRAIN_SRC_TEXT not in sp:sp.append(DRAIN_SRC_TEXT)
+    drain_sidx=sp.index(DRAIN_SRC_TEXT)
     lv = {l["id"]: l for l in M["levels"]}; order = [l["id"] for l in M["levels"]]
     new = []; counter = collections.Counter(); skipped = []
     foot = footprints(M)
@@ -78,7 +166,7 @@ def build(M, verbose=False):
         if mat not in M["mats"]: mat = next((e["m"] for e in els if e["c"] == cat and e.get("t") in types), mat)
         ends = []                                     # (x, y, z, level, dia_mm, element id)
         for e in els:
-            if e["c"] != cat or e.get("t") not in types or e["g"][0] != "t" or (e.get("a") or {}).get("connector"): continue
+            if e["c"] != cat or e.get("t") not in types or e["g"][0] != "t" or (e.get("a") or {}).get("connector") or (e.get("a") or {}).get("no_connectors"): continue
             pts = e["g"][1]; d = _dia_mm(e)
             closed = len(pts) >= 4 and math.hypot(pts[0][0] - pts[-1][0], pts[0][1] - pts[-1][1]) < 2 and max(abs(p[0] - pts[0][0]) for p in pts) < 60
             if closed:                                # a ring: the riser symbol itself
@@ -111,6 +199,13 @@ def build(M, verbose=False):
                      "mark": f"RISER-{key.upper()}-{int(round(c['x']))}/{int(round(c['y']))}", "t": types[0], "m": mat,
                      "a": {"riser": True, "dia_mm": dia, "length_m": round(abs(z[b] - z[a]), 2), "kind": name, "levels": f"{a} → {b}", "evidence": f"{len(c['m'])} نهاية على {len(lvls)} طوابق عند النقطة نفسها",
                            "assumed": "القطر = أكبر ماسورة تنتهي هنا؛ المنسوب من نهايات المواسير نفسها"}, "s": [sidx]}
+                if cat=='P.drain':
+                    _annotate_derived_drain(e,inputs={'levels':lvls,
+                        'endpoint_element_ids':sorted({m[5] for m in c['m']}),
+                        'clustering_radius_cm':RADIUS,'XY_basis':'mean_of_generated_model_endpoint_cluster',
+                        'Z_basis':'mean_of_model_endpoint_elevations_per_level',
+                        'diameter_basis':'largest_model_endpoint_diameter_with_display_factor_1.1'})
+                    e['s']=[drain_sidx]
                 new.append(e)
             if verbose: print(f"  riser {key:5s} ({round(c['x'])},{round(c['y'])}) dia {dia} levels {lvls} ends {len(c['m'])}")
     els.extend(new)

@@ -1,0 +1,134 @@
+{
+  "schema": "c4.component-continuation.v1",
+  "pass": true,
+  "base_model_sha256": "9e636423e4105d002c014ede34becbbc307d676902b548da0181de235cf6af7f",
+  "after_model_sha256": "9154a8b1d191ffa09414ccb831e6ad536e9d1aad2ca75bcf5eaa74b694b4347e",
+  "before_elements": 33137,
+  "after_elements": 33105,
+  "unrelated_full_elements_preserved": 32889,
+  "stairs": {
+    "groups": 2,
+    "before_bodies": 42,
+    "after_assemblies": 10,
+    "retired_ids": 32,
+    "tread_surfaces": 52,
+    "riser_surfaces": 58,
+    "landing_surfaces": 4,
+    "triangles": 228,
+    "remaining_held_bodies": 42,
+    "physical_acceptance": false
+  },
+  "equipment": {
+    "schema": "c4.equipment-completion.v1",
+    "data_sha256": "773ee989bc721d3062985f4eb0b121afb1bd99469ca38c2f0f632d45df3e6c29",
+    "controlled_ids": [
+      "E.panel-G-ER002",
+      "E.gen-G-ER001"
+    ],
+    "changed_ids": [
+      "E.panel-G-ER002",
+      "E.gen-G-ER001"
+    ],
+    "changed": 2,
+    "literal_plan_extents": 2,
+    "relative_heights_verified": 1,
+    "absolute_Z_verified": 0,
+    "installed_material_verified": 0,
+    "lifecycle_dependencies": {
+      "affected": [
+        "power"
+      ],
+      "unchanged_systems_require_exact_dependency_proof": true,
+      "reason_ar": "تغير غلاف معدات القدرة؛ يلزم تحليل القدرة المعزول وفحص تبعيات باقي الأنظمة قبل إعادة استخدام النتائج."
+    }
+  },
+  "doors": {
+    "existing_door_ids": 204,
+    "raw_unique_door_groups": 81,
+    "jamb_profiles_compared": 162,
+    "generic_detail_records": 2,
+    "source_conflicts": 2,
+    "code_counts": {
+      "D1": 30,
+      "D2": 58,
+      "D3": 81,
+      "D4": 10,
+      "D5": 10,
+      "D7": 15
+    },
+    "architrave_conflict_affected_instances": 204,
+    "NR_skin_conflict_affected_instances": 139,
+    "physical_components_added": 0,
+    "geometry_changed": false,
+    "data_sha256": "c1de25af4ff44d00bd60008ba7e7009e7d01da95837c6434eb6006340559d0ec",
+    "source_visual_review_reproduced": true,
+    "source_conflicts_resolved": false
+  },
+  "source_issues_refreshed": 3,
+  "component_counts": {
+    "derived": 16554,
+    "source_checked": 7170,
+    "legacy_extract_match": 1678,
+    "unverified": 7703
+  },
+  "lifecycle": {
+    "recomputed_systems": [],
+    "reused_by_exact_dependencies": [
+      "power",
+      "fire",
+      "chw",
+      "air",
+      "vent_fa",
+      "vent_ea",
+      "smk_cp_fa",
+      "smk_cp_ea",
+      "smk_co_fa",
+      "smk_co_ea",
+      "cold",
+      "hot",
+      "storm",
+      "lightning",
+      "earthing",
+      "telephone",
+      "water_site",
+      "irrigation",
+      "fire_pumps",
+      "drain"
+    ],
+    "dependencies_before_sha256": "329a7a3dd1ede0b37b36ac1b49dd684edd01284e579161788cdbceef724b4c10",
+    "dependencies_after_sha256": "329a7a3dd1ede0b37b36ac1b49dd684edd01284e579161788cdbceef724b4c10",
+    "reused_packed_ID_results_equal": true,
+    "regressions": [],
+    "baseline_sha256": "bc1f0989250efdb4f54cce9c4935e15df20bb148d7b11cb133331d82a7a3badf",
+    "all_network_completeness_tests_pass": false,
+    "physical_ports_or_operation_verified": false
+  },
+  "geometry_integrity_pass": true,
+  "scoped_coordination": {
+    "target_count": 206,
+    "narrow_phase_pairs": 278,
+    "positive_volume_pairs": 278,
+    "already_in_legacy_clashes": 0,
+    "new_to_legacy_list": 278,
+    "unsupported_geometry_counts": {
+      "mesh": 39,
+      "tri": 98,
+      "rs": 9
+    }
+  },
+  "new_full_post_or_network_run": false,
+  "physical_acceptance": false,
+  "staged_sha256": {
+    "before-model.json": "9e636423e4105d002c014ede34becbbc307d676902b548da0181de235cf6af7f",
+    "after-model.json": "9154a8b1d191ffa09414ccb831e6ad536e9d1aad2ca75bcf5eaa74b694b4347e",
+    "before-component-coverage.json": "d05815e32c94ba26afda00697910a10bf8b9c086a2ad3cf401f68e7bcd160a6b",
+    "after-component-coverage.json": "cd3c0db3a398f6d07ca3f767624e1a9bcf171818e20a27034b1d4fc6d3939554",
+    "after-coordination-review.json": "db8d9904783c0d887791f4bf3234fa066cb56a4223f6b100ee63f985dc7811aa",
+    "completion-coordination.json": "68cb87d688337342c2666aa5bfb0e7c8a0b90249391218eca0c772bab20166cd",
+    "stairs-source-audit.json": "d9bec1acffa0edbcd57505eb091ac4dbbcfdb0f2ec685116c0240e6e67515a61",
+    "equipment-source-audit.json": "698fb561c63e247d3123a3f5f5e0fe61acf61ba024a185290b9b0dfab6e3173f",
+    "doors-source-audit.json": "412c3f1549aeff94c6518ea4380565d613ed09eea7d83022afcb64d92c7cf56a",
+    "geometry-integrity.json": "83783c7965e6b17e83f3d82070122fc7394bee22fdae539b53744c234bfcbac0",
+    "index-remap.json": "1bf5923d7e0d5048f43c2b859da159a0f0436b2e6281d54c5e5d5f2944251b4a"
+  }
+}

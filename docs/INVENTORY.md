@@ -1,20 +1,20 @@
 # جرد المشروع الكامل — نموذج C4 ثلاثي الأبعاد (RD09)
 
-يُولَّد آليًا بأمر `python3 pipeline/post_model.py` من الملفات نفسها (آخر توليد: 2026-10-08 18:39). كل رقم هنا مقيس لا مكتوب باليد.
+يُولَّد آليًا بأمر `python3 pipeline/post_model.py` من الملفات نفسها (آخر توليد: 2026-10-09 08:05). كل رقم هنا مقيس لا مكتوب باليد.
 
 ## 1) النموذج
 
-- **32,359** عنصرًا في **317** نوعًا على **9** مستويات و**30** وحدة سكنية، بـ**214** خامة و**35** رمز تشطيب (A500).
+- **33,160** عنصرًا في **432** نوعًا مستخدمًا فعليًا على **9** مستويات و**30** وحدة سكنية. سجل التعريفات يضم **437** نوعًا و**239** مادة عرض و**45** رمز تشطيب (A500)؛ ليس اعتمادًا للمواد الفعلية.
 - كماليات إخراجية (للعرض لا للتنفيذ): **2,997** عنصرًا.
 
 ### درجات الموثوقية (ما يمكن الاعتماد عليه من كل عنصر)
 
 | الدرجة | العناصر | النسبة | المعنى |
 |---|---:|---:|---|
-| موثّق | 4,188 | 12.9% | الموضع والمنسوب والمواصفة مقروءة من المخططات والجداول |
-| مشتق | 14,935 | 46.2% | محسوب بقاعدة معلومة المعطيات (ارتفاعات التركيب، سقف FCL، سحب الجهاز إلى الجدار ...) |
-| تخمين | 10,239 | 31.6% | اختاره النموذج لغياب البيان (مناسيب الخدمات في فراغ السقف، أقطار مفترضة، أجهزة بلا حامل ...) |
-| إخراجي | 2,997 | 9.3% | كماليات للعرض فقط |
+| موثّق | 4,202 | 12.7% | الموضع والمنسوب والمواصفة مقروءة من المخططات والجداول |
+| مشتق | 10,670 | 32.2% | محسوب بقاعدة معلومة المعطيات (ارتفاعات التركيب، سقف FCL، سحب الجهاز إلى الجدار ...) |
+| تخمين | 15,291 | 46.1% | اختاره النموذج لغياب البيان (مناسيب الخدمات في فراغ السقف، أقطار مفترضة، أجهزة بلا حامل ...) |
+| إخراجي | 2,997 | 9.0% | كماليات للعرض فقط |
 
 لا يوجد عنصر «مطابق للمنفَّذ» بعد؛ تلك الدرجة تُمنح عند اعتماد مخططات الأز-بيلت (BIM Forum LOD 500 = متحقَّق ميدانيًا).
 
@@ -22,49 +22,49 @@
 
 | القسم | العناصر | موثّق | مشتق | تخمين | إخراجي |
 |---|---:|---:|---:|---:|---:|
-| الإنشائي | 784 | 17 | 767 | 0 | 0 |
-| المعماري | 15,385 | 4,160 | 6,347 | 1,881 | 2,997 |
-| الميكانيكي (تكييف وتهوية) | 4,385 | 0 | 1,781 | 2,604 | 0 |
-| الكهربائي | 5,567 | 0 | 3,110 | 2,457 | 0 |
-| الإمدادات الصحية والإطفاء | 6,238 | 11 | 2,930 | 3,297 | 0 |
+| الإنشائي | 651 | 12 | 468 | 171 | 0 |
+| المعماري | 16,128 | 4,179 | 3,728 | 5,224 | 2,997 |
+| الميكانيكي (تكييف وتهوية) | 4,098 | 0 | 808 | 3,290 | 0 |
+| الكهربائي | 5,937 | 0 | 2,837 | 3,100 | 0 |
+| الإمدادات الصحية والإطفاء | 6,346 | 11 | 2,829 | 3,506 | 0 |
 
 ### حسب الطابق
 
 | الطابق | العناصر | موثّق | مشتق | تخمين | إخراجي | تعارض مؤكد | مرشح | تخمينات فردية |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| البدروم (-3.70) | 1,612 | 334 | 713 | 565 | 0 | 9 | 14 | 26 |
-| الأرضي (+0.35) | 3,832 | 586 | 1,069 | 852 | 1,325 | 3 | 7 | 51 |
-| الأول (+5.75) | 5,131 | 664 | 2,566 | 1,567 | 334 | 9 | 35 | 28 |
-| الثاني (+9.25) | 5,156 | 628 | 2,536 | 1,656 | 336 | 9 | 36 | 31 |
-| الثالث (+12.75) | 5,170 | 628 | 2,551 | 1,656 | 335 | 9 | 37 | 31 |
-| الرابع (+16.25) | 5,162 | 628 | 2,539 | 1,656 | 339 | 9 | 37 | 31 |
-| الخامس (+19.75) | 5,155 | 628 | 2,543 | 1,656 | 328 | 9 | 29 | 31 |
-| السطح (+23.35) | 1,076 | 88 | 368 | 620 | 0 | 3 | 3 | 56 |
-| سطح الغرف العلوي (+26.85) | 65 | 4 | 50 | 11 | 0 | 0 | 0 | 6 |
+| البدروم (-3.70) | 1,778 | 334 | 610 | 834 | 0 | 18 | 30 | 0 |
+| الأرضي (+0.35) | 4,060 | 584 | 930 | 1,221 | 1,325 | 1 | 11 | 1 |
+| الأول (+5.75) | 5,150 | 664 | 1,737 | 2,415 | 334 | 9 | 35 | 0 |
+| الثاني (+9.25) | 5,239 | 628 | 1,801 | 2,474 | 336 | 9 | 38 | 0 |
+| الثالث (+12.75) | 5,216 | 628 | 1,773 | 2,480 | 335 | 9 | 39 | 0 |
+| الرابع (+16.25) | 5,208 | 628 | 1,761 | 2,480 | 339 | 9 | 39 | 0 |
+| الخامس (+19.75) | 5,199 | 628 | 1,763 | 2,480 | 328 | 9 | 31 | 0 |
+| السطح (+23.35) | 1,180 | 106 | 245 | 829 | 0 | 1 | 6 | 0 |
+| سطح الغرف العلوي (+26.85) | 130 | 2 | 50 | 78 | 0 | 0 | 0 | 0 |
 
 ## 2) المصادر (المخططات)
 
-226 ورقة في 7 ملفات؛ **136** منها مُستشهَد بها في النموذج (60%).
+226 ورقة في 7 ملفات؛ **179** منها مذكورة في مراجع العناصر والأنواع الموجودة فعليًا (79.2%). لا يعد الاستشهاد استخراجًا كاملًا أو مراجعة كل تفاصيل الورقة؛ مراجع الأرشيف غير المستخدمة مستبعدة.
 
 | الملف | الأوراق | المستعملة |
 |---|---:|---:|
-| المعماري — الجزء 1 | 18 | 13 |
-| المعماري — الجزء 2 | 58 | 32 |
+| المعماري — الجزء 1 | 18 | 14 |
+| المعماري — الجزء 2 | 58 | 41 |
 | الإنشائي | 32 | 23 |
-| الميكانيكا — الجزء 1 | 29 | 19 |
-| الميكانيكا — الجزء 2 | 37 | 19 |
-| الكهرباء — الجزء 1 | 18 | 14 |
-| الكهرباء — الجزء 2 | 34 | 16 |
+| الميكانيكا — الجزء 1 | 29 | 27 |
+| الميكانيكا — الجزء 2 | 37 | 32 |
+| الكهرباء — الجزء 1 | 18 | 16 |
+| الكهرباء — الجزء 2 | 34 | 26 |
 
 | نوع الورقة | العدد | المستعمل |
 |---|---:|---:|
-| أخرى | 15 | 4 |
+| أخرى | 15 | 7 |
 | ملاحظات / مفتاح | 9 | 6 |
-| مسقط | 120 | 81 |
+| مسقط | 120 | 107 |
 | مقطع / واجهة | 15 | 11 |
-| جدول | 6 | 4 |
-| تفصيل | 46 | 26 |
-| مخطط تخطيطي | 15 | 4 |
+| جدول | 6 | 5 |
+| تفصيل | 46 | 35 |
+| مخطط تخطيطي | 15 | 8 |
 
 ### أوراق غير مستعملة من نوع مسقط / تفصيل / مقطع (مرشحة للاستخراج التالي)
 
@@ -75,19 +75,11 @@
 | ARCH2 | 8 | A607 | Ramp Details 02 |
 | ARCH2 | 10 | A701 | Door Details |
 | ARCH2 | 16 | A803 | Window Details |
-| ARCH2 | 18 | A1100 | Garbage Chute / Structural Details |
 | ARCH2 | 27 | A1302 | Wardrobe Detail 03 |
 | ARCH2 | 30 | A1402 | Ceiling Details |
 | ARCH2 | 33 | 00 | Curtain Wall Details |
-| ARCH2 | 36 | A1700 | Canopy Details |
-| ARCH2 | 37 | A1800 | Ladder Details |
 | ARCH2 | 39 | A1901 | Car Parking Details 02 |
 | ARCH2 | 41 | A1903 | Traffic Control / Sign Details |
-| ARCH2 | 43 | A2100 | Reception Dusk / Details |
-| ARCH2 | 44 | A2200 | Basement Floor Signage / Layouts |
-| ARCH2 | 45 | A2201 | Ground Floor Signage / Layouts |
-| ARCH2 | 46 | A2202 | First Floor Signage / Layouts |
-| ARCH2 | 47 | A2203 | Typical Floor Signage / Layouts |
 | ARCH2 | 48 | A2204 | Roof Floor Signage / Layouts |
 | ARCH2 | 52 | A2303 | Landscape Section / Details 02 |
 | ARCH2 | 53 | A2304 | Landscape Section / Details 03 |
@@ -99,45 +91,18 @@
 | STR | 13 | 00 | Shoring Plan |
 | MECH1 | 9 | AC-107-B | Ac Details |
 | MECH1 | 10 | AC-107-B | Ac Details |
-| MECH1 | 17 | SM-100 | Basement Floor Plan / Smoke Management Layout |
-| MECH1 | 18 | SM-101 | Ground Floor Plan / Smoke Management Layout |
-| MECH1 | 19 | SM-102 | First Floor Plan / Smoke Management Layout |
-| MECH1 | 20 | 00 | Typical Floor Plan / Smoke Management Layout |
-| MECH1 | 21 | SM-104 | Roof Floor Plan / Smoke Management Layout |
-| MECH2 | 1 | 00 | Site Plan / Drainage Layout |
-| MECH2 | 9 | DR-106 | Drainage Details |
-| MECH2 | 16 | 00 | Fire Fighting Details |
-| MECH2 | 17 | 00 | Site Plan / Water Supply Layout |
-| MECH2 | 25 | 00 | Basement Floor Plan / Irrigation Layout |
-| MECH2 | 26 | 00 | Ground Floor Plan / Irrigation Layout |
-| MECH2 | 27 | 00 | Ground Floor Plan / Storm Water Layout |
-| MECH2 | 28 | 00 | First Floor Plan / Storm Water Layout |
-| MECH2 | 29 | 00 | Typical Floor Plan / Storm Water Layout |
-| MECH2 | 30 | 00 | Roof Floor Plan / Storm Water Layout |
-| MECH2 | 31 | SW-105 | Top Roof Plan / Storm Water Layout |
 | MECH2 | 32 | 00 | Basement Floor Plan / Chilled Water Connection Layout |
 | MECH2 | 33 | 00 | Ground Floor Plan / Chilled Water Connection Layout |
 | MECH2 | 34 | CHW-102 | First Floor Plan / Chilled Water Connection Layout |
 | MECH2 | 35 | CHW-103 | Typical Floor Plan / Chilled Water Connection Layout |
 | MECH2 | 36 | 00 | Roof Floor Plan / Chilled Water Connection Layout |
-| ELEC1 | 8 | 00 | Site Plan / Power Layout |
-| ELEC1 | 18 | 00 | Electrical / General Details |
-| ELEC2 | 1 | 00 | Ground Floor Plan / Earthing Protection Layout |
 | ELEC2 | 10 | 00 | Fire Alarm / General Details |
-| ELEC2 | 11 | 00 | Basement Floor Plan / Lightning Protection Layout |
-| ELEC2 | 12 | 00 | Ground Floor Plan / Lightning Protection Layout |
-| ELEC2 | 13 | 00 | First Floor Plan / Spot |
-| ELEC2 | 14 | — | Typical Floor Plan / Lightning Protection Layout |
-| ELEC2 | 17 | 00 | Lightning Protection / General Details |
-| ELEC2 | 27 | 00 | Site Plan / Power Layout |
 | ELEC2 | 28 | 00 | Basement Floor Plan / Telephone Layout |
-| ELEC2 | 32 | 00 | Roof Floor Plan / Telephone Layout |
-| ELEC2 | 34 | 00 | Telephone / General Details |
 
 ## 3) المتابعة
 
-- **التعارضات** (564): مؤكد **60** · مرشح (اختلاف منسوب) **198** · هامشي **306** — في **510** مجموعة.
-- **التخمينات**: **211** قاعدة (مرتفعة الأثر 45 · متوسطة 87 · منخفضة 79) و**291** قرارًا فرديًا بموضع/إزاحة.
+- **التعارضات** (582): مؤكد **65** · مرشح (اختلاف منسوب) **229** · هامشي **288** — في **524** مجموعة.
+- **التخمينات**: **298** قاعدة (مرتفعة الأثر 58 · متوسطة 125 · منخفضة 115) و**1** قرارًا فرديًا بموضع/إزاحة.
 
 ### إغلاق القسم المعماري (ARCH_CLOSURE)
 
@@ -170,7 +135,7 @@
 | تنبيه | الملاحظات والمناظير تُحفظ في هذا المتصفح فقط؛ انسخها (أو انسخ الرابط) لتبقى | نعم | تنبيه |
 | تنبيه | الظلال والعمق تتوقفان أثناء القص وفي وضع الأداء | نعم | تنبيه |
 | تنبيه | الكماليات الإخراجية (أثاث وأشجار وسيارات) للعرض لا للتنفيذ، وتُخفى من «الأقسام» | نعم | تنبيه |
-| تنبيه | الخوازيق تُعرض 30 سم تحت اللبشة للدلالة فقط (الطول الفعلي 13 م) | نعم | تنبيه |
+| تنبيه | الخوازيق بطول13م وقطر60سم حسب P1؛ منسوب الرأس مشتق والغرس وقطع الرأس النهائي غير مثبتين | نعم | تنبيه |
 | تنبيه | صور العينات مرخّصة ومنسوبة لأصحابها (docs/PHOTO_CREDITS.md) | نعم | تنبيه |
 | 3D | نموذج ثلاثي الأبعاد بالمجسمات المجمّعة (Three.js) في ملف واحد | نعم | — |
 | 3D | تحكم بالكاميرا: ماوس / تراك باد / لمس (إصبع تدوير، إصبعان تحريك وقرص) | نعم | — |
@@ -184,13 +149,16 @@
 | التحليل | سجل التخمينات وأفضل موضع للمكوّنات بلا حامل | نعم | — |
 | التحليل | درجة موثوقية لكل عنصر (موثّق / مشتق / تخمين / إخراجي) | نعم | — |
 | الأنظمة | التهوية: مجاري الشفط والهواء النقي والناشرات والشبكات السلكية والمخمّدات والصواعد ومراوح الدور الأرضي (مخططات VE-100…VE-105) | نعم | — |
-| الأنظمة | اختبارات دورة الحياة لتسعة أنظمة (كهرباء، إطفاء، مبردة، هواء تغذية، تهوية نقية وشفط، باردة، ساخنة، صرف) | نعم | — |
+| الأنظمة | إدارة الدخان: مجاري هواء التعويض وشفط الدخان لموقف البدروم (13 شبكة FAG و13 EAG) وصاعدا الممرات ومخمّدات MFD ومروحتا السطح (مخططات SM-100…SM-105) | نعم | — |
+| الأنظمة | تصريف الموقع ومياه الأمطار: ثلاث غرف تفتيش وخط الموقع ومصارف السطح والصواعد والتصريف الحر (MECH2 ص1 وص27–31) | نعم | — |
+| الأنظمة | اختبارات دورة الحياة لعشرين نظامًا، ومنها مياه الموقع والري ومضخات الإطفاء والصواعق والتأريض والهاتف؛ تبقى شبكات التهوية والدخان مستقلة هندسيًا | نعم | — |
+| الواجهة | تجميع بطاقتي التهوية وأربع بطاقات إدارة الدخان في عائلتين مع جمع النتائج دون دمج الشبكات | نعم | — |
 | العينات | مكتبة عينات تفصيلية بمعاينة منفردة وانتقال إلى الموضع | نعم | — |
 | العينات | حديد التسليح بالأسياخ المستديرة عند الطلب | نعم | — |
 | الواجهة | تبديل ما يفعله السحب بإصبع واحد (أزرار الوضع) | نعم | — |
 
 ## 5) الشيفرة والتوثيق والمخرجات
 
-- خط الاستخراج (`pipeline/`): 93 ملفًا، 14,613 سطرًا. العارض (`src/`): 19 ملفات JavaScript + القالب، 3,721 سطرًا.
-- التوثيق (`docs/`): ARCH_CLOSURE.md, CLASH_LOG.md, CONFLICTS.md, HANDOFF_2026-10-07.md, HANDOFF_2026-10-08.md, INVENTORY.md, LIFECYCLE_TESTS.md, PHOTO_CREDITS.md, PLACEMENT_AUDIT.md, PROGRESS.md, REMOVED_AUDIT.md, SAMPLES.md, SITE_PHOTOS.md.
-- المخرج: `index.html` ملف واحد (14.08 م.ب) · المستودع `binjednan/RD9-C4` · العرض المباشر https://binjednan.github.io/RD9-C4/
+- خط الاستخراج (`pipeline/`): 147 ملفًا، 23,133 سطرًا. العارض (`src/`): 20 ملفات JavaScript + القالب، 4,255 سطرًا.
+- التوثيق (`docs/`): ARCH_CLOSURE.md, CLASH_LOG.md, CODEX_PROMPT_SMOKE_MANAGEMENT.md, CODEX_WORKORDER_01.md, COMPONENT_SOURCE_REVIEW.md, CONFLICTS.md, COORDINATION_SOURCE_REVIEW.md, CORE_STAIRS_SOURCE_REVIEW.md, DESIGN_CORE_STAIRS_SOURCE_SURFACES.md, DESIGN_D16_SOURCE_REMAINING.md, DESIGN_DRAIN_REMAINING.md, DESIGN_ELECTRICAL_REMAINING.md, DESIGN_ELECTRICAL_SOURCE_CONTACTS.md, DESIGN_FIRE_CHW.md, DESIGN_GARBAGE_CHUTE.md, DESIGN_HVAC_DAMPER_SOURCE.md, DESIGN_HVAC_OUTLETS_BODY_SOURCE.md, DESIGN_HVAC_OUTLETS_SOURCE.md, DESIGN_PRESENTATION_RESEARCH.md, DESIGN_PROJECT_REVIEW.md, DESIGN_REMAINING_ALIGNMENT.md, DESIGN_STAIR01_ROOF_SOURCE_CORRECTION.md, DESIGN_STORM_SITE.md, DESIGN_TOP_ROOF_SHAFT_OPENINGS.md, DESIGN_WATER_HEATER_CAPACITY_SOURCE.md, DESIGN_WATER_METER_SOURCE_REVIEW.md, DESIGN_WATER_MIXED_SOURCE_REVIEW.md, DESIGN_WATER_SITE.md, DESIGN_WATER_SUPPLY_SOURCE_CORRECTIONS.md, DESIGN_WATER_VALVE_SOURCE.md, DESIGN_WINDOW_SOURCE_XY.md, HANDOFF_2026-10-07.md, HANDOFF_2026-10-08.md, HANDOFF_REMAINING_ARCH_FIRE.md, INVENTORY.md, ISSUES_LOCAL_ANNOTATIONS.md, LIFECYCLE_TESTS.md, LOOK_DISPLAY_COLORS.md, MATERIAL_SOURCE_REPLAY.md, PHOTO_CREDITS.md, PLACEMENT_AUDIT.md, PROGRESS.md, REMOVED_AUDIT.md, REVIEW_ARCH_STRUCT_REMAINING.md, SAMPLES.md, SITE_PHOTOS.md, UI_REORGANIZATION.md.
+- المخرج: `index.html` ملف واحد (57.03 م.ب) · المستودع `binjednan/RD9-C4` · العرض المباشر https://binjednan.github.io/RD9-C4/

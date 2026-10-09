@@ -1,0 +1,239 @@
+{
+  "schema": "c4.raft-model-acceptance.v1",
+  "pass": true,
+  "errors": [],
+  "results": [
+    {
+      "id": "S.raft-B-0001",
+      "status": "matched",
+      "model_geometry_match": true,
+      "geometry_sha256": "df4b8fd1960fa1deaddedb5d1786f4d830654047593019306c2f747937127e5d",
+      "identity_sha256": "ac121c1fd87ec0f529074fe8e0fa156bb72cb4921659aeeee1d4fb6c23c13fc2",
+      "checks": {
+        "registered_plan_XY": true,
+        "plan_domain_shape": true,
+        "section_top_Z": true,
+        "section_thickness": true,
+        "full_body_section_shape": true
+      },
+      "measurements": {
+        "xy_deviation_cm": 4.809678347098886e-09,
+        "symmetric_difference_cm2": 6.172257467871664e-05,
+        "top_Z_deviation_m": 0.0,
+        "thickness_deviation_cm": 2.842170943040401e-14,
+        "section_top_m": -3.9,
+        "literal_thickness_cm": 80.0,
+        "derived_bottom_m": -4.7,
+        "flat_body_covers_both_lift_pits": false
+      },
+      "evidence": {
+        "source_pdf_sha256": "278f642ecf0dfca3c7c4ef747c5c93adbb0737c5a30ccd71a932fcf5e8381e59",
+        "data_sha256": "5cecf3a989ca7aa9688af41097235b563151f94669ff01a2095bb6711894a750",
+        "plan_page": "STR:11 / S-7",
+        "section": "STR:12 / S-8 SECTION 1-A",
+        "source_shape": "constant-thickness concrete prism; original outer boundary minus separately labelled PC1",
+        "source_plan_profile_indices": [
+          3561,
+          6285
+        ],
+        "model_to_registered_pdf_tolerance_cm": 0.2,
+        "registration_max_residual_cm": 1.2155000000002474
+      },
+      "conflict_ids": [],
+      "errors": [],
+      "physical_or_site_acceptance": false
+    },
+    {
+      "id": "S.raft-B-0002",
+      "status": "conflict",
+      "model_geometry_match": false,
+      "geometry_sha256": "e5cea1f2fb07b413be4a7168904caa90b4798b7360efe73f3616fcf651c414f8",
+      "identity_sha256": "5988ba87cf7c7fc74c302e5c1cf276920241ef05cc4773f5264f71610500156a",
+      "checks": {
+        "registered_plan_XY": true,
+        "plan_domain_shape": true,
+        "section_top_Z": true,
+        "section_thickness": true,
+        "full_body_section_shape": false
+      },
+      "measurements": {
+        "xy_deviation_cm": 4.540880696943979e-09,
+        "symmetric_difference_cm2": 3.367631270640961e-05,
+        "top_Z_deviation_m": 0.0,
+        "thickness_deviation_cm": 5.684341886080802e-14,
+        "section_top_m": -3.9,
+        "literal_thickness_cm": 150.0,
+        "derived_bottom_m": -5.4,
+        "flat_body_covers_both_lift_pits": true
+      },
+      "evidence": {
+        "source_pdf_sha256": "278f642ecf0dfca3c7c4ef747c5c93adbb0737c5a30ccd71a932fcf5e8381e59",
+        "data_sha256": "5cecf3a989ca7aa9688af41097235b563151f94669ff01a2095bb6711894a750",
+        "plan_page": "STR:11 / S-7",
+        "section": "STR:12 / S-8 SECTION 1-B",
+        "source_shape": "150cm wings at TOP-3.90 with depressed lift-pit portion at CL.AS MEP; full body is not a flat prism",
+        "source_plan_profile_indices": [
+          6285
+        ],
+        "model_to_registered_pdf_tolerance_cm": 0.2,
+        "registration_max_residual_cm": 1.2155000000002474
+      },
+      "conflict_ids": [
+        "RM-RAFT-PC1-LIFT-PIT"
+      ],
+      "errors": [],
+      "physical_or_site_acceptance": false
+    }
+  ],
+  "source_proof": {
+    "pdf_sha256": "278f642ecf0dfca3c7c4ef747c5c93adbb0737c5a30ccd71a932fcf5e8381e59",
+    "raw_checks": [
+      "text:11:1",
+      "text:11:3",
+      "text:11:6",
+      "text:11:63",
+      "text:11:65",
+      "text:11:113",
+      "text:12:36",
+      "text:12:48",
+      "text:12:49",
+      "text:12:50",
+      "text:12:51",
+      "text:12:52",
+      "text:12:53",
+      "text:12:55",
+      "text:12:56",
+      "text:12:57",
+      "text:12:58",
+      "text:12:70",
+      "text:12:71",
+      "text:12:77",
+      "text:12:78",
+      "annotation:11:63",
+      "annotation:11:67",
+      "annotation:12:0",
+      "annotation:12:1",
+      "annotation:12:3",
+      "drawing:11:6",
+      "drawing:11:7",
+      "drawing:11:9",
+      "drawing:11:3561",
+      "drawing:11:6285",
+      "drawing:11:3736",
+      "drawing:11:3737",
+      "drawing:11:3739",
+      "drawing:11:6720",
+      "drawing:12:5574",
+      "drawing:12:5583",
+      "drawing:12:51676",
+      "drawing:12:36615",
+      "drawing:12:36616",
+      "drawing:12:20223",
+      "drawing:12:22407",
+      "drawing:12:22408",
+      "drawing:12:22442"
+    ],
+    "renderings": [
+      {
+        "path": "../review-evidence/raft-model-STR12-1A.png",
+        "sha256": "701741a125d2e5de946f9116d46d6d2a4e9df175a9bb368458a3f8f513ac9dc4",
+        "pass": true
+      },
+      {
+        "path": "../review-evidence/raft-model-STR12-1B.png",
+        "sha256": "ba7baa78d630825a39b9e9ab8cd99311ab97dfff437c5f5d403eff6b63e82983",
+        "pass": true
+      },
+      {
+        "path": "../review-evidence/raft-model-STR11-1A-plan.png",
+        "sha256": "b4d6ab8270235c380f604bef883a6585b7504523715798b2aa1449f6ed5b675f",
+        "pass": true
+      },
+      {
+        "path": "../review-evidence/raft-model-STR11-pits.png",
+        "sha256": "0744c8008d497d240a55b5c527bd8641a049b84d1adfb265863ede3c77d912d1",
+        "pass": true
+      }
+    ],
+    "registration": {
+      "ox": -1073.6405,
+      "oy": 5008.357,
+      "s": 3.529,
+      "nx": 17,
+      "ny": 11,
+      "nv": 17,
+      "nh": 11,
+      "ex": 6.21349999999893,
+      "ey": 6.527999999999793
+    },
+    "registration_axis_residuals_cm": {
+      "X": [
+        0.8244999999999436,
+        0.04549999999994725,
+        0.0,
+        0.02800000000002001,
+        0.6290000000001328,
+        0.07000000000016371,
+        0.10150000000021464,
+        0.4679999999998472,
+        0.7339999999999236,
+        0.1714999999999236,
+        0.1855000000000473,
+        0.33849999999983993,
+        0.31750000000010914,
+        0.8624999999997272,
+        0.2369999999996253,
+        0.775000000000091,
+        0.42549999999937427
+      ],
+      "Y": [
+        0.1914999999999054,
+        0.2615000000000691,
+        1.2155000000002474,
+        0.09749999999985448,
+        0.13950000000022555,
+        0.6815000000001419,
+        1.2019999999997708,
+        0.0,
+        0.5625,
+        1.1179999999994834,
+        1.0585000000000946
+      ]
+    },
+    "max_registration_axis_residual_cm": 1.2155000000002474,
+    "registration_residuals_are_not_model_tolerance": true,
+    "section_1A_plan_raw_y": 684.3800659179688,
+    "PC1_min_raw_y": 729.2000122070312,
+    "section_1A_PC1_intersection_length_cm": 0.0,
+    "section_1A_registered_length_cm": 4471.736680908204,
+    "section_1A_raft80_intersection_length_cm": 4471.736680908204,
+    "lift_pit_inside_PC1": true,
+    "lift_pit_source_Z": "CL.- AS MEP",
+    "lift_pit_is_depicted_lower": true,
+    "PC1_outside_outer_cm2": 1.4286038472696534,
+    "PC1_bottom_source_edge_delta_cm": 0.0004307861328125,
+    "scope_ar": "مطابقة الشكل الهندسي لجسم الخرسانة الممثل بالمجسم مع الرسم المسجل:XY والحدود والسماكة والمنسوب. ليست اعتماد تسليح أو غطاء أو عزل أو خرسانة نظافة أو ارتكاز أو تنفيذ ميداني."
+  },
+  "data_sha256": "5cecf3a989ca7aa9688af41097235b563151f94669ff01a2095bb6711894a750",
+  "model_geometry_sha256": "cd008238319f564cb4992e14f7f655d06a1c65d5b76a789a18c131c55cdab93f",
+  "matched_count": 1,
+  "conflict_count": 1,
+  "conflicts": [
+    {
+      "id": "RM-RAFT-PC1-LIFT-PIT",
+      "ids": [
+        "S.raft-B-0002"
+      ],
+      "kind": "model_source_shape_mismatch",
+      "title_ar": "مجسمPC1مسطح ولا يمثل انخفاض حفرة المصعد المرسوم",
+      "detail_ar": "مسقطSTR11يرسم حوضي المصعدين داخلPC1؛ قطاعSTR12/S-8/1-Bيخفض سطحLIFT PITعن−3.90إلىCL.AS MEPويحفظ سمك150سم للحفرة. المجسمS.raft-B-0002منشور واحد−5.40…−3.90بلا فتحة أو هبوط. تُثبت سماكة ومنسوب الأجنحة فقط،ولا يعتمد كامل الجسم ولا يُخترع منسوب الحفرة منقطاعNTS.",
+      "source_pages": [
+        "STR:11",
+        "STR:12"
+      ],
+      "geometry_fully_matched": false
+    }
+  ],
+  "scope_ar": "مطابقة الشكل الهندسي لجسم الخرسانة الممثل بالمجسم مع الرسم المسجل:XY والحدود والسماكة والمنسوب. ليست اعتماد تسليح أو غطاء أو عزل أو خرسانة نظافة أو ارتكاز أو تنفيذ ميداني.",
+  "physical_or_site_acceptance": false
+}

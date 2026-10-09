@@ -1,0 +1,2588 @@
+{
+  "schema": "c4.ceiling-shape-match-source-audit.v1",
+  "pass": true,
+  "data_sha256": "c017119dc267255a414a74b30e350d0728425c74e4341993158f6776f0061420",
+  "source_pdf_sha256": "10a116d09ea5a6f8df238faaf93840b5437255c73b9c8aff032452a0d195c9e0",
+  "source_rows": {
+    "C1": {
+      "row_text": "12mm thk gypsum board with emulsion paint as per drawing level with suspension system",
+      "thickness_mm": 12,
+      "word_indices": [
+        713,
+        916,
+        917,
+        918,
+        919,
+        920,
+        921,
+        922,
+        923,
+        924,
+        925,
+        926,
+        927,
+        928,
+        929
+      ]
+    },
+    "C3": {
+      "row_text": "600x600x7mm thk plain aluminum suspended ceiling tiles with concealed suspension system moisture resistant as per drawing level",
+      "thickness_mm": 7,
+      "word_indices": [
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        715
+      ]
+    }
+  },
+  "checked_count": 281,
+  "records": [
+    {
+      "id": "A.ceil-G-C0024",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0002",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 3.9,
+      "before_upper_z_m": 3.92,
+      "after_upper_z_m": 3.912,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0005",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0006",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0007",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0008",
+      "type": "ceil_C1",
+      "lower_z_m": 3.9,
+      "before_upper_z_m": 3.92,
+      "after_upper_z_m": 3.912,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0025",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0011",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0012",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0013",
+      "type": "ceil_C1",
+      "lower_z_m": 3.75,
+      "before_upper_z_m": 3.77,
+      "after_upper_z_m": 3.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0014",
+      "type": "ceil_C1",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0015",
+      "type": "ceil_C1",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0016",
+      "type": "ceil_C1",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0017",
+      "type": "ceil_C1",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0018",
+      "type": "ceil_C1",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0019",
+      "type": "ceil_C3",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0020",
+      "type": "ceil_C3",
+      "lower_z_m": 3.15,
+      "before_upper_z_m": 3.17,
+      "after_upper_z_m": 3.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0021",
+      "type": "ceil_C1",
+      "lower_z_m": 3.4,
+      "before_upper_z_m": 3.42,
+      "after_upper_z_m": 3.412,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0022",
+      "type": "ceil_C1",
+      "lower_z_m": 3.4,
+      "before_upper_z_m": 3.42,
+      "after_upper_z_m": 3.412,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-G-C0023",
+      "type": "ceil_C1",
+      "lower_z_m": 3.4,
+      "before_upper_z_m": 3.42,
+      "after_upper_z_m": 3.412,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0048",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0002",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0004",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0005",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0006",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0007",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0008",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0009",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0010",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0011",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0012",
+      "type": "ceil_C1",
+      "lower_z_m": 8.1,
+      "before_upper_z_m": 8.12,
+      "after_upper_z_m": 8.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0013",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0014",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0015",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0016",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0017",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0018",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0019",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0020",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0021",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0022",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0023",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0024",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0025",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0026",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0027",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0028",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0029",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0030",
+      "type": "ceil_C1",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0031",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0032",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0033",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0034",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0035",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0036",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0037",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0038",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0039",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0040",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0041",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0042",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0043",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0044",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0045",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0046",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-1-C0047",
+      "type": "ceil_C3",
+      "lower_z_m": 8.15,
+      "before_upper_z_m": 8.17,
+      "after_upper_z_m": 8.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0053",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0054",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0004",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0005",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0006",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0007",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0008",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0009",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0010",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0011",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0012",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0013",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0014",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0015",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0016",
+      "type": "ceil_C1",
+      "lower_z_m": 11.6,
+      "before_upper_z_m": 11.62,
+      "after_upper_z_m": 11.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0017",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0018",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0019",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0020",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0021",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0022",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0023",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0024",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0025",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0026",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0027",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0028",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0029",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0030",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0031",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0032",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0033",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0034",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0035",
+      "type": "ceil_C1",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0036",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0037",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0038",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0039",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0040",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0041",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0042",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0043",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0044",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0045",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0046",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0047",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0048",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0049",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0050",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0051",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-2-C0052",
+      "type": "ceil_C3",
+      "lower_z_m": 11.65,
+      "before_upper_z_m": 11.67,
+      "after_upper_z_m": 11.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0053",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0054",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0004",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0005",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0006",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0007",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0008",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0009",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0010",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0011",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0012",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0013",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0014",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0015",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0016",
+      "type": "ceil_C1",
+      "lower_z_m": 15.1,
+      "before_upper_z_m": 15.12,
+      "after_upper_z_m": 15.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0017",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0018",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0019",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0020",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0021",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0022",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0023",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0024",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0025",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0026",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0027",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0028",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0029",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0030",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0031",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0032",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0033",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0034",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0035",
+      "type": "ceil_C1",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0036",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0037",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0038",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0039",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0040",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0041",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0042",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0043",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0044",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0045",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0046",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0047",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0048",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0049",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0050",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0051",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-3-C0052",
+      "type": "ceil_C3",
+      "lower_z_m": 15.15,
+      "before_upper_z_m": 15.17,
+      "after_upper_z_m": 15.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0053",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0054",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0004",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0005",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0006",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0007",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0008",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0009",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0010",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0011",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0012",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0013",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0014",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0015",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0016",
+      "type": "ceil_C1",
+      "lower_z_m": 18.6,
+      "before_upper_z_m": 18.62,
+      "after_upper_z_m": 18.612,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0017",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0018",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0019",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0020",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0021",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0022",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0023",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0024",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0025",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0026",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0027",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0028",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0029",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0030",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0031",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0032",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0033",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0034",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0035",
+      "type": "ceil_C1",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.662,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0036",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0037",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0038",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0039",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0040",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0041",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0042",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0043",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0044",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0045",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0046",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0047",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0048",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0049",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0050",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0051",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-4-C0052",
+      "type": "ceil_C3",
+      "lower_z_m": 18.65,
+      "before_upper_z_m": 18.67,
+      "after_upper_z_m": 18.657,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0053",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0054",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0004",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0005",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0006",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0007",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0008",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0009",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0010",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0011",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0012",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0013",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0014",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0015",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0016",
+      "type": "ceil_C1",
+      "lower_z_m": 22.1,
+      "before_upper_z_m": 22.12,
+      "after_upper_z_m": 22.112,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0017",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0018",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0019",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0020",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0021",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0022",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0023",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0024",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0025",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0026",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0027",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0028",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0029",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0030",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0031",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0032",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0033",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0034",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0035",
+      "type": "ceil_C1",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.162,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0036",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0037",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0038",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0039",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0040",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0041",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0042",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0043",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0044",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0045",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0046",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0047",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0048",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0049",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0050",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0051",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-5-C0052",
+      "type": "ceil_C3",
+      "lower_z_m": 22.15,
+      "before_upper_z_m": 22.17,
+      "after_upper_z_m": 22.157,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-R-C0001",
+      "type": "ceil_C1",
+      "lower_z_m": 25.75,
+      "before_upper_z_m": 25.77,
+      "after_upper_z_m": 25.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-R-C0002",
+      "type": "ceil_C1",
+      "lower_z_m": 25.75,
+      "before_upper_z_m": 25.77,
+      "after_upper_z_m": 25.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-R-C0003",
+      "type": "ceil_C1",
+      "lower_z_m": 25.75,
+      "before_upper_z_m": 25.77,
+      "after_upper_z_m": 25.762,
+      "thickness_mm": 12,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-R-C0004",
+      "type": "ceil_C3",
+      "lower_z_m": 25.75,
+      "before_upper_z_m": 25.77,
+      "after_upper_z_m": 25.757,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    },
+    {
+      "id": "A.ceil-R-C0005",
+      "type": "ceil_C3",
+      "lower_z_m": 25.75,
+      "before_upper_z_m": 25.77,
+      "after_upper_z_m": 25.757,
+      "thickness_mm": 7,
+      "xy_and_lower_face_unchanged": true
+    }
+  ],
+  "excluded_vertical_risers_unchanged": 2,
+  "xy_or_absolute_Z_newly_accepted": 0,
+  "location_shape_fully_verified": 0
+}

@@ -8,20 +8,20 @@
 const TRANK={c:0,k:1,m:2};
 const IMPACT={high:{n:'مرتفع الأثر',c:'#0072B2',i:'▲',r:0},med:{n:'متوسط الأثر',c:'#56B4E9',i:'◆',r:1},low:{n:'منخفض الأثر',c:'#9AA3AD',i:'●',r:2}};
 const CONFI={high:'●',med:'◆',low:'▲'};
-const CONFN={high:'عالية',med:'متوسطة',low:'منخفضة'};
-const CST={open:'#8b949e',checking:'#bf8700',resolved:'#1a7f37',accepted:'#0969da',false:'#6e7781',design:'#cf222e'};   // clash statuses = keys of M.clashLog.statuses
+const CONFN={high:'نقل ≤30 سم',med:'نقل ≤100 سم',low:'نقل أكبر / تغيّر تركيب'};
+const CST={open:'#8b949e',checking:'#bf8700',resolved:'#1a7f37',accepted:'#0969da',false:'#6e7781',design:'#cf222e',historical:'#8b949e'};
 const CDONE={resolved:1,accepted:1,false:1};
-const GST={open:'لم يُتحقق بعد',checking:'قيد التحقق',verified:'تم التحقق — مطابق للأز-بيلت',wrong:'خالف الأز-بيلت — يُصحَّح',pending:'بانتظار تأكيدك'};
-const GSTC={open:'#8b949e',checking:'#bf8700',verified:'#1a7f37',wrong:'#cf222e',pending:'#8250df'};
+const GST={open:'لم يؤشر المستخدم',checking:'قيد مراجعة المستخدم',verified:'تأشير مستخدم: مطابق للمصدر',wrong:'تأشير مستخدم: يخالف المصدر',pending:'متابعة معلقة',historical:'تأشير تاريخي — يحتاج مراجعة'};
+const GSTC={open:'#8b949e',checking:'#bf8700',verified:'#1a7f37',wrong:'#cf222e',pending:'#8250df',historical:'#8b949e'};
 const GDONE={verified:1};
 const OBSC=[['beam','جسر'],['col','عمود'],['wall','جدار/نواة'],['svc','خدمة أخرى']];
 const LAYS=[['S','إنشائي'],['A','معماري'],['M','ميكانيكي'],['E','كهربائي'],['P','صحي وإطفاء']];
 const MOUNT={wall:'جدار/عمود/كسوة',ceil:'سقف/بلاطة/جسر',floor:'سطح الأرضية',fcu:'غلاف وحدة FCU',equip:'غلاف آلة',stand:'قائم من الأرضية',hang:'تعليق بالسقف'};
 const LVAB={B:'ب',G:'أ',R:'س',T:'ع'};
-const TLAB={c:'مؤكد',k:'مرشح',m:'هامشي'};
-const TTITLE={c:'تعارض مؤكد — لا يزول بتغيير المنسوب',k:'مرشح — اختلاف منسوب: يزول عند المنسوب المقترح',m:'هامشي — تداخل أقل من 3 سم أو 3 لترات، للعلم فقط'};
-const TFULL={c:'تعارض مؤكد',k:'مرشح — اختلاف منسوب',m:'هامشي'};
-const THEAD={c:'تعارضات مؤكدة',k:'مرشحة — اختلاف منسوب',m:'هامشية'};
+const TLAB={c:'يحتاج تنسيقًا',k:'مرشح منسوب/شكل',m:'أثر صغير'};
+const TTITLE={c:'تداخل يحتاج تنسيقًا؛ إثبات المصدر والمنسوب في مطابقة المشروع',k:'مرشح منسوب أو شكل: الحل الرأسي يحتاج تفاصيل المصدر',m:'أثر صغير هندسيًا؛ الحجم وحده لا يثبت أنه مقبول'};
+const TFULL={c:'تداخل يحتاج تنسيقًا',k:'مرشح اختلاف منسوب / شكل',m:'أثر صغير يحتاج تحققًا'};
+const THEAD={c:'تداخلات تحتاج تنسيقًا',k:'مرشحة — اختلاف منسوب / شكل',m:'آثار صغيرة تحتاج تحققًا'};
 const PAGE=40, PAGE_LOC=30, AP_N=10, AP_MS=6500, EL_LIST_MAX=500;
 const plural=(n,one,two,few,many)=>n===1?one:n===2?two:(n>=3&&n<=10)?n+' '+few:n+' '+many;
 const P_POS=n=>plural(n,'موضع واحد','موضعان','مواضع','موضعًا'), P_GRP=n=>plural(n,'مجموعة واحدة','مجموعتان','مجموعات','مجموعة'),
@@ -30,10 +30,17 @@ const NUM=v=>'<span class="num">'+v+'</span>';
 const F2=z=>(z<0?'−':'')+Math.abs(z).toFixed(2);
 const shortSt=s=>String(s).split(' — ')[0].replace(/\s*\(.*\)$/,'');
 const TIPS={
-  clash:'تقاطعات بين الخدمات والعناصر الإنشائية. تُصنَّف بسؤال واحد: هل تزول المشكلة إذا تغيّر منسوب الخدمة داخل الفراغ؟',
-  guess:'كل ما اختاره النموذج لغياب بيانٍ في المخططات المعتمدة (موضع، منسوب، مقاس، مادة). يبقى تخمينًا حتى يُطابَق بمخططات الأز-بيلت ويُعلَّم «تم التحقق».',
-  conf:'ثقة عالية: نُقل الجهاز 30 سم أو أقل. متوسطة: حتى 100 سم. منخفضة: أكثر من ذلك أو تغيّر نوع التركيب (مثلًا جهاز سقفي رُكّب على جدار). «القرارات الفردية» أجهزة نُقلت أو سُحبت إلى مضيف؛ «الافتراضات العامة» تخص أنواعًا كاملة (مقاس، مادة، تمثيل).'
+  clash:'تقاطعات في المجسم مرتبة حسب الحاجة إلى التنسيق. الحكم المثبت من المخططات وفجوات المنسوب يظهران في «مطابقة المشروع».',
+  guess:'اختيارات سابقة للمجسم عند غياب بيان في المصادر المرفقة (موضع، منسوب، مقاس، مادة). تأشير المستخدم سجل متابعة محلي؛ تحقق المصدر الحالي وحدود المنسوب والمقاس يظهران في «مطابقة المشروع».',
+  conf:'فئات مسافة النقل السابقة: حتى 30 سم، حتى 100 سم، أو أكبر من ذلك/تغيّر تركيب. المسافة لا تثبت صحة الموضع أو المنسوب أو النوع. «القرارات الفردية» نقل أو سحب سابق إلى مضيف؛ «الافتراضات العامة» تخص مقاسًا أو مادة أو تمثيلًا. التأشير المحفوظ لا يثبت التنفيذ في الموقع.'
 };
+// A synchronous context fingerprint for local annotations, not a source-proof hash.
+function annotationFingerprint(value){
+  const stable=v=>Array.isArray(v)?v.map(stable):v&&typeof v==='object'?Object.keys(v).sort().reduce((o,k)=>{if(v[k]!==undefined)o[k]=stable(v[k]);return o;},{}):v;
+  const text=JSON.stringify(stable(value));let a=2166136261,b=2246822507;
+  for(let i=0;i<text.length;i++){a=Math.imul(a^text.charCodeAt(i),16777619);b=Math.imul(b^text.charCodeAt(i),3266489909);}
+  return (a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');
+}
 /* ---- clash cross-section sketch (pure functions) ---- */
 /* reference implementation of the clash cross-section sketch (pure functions: no DOM access, no THREE) */
 var SK_UID=0;
@@ -108,7 +115,7 @@ function initIssues(ctx){
   const select=ctx.select, PlanMap=ctx.PlanMap;
   const box=$('issuesBox'), sec=document.querySelector('.acc[data-sec="pIssues"]');
   const els=M.els, clashes=M.clashes||[], GU=M.guesses||{rules:[],items:[],kinds:{},impact:{}};
-  const CLS=(M.clashLog&&M.clashLog.statuses)||{open:'مفتوح'}, CLKEYS=Object.keys(CLS);
+  const CLS={open:'لم يؤشر المستخدم',checking:'قيد مراجعة المستخدم',resolved:'تأشير مستخدم: عولج',accepted:'تأشير مستخدم: مقبول',false:'تأشير مستخدم: ليس تعارضًا',design:'تأشير مستخدم: يحتاج قرارًا',historical:'تأشير تاريخي — يحتاج مراجعة'}, CLKEYS=Object.keys(CLS).filter(k=>k!=='historical');
   const API={open(){},focus(){},next(){},prev(){},close(){},autopilot(){},setFilter(){},setStatus(){},state(){return {built:false};},csv(){return '';},tap(){return false;},frame(){},pinAt(){return null;},get active(){return false;}};
   if(!box||!sec||!PAL) return API;
 
@@ -119,7 +126,15 @@ function initIssues(ctx){
   const obsOf=c=>{const o=String(c.oid||''); return /^S\.beam/.test(o)?'beam':/^S\.col/.test(o)?'col':/^S\.wall/.test(o)?'wall':'svc';};
   const GMETA=new Map((M.clashGroups||[]).map(g=>[g.k,g]));
   const TOT={c:0,k:0,m:0}; clashes.forEach(c=>{TOT[tierOf(c)]++;});
-  const elName=ei=>{const e=els[ei],T=M.types&&M.types[e.t]; return (e.mark||e.id)+' — '+((T&&T.n)||e.t||e.c);};
+  const elName=ei=>{const e=els[ei],T=M.types&&M.types[e?.t]; if(!e) return 'عنصر غير متاح'; return (e.mark||e.id||e.t||e.c||'عنصر غير مسمّى')+' — '+((T&&T.n)||ctx.CATS?.[e.c]?.name||e.t||e.c||e.id||'عنصر غير مسمّى');};
+  const clashOtherName=(c,ei)=>{
+    const named=ei===c.a?c.obs:c.svc;
+    if(typeof named==='string'&&named.trim()) return named.trim();
+    const other=els[ei===c.a?c.b:c.a];
+    if(ctx.elementDisplayName) return ctx.elementDisplayName(other);
+    const T=other&&M.types?.[other.t];
+    return other?.mark||T?.n||ctx.CATS?.[other?.c]?.name||other?.id||other?.t||other?.c||'عنصر غير متاح';
+  };
   const unitName=ei=>{const u=els[ei].u; if(!u) return null; const x=UNITS.find(y=>y.id===u); return x?x.name:null;};
   const lvName=l=>(LVL[l]&&LVL[l].name)||l, lvAb=l=>LVAB[l]||l;
   const RULES=(GU.rules||[]).map(r=>{
@@ -137,20 +152,38 @@ function initIssues(ctx){
   try{ const bd=$('accN_pIssues'); if(bd) bd.textContent=String(TOT.c+TOT.k); }catch(e){}
 
   /* ---------------- statuses and notes (this device only) ---------------- */
-  const KEY='c4issues'; let ST={v:1,c:{},g:{},r:{}};
+  const KEY='c4issues'; let ST={v:2,c:{},g:{},r:{}};
   function saveStore(){ try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){ toast('تعذّر الحفظ على هذا الجهاز'); } }
   (function loadStore(){
     let o=null; try{o=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
-    if(o&&o.v===1){ST={v:1,c:o.c||{},g:o.g||{},r:o.r||{}}; return;}
+    if(o&&(o.v===1||o.v===2)){ST={v:2,c:o.c||{},g:o.g||{},r:o.r||{}}; return;}
     try{ let moved=false; for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.indexOf('c4clash:')===0){ let v=null; try{v=JSON.parse(localStorage.getItem(k)||'null');}catch(e){} if(v&&(v.st||v.tx)){ST.c[k.slice(8)]={st:v.st||'open',tx:v.tx||'',ts:v.ts||''}; moved=true;} } } if(moved) saveStore(); }catch(e){}
   })();
   const bagOf=kind=>ST[kind==='clash'?'c':kind==='guess'?'g':'r'];
   const keyOf=(kind,id)=>kind==='clash'?clashes[id].id:kind==='guess'?ITEMS[id].key:id;
   const entryOf=(kind,id)=>bagOf(kind)[keyOf(kind,id)]||null;
-  function putEntry(kind,id,st,tx){ const bag=bagOf(kind),k=keyOf(kind,id); if((!st||st==='open')&&!tx) delete bag[k]; else bag[k]={st:st||'open',tx:tx||'',ts:new Date().toISOString()}; saveStore(); }
-  const clashStatus=c=>{const e=ST.c[c.id]; return (e&&e.st)||c.st||'open';};
-  const itemStatus=ii=>{const e=ST.g[ITEMS[ii].key]; return (e&&e.st)||'open';};
-  const ruleStatus=rid=>{const e=ST.r[rid]; return (e&&e.st)||'open';};
+  const contextCache=new Map(),clashIndex=new Map(clashes.map((c,i)=>[c.id,i]));
+  const elementContext=e=>({id:e.id,c:e.c,l:e.l,g:e.g,t:e.t,m:e.m,a:e.a||{},sources:(e.s||[]).map(i=>M.sp?.[i]??i),type:M.types?.[e.t]||{},source_xy_status:M.componentReview?.status_by_id?.[e.id]||'unverified'});
+  function annotationContext(kind,id){
+    const key=kind+'|'+keyOf(kind,id);if(contextCache.has(key))return contextCache.get(key);
+    let facts;
+    if(kind==='clash'){const c=clashes[id];facts={elements:[elementContext(els[c.a]),elementContext(els[c.b])],kind:c.k,level:c.l,volume:c.v,point:c.pt,tier:c.tier,checks:c.classification_checks};}
+    else if(kind==='guess'){const I=ITEMS[id];facts={element:elementContext(I.e),decision:{...I.it,e:I.e.id},rule:RULE_BY_ID.get(I.it.r)?.r?.id};}
+    else {const R=RULE_BY_ID.get(id);facts={rule:R?{...R.r,els:undefined}:id,elements:R?R.idx().map(i=>elementContext(els[i])).sort((a,b)=>a.id.localeCompare(b.id)):[]};}
+    const ctx={basis:'geometry_type_source_context_v1',fingerprint:annotationFingerprint(facts),viewer_version:String(ctxVersion())};contextCache.set(key,ctx);return ctx;
+  }
+  function ctxVersion(){return ctx.version||document.getElementById('ver')?.textContent||'غير مسجل';}
+  const isCurrent=(kind,id,e)=>!!(e?.context&&e.context.basis==='geometry_type_source_context_v1'&&e.context.fingerprint===annotationContext(kind,id).fingerprint);
+  function localStatus(kind,id,fallback){const e=entryOf(kind,id);return e?(isCurrent(kind,id,e)?e.st||'open':'historical'):(fallback&&fallback!=='open'?'historical':'open');}
+  function putEntry(kind,id,st,tx){
+    const bag=bagOf(kind),k=keyOf(kind,id),old=bag[k];
+    if((!st||st==='open')&&!tx&&!old) delete bag[k];
+    else {const history=old?.history?[...old.history]:[];if(old){const previous={...old};delete previous.history;history.push(previous);}bag[k]={st:st||'open',tx:tx||'',ts:new Date().toISOString(),context:annotationContext(kind,id),history};}
+    saveStore();
+  }
+  const clashStatus=c=>localStatus('clash',clashIndex.get(c.id),c.st);
+  const itemStatus=ii=>localStatus('guess',ii);
+  const ruleStatus=rid=>localStatus('rule',rid);
 
   /* ---------------- state and filters ---------------- */
   const defaults=k=>k==='clash'?{tiers:{c:1,k:1,m:0},lv:new Set(),sys:'',obs:'',st:'',q:'',sort:'prio'}:{imps:{high:1,med:1,low:1},lv:new Set(),kind:'',layer:'',st:'',q:'',sort:'prio'};
@@ -217,7 +250,7 @@ function initIssues(ctx){
   function advCount(){ const f=S.f[S.kind]; return S.kind==='clash'?(f.sys?1:0)+(f.obs?1:0)+(f.st?1:0)+(f.sort!=='prio'?1:0):(f.kind?1:0)+(f.layer?1:0)+(f.st?1:0)+(f.sort!=='prio'?1:0); }
   function updateAdv(){ const n=advCount(),b=$('isAdvN'); if(b){ b.textContent=n||''; b.style.display=n?'':'none'; } const bt=$('isAdvB'); if(bt) bt.setAttribute('aria-expanded',String(S.adv)); }
   function buildHead(){
-    const k=S.kind,f=S.f[k]; let h='<p class="is-lead">'+esc(TIPS[k])+' <button type="button" class="is-howb" data-act="how" aria-expanded="'+S.how+'">'+(k==='clash'?'كيف صُنّفت؟':'كيف تُقرأ الثقة؟')+'</button></p><div class="is-how" id="isHow"'+(S.how?'':' hidden')+'>'+esc(k==='clash'?(M.clashNote||''):TIPS.conf)+'</div>';
+    const k=S.kind,f=S.f[k]; let h='<p class="is-lead">'+esc(TIPS[k])+' <button type="button" class="is-howb" data-act="how" aria-expanded="'+S.how+'">'+(k==='clash'?'كيف صُنّفت؟':'كيف تُقرأ فئات النقل؟')+'</button></p><div class="is-how" id="isHow"'+(S.how?'':' hidden')+'>'+esc(k==='clash'?(M.clashNote||''):TIPS.conf)+'</div>';
     h+='<div class="is-tiles" role="group" aria-label="'+(k==='clash'?'الدرجة':'الأثر')+'">';
     if(k==='clash') ['c','k','m'].forEach(t=>{const T=PAL.TIER[t]; h+='<button type="button" class="is-tile'+(f.tiers[t]?' on':'')+'" data-tier="'+t+'" aria-pressed="'+(!!f.tiers[t])+'" style="--tc:'+T.c+';--tcb:'+T.c+'1a" title="'+esc(TTITLE[t])+'"><span class="is-ic">'+T.i+'</span><b>'+TOT[t]+'</b><span class="l">'+TLAB[t]+'</span></button>';});
     else ['high','med','low'].forEach(t=>{const T=IMPACT[t]; h+='<button type="button" class="is-tile'+(f.imps[t]?' on':'')+'" data-imp="'+t+'" aria-pressed="'+(!!f.imps[t])+'" style="--tc:'+T.c+';--tcb:'+T.c+'1a" title="'+esc(T.n)+'"><span class="is-ic">'+T.i+'</span><b>'+IMPT[t]+'</b><span class="l">'+T.n+'</span></button>';});
@@ -227,13 +260,13 @@ function initIssues(ctx){
       const cnt={}; clashes.forEach(c=>{cnt[c.sys]=(cnt[c.sys]||0)+1;}); const systems=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||(a<b?-1:1));
       h+='<label>النظام<select data-f="sys">'+opts([['','الكل']].concat(systems.map(s=>[s,s])),f.sys)+'</select></label>';
       h+='<label>العائق<select data-f="obs">'+opts([['','الكل']].concat(OBSC),f.obs)+'</select></label>';
-      h+='<label>الحالة<select data-f="st">'+opts([['','الكل'],['*open','غير منتهٍ']].concat(CLKEYS.map(s=>[s,CLS[s]])),f.st)+'</select></label>';
+      h+='<label>متابعة المستخدم<select data-f="st">'+opts([['','الكل'],['*open','دون تأشير معالجة حالي']].concat(Object.keys(CLS).map(s=>[s,CLS[s]])),f.st)+'</select></label>';
       h+='<label>الترتيب<select data-f="sort">'+opts([['prio','الأولوية'],['vol','الأكبر حجمًا'],['n','الأكثر مواضع'],['lvl','حسب الطابق']],f.sort)+'</select></label>';
     } else {
       const kinds=Object.keys(GU.kinds||{}).filter(x=>RULES.some(R=>R.r.kind===x));
       h+='<label>النوع<select data-f="kind">'+opts([['','الكل']].concat(kinds.map(x=>[x,GU.kinds[x]])),f.kind)+'</select></label>';
       h+='<label>التخصص<select data-f="layer">'+opts([['','الكل']].concat(LAYS),f.layer)+'</select></label>';
-      h+='<label>الحالة<select data-f="st">'+opts([['','الكل'],['*open','غير مُتحقَّق منه']].concat(Object.keys(GST).map(s=>[s,GST[s]])),f.st)+'</select></label>';
+      h+='<label>متابعة المستخدم<select data-f="st">'+opts([['','الكل'],['*open','دون تأشير مطابقة حالي']].concat(Object.keys(GST).map(s=>[s,GST[s]])),f.st)+'</select></label>';
       h+='<label>الترتيب<select data-f="sort">'+opts([['prio','الأثر ثم العدد'],['n','الأكثر عناصر'],['kind','حسب النوع']],f.sort)+'</select></label>';
     }
     h+='</div>';
@@ -243,7 +276,7 @@ function initIssues(ctx){
   function updateProg(){ const el=$('isProg'); let t=0,d=0;
     if(S.kind==='clash'){ for(let ci=0;ci<clashes.length;ci++) if(matchClash(ci)){t++; if(CDONE[clashStatus(clashes[ci])]) d++;} } else { const u=guessUnits(); t=u.t; d=u.d; }
     if(!t){el.style.display='none'; el.innerHTML=''; return;} el.style.display=''; const p=Math.round(d*100/t);
-    el.innerHTML='<span>المُنجَز '+d+' من '+t+' ('+p+'%)</span><span class="bar"><span style="width:'+p+'%"></span></span>'; }
+    el.innerHTML='<span>تأشير المستخدم الحالي '+d+' من '+t+' ('+p+'%) — متابعة محلية فقط</span><span class="bar"><span style="width:'+p+'%"></span></span>'; }
   function updateSum(){ const rows=getRows(); let txt;
     if(S.kind==='clash'){ const n=rows.reduce((a,g)=>a+g.idx.length,0); txt=P_GRP(rows.length)+' ('+P_POS(n)+') من '+((M.clashGroups||[]).length||rows.length); }
     else { const d=rows.reduce((a,R)=>a+(R.hasItems?ruleItems(R).length:0),0); txt=P_RULE(rows.length)+' من '+RULES.length+' · القرارات الفردية: '+d; }
@@ -251,7 +284,7 @@ function initIssues(ctx){
 
   const skC=new Map();
   function sketchFor(ci){ let s=skC.get(ci); if(s===undefined){ const p=sketchInputs(M,clashes[ci]); s=p?sketchSVG(p):''; skC.set(ci,s);} return s; }
-  function noteBox(c){ if(tierOf(c)==='m') return esc(c.why); if(/^P\.tank/.test(String(c.sid||''))) return 'خلاف بين ورقتين (A2500 والمخطط الإنشائي) لا علاقة له بالمنسوب.'; return ''; }
+  function noteBox(c){ if(tierOf(c)==='m'||/^P\.tank/.test(String(c.sid||''))) return esc(c.why); return ''; }
   function visHTML(c,ci){ const s=sketchFor(ci); if(s) return '<div class="is-vis">'+s+'</div>'; const n=noteBox(c); return n?'<div class="is-vis"><div class="is-none">'+n+'</div></div>':''; }
   function locsClashHTML(g){
     const lim=S.pageLoc[g.gk]||PAGE_LOC;
@@ -264,7 +297,7 @@ function initIssues(ctx){
     g.idx.forEach(ci=>{const st=clashStatus(clashes[ci]); if(st!=='open') any=true; if(CDONE[st]) done++;});
     const open=S.open.has(g.gk),sel=S.sel&&((S.sel.kind==='group'&&S.sel.id===g.gk)||(S.sel.kind==='clash'&&clashes[S.sel.id].gk===g.gk));
     let h='<article class="is-card'+(sel?' sel':'')+(done===n?' done':'')+'" data-gid="'+esc(g.gk)+'" style="--tc:'+T.c+'"><header class="is-ch"><span class="is-ic">'+T.i+'</span><h4>'+esc(g.meta.svc)+' × '+esc(g.meta.obs)+'</h4></header>';
-    h+='<div class="is-meta">'+pill(esc(lvName(g.meta.l)))+pill(esc(g.meta.sys))+pill(P_POS(n))+pill('≈ '+(g.vol<0.01?'< 0.01':g.vol.toFixed(2))+' م³')+(any?pill(done+' من '+n+' مُنجَز','st','background:'+(done===n?'#1a7f37':'#bf8700')):'')+'</div>';
+    h+='<div class="is-meta">'+pill(esc(lvName(g.meta.l)))+pill(esc(g.meta.sys))+pill(P_POS(n))+pill('≈ '+(g.vol<0.01?'< 0.01':g.vol.toFixed(2))+' م³')+(any?pill(done+' من '+n+' بتأشير متابعة حالي','st','background:'+(done===n?'#1a7f37':'#bf8700')):'')+'</div>';
     h+=visHTML(w,g.idx[0]);
     h+='<dl class="is-wf"><dt>السبب</dt><dd>'+esc(w.why)+'</dd><dt>الحل المقترح</dt><dd>'+esc(w.fix)+'</dd></dl>';
     h+='<div class="is-act"><button type="button" class="mini pri" data-act="view">عرض</button><button type="button" class="mini" data-act="locs" aria-expanded="'+open+'">المواضع '+(open?'▴':'▾')+'</button></div>';
@@ -283,7 +316,7 @@ function initIssues(ctx){
   function ruleCardHTML(R){
     const r=R.r,T=IMPACT[r.impact],open=S.open.has(r.id),sel=S.sel&&((S.sel.kind==='rule'&&S.sel.id===r.id)||(S.sel.kind==='guess'&&ITEMS[S.sel.id].it.r===r.id));
     let stp='',doneAll=false;
-    if(R.hasItems){ let d=0; R.items.forEach(ii=>{if(GDONE[itemStatus(ii)]) d++;}); stp=d?pill('تم التحقق من '+d+' من '+R.items.length+' قرارًا','st','background:#1a7f37'):''; doneAll=d===R.items.length; }
+    if(R.hasItems){ let d=0; R.items.forEach(ii=>{if(GDONE[itemStatus(ii)]) d++;});const hist=R.items.filter(ii=>itemStatus(ii)==='historical').length;stp=d?pill('أشر المستخدم مطابقة '+d+' من '+R.items.length+' قرارًا','st','background:#1a7f37'):hist?pill('تأشير تاريخي: '+hist+' قرارًا','st','background:#8b949e'):''; doneAll=d===R.items.length; }
     else { const st=ruleStatus(r.id); stp=stPillGuess(st); doneAll=!!GDONE[st]; }
     let h='<article class="is-card is-gc'+(sel?' sel':'')+(doneAll?' done':'')+'" data-rid="'+esc(r.id)+'" style="--tc:'+T.c+'"><header class="is-ch"><span class="is-ic">'+T.i+'</span><h4>'+esc(r.title)+'</h4></header>';
     h+='<div class="is-meta">'+pill(esc((GU.kinds||{})[r.kind]||r.kind))+pill(T.n)+pill(P_EL(r.n))+(R.hasItems?pill('قرارات فردية'):'')+stp+'</div><div class="is-vis">'+lvStrip(R)+'</div>';
@@ -349,7 +382,7 @@ function initIssues(ctx){
     const lvs=M.levels.filter(l=>byL[l.id]),f=S.f[S.kind];
     if(!lvs.length){ p.innerHTML=S.kind==='guess'?'<div class="is-empty">لا قرارات فردية ضمن المرشحات الحالية.<br><button type="button" class="mini" data-act="reset">إعادة ضبط المرشحات</button></div>':emptyHTML(); return; }
     if(!S.mapLevel||!byL[S.mapLevel]) S.mapLevel=(f.lv.size===1&&byL[[...f.lv][0]])?[...f.lv][0]:lvs.slice().sort((a,b)=>byL[b.id]-byL[a.id])[0].id;
-    const leg=S.kind==='clash'?['c','k','m'].map(t=>'<span><span class="is-ic" style="--tc:'+PAL.TIER[t].c+'">'+PAL.TIER[t].i+'</span>'+TLAB[t]+'</span>').join(''):['high','med','low'].map(t=>'<span><span class="is-ic" style="--tc:'+PAL.CONF[t].c+'">'+CONFI[t]+'</span>ثقة '+CONFN[t]+'</span>').join('')+'<span><span class="is-ic" style="--tc:#0072B2">→</span>من موضع المخطط إلى الموضع المخمَّن</span>';
+    const leg=S.kind==='clash'?['c','k','m'].map(t=>'<span><span class="is-ic" style="--tc:'+PAL.TIER[t].c+'">'+PAL.TIER[t].i+'</span>'+TLAB[t]+'</span>').join(''):['high','med','low'].map(t=>'<span><span class="is-ic" style="--tc:'+PAL.CONF[t].c+'">'+CONFI[t]+'</span>'+CONFN[t]+'</span>').join('')+'<span><span class="is-ic" style="--tc:#0072B2">→</span>موضع سابق ← موضع التخمين</span>';
     const hint='اضغط دبوسًا لفتح تفاصيله · اضغط أرضًا فارغة لنقل الكاميرا إلى هناك · قرص أو عجلة للتقريب · نقرتان لإعادة الضبط'+(S.kind==='guess'?'<br>الخريطة تعرض القرارات الفردية فقط (الأجهزة المنقولة والمسحوبة)؛ الافتراضات العامة تخص أنواعًا لا مواضع.':'');
     p.innerHTML='<div class="is-mapbox"><div class="is-maplv" role="group" aria-label="طابق الخريطة">'+lvs.map(l=>'<button type="button" class="chip'+(l.id===S.mapLevel?' on':'')+'" data-ml="'+l.id+'">'+esc(l.name)+' <b>'+byL[l.id]+'</b></button>').join('')+'</div><div id="isMapSlot"></div><div class="is-leg">'+leg+'</div><div class="muted">'+hint+'</div></div>';
     if(!mapCv){ mapCv=document.createElement('canvas'); mapCv.id='isMap'; mapCv.className='is-mapcv'; pm=new PlanMap(mapCv,{M,LVL});
@@ -420,7 +453,7 @@ function initIssues(ctx){
       return {classes:ts.map(t=>({k:t,n:TFULL[t],c:PAL.TIER[t].c})),map,label:'التعارضات المعروضة'}; }
     const idx={low:1,med:2,high:3},map=new Map();
     getRows('guess').forEach(R=>ruleItems(R).forEach(ii=>{ const I=ITEMS[ii],v=idx[I.it.conf]||1,o=map.get(I.ei); if(o===undefined||v<o) map.set(I.ei,v); }));
-    return {classes:['low','med','high'].map(k=>({k,n:PAL.CONF[k].n,c:PAL.CONF[k].c})),map,label:'القرارات المعروضة'}; }
+    return {classes:['low','med','high'].map(k=>({k,n:CONFN[k],c:PAL.CONF[k].c})),map,label:'فئات النقل السابقة'}; }
   function applyLens(){ if(!LENS) return; const d=lensData(); setLens('custom',{classes:d.classes,map:d.map,hideRest:false,label:d.label}); }
   function syncLens(){ if(S.lens) applyLens(); }
   function toggleLens(){ if(!LENS) return; if(S.lens){ setLens('off'); S.lens=false; } else { closeFocus(); S.lens=true; applyLens(); } toolsHTML(); }
@@ -437,9 +470,13 @@ function initIssues(ctx){
   function navStep(d){ const ids=flatIds(); if(!ids.length||!S.sel) return; let i=ids.indexOf(S.sel.id); i=i<0?(d>0?0:ids.length-1):(i+d+ids.length)%ids.length; focus(S.sel.kind,ids[i]); }
   const dHead=(title,sub)=>'<div class="ih"><b>'+title+'</b><span class="ihb"><button type="button" class="is-mlist" id="isdList" aria-label="القائمة">☰ القائمة</button><button type="button" id="isdCol" aria-label="طيّ التفاصيل أو فردها" title="طيّ / فرد">▴</button><button type="button" id="isdCl" aria-label="إغلاق" title="إنهاء التركيز">×</button></span></div><div class="isub">'+sub+'</div><div class="ibody is-dr">';
   function noteHTML(kind,id){
-    const ent=entryOf(kind,id)||{},list=kind==='clash'?CLKEYS.map(s=>[s,CLS[s]]):Object.keys(GST).map(s=>[s,GST[s]]),cur=ent.st||(kind==='clash'?(clashes[id].st||'open'):'open');
-    const ph=kind==='clash'?'كيف حُلّ في الواقع؟ (عبور عبر ثقب / تغيير مسار / رفع منسوب…)':'ماذا وجدتَ في الأز-بيلت؟ (مطابق / موضع آخر / مقاس مختلف…)';
-    return '<details class="idet" open><summary>حالتي وملاحظتي</summary><div class="mynote"><select id="isdSt" aria-label="الحالة">'+opts(list,cur)+'</select><textarea id="isdTx" rows="2" placeholder="'+esc(ph)+'">'+esc(ent.tx||'')+'</textarea><div class="is-act"><button type="button" class="mini pri" data-act="save">حفظ على هذا الجهاز</button><button type="button" class="mini" data-act="clear">مسح</button></div></div></details>'; }
+    const ent=entryOf(kind,id)||{},names=kind==='clash'?CLS:GST,list=(kind==='clash'?CLKEYS:Object.keys(GST).filter(s=>s!=='historical')).map(s=>[s,names[s]]),cur=ent.st||'open',current=ent.st&&isCurrent(kind,id,ent);
+    const ph='اكتب المرجع والورقة أو ملاحظة المراجعة؛ التنفيذ في الموقع يحتاج دليله الخاص.';
+    let note='<p class="muted">تأشير المستخدم على هذا الجهاز لا يعتمد التنفيذ في الموقع ولا يغيّر نتيجة فحص المصدر والتنسيق.</p>';
+    if(ent.st&&!current)note+='<p class="note">تأشير تاريخي محفوظ: '+esc(names[ent.st]||ent.st)+(ent.ts?' · '+esc(ent.ts):'')+'. سياق المصدر أو الهندسة تغير، أو لم تحفظ له بصمة. لا يُحسب تأشيرًا حاليًا. الحفظ يربط اختيارك الحالي بهذا السياق ويحفظ التأشير السابق.</p>';
+    else if(current)note+='<p class="muted">التأشير مرتبط بسياق الهندسة والنوع والمراجع الحالي'+(ent.ts?' · '+esc(ent.ts):'')+'.</p>';
+    const history=ent.history||[];if(history.length)note+='<details><summary>التأشيرات السابقة المحفوظة ('+history.length+')</summary>'+history.slice().reverse().map(h=>'<p>'+esc(names[h.st]||h.st||'ملاحظة')+' · '+esc(h.ts||'تاريخ غير مسجل')+(h.context?.viewer_version?' · إصدار '+esc(h.context.viewer_version):'')+'</p><p class="muted">'+esc(h.tx||'دون ملاحظة')+'</p>').join('')+'</details>';
+    return '<details class="idet" open><summary>متابعتي وملاحظتي المحلية</summary>'+note+'<div class="mynote"><select id="isdSt" aria-label="تأشير المستخدم">'+opts(list,cur)+'</select><textarea id="isdTx" rows="2" placeholder="'+esc(ph)+'">'+esc(ent.tx||'')+'</textarea><div class="is-act"><button type="button" class="mini pri" data-act="save">حفظ على هذا الجهاز</button><button type="button" class="mini" data-act="clear">مسح التأشير الحالي</button></div></div></details>'; }
   function clashDrawerHTML(ci){
     const c=clashes[ci],t=tierOf(c),T=PAL.TIER[t],L=LVL[c.l],ffl=L.ffl,hh=c.pt[1]-ffl,p=sketchInputs(M,c),sk=p?sketchSVG(p):'',unit=unitName(c.a)||unitName(c.b);
     let h=dHead(esc(c.svc)+' × '+esc(c.obs),'<span class="is-ic" style="--tc:'+T.c+'">'+T.i+'</span><span style="color:'+T.c+';font-weight:600">'+esc(TFULL[t])+'</span><code>'+esc(c.id)+'</code><span>'+esc(L.name)+'</span><span>'+esc(c.sys)+'</span>');
@@ -457,19 +494,19 @@ function initIssues(ctx){
       +'<tr><th>حجم التداخل</th><td>≈ '+NUM(c.v)+' م³'+(c.depth!=null?' — عمق '+NUM(c.depth)+' سم':'')+'</td></tr>'
       +(c.need!=null?'<tr><th>سماكة الخدمة</th><td>'+NUM(Math.round(c.need*100))+' سم</td></tr>':'')
       +'<tr><th>الوحدة / الموقع</th><td>'+esc(unit||'أجزاء مشتركة (ممر/ردهة/خدمات)')+'</td></tr></table></details>';
-    h+='<details class="idet" open><summary>السبب والحل</summary><dl class="is-wf"><dt>السبب</dt><dd>'+esc(c.why)+'</dd><dt>الحل المقترح</dt><dd>'+esc(c.fix)+'</dd></dl><div class="muted">مناسيب الخدمات في فراغ السقف افتراضية؛ يحسمها الأز-بيلت.</div></details>';
-    if((c.st&&c.st!=='open')||c.res||c.note) h+='<details class="idet"><summary>سجل الموقع</summary>'+stPillClash(c.st||'open')+' '+(c.date?'<small>'+esc(c.date)+'</small>':'')+' '+(c.by?'<small>— '+esc(c.by)+'</small>':'')+(c.res?'<div><b>طريقة الحل:</b> '+esc(c.res)+'</div>':'')+(c.note?'<div>'+esc(c.note)+'</div>':'')+'</details>';
+    h+='<details class="idet" open><summary>السبب والحل</summary><dl class="is-wf"><dt>السبب</dt><dd>'+esc(c.why)+'</dd><dt>الحل المقترح</dt><dd>'+esc(c.fix)+'</dd></dl><div class="muted">حدود المنسوب والافتراضات تُراجع لكل طرف في «مطابقة المشروع»؛ الاقتراح لا يثبت حلًا منفذًا.</div></details>';
+    if((c.st&&c.st!=='open')||c.res||c.note) h+='<details class="idet"><summary>سجل متابعة تاريخي من الملف</summary>'+stPillClash('historical')+' '+esc((M.clashLog?.statuses||{})[c.st]||c.st||'')+' '+(c.date?'<small>'+esc(c.date)+'</small>':'')+' '+(c.by?'<small>— '+esc(c.by)+'</small>':'')+(c.res?'<div><b>طريقة الحل المسجلة:</b> '+esc(c.res)+'</div>':'')+(c.note?'<div>'+esc(c.note)+'</div>':'')+'<p class="muted">حالة مسجلة سابقًا؛ لا تثبت مصدر الإصدار الحالي أو التنفيذ في الموقع.</p></details>';
     h+=noteHTML('clash',ci)+'<div id="isdSteps"></div><div class="is-act"><button type="button" class="mini" data-act="route">مسار الوصول</button><button type="button" class="mini" data-act="tour">جولة مشي</button><button type="button" class="mini" data-act="aim">إعادة توجيه الكاميرا</button><button type="button" class="mini" data-act="end">إنهاء التركيز</button></div></div>';
     return h; }
-  function moveSentence(it){ let s='نُقل '+Math.round(it.cm)+' سم أفقيًا'; if(it.dz&&Math.abs(it.dz)>=0.5) s+=' وعُدّل منسوبه '+Math.round(it.dz)+' سم'; if(MOUNT[it.k]) s+=' إلى «'+MOUNT[it.k]+'»'+(it.host?' (<code>'+esc(it.host)+'</code>)':''); if(it.conv) s+='؛ تغيّر نوع التركيب عن المقصود'; return s+'.'; }
+  function moveSentence(it){ let s='السجل السابق: نُقل '+Math.round(it.cm)+' سم أفقيًا'; if(it.dz&&Math.abs(it.dz)>=0.5) s+=' وعُدّل منسوبه '+Math.round(it.dz)+' سم'; if(MOUNT[it.k]) s+=' إلى «'+MOUNT[it.k]+'»'+(it.host?' (<code>'+esc(it.host)+'</code>)':''); if(it.conv) s+='؛ تغيّر نوع التركيب'; return s+'. المسافة المسجلة لا تقيس انحراف المجسم الحالي عن المصدر.'; }
   function guessDrawerHTML(ii){
     const I=ITEMS[ii],it=I.it,e=I.e,R=RULE_BY_ID.get(it.r),r=R?R.r:{},cf=PAL.CONF[it.conf]||PAL.CONF.low,a=after(ii),T=M.types&&M.types[e.t],unit=unitName(I.ei),q=e.q||'ddd';
-    let h=dHead(esc((T&&T.n)||e.t),'<span class="is-ic" style="--tc:'+cf.c+'">'+(CONFI[it.conf]||'●')+'</span><span style="font-weight:600">'+esc(cf.n)+'</span><code>'+esc(e.id)+'</code><span>'+esc(lvName(e.l))+'</span>'+(unit?'<span>'+esc(unit)+'</span>':''));
+    let h=dHead(esc((T&&T.n)||e.t),'<span class="is-ic" style="--tc:'+cf.c+'">'+(CONFI[it.conf]||'●')+'</span><span style="font-weight:600">'+esc(CONFN[it.conf]||'فئة نقل سابقة')+'</span><code>'+esc(e.id)+'</code><span>'+esc(lvName(e.l))+'</span>'+(unit?'<span>'+esc(unit)+'</span>':''));
     h+=navHTML();
-    if(it.from) h+='<details class="idet" open><summary>قبل ← بعد</summary><div class="is-ba"><div><h6>قبل (موضع المخطط)</h6><span class="num">X '+it.from[0]+' · Y '+it.from[1]+'</span> سم<br>المنسوب '+NUM(F2(it.from[2]))+' م</div><div class="af"><h6>بعد (الموضع المخمَّن)</h6><span class="num">X '+a.xcm.toFixed(1)+' · Y '+a.ycm.toFixed(1)+'</span> سم<br>المنسوب '+NUM(F2(a.zb))+' م</div></div><div class="muted">'+moveSentence(it)+'</div></details>';
-    else h+='<details class="idet" open><summary>الموضع بعد السحب</summary><div class="is-ba"><div class="af" style="grid-column:1/3"><h6>الموضع الحالي (المخمَّن)</h6><span class="num">X '+a.xcm.toFixed(1)+' · Y '+a.ycm.toFixed(1)+'</span> سم<br>المنسوب '+NUM(F2(a.zb))+' م</div></div><div class="muted">سُحب الجهاز '+NUM(Math.round(it.cm))+' سم على أقصر محور حتى لامس ظهره وجه الجدار؛ موضع الرمز الأصلي في المخطط لم يُحفظ رقميًا.</div></details>';
+    if(it.from) h+='<details class="idet" open><summary>السجل السابق ← المجسم الحالي</summary><div class="is-ba"><div><h6>موضع سابق مسجل — ليس تحقق مصدر</h6><span class="num">X '+it.from[0]+' · Y '+it.from[1]+'</span> سم<br>المنسوب '+NUM(F2(it.from[2]))+' م</div><div class="af"><h6>الموضع الحالي في المجسم</h6><span class="num">X '+a.xcm.toFixed(1)+' · Y '+a.ycm.toFixed(1)+'</span> سم<br>المنسوب '+NUM(F2(a.zb))+' م</div></div><div class="muted">'+moveSentence(it)+'</div></details>';
+    else h+='<details class="idet" open><summary>الموضع الحالي وسجل السحب السابق</summary><div class="is-ba"><div class="af" style="grid-column:1/3"><h6>الموضع الحالي في المجسم</h6><span class="num">X '+a.xcm.toFixed(1)+' · Y '+a.ycm.toFixed(1)+'</span> سم<br>المنسوب '+NUM(F2(a.zb))+' م</div></div><div class="muted">السجل السابق يذكر سحبًا '+NUM(Math.round(it.cm))+' سم إلى جدار. لا يثبت هذا السجل موضع المصدر أو التلامس الحالي؛ تحقق الموضع في «مطابقة المشروع».</div></details>';
     h+='<details class="idet" open><summary>لماذا وكيف</summary><dl class="is-wf">'+(r.why?'<dt>لماذا خُمّن</dt><dd>'+esc(r.why)+'</dd>':'')+(r.how?'<dt>كيف اختير</dt><dd>'+esc(r.how)+'</dd>':'')+(r.basis?'<dt>الأساس</dt><dd>'+esc(r.basis)+'</dd>':'')+(r.verify?'<dt>ما يحسمه</dt><dd>'+esc(r.verify)+'</dd>':'')+'</dl>'+(e.a&&e.a.mount_note?'<div class="muted">'+esc(e.a.mount_note)+'</div>':'')+'</details>';
-    h+='<details class="idet" open><summary>الموثوقية بعد التخمين</summary><div class="is-q3">'+[['الموضع',q[0]],['المنسوب',q[1]],['المواصفة',q[2]]].map(x=>{const g=PAL.GRADE[x[1]]||PAL.GRADE.d; return pill(x[0]+': '+esc(g.n),'st','background:'+g.c+';color:#0b2a3d');}).join('')+'</div></details>';
+    h+='<details class="idet"><summary>تصنيف الاستخراج التاريخي بعد التخمين</summary><p class="muted">هذه العلامات السابقة لا تثبت صحة المصدر أو المنسوب أو المواصفة. دليل الفحص الحالي في «مطابقة المشروع».</p><div class="is-q3">'+[['الموضع',q[0]],['المنسوب',q[1]],['المواصفة',q[2]]].map(x=>{const g=PAL.GRADE[x[1]]||PAL.GRADE.d; return pill(x[0]+': '+esc(g.n),'st','background:'+g.c+';color:#0b2a3d');}).join('')+'</div></details>';
     h+=noteHTML('guess',ii)+'<div class="is-act"><button type="button" class="mini" data-act="card">بطاقة العنصر الكاملة</button><button type="button" class="mini" data-act="end">إنهاء التركيز</button></div></div>';
     return h; }
   function ruleDrawerHTML(rid){
@@ -486,7 +523,7 @@ function initIssues(ctx){
     const s=S.sel; if(!s) return;
     if(a==='prev') navStep(-1); else if(a==='next') navStep(1); else if(a==='end') closeFocus();
     else if(a==='save'){ setStatus(s.kind,s.id,$('isdSt').value,$('isdTx').value.trim()); toast('حُفظت حالتك على هذا الجهاز'); }
-    else if(a==='clear'){ setStatus(s.kind,s.id,'open',''); $('isdTx').value=''; $('isdSt').value=s.kind==='clash'?(clashes[s.id].st||'open'):'open'; toast('مُسحت حالتك'); }
+    else if(a==='clear'){ setStatus(s.kind,s.id,'open',''); $('isdTx').value=''; $('isdSt').value='open'; toast('أزيل التأشير الحالي؛ بقي سجل التأشيرات السابقة محفوظًا'); }
     else if(a==='route'&&s.kind==='clash'){ $('isdSteps').innerHTML=CLASH.showRoute(clashes[s.id]); }
     else if(a==='tour'&&s.kind==='clash'){ $('isdSteps').innerHTML=CLASH.runTour(clashes[s.id]); }
     else if(a==='aim'&&s.kind==='clash'){ CLASH.show(s.id); if(S.ghost!==8) setGhost(true,S.ghost/100,[clashes[s.id].l]); }
@@ -519,9 +556,24 @@ function initIssues(ctx){
     const t=loc||card; if(t&&sectionOpen()&&t.scrollIntoView) t.scrollIntoView({block:'nearest',behavior:'smooth'}); }
   function refresh(){ if(!built) return; ROWS={clash:null,guess:null}; updateLevels(); updateProg(); updateSum(); renderPane(); rebuildPins(); syncLens(); }
   function render(){ if(!built) return; $('isRoot').dataset.kind=S.kind; tabsHTML(); buildHead(); viewsHTML(); toolsHTML(); refresh(); }
+  function drawingIssuesHTML(){
+    const ds=M.drawingIssues||[]; if(!ds.length) return '';
+    const st={corrected:'صحح في النموذج',source_conflict:'تعارض مصدر مفتوح',source_gap:'نقص مصدر',model_candidate:'تداخل مرشح يحتاج تنسيقًا'};
+    return '<details id="drawingIssues"><summary>مراجعة المواضع والمصادر ('+ds.length+')</summary><div class="note">التصحيحات تخص المجسم؛ لا تثبت التنفيذ في الموقع. لكل حالة مصدر وموضع وإجراء.</div>'+ds.map((d,i)=>'<article class="is-card"><b>'+esc(d.title)+'</b><small>'+esc(st[d.status]||d.status)+' · '+esc(d.id)+'</small><p>'+esc(d.note)+'</p><small>'+esc(d.source)+(d.xy_cm?' · X/Y سم: '+esc(d.xy_cm.join(' / ')):'')+'</small><button type="button" class="mini" data-drawing-issue="'+i+'">تفاصيل وموضع</button></article>').join('')+'</details>';
+  }
+  function focusDrawing(i){
+    const d=(M.drawingIssues||[])[i]; if(!d) return;
+    const inds=(d.elements||[]).map(id=>idOf.get(id)).filter(j=>j!==undefined);
+    CLASH.endFocus(); clearHL();
+    if(inds.length){inds.forEach(ensureVisible);highlight(inds,0x2f81f7,true,.3);flyToBox(bboxOf(inds));}
+    else if(d.xy_cm&&LVL[d.level]){const p=new THREE.Vector3(d.xy_cm[0]/100,d.z_m==null?LVL[d.level].ffl:d.z_m,-d.xy_cm[1]/100);flyTo(p.clone().add(new THREE.Vector3(-3,4,5)),p);}
+    const val=v=>v==null?'غير محدد':JSON.stringify(v);
+    showDrawer('<section dir="rtl"><h3>'+esc(d.title)+'</h3><p>'+esc(d.note)+'</p><table class="ctab"><tr><th>المصدر</th><td>'+esc(d.source)+'</td></tr><tr><th>الموضع</th><td>'+esc(d.level||'عام')+' / '+esc(val(d.xy_cm))+' سم</td></tr><tr><th>المنسوب</th><td>'+esc(val(d.z_m))+' م</td></tr><tr><th>قبل</th><td>'+esc(val(d.before))+'</td></tr><tr><th>بعد</th><td>'+esc(val(d.after))+'</td></tr></table><p>الحالة تخص المجسم أو تعارض الأوراق؛ لا توثّق معالجة منفذة في الموقع.</p></section>',()=>{});
+    wake();
+  }
   function buildRoot(){
     if(built) return; built=true;
-    box.innerHTML='<div class="is-root" id="isRoot" data-kind="clash"><div class="is-tabs" role="tablist" aria-label="نوع القائمة" id="isTabs"></div><div id="isHead"></div><div class="is-bar" id="isBar"><div class="is-sum" id="isSum" aria-live="polite"></div><div class="is-views" role="tablist" id="isViews"></div></div><div class="is-tools" id="isTools"></div><div class="is-pane" id="isPane"></div></div>';
+    box.innerHTML=drawingIssuesHTML()+'<div class="is-root" id="isRoot" data-kind="clash"><div class="is-tabs" role="tablist" aria-label="نوع القائمة" id="isTabs"></div><div id="isHead"></div><div class="is-bar" id="isBar"><div class="is-sum" id="isSum" aria-live="polite"></div><div class="is-views" role="tablist" id="isViews"></div></div><div class="is-tools" id="isTools"></div><div class="is-pane" id="isPane"></div></div>';
     box.addEventListener('click',onClick); box.addEventListener('change',onChange); box.addEventListener('input',onInput); render(); }
 
   /* ---------------- focus in 3-D ---------------- */
@@ -584,14 +636,14 @@ function initIssues(ctx){
   /* ---------------- CSV ---------------- */
   const q2=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   function csv(kind){
-    kind=kind||S.kind; const rows=[]; const stl=(k,id)=>{ const e=entryOf(k,id)||{}; return [e.st?(k==='clash'?(CLS[e.st]||e.st):(GST[e.st]||e.st)):'',e.tx||'']; };
+    kind=kind||S.kind; const rows=[]; const stl=(k,id)=>{ const e=entryOf(k,id)||{},names=k==='clash'?CLS:GST,current=e.st&&isCurrent(k,id,e);return [e.st?(current?(names[e.st]||e.st):names.historical+' ('+(names[e.st]||e.st)+')'):'',e.tx||'',current?'مرتبط بالسياق الحالي':e.st?'تاريخي؛ لا يحسم تحقق المصدر':'',e.context?.viewer_version||'',e.context?.fingerprint||'']; };
     if(kind==='clash'){
-      rows.push(['id','الدرجة','الطابق','النظام','الخدمة','العائق','عنصر الخدمة','عنصر العائق','X سم','Y سم','المنسوب المطلق م','الارتفاع فوق الأرضية م','حجم التداخل م3','عمق التداخل سم','سماكة الخدمة سم','النطاق الحر م','السبب','الحل المقترح','حالة الموقع','حالتي','ملاحظتي']);
-      getRows('clash').forEach(g=>g.idx.forEach(ci=>{ const c=clashes[ci],s=stl('clash',ci); rows.push([c.id,TFULL[tierOf(c)],lvName(c.l),c.sys,c.svc,c.obs,c.ea,c.eb,Math.round(c.pt[0]*100),Math.round(-c.pt[2]*100),c.pt[1].toFixed(2),(c.pt[1]-LVL[c.l].ffl).toFixed(2),c.v,c.depth==null?'':c.depth,c.need==null?'':Math.round(c.need*100),c.band?c.band[0]+'..'+c.band[1]:'',c.why,c.fix,CLS[c.st||'open']||c.st,s[0],s[1]]); })); }
+      rows.push(['id','الدرجة','الطابق','النظام','الخدمة','العائق','عنصر الخدمة','عنصر العائق','X سم','Y سم','المنسوب المطلق م','الارتفاع فوق الأرضية م','حجم التداخل م3','عمق التداخل سم','سماكة الخدمة سم','النطاق الحر م','السبب','الحل المقترح','حالة مسجلة تاريخيًا من الملف','تأشير المستخدم','ملاحظتي','سياق التأشير','إصدار التأشير','بصمة سياق التأشير']);
+      getRows('clash').forEach(g=>g.idx.forEach(ci=>{ const c=clashes[ci],s=stl('clash',ci); rows.push([c.id,TFULL[tierOf(c)],lvName(c.l),c.sys,c.svc,c.obs,c.ea,c.eb,Math.round(c.pt[0]*100),Math.round(-c.pt[2]*100),c.pt[1].toFixed(2),(c.pt[1]-LVL[c.l].ffl).toFixed(2),c.v,c.depth==null?'':c.depth,c.need==null?'':Math.round(c.need*100),c.band?c.band[0]+'..'+c.band[1]:'',c.why,c.fix,(M.clashLog?.statuses||{})[c.st||'open']||c.st,...s]); })); }
     else {
-      rows.push(['نوع الصف','معرّف القاعدة','عنوان القاعدة','النوع','الأثر','عدد العناصر','معرّف العنصر','الوسم','نوع العنصر','الطابق','قبل X سم','قبل Y سم','قبل المنسوب م','مسافة النقل سم','تغيّر المنسوب سم','المضيف','طريقة التركيب','الثقة','لماذا','كيف','الأساس','ما يحسمه','حالتي','ملاحظتي']);
-      getRows('guess').forEach(R=>{ const r=R.r,s=stl('rule',r.id); rows.push(['قاعدة',r.id,r.title,(GU.kinds||{})[r.kind]||r.kind,IMPACT[r.impact].n,r.n,'','','','','','','','','','','','',r.why,r.how||'',r.basis,r.verify,s[0],s[1]]);
-        ruleItems(R).forEach(ii=>{ const I=ITEMS[ii],it=I.it,e=I.e,t=M.types&&M.types[e.t],s2=stl('guess',ii); rows.push(['قرار',r.id,r.title,(GU.kinds||{})[r.kind]||r.kind,IMPACT[r.impact].n,1,e.id,e.mark||'',(t&&t.n)||e.t,lvName(e.l),it.from?it.from[0]:'',it.from?it.from[1]:'',it.from?it.from[2]:'',it.cm==null?'':it.cm,it.dz==null?'':it.dz,it.host||'',MOUNT[it.k]||'',CONFN[it.conf]||'',r.why,r.how||'',r.basis,r.verify,s2[0],s2[1]]); }); }); }
+      rows.push(['نوع الصف','معرّف القاعدة','عنوان القاعدة','النوع','الأثر','عدد العناصر','معرّف العنصر','الوسم','نوع العنصر','الطابق','قبل X سم','قبل Y سم','قبل المنسوب م','مسافة النقل سم','تغيّر المنسوب سم','المضيف','طريقة التركيب','فئة النقل السابقة','لماذا','كيف','الأساس','ما يحسمه','تأشير المستخدم','ملاحظتي','سياق التأشير','إصدار التأشير','بصمة سياق التأشير']);
+      getRows('guess').forEach(R=>{ const r=R.r,s=stl('rule',r.id); rows.push(['قاعدة',r.id,r.title,(GU.kinds||{})[r.kind]||r.kind,IMPACT[r.impact].n,r.n,'','','','','','','','','','','','',r.why,r.how||'',r.basis,r.verify,...s]);
+        ruleItems(R).forEach(ii=>{ const I=ITEMS[ii],it=I.it,e=I.e,t=M.types&&M.types[e.t],s2=stl('guess',ii); rows.push(['قرار',r.id,r.title,(GU.kinds||{})[r.kind]||r.kind,IMPACT[r.impact].n,1,e.id,e.mark||'',(t&&t.n)||e.t,lvName(e.l),it.from?it.from[0]:'',it.from?it.from[1]:'',it.from?it.from[2]:'',it.cm==null?'':it.cm,it.dz==null?'':it.dz,it.host||'',MOUNT[it.k]||'',CONFN[it.conf]||'',r.why,r.how||'',r.basis,r.verify,...s2]); }); }); }
     return '﻿'+rows.map(r=>r.map(q2).join(',')).join('\n'); }
   function downloadCsv(){
     const text=csv(S.kind),d=new Date(),ds=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
@@ -627,6 +679,7 @@ function initIssues(ctx){
     if(a==='loc'){ const li=b.closest('.is-loc'); if(!li) return; if(li.dataset.ci!==undefined) focus('clash',+li.dataset.ci); else if(li.dataset.ii!==undefined) focus('guess',+li.dataset.ii); else if(li.dataset.ei!==undefined) focusEl(+li.dataset.ei); } }
   function onClick(ev){
     const t=ev.target; let b;
+    if((b=t.closest('[data-drawing-issue]'))){focusDrawing(+b.dataset.drawingIssue);return;}
     if((b=t.closest('[data-tab]'))){ setKind(b.dataset.tab); return; }
     if((b=t.closest('.is-tile'))){ toggleTile(b); return; }
     if((b=t.closest('#isLv [data-lv]'))){ toggleLevel(b.dataset.lv); return; }
@@ -668,10 +721,10 @@ function initIssues(ctx){
   function infoHTML(ei){
     let h=''; const ii=itemOfEl.get(ei);
     if(ii!==undefined){ const I=ITEMS[ii],it=I.it,cf=PAL.CONF[it.conf]||PAL.CONF.low,R=RULE_BY_ID.get(it.r);
-      h+='<div class="is-inf"><b>تخمين مسجَّل في «مركز المتابعة»</b>'+esc(R?R.r.title:'')+' — <span style="font-weight:600">'+esc(cf.n)+'</span>'+(it.from?' · نُقل '+Math.round(it.cm)+' سم عن موضع المخطط':' · سُحب '+Math.round(it.cm)+' سم إلى وجه الجدار')+'<br><button type="button" class="mini" data-iss="g:'+ii+'">اعرض «قبل ← بعد»</button></div>'; }
+      h+='<div class="is-inf"><b>تخمين تاريخي مسجَّل في «مركز المتابعة»</b>'+esc(R?R.r.title:'')+' — <span style="font-weight:600">'+esc(CONFN[it.conf]||'فئة نقل سابقة')+'</span>'+' · مسافة مسجلة '+Math.round(it.cm)+' سم؛ ليست انحرافًا مثبتًا في الإصدار الحالي<br><button type="button" class="mini" data-iss="g:'+ii+'">اعرض السجل والموضع الحالي</button></div>'; }
     const cl=clashesOfEl.get(ei);
     if(cl&&cl.length){ const sorted=cl.slice().sort((a,b)=>TRANK[tierOf(clashes[a])]-TRANK[tierOf(clashes[b])]);
-      h+='<div class="is-inf"><b>تعارضات يشارك فيها هذا العنصر ('+cl.length+')</b>'+sorted.slice(0,6).map(ci=>{ const c=clashes[ci],t=tierOf(c); return '<button type="button" class="chip" data-iss="c:'+ci+'" style="border-color:'+PAL.TIER[t].c+'"><span class="is-ic" style="--tc:'+PAL.TIER[t].c+'">'+PAL.TIER[t].i+'</span> '+esc(TLAB[t])+' — '+esc(ei===c.a?c.obs:c.svc)+'</button>'; }).join('')+(cl.length>6?' <small>و'+(cl.length-6)+' أخرى</small>':'')+'</div>'; }
+      h+='<div class="is-inf"><b>تعارضات يشارك فيها هذا العنصر ('+cl.length+')</b>'+sorted.slice(0,6).map(ci=>{ const c=clashes[ci],t=tierOf(c); return '<button type="button" class="chip" data-iss="c:'+ci+'" style="border-color:'+PAL.TIER[t].c+'"><span class="is-ic" style="--tc:'+PAL.TIER[t].c+'">'+PAL.TIER[t].i+'</span> '+esc(TLAB[t])+' — '+esc(clashOtherName(c,ei))+'</button>'; }).join('')+(cl.length>6?' <small>و'+(cl.length-6)+' أخرى</small>':'')+'</div>'; }
     return h; }
   document.addEventListener('click',ev=>{ const b=ev.target.closest&&ev.target.closest('[data-iss]'); if(!b) return; const p=b.dataset.iss.split(':'); if(p[0]==='g') focus('guess',+p[1]); else if(p[0]==='c') focus('clash',+p[1]); });
 

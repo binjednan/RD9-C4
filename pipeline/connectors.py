@@ -22,8 +22,10 @@ FEED_R = 100.0          # cm plan distance source surface ↔ conductor
 ID_RE = re.compile(r"-K\d{4}$")
 SRC_TEXT = "وصلة مشتقة من المسقط: الماسورة تنتهي عند الجهاز في الرسم؛ النزول الرأسي والوصلة الأخيرة مشتقان من منسوبَي الطرفين (اختبارات دورة الحياة، pipeline/connectors.py)"
 # type / material of a connector by the category of the conductor it continues
-CONN = {"P.cold": ("pipe_cold", "p_cold"), "P.hot": ("pipe_hot", "p_hot"), "P.drain": ("pipe_waste", "p_waste"), "P.ff": ("pipe_ff", "p_ff"), "M.duct": ("duct_flex", "m_duct")}
-CONN_SYS = {"vent_ea": ("duct_flex_ea", "m_duct_ea"), "vent_fa": ("duct_flex_fa", "m_duct_fa")}     # the ventilation ducts have their own types: the supply-air test must not count their flexible pieces
+CONN = {"P.cold": ("pipe_cold", "p_cold"), "P.hot": ("pipe_hot", "p_hot"), "P.drain": ("pipe_waste", "p_waste"), "P.storm": ("storm_pipe", "p_storm"), "P.ff": ("pipe_ff", "p_ff"), "M.duct": ("duct_flex", "m_duct")}
+CONN_SYS = {"vent_ea": ("duct_flex_ea", "m_duct_ea"), "vent_fa": ("duct_flex_fa", "m_duct_fa"),      # the ventilation and smoke ducts have their own types: the supply-air test must not count their flexible pieces
+            "smk_cp_fa": ("duct_flex_cp_fa", "m_duct_sm_fa"), "smk_cp_ea": ("duct_flex_cp_ea", "m_duct_sm_ea"),
+            "smk_co_fa": ("duct_flex_co_fa", "m_duct_sm_fa"), "smk_co_ea": ("duct_flex_co_ea", "m_duct_sm_ea")}
 
 
 def _ends(e):
@@ -115,7 +117,7 @@ class UF:
         self.p[a] = b; return True
 
 
-def build(M, verbose=False):
+def build(M, verbose=False, reserved_ids=None):
     els = M["els"]
     els[:] = [e for e in els if not ID_RE.search(e["id"])]
     sp = M["sp"]
@@ -123,6 +125,7 @@ def build(M, verbose=False):
     sidx = sp.index(SRC_TEXT)
     M.setdefault("types", {}).setdefault("duct_flex", {"n": "وصلة مجرى مرنة بين المجرى والناشر (مشتقة)", "cf": "derived", "sp": [["النوع", "وصلة مرنة مستديرة Ø 15–25 سم"], ["الأصل", "مشتقة من المسقط لإتمام اتصال الناشر بالمجرى"]], "sr": [SRC_TEXT]})
     counter = collections.Counter(); stats = collections.Counter(); new = []
+    reserved_ids = set(reserved_ids or [])
     world = L.World(els)
 
     def make(kind, host, other, pts, sysid, note, vtype=None):
@@ -134,9 +137,14 @@ def build(M, verbose=False):
         if vtype: ct = vtype
         if cm not in M["mats"]: cm = eh["m"]
         counter[(eh["c"], eh["l"])] += 1
+        candidate_id = f"{eh['c']}-{eh['l']}-K{sum(counter.values()):04d}"
+        # Reserve only bounded FHC continuity/retirement IDs; route geometry is unchanged.
+        while candidate_id in reserved_ids:
+            counter[(eh["c"], eh["l"])] += 1
+            candidate_id = f"{eh['c']}-{eh['l']}-K{sum(counter.values()):04d}"
         dia = _dia_cm(eh)
         length = sum(math.hypot(p[0] - q[0], p[1] - q[1]) / 100.0 + abs(p[2] - q[2]) for p, q in zip(pts, pts[1:]))
-        e = {"id": f"{eh['c']}-{eh['l']}-K{sum(counter.values()):04d}", "c": eh["c"], "l": eh["l"], "g": ["t", pts, dia], "mark": None, "t": ct, "m": cm,
+        e = {"id": candidate_id, "c": eh["c"], "l": eh["l"], "g": ["t", pts, dia], "mark": None, "t": ct, "m": cm,
              "a": {"connector": kind, "from": eh["id"], "to": eo["id"], "kind": note, "dia_mm": round(dia * 10), "length_m": round(length, 2)}, "s": [sidx]}
         if eh["c"] == "M.duct": e["a"].update({"w_cm": dia, "h_cm": dia})      # the sample library of the duct type reads the section size from these two attributes
         u = eo.get("u") or eh.get("u")
@@ -146,10 +154,10 @@ def build(M, verbose=False):
     for sd in L.SYSTEMS:
         sid = sd["id"]
         if sd.get("no_connectors"): continue                  # electricity: only drawn conductors connect (pipeline/elec_build.py), nothing is derived here
-        src = [i for i, e in enumerate(els) if sd["source"](e)]
-        ter = [i for i, e in enumerate(els) if sd["terminal"](e)]
+        src = [i for i, e in enumerate(els) if sd["source"](e) and not (e.get("a") or {}).get("no_connectors")]
+        ter = [i for i, e in enumerate(els) if sd["terminal"](e) and not (e.get("a") or {}).get("no_connectors")]
         for vname, vpred in sd["variants"]:
-            con = [i for i, e in enumerate(els) if vpred(e)]
+            con = [i for i, e in enumerate(els) if vpred(e) and not (e.get("a") or {}).get("no_connectors")]
             node = set(con) | set(src)
             for i in node | set(ter): world.prim(i)
             # ---- components of conductors + sources at TOL

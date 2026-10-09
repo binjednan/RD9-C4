@@ -13,6 +13,9 @@ def add(c,l,g,mark=None,typ=None,mat="conc",attrs=None,src=None,u=None,u2=None,f
     if u2: e["u2"]=f"{l}-{u2}"
     if grp: e["grp"]=grp
     els.append(e)
+def reserve_ids(c, n):
+    cnt[c] += n
+add.reserve_ids = reserve_ids
 units=[]
 for lvl in ("1","2","3","4","5"):
     AA.build_tower_level(els,add,lvl)

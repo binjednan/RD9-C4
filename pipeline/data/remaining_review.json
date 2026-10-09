@@ -1,0 +1,634 @@
+{
+  "version": 1,
+  "scope": "الأوراق78بلاcitationفيالجردالقديم؛عدمcitationلايعنيعدموجودهندسة؛نوعالمراجعةمذكورلكلصفحة",
+  "page_count": 78,
+  "pages": [
+    {
+      "set": "ARCH1",
+      "page": 1,
+      "title": "Perspective",
+      "review": "source_data_and_text",
+      "facts": "منظور NTS؛ لا محاور أو أبعاد تنفيذية.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH1",
+      "page": 2,
+      "title": "Calculation Table",
+      "review": "source_data_and_text",
+      "facts": "مساحة أرض2090.46م²؛ بدروم2016،أرضي343،نموذجي604.5،سطح112؛ GFA3597.5؛BAR28.9%؛FAR1.72؛مساحة خضراء370.5م²/17.7%.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH1",
+      "page": 14,
+      "title": "Section A-A",
+      "review": "source_data_and_text",
+      "facts": "فرق G–B مكتوب405سم؛ G+0.35 يوافق B−3.70 كمنسوب عام.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH1",
+      "page": 15,
+      "title": "Section B-B",
+      "review": "source_data_and_text",
+      "facts": "فرق G–B مكتوب405سم؛ قطاعات الواجهات والسلالم.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH1",
+      "page": 16,
+      "title": "Boundary Wall 01",
+      "review": "source_data_and_text",
+      "facts": "حد الأرض4570سم؛ قمة سورT.O.B+3.00؛W11؛إحالة A401.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 8,
+      "title": "Ramp Details 02",
+      "review": "source_visual_and_text",
+      "facts": "الميل الرئيسي15.5% في مسقطيB/G وقطاعG–G؛ انتقالي8% بطول300سم؛ FFLB−3.60/−3.70.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 10,
+      "title": "Door Details",
+      "review": "source_visual_and_text",
+      "facts": "أبواب خشب/فولاذ،مقاومة حريق/عادية،إطارات وتثبيت؛رسومات1:10.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 11,
+      "title": "Hardware Set / (Sheet 01 Of 02)",
+      "review": "source_visual_and_text",
+      "facts": "مجموعات1/2/3/5/6:باب غرف/مطبخ/درج؛ D5 درج داخلي60دقيقة،D6درج خارجي فولاذ90دقيقة معpanicbar.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 12,
+      "title": "Hardware Set / (Sheet 02 Of 02)",
+      "review": "source_visual_and_text",
+      "facts": "D7 له مجموعتان حسب الغرفة:قمامة مقابل كهرباء/هاتف/GSM/MCC؛ D11 يشملGAS/command/garbage؛D13سومب/ري؛D15مضخاتCHW.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 16,
+      "title": "Window Details",
+      "review": "source_visual_and_text",
+      "facts": "مقطعCW-VENT،عتبة سفلية وأعلى فتحة،عوازل وسيلكون ومحدد فتح12.5؛اتجاهOUTSIDE.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 18,
+      "title": "Garbage Chute / Structural Details",
+      "review": "source_visual_and_text",
+      "facts": "chute قطر600مم/سماكة1.5ممSS304؛vent300مم؛hopperإطار75×59ونت45×45سم/120دقيقة؛lockومؤشر؛fusiblelink75°C؛trolley1.1م³؛حلقةدعم وزوايا50×50×5.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 27,
+      "title": "Wardrobe Detail 03",
+      "review": "source_visual_and_text",
+      "facts": "رفوف/أدراج/architrave/skirting؛أبعاد أجزاء2.5/5/10سم.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 28,
+      "title": "Basement Floor / Reflected Ceiling",
+      "review": "source_data_and_text",
+      "facts": "غرف البدروم وC1؛lobby20.62م² وغرفةمضخة6.5م²؛منحدر16.5%.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 30,
+      "title": "Ceiling Details",
+      "review": "source_data_and_text",
+      "facts": "gypsum12.5مم؛قنوات40×15×2مم؛hangerقابلللضبط؛accesspanel؛زوايا طرفية وإطار ألمنيوم.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 33,
+      "title": "Curtain Wall Details",
+      "review": "source_visual_and_text",
+      "facts": "زجاجspandrel6مم؛XPS20ممU0.949W/m.K؛mullion100مم؛ventilationslot؛concreteface.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 36,
+      "title": "Canopy Details",
+      "review": "source_visual_and_text",
+      "facts": "ثلاث برجولات معدات: 1200×300،700×300،400×250 سم؛ ارتفاع295 سم من A1700،مواضع وحدود الأجزاء ثبتت في A105/A106؛ ألمنيوم box150/100 وPPC80 ميكرون بتأثير خشب. 3 إطارات و22 عمودًا و88 شريحة، المراسي غير مرسومة.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 37,
+      "title": "Ladder Details",
+      "review": "source_visual_and_text",
+      "facts": "عرض80سم؛أولدرجة40سمثم30سم؛الدرجةالأخيرة20سمتحت+27.25؛جوانب+50سم؛12درجةقطر2سم؛زاوية7.5×7.5×0.9سم؛تثبيتلوحة100×100×8مم.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 39,
+      "title": "Car Parking Details 02",
+      "review": "source_visual_and_text",
+      "facts": "cornerguardارتفاع1000مم/ذراع20سم؛wallguardقضبان كل30سم؛مرجعأنكرحسبالمطلوب.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 40,
+      "title": "Road Marking Arrow",
+      "review": "source_visual_and_text",
+      "facts": "سهممستقيم/يمين/يسارطول500سم،رأس75/205سم؛givewayوstoplineبعرض7.5سم.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 41,
+      "title": "Traffic Control / Sign Details",
+      "review": "source_visual_and_text",
+      "facts": "S1–S8 لوحات80×30سم،ألمنيومPPC3مم؛علاماتDN301/302/304 بحجمحسبDM.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 42,
+      "title": "",
+      "review": "source_visual_and_text",
+      "facts": "عنوان فعليTypicalRoof,WetArea,Threshold&BasementDetails؛SSL B−3.90/G−0.10؛غشاءpolyethylene4مم،screedوحمايةومداخلthreshold.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 43,
+      "title": "Reception Dusk / Details",
+      "review": "source_visual_and_text",
+      "facts": "مكتبخشبصلب/CHROME GOLD؛طولخارجي158وعرض64سم/طولداخلي150؛ارتفاع90سم=75+15.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 44,
+      "title": "Basement Floor Signage / Layouts",
+      "review": "source_data_and_text",
+      "facts": "علامات البدروم مرسومةبالغرفوالانتقال/اتجاهالمواقف.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 45,
+      "title": "Ground Floor Signage / Layouts",
+      "review": "source_data_and_text",
+      "facts": "علامات الأرضي/الغرفومرورالسيارات.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 46,
+      "title": "First Floor Signage / Layouts",
+      "review": "source_data_and_text",
+      "facts": "علامات الدورالأولوالوحدات1ST-01..06.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 47,
+      "title": "Typical Floor Signage / Layouts",
+      "review": "source_data_and_text",
+      "facts": "علامات الأدوارالنموذجية؛التفصيلالموضعيللغرفوالممر.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 48,
+      "title": "Roof Floor Signage / Layouts",
+      "review": "source_visual_and_text",
+      "facts": "العنوانRoofFloorSignagePlan،داخلها FIRST FLOOR PLAN/A2202 و1ST-01..06؛فحص بصريأكدشكلالدورالأول.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 52,
+      "title": "Landscape Section / Details 02",
+      "review": "source_visual_and_text",
+      "facts": "sections04/05/06:planterFL+1.05،walkFL+.95،ground+.20؛5درجات؛غشاء4مم،RC/lightweight/protection؛gazebo.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 53,
+      "title": "Landscape Section / Details 03",
+      "review": "source_visual_and_text",
+      "facts": "section07يربطgazebo/sails/parking؛detailA drive+.10،Bwalk+.20،Cparking+.20؛screed50مم،membrane4مم،slab30سم.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 55,
+      "title": "Preliminary Concept Drawing / Davitsystem",
+      "review": "source_visual_and_text",
+      "facts": "PRELIMINARYCONCEPT؛bracketsعلىparapet؛clearance1000مم؛cradleparkingعلىG؛أحمال/reactionsأساسيةبتصميمالمصنعالمعتمد.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ARCH2",
+      "page": 56,
+      "title": "Preliminary Concept Drawing / Davitsystem",
+      "review": "source_visual_and_text",
+      "facts": "PRELIMINARYCONCEPT؛cradle2م/طول2279مم؛SWL240كجمexclusive؛400V/50Hz/.74kW؛محركان400كجم/محرك؛SS316anchors.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 3,
+      "title": "General Notes 3",
+      "review": "source_visual_and_text",
+      "facts": "بلوكمدعمبزواياوجامبات؛أعمدةولنتلكل4م؛slabongrade12سم/A252؛فواصلmax6م؛dowelsT20/T25بحسبالسماكة؛2/3T12أساساتجدران.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 4,
+      "title": "General Notes 4",
+      "review": "source_visual_and_text",
+      "facts": "FOSROC أوequal؛piletop،kicker،lap،slab/wallconstruction/expansionjoints؛waterstopوswellablepipepenetration.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 5,
+      "title": "Basement Floor Loading Layout",
+      "review": "source_visual_and_text",
+      "facts": "Bzones1..4:garage/ramp،pump،stairs/corridor/lobby،watertank؛عنوانجدولKN/M3 كماطبع.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 6,
+      "title": "Ground Floor Loading Layout",
+      "review": "source_visual_and_text",
+      "facts": "Gzones2/3/4/6/7/9؛openlandscape/truckload15،extra19وملاحظة1.0mmaxwetbackfill؛عنوانKN/M3.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 7,
+      "title": "1St - 5Th Floor Loading Layout",
+      "review": "source_visual_and_text",
+      "facts": "1st–5thzones3corridor/stair و8residence؛residencelive3/partition4/finishes3بالجدول.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 8,
+      "title": "Roof Floor Loading Layout",
+      "review": "source_visual_and_text",
+      "facts": "Rzones2GRPtank10+finishes5؛6watertank24+finishes10؛7MEPchillers7.5+finishes5؛باقيroof/rooms.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 9,
+      "title": "Top Floor Loading Layout",
+      "review": "source_visual_and_text",
+      "facts": "Toproofzones5؛rooflive3/finish3؛tableKN/M3 كماطبع.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 10,
+      "title": "Foundation Reaction (Kn)",
+      "review": "source_visual_and_text",
+      "facts": "FoundationreactionkN،أعلى16300CORE1A؛النصLOADS BF+GF+5TYPICAL+3FLOOR(FUTURE)+ROOF.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "STR",
+      "page": 13,
+      "title": "Shoring Plan",
+      "review": "source_visual_and_text",
+      "facts": "IndicativeTEMPORARYSHORING،finaldesigncontractor/specialist/consultant/ADM؛PU18toe−10م؛dredgeline−5.3ولكنتعليق−5.2.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH1",
+      "page": 8,
+      "title": "00",
+      "review": "source_visual_and_text",
+      "facts": "AC-107: تفاصيل FAHU/FCU، صمامات التنفيس، مخمدات الحريق والدخان، حوامل الصواعد، نفاذ الجدران والسطح وتصريف التكاثف. فتحات وصول600×600مم. تفاصيلNTS وملاحظات لا تحدد مواقعXY.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH1",
+      "page": 9,
+      "title": "Ac Details",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH1",
+      "page": 10,
+      "title": "Ac Details",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH1",
+      "page": 29,
+      "title": "Ventilation Schedule",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 9,
+      "title": "Drainage Details",
+      "review": "source_visual_and_text",
+      "facts": "DR-106: ميول الصرف وفرشةB/O وفتحة التنظيف والمصيدة وغرف التفتيش ومضخات الغاطسة. جدول الحوامل50/82/110/160مم=1.10/1.40/1.50/1.80م أفقيًا و1.20/1.50/1.70/2.10م رأسيًا. لا تعميم مقاس التفصيل النموذجي بدل مسقطDR-010.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 16,
+      "title": "Fire Fighting Details",
+      "review": "source_data_and_text",
+      "facts": "هوية وسعات مضخات الإطفاء والتفاصيل دون استنتاجXY؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 17,
+      "title": "Site Plan / Water Supply Layout",
+      "review": "source_data_and_text",
+      "facts": "المياه والري: استخراج المصدر ومقارنة الخزانات والصاعد والمناسيب؛ DESIGN_WATER_SITE.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 23,
+      "title": "Water Supply Riser Diagram",
+      "review": "source_data_and_text",
+      "facts": "المياه والري: استخراج المصدر ومقارنة الخزانات والصاعد والمناسيب؛ DESIGN_WATER_SITE.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 25,
+      "title": "Basement Floor Plan / Irrigation Layout",
+      "review": "source_data_and_text",
+      "facts": "المياه والري: استخراج المصدر ومقارنة الخزانات والصاعد والمناسيب؛ DESIGN_WATER_SITE.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 26,
+      "title": "Ground Floor Plan / Irrigation Layout",
+      "review": "source_data_and_text",
+      "facts": "المياه والري: استخراج المصدر ومقارنة الخزانات والصاعد والمناسيب؛ DESIGN_WATER_SITE.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 32,
+      "title": "Basement Floor Plan / Chilled Water Connection Layout",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 33,
+      "title": "Ground Floor Plan / Chilled Water Connection Layout",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 34,
+      "title": "First Floor Plan / Chilled Water Connection Layout",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 35,
+      "title": "Typical Floor Plan / Chilled Water Connection Layout",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 36,
+      "title": "Roof Floor Plan / Chilled Water Connection Layout",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "MECH2",
+      "page": 37,
+      "title": "Chilled Water Riser Diagram",
+      "review": "source_data_and_text",
+      "facts": "مراجعة مقارنة CHW وتفاصيل AC والجداول؛ DESIGN_FIRE_CHW.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC1",
+      "page": 7,
+      "title": "Lighting Control System / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "EL-106 التحكم بالإنارة: حساس الحركة إرشادي؛المصمم/المقاول يحدد العدد النهائي؛إنارة الخارج بمؤقتوPhotocell",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC1",
+      "page": 8,
+      "title": "Site Plan / Power Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC1",
+      "page": 15,
+      "title": "Electrical / Load Schedule",
+      "review": "source_data_and_text",
+      "facts": "EP-106 إطار جدولالأحمال فقط؛لا يوجد جدولقابللاستخراج الأحمال داخل الصفحة",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC1",
+      "page": 18,
+      "title": "Electrical / General Details",
+      "review": "source_data_and_text",
+      "facts": "EP-109 تفاصيللوحاتومقابسوحامل؛صفحةNTSلا مواقعXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 1,
+      "title": "Ground Floor Plan / Earthing Protection Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 7,
+      "title": "Fire Alarm / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "FA-105 مخططإنذارالحريق:واجهةالمضخاتوالتهوية والتحكمبالإنارة والإنتركم؛FP200 2×2.5مم²في25مم",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 8,
+      "title": "Central Monitoring / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "FA-106 المراقبةالمركزية:أعدادEL/EXITوتوصيل2Core+E2.5مم²FP200في25مم؛بلاXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 9,
+      "title": "Voice Evacuation / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "FA-107 الإخلاءالصوتي:تحكمفيCOMMANDROOMوبطاريةDCوربطFACP؛بلاXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 10,
+      "title": "Fire Alarm / General Details",
+      "review": "source_data_and_text",
+      "facts": "FA-108 تفاصيلإنذارالحريق:لوحةومكررومناسيبالتثبيت؛بلاXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 11,
+      "title": "Basement Floor Plan / Lightning Protection Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 12,
+      "title": "Ground Floor Plan / Lightning Protection Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 13,
+      "title": "First Floor Plan / Spot",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 14,
+      "title": "Typical Floor Plan / Lightning Protection Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 17,
+      "title": "Lightning Protection / General Details",
+      "review": "source_data_and_text",
+      "facts": "LPT-106 تفاصيلصواعق:25×3مم،ربطبالتسليحواختبارالحفرة؛تعارض16ممبالمفتاحمع20ممبالتفصيل",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 24,
+      "title": "Smatv / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "LC-106 مخططSMATV:ثلاثأطباق120سمNilesat/Arabsat/Hotbird؛RG11/RG6وحامل16IF+1RF؛بلاXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 25,
+      "title": "Cctv / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "LC-107 مخططالإنتركم/CCTV؛توزيعوظيفيوتوصيلاتمنطقيةبلاXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 26,
+      "title": "Intercom / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "LC-108 تفاصيلالتيارالخفيف؛مقاساتوتركيببلاXY",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 27,
+      "title": "Site Plan / Power Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 28,
+      "title": "Basement Floor Plan / Telephone Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 32,
+      "title": "Roof Floor Plan / Telephone Layout",
+      "review": "source_data_and_text",
+      "facts": "استخراج مسقط المصدر ومراجعة رموزه ومفتاحه مع حفظPDF/transform؛ DESIGN_ELECTRICAL_REMAINING.md.",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 33,
+      "title": "Telephone / Schematic Diagram",
+      "review": "source_data_and_text",
+      "facts": "TE-105 مخططهاتف:2×100مم،MDFرفان42U،MINI-ODF600×600،ONU60×60×15/30؛لايشكل مسارXYZ",
+      "baseline_citations": 0
+    },
+    {
+      "set": "ELEC2",
+      "page": 34,
+      "title": "Telephone / General Details",
+      "review": "source_data_and_text",
+      "facts": "TE-106 تفصيلغرفMDFوGSMوODFورف12U300عمقًا؛بلاXY",
+      "baseline_citations": 0
+    }
+  ],
+  "known_prior_cited_pages": 148,
+  "source_sets": 7,
+  "source_pages": 226
+}

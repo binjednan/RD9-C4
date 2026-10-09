@@ -7,7 +7,7 @@ function initSamplesUI(ctx){
   const {M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}=ctx; const bbAll=elBB;
   const lib=window.__SAMPLES__; const pane=$('pSamp'); if(!lib||!pane||!LOD){ if(pane) pane.innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>'; return; }
   const CATN={architecture:'العمارة',electrical:'الكهرباء',mechanical:'الميكانيكا (تكييف وتهوية)',plumbing:'السباكة والصرف',fire:'الإطفاء',structure:'الإنشائي'};
-  const CONFN={doc:['من المستندات','#1a7f37'],derived:['مشتق من المستندات','#9a6700'],assumed:['افتراض — يحتاج تأكيد','#cf222e']};
+  const CONFN={doc:['مرجع عينة مذكور — ليس إثبات مطابقة','#1a7f37'],derived:['مشتق مرجع عينة مذكور — ليس إثبات مطابقة','#9a6700'],assumed:['افتراض — يحتاج تأكيد','#cf222e']};
   // instances per sample (units + catalog-only mapped types)
   const cnt={}; LOD.units.forEach(u=>cnt[u.sid]=(cnt[u.sid]||0)+1);
   const typeCnt={}; const rules=lib.map; M.els.forEach(e=>{ for(const r of rules){ if(r.c&&r.c!==e.c) continue; if(r.t){ if(r.t.endsWith('*')){ if(!(e.t&&e.t.startsWith(r.t.slice(0,-1)))) continue; } else if(r.t!==e.t) continue; } typeCnt[r.s]=(typeCnt[r.s]||0)+1; break; } });
@@ -32,10 +32,10 @@ function initSamplesUI(ctx){
     const ph=window.THUMBS?THUMBS.photoOfKey(id):null;
     $('smpInfo').innerHTML=`<h3>${esc(s.name)}</h3><div class="muted">${esc(s.en||'')} • <code>${esc(id)}</code> • <b style="color:${cf[1]}">${cf[0]}</b></div>${ph?'<div class="ithumb">'+THUMBS.photoFigure(ph)+'</div>':''}
       <div class="dimrow">${keys.map(k=>`<label>${k}<input type="number" data-d="${k}" value="${dims[k]}" step="1" min="0.1"></label>`).join('')}<span class="muted">سم — غيّر الأبعاد لرؤية تكيّف العينة</span></div>
-      ${(s.facts&&s.facts.length)?'<h4>من المستندات</h4><table class="ctab">'+s.facts.map(f=>`<tr><th>${esc(f[0])}</th><td>${esc(f[1])}</td></tr>`).join('')+'</table>':''}
+      ${(s.facts&&s.facts.length)?'<h4>مرجع عينة مذكور — ليس إثبات مطابقة</h4><table class="ctab">'+s.facts.map(f=>`<tr><th>${esc(f[0])}</th><td>${esc(f[1])}</td></tr>`).join('')+'</table>':''}
       ${(s.asm&&s.asm.length)?'<h4>افتراضات هندسية — تحتاج تأكيد</h4><ul class="asm">'+s.asm.map(a=>`<li>${esc(a)}</li>`).join('')+'</ul>':''}
       ${(s.src&&s.src.length)?'<h4>المصادر</h4><ul>'+s.src.map(a=>`<li>${esc(a)}</li>`).join('')+'</ul>':''}
-      <h4>الأجزاء المرسومة</h4><div class="muted parts" id="smpParts"></div>
+      <h4>أجزاء عينة العرض</h4><div class="muted parts" id="smpParts"></div>
       <div class="row" style="gap:6px;margin-top:8px"><button class="mini" id="smpGo" ${(cnt[id]?'':'disabled')}>${cnt[id]?'اذهب إلى أقرب موضع في المبنى':'لا استبدال تلقائي (كتالوج)'}</button><button class="mini" id="smpClose2">إغلاق</button></div>`;
     const names=[...new Set((s.parts||[]).map(p=>p.n).filter(Boolean))]; $('smpParts').textContent=names.join(' • ')||'—';
     build(id,dims); wrap.appendChild(R.renderer.domElement);

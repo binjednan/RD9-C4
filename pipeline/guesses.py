@@ -55,6 +55,7 @@ def _centre(e):
 def _hosts(els):
     H = collections.defaultdict(lambda: {"wall": [], "ceil": [], "floor": [], "equip": []})
     for i, e in enumerate(els):
+        if e.get('a',{}).get('alt'): continue
         c = e["c"]; lv = e["l"]
         if c in WALL_CATS or c == "S.beam":
             p, z0, z1 = _pz(e)
@@ -88,13 +89,20 @@ def intent_of(t, wall_types, samples):
 
 def relocate(M, els, wall_types, samples=None):
     """moves every 'unsupported' element to its most plausible host; returns the ids moved and the ids that found no host"""
+    # Owner 2026-10-09: preserve every drawn position; host inference cannot move it.
+    if M.get('meta',{}).get('owner_render_only'): return [], []
     samples = samples or {}
     H = _hosts(els); moved = []; failed = []
     fcus = collections.defaultdict(list)
     for i, e in enumerate(els):
+        if e.get('a',{}).get('alt'): continue
         if e["c"] == "M.equip" and e.get("t") == "fcu" and e["g"][0] == "b": fcus[e["l"]].append(i)
     for i, e in enumerate(els):
+        if e.get('a',{}).get('alt'): continue
         a = e.get("a") or {}
+        if a.get("sys") or a.get("source_locked_xy") or e["c"] in ("M.pipe", "M.duct", "P.cold", "P.hot", "P.drain", "P.ff") and e["g"][0] in ("b","cyl","r"):
+            # A missing host is a finding, never a reason to move a drawn network.
+            continue
         if a.get("unsupported") and e["g"][0] in ("t", "d"):          # pipes / ducts with no support: a stand to the floor below, else a hanger to the soffit above (<= 2 m)
             zs = [p[2] for p in e["g"][1]]; half = (e["g"][2] / 200.0) if e["g"][0] == "t" else (e["g"][3] / 200.0)
             zmin, zmax = min(zs) - half, max(zs) + half; lv = e["l"]
@@ -107,7 +115,9 @@ def relocate(M, els, wall_types, samples=None):
                     a["stand_cm"] = max(8, round((zmin - max(fl)) * 100)); kind = "stand"
                 else:
                     a["hang_cm"] = max(8, round((min(ce) - zmax) * 100)); kind = "hang"
-                a.pop("unsupported", None); a["guess_from"] = [round(cx, 1), round(cy, 1), round(zmin, 3)]; a["guess_kind"] = kind; a["guess_cm"] = 0.0; a["guess_dz_cm"] = 0.0; a["guess_conf"] = "med"
+                a.pop("unsupported", None); a.pop("guess_from", None)
+                a["support_assumption"] = "قائم/تعليق مشتق من سطح النموذج عند مركز المسار؛ لم تتغير XY أو Z. يلزم اعتماد تفصيل التثبيت."
+                a["guess_kind"] = kind; a["guess_cm"] = 0.0; a["guess_dz_cm"] = 0.0; a["guess_conf"] = "med"
                 a["mount_note"] = "تخمين: خط أنابيب بلا حامل في النموذج؛ الموضع كما في المسقط وأُضيف " + ("قائم" if kind == "stand" else "تعليق") + " — بانتظار تأكيد الأز-بيلت"
                 e["a"] = a; moved.append(e["id"])
             continue
@@ -332,7 +342,7 @@ def registry(M, els):
     drops = [i for i, e in enumerate(els) if e.get("t") == "sprk_drop"]
     rule("G-SPRKDROP", "dim", "low", "وصلات الرشاشات 25 مم", "المخطط يرسم رمز الرشاش فقط", "وصلة 1\" (NFPA 13) بين الرشاش وأنبوب الفرع", "FF-100..105 + NFPA 13", "الأز-بيلت: شبكة الرشاشات", idxs=drops)
     pile = [i for i, e in enumerate(els) if e["c"] == "S.pile"]
-    rule("G-PILE", "repr", "low", "طول الخازوق للعرض 30 سم", "الطول الفعلي 13 م لا يُعرض كاملًا", "يُعرض 30 سم تحت اللبشة للدلالة", "STR ص11–12", VERIFY["repr"], idxs=pile)
+    rule("G-PILE", "repr", "low", "مرجع رأس الخازوق مشتق؛ الغرس ومنسوب القطع غير مثبتين", "STR ص11 يحدد طول الخازوق 13 م وقطره 60 سم؛ غرس الرأس ومنسوب القطع غير مرقمين", "يُعرض الطول 13 م؛ قمة الجسم −5.40 م مشتقة من أسفل PC1، وليست منسوب قطع معتمدًا", "STR ص11–12", VERIFY["repr"], idxs=pile)
     stage = [i for i, e in enumerate(els) if e["c"] == "A.stage"]
     rule("G-STAGE", "repr", "low", "كماليات إخراجية (أثاث، ستائر، نباتات، سيارات، ألعاب)", "غير مشمولة بالعقد؛ تُعرض لقراءة الفراغ فقط", "مواضعها وألوانها اقتراح للعرض وتُخفى بمفتاح واحد", "A2300 + الصور + اقتراح",
          "لا تحقق مطلوب (للعرض)", idxs=stage)

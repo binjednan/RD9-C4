@@ -21,6 +21,7 @@ from shapely.geometry import Polygon, box, Point
 from shapely.affinity import rotate as _rot
 from shapely.ops import unary_union
 from shapely.strtree import STRtree
+from shapely import remove_repeated_points
 
 SRC = ["A500: جدول التشطيبات (خلايا الأرضيات) وA102/A103: مخططات الأدوار — حدود الخلايا والجدران من النموذج نفسه", "المستندات لا تحدد مكوّنات طبقة التسوية؛ الارتفاع = الفرق بين منسوب البلاطة الإنشائية وأسفل التشطيب"]
 MAT = {"floor_buildup": {"name": "طبقة التسوية تحت التشطيب (مونة / تسوية — تقديرية)", "color": "#c9c6bc", "rough": 0.95, "code": "A500/STR"}}
@@ -53,6 +54,14 @@ def _foot(e):
 
 def _parts(geom):
     return list(geom.geoms) if hasattr(geom, "geoms") else [geom]
+
+
+def _distance(a, b):
+    # Some valid source rings repeat a vertex consecutively (A.floor-B-1534).
+    # GEOS distance then warns while evaluating the zero-length edge.  Remove
+    # exact repeats only in these temporary measurement inputs: no XY, source
+    # polygon, output geometry, area, or tolerance is changed.
+    return remove_repeated_points(a, tolerance=0).distance(remove_repeated_points(b, tolerance=0))
 
 
 def _ring(c):
@@ -95,8 +104,8 @@ def build(M):
         for g in _parts(gap):
             if g.is_empty or g.geom_type != "Polygon" or g.area < 4 or g.area > MAX_STRIP_M2 * 1e4: continue
             if not g.buffer(-THIN_CM / 2).is_empty: stats["wide_left"] += 1; continue
-            touch = [i for i in tree.query(g.buffer(1.5)) if cell_polys[i].distance(g) < 1.0]
-            if not touch or solid_u.is_empty or solid_u.distance(g) > 1.0: stats["no_neighbour"] += 1; continue
+            touch = [i for i in tree.query(g.buffer(1.5)) if _distance(cell_polys[i], g) < 1.0]
+            if not touch or solid_u.is_empty or _distance(solid_u, g) > 1.0: stats["no_neighbour"] += 1; continue
             best = max(touch, key=lambda i: g.buffer(1.5).intersection(cell_polys[i]).area)
             strips.append((g, cells[best]))
         for g, (ce, cp, z0, z1) in strips:

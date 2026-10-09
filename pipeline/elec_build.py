@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Electrical conductors + distribution boards as model elements (data: pipeline/data/elec_wires.json from pipeline/elec_wires.py).
 
-  boards      the label of every board symbol of the power plans becomes an E.panel box (DB-F1 … DB-F6, DB-SR, SMDB-n); a board the model already has (symbol class e_P18, MDB) is reused
+  boards      a DB name bound by its actual source arrow to a verified symbol reuses that symbol; other legacy labels retain their explicitly assumed E.panel proxy
   circuits    every drawn conductor chain becomes E.tray tubes at the height the wiring runs: lighting in the ceiling void just above the highest fixture of the chain (Z_VOID), power (drawn dashed = concealed
               in the floor) in the screed.  ONE elevation per chain, so the polylines of a chain keep touching each other
   drops       from a chain down / up to every device of its family within SNAP of it in plan (fixtures + switches for lighting, sockets for power)
@@ -19,6 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import connectors as C
 
 DATA = os.path.join(HERE, "data", "elec_wires.json")
+SEMANTIC_DATA = os.path.join(HERE, 'data', 'electrical_symbol_semantics.json')
 ID_RE = re.compile(r"-W\d{4}$")
 LEVELS = {"B": ["B"], "G": ["G"], "1": ["1"], "TY": ["2", "3", "4", "5"], "R": ["R"], "T": ["T"]}
 SNAP = 40.0               # cm  a device this close to a chain (plan) hangs on it (the placement passes move devices up to ~40 cm to the wall / ceiling grid)
@@ -43,7 +44,7 @@ TYPES = {
     "det_db": {"n": "لوحة توزيع (DB)", "cf": "derived", "sp": [["الأصل", "تسمية اللوحة في مسقط القدرة؛ الأبعاد افتراض 50×15×70 سم"]], "sr": []},
 }
 LIGHT_T = lambda e: (e["c"] in ("E.light",) and (e.get("t") or "").startswith("e_L")) or (e["c"] == "E.socket" and (e.get("t") or "").startswith("e_S"))
-POWER_T = lambda e: e["c"] == "E.socket" and (e.get("t") or "").startswith("e_P") and e.get("t") not in ("e_P14", "e_P15", "e_P16", "e_P18")
+POWER_T = lambda e: e["c"] == "E.socket" and (e.get("t") or "").startswith("e_P") and e.get("t") not in ("e_P14", "e_P15", "e_P16", "e_P17", "e_P18")
 
 
 def _poly_len(pl): return sum(math.hypot(a[0] - b[0], a[1] - b[1]) for a, b in zip(pl, pl[1:]))
@@ -108,6 +109,18 @@ def build(M, verbose=False):
 
     def elem(i): return els[i] if i < len(els) else new[i - len(els)]
 
+    # This table binds a printed name/leader/glyph in one source sheet and level.
+    # It replaces label-centred duplicate DB proxies; no model distance chooses it.
+    source_boards = {}
+    if os.path.exists(SEMANTIC_DATA):
+        for proof in json.load(open(SEMANTIC_DATA, encoding='utf-8')).get('board_reuse', []):
+            key = (proof['sheet_archive_key'], proof['level'], proof['archive_board_name'],
+                   tuple(proof['archive_board_xy_cm']))
+            if key in source_boards:
+                raise ValueError('Duplicate source DB identity in reviewed symbol data')
+            source_boards[key] = proof
+    by_identity = {e['id']: i for i, e in enumerate(els)}
+    reused_boards = []; retired_board_drops = []
     boards_of = {}                                           # (sheet key, level) -> {name: element index}
     for sk, levels in LEVELS.items():
         psheet = D.get("power|" + sk)
@@ -116,7 +129,22 @@ def build(M, verbose=False):
             f0 = ffl[lv]; bd = {}
             for b in (psheet["boards"] if psheet else []):
                 name = b["n"]; hit = None
-                for i in devs[lv]:
+                proof = source_boards.get((sk, lv, name, (b['x'], b['y'])))
+                if proof:
+                    i = by_identity.get(proof['symbol_id'])
+                    if i is None:
+                        raise ValueError('Verified source DB symbol missing: '+proof['symbol_id'])
+                    e = els[i]
+                    if (e['l'], e.get('t'), e.get('mark')) != (lv, 'e_P17', name) or not e.get('a', {}).get('source_semantics_checked'):
+                        raise ValueError('Verified source DB symbol has not received its semantic correction: '+proof['symbol_id'])
+                    hit = i
+                    reused_boards.append(proof)
+                    stats['boards_reused_from_raw_glyph'] += 1
+                    # Reserve the former generated-board ordinal so replacing
+                    # its proxy does not renumber unrelated conductor/drop IDs.
+                    if proof.get('former_derived_board_ids'):
+                        counter[('E.panel', lv)] += 1
+                for i in ([] if proof else devs[lv]):
                     e = els[i]
                     if e["g"][0] != "b": continue
                     near = math.hypot(e["g"][1] - b["x"], e["g"][2] - b["y"]) < 90
@@ -143,9 +171,12 @@ def build(M, verbose=False):
             chains = [[q for parts in ch for q in parts] for ch in parts_of]
             # ---- 1. every device of the family hangs on the nearest drawn conductor (plan distance <= SNAP)
             att = collections.defaultdict(list)                                         # chain index -> [(element index, anchor)]
+            retired_att = collections.defaultdict(list)                                 # ordinal bookkeeping only; never emit a board port from proximity
             for i in devs[lv]:
                 e = els[i]
-                if not sel(e): continue
+                is_load = sel(e)
+                reserve_board = fam == "power" and e.get("t") == "e_P17" and e["c"] == "E.socket"
+                if not is_load and not reserve_board: continue
                 A = C.anchor(e)
                 if A is None: continue
                 best = (1e18, None)
@@ -153,7 +184,8 @@ def build(M, verbose=False):
                     for pl in ch:
                         d, _ = C.closest_on_poly([[x, y, 0.0] for x, y in pl], A[0], A[1])
                         if d < best[0]: best = (d, ci)
-                if best[1] is not None and best[0] <= SNAP: att[best[1]].append((i, A))
+                if best[1] is not None and best[0] <= SNAP:
+                    (att if is_load else retired_att)[best[1]].append((i, A))
             # ---- 2. one elevation per chain
             zc = {}
             for ci in range(len(chains)):
@@ -179,7 +211,9 @@ def build(M, verbose=False):
             # ---- 3. drops to the devices
             by_chain = collections.defaultdict(list)
             for c, pts, wi in polys: by_chain[c].append((pts, wi))
-            for i, ci, A in sorted((i, ci, A) for ci, lst in att.items() for i, A in lst):      # device order (stable ids)
+            attachments = [(i, ci, A, False) for ci, lst in att.items() for i, A in lst]
+            attachments += [(i, ci, A, True) for ci, lst in retired_att.items() for i, A in lst]
+            for i, ci, A, retired in sorted(attachments):                                # device order (stable ids)
                 e = els[i]; best = (1e18, None, None)
                 for pts, wi in by_chain.get(ci, []):
                     d, pc = C.closest_on_poly(pts, A[0], A[1])
@@ -187,6 +221,22 @@ def build(M, verbose=False):
                 if best[1] is None: continue
                 route = C.route(best[1], C.attach_point(e, best[1]))
                 if not route: continue
+                if retired:
+                    # The former socket classifier generated a drop to this DB
+                    # solely from its nearest chain. No raw port/path record
+                    # authorizes that connection. Reserve its historical ordinal
+                    # so all other conductor IDs/geometry remain stable.
+                    number = sum(counter.values()) + 1
+                    counter[("retired_board_drop", lv, fam)] += 1
+                    retired_board_drops.append({"id": f"E.tray-{lv}-W{number:04d}",
+                        "to": e["id"], "from": elem(best[2])["id"], "level": lv,
+                        "former_derived_geometry": ["t", route, 1.6],
+                        "source_semantics_record_sha256": e.get("a", {}).get("source_semantics_record_sha256"),
+                        "source_board_identity": e.get("a", {}).get("source_board_identity"),
+                        "raw_port_reference": None, "ordinal_reserved": True,
+                        "reason_ar": "لوحة DB مصدرية وليست مقبسًا. النزول القديم تولد من أقرب خط فقط؛ لا يوجد شاهد مسار/منفذ مصدر لهذا النزول، فحذف دون إعادة ترقيم الموصلات الأخرى."})
+                    stats["retired_untraced_board_drops"] += 1
+                    continue
                 add("E.tray", lv, ["t", route, 1.6], "wire_drop", "m_wire", a={"kind": "نزول إلى الجهاز", "from": elem(best[2])["id"], "to": e["id"], "dia_mm": 16,
                     "length_m": round(sum(math.hypot(p[0] - q[0], p[1] - q[1]) / 100.0 + abs(p[2] - q[2]) for p, q in zip(route, route[1:])), 2)}, u=e.get("u"))
                 stats["drops_" + fam] += 1
@@ -218,6 +268,17 @@ def build(M, verbose=False):
                             "length_m": round(CIRCUIT_END / 100.0, 2), "plan_m": round(math.hypot(bx - p[0], by - p[1]) / 100.0, 1), "assumed": CIRCUIT_END_ASSUMED}, u=elem(wi).get("u"))
                         stats["circuit_end_" + fam] += 1
     els.extend(new)
+    M.setdefault('meta', {})['electrical_source_board_reuse'] = {
+        'count': len(reused_boards), 'proofs': reused_boards,
+        'former_derived_board_ids': [eid for p in reused_boards for eid in p.get('former_derived_board_ids', [])],
+        'method': 'source arrow + printed name + sheet + level; exact archived board row identity',
+        'limit_ar': 'هوية اللوحة ومركز رمزها مثبتان؛ غلاف العرض ومنسوبه ومادته ليست معتمدة من ذلك السهم.',
+    }
+    M['meta']['electrical_board_drop_retirements'] = {
+        'count': len(retired_board_drops), 'records': retired_board_drops,
+        'geometry_scope': 'Only untraced proximity-generated board drops omitted; other conductor ordinals reserved',
+        'source_limit': 'DB symbol and its name are source-verified; this supplies no undocumented board port or feeder path',
+    }
     if verbose: print("elec wires:", len(new), dict(stats))
     return len(new)
 

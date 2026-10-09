@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "pass": true,
+    "findings": 0,
+    "existing_door_ids": 204,
+    "raw_unique_door_groups": 81,
+    "jamb_profiles_compared": 162,
+    "generic_detail_records": 2,
+    "source_conflicts": 2,
+    "code_counts": {
+      "D1": 30,
+      "D2": 58,
+      "D3": 81,
+      "D4": 10,
+      "D5": 10,
+      "D7": 15
+    },
+    "architrave_conflict_affected_instances": 204,
+    "NR_skin_conflict_affected_instances": 139,
+    "physical_components_added": 0,
+    "geometry_changed": false
+  },
+  "errors": [],
+  "source_proof": {
+    "pass": true,
+    "errors": [],
+    "sources": [
+      {
+        "source": "ARCH1",
+        "pass": true
+      },
+      {
+        "source": "ARCH2",
+        "pass": true
+      }
+    ],
+    "crop_checks": [
+      {
+        "detail": "FR",
+        "pass": true
+      },
+      {
+        "detail": "NR",
+        "pass": true
+      }
+    ],
+    "schedule_checks": [
+      {
+        "code": "D1",
+        "pass": true
+      },
+      {
+        "code": "D2",
+        "pass": true
+      },
+      {
+        "code": "D3",
+        "pass": true
+      },
+      {
+        "code": "D4",
+        "pass": true
+      },
+      {
+        "code": "D5",
+        "pass": true
+      },
+      {
+        "code": "D7",
+        "pass": true
+      }
+    ],
+    "scope": "unchanged PDFs + visually inspected A701 crops + A700 typed text; no new 3D/source-registration acceptance"
+  },
+  "source_data_sha256": "c1de25af4ff44d00bd60008ba7e7009e7d01da95837c6434eb6006340559d0ec",
+  "acceptance_scope": "new typed conflict records only; original leaf geometry and all whole-assembly acceptance flags remain unchanged"
+}

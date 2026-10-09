@@ -1,0 +1,40 @@
+{
+  "source": {
+    "file": "Arch. Drawings Part II.pdf",
+    "file_key": "ARCH2",
+    "page": 49,
+    "drawing": "A2300"
+  },
+  "els": [
+    {
+      "id": "A.stage-G-A2300PL0288",
+      "c": "A.stage",
+      "l": "G",
+      "t": "source_a2300_small_plant",
+      "m": "plant_c",
+      "g": ["sph", 1603, 2506, 12, 0.2, 0.55, 6, 4],
+      "mark": "GC/SUC",
+      "stage": "plant"
+    },
+    {
+      "id": "A.stage-G-A2300PL0289",
+      "c": "A.stage",
+      "l": "G",
+      "t": "source_a2300_small_plant",
+      "m": "plant_a",
+      "g": ["sph", 1555, 2582, 12, 0.2, 0.55, 6, 4],
+      "mark": "GC/SUC",
+      "stage": "plant"
+    },
+    {
+      "id": "A.stage-G-A2300PL0290",
+      "c": "A.stage",
+      "l": "G",
+      "t": "source_a2300_small_plant",
+      "m": "plant_b",
+      "g": ["sph", 1652, 2481, 12, 0.2, 0.55, 6, 4],
+      "mark": "GC/SUC",
+      "stage": "plant"
+    }
+  ]
+}

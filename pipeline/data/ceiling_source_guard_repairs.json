@@ -1,0 +1,217 @@
+{
+  "records": {
+    "E.light-G-0651": {
+      "category": "E.light",
+      "type": "e_L7",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 12.0,
+      "source_xy_cm": [
+        595.001155029297,
+        969.6296149902346
+      ],
+      "unsupported_fallback_z_m": [
+        5.29,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.58,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.light-G-0652": {
+      "category": "E.light",
+      "type": "e_L7",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 12.0,
+      "source_xy_cm": [
+        595.001155029297,
+        829.5300783691409
+      ],
+      "unsupported_fallback_z_m": [
+        5.29,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.58,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.light-G-0653": {
+      "category": "E.light",
+      "type": "e_L7",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 12.0,
+      "source_xy_cm": [
+        174.70334710693373,
+        829.5300783691409
+      ],
+      "unsupported_fallback_z_m": [
+        5.29,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.58,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.light-G-0654": {
+      "category": "E.light",
+      "type": "e_L7",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 12.0,
+      "source_xy_cm": [
+        174.70334710693373,
+        969.6296149902346
+      ],
+      "unsupported_fallback_z_m": [
+        5.29,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.58,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.fa-G-0222": {
+      "category": "E.fa",
+      "type": "e_F1",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 5.0,
+      "source_xy_cm": [
+        189.15422215270996,
+        942.7810075073239
+      ],
+      "unsupported_fallback_z_m": [
+        5.3,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.59,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.emerg-G-0123": {
+      "category": "E.emerg",
+      "type": "e_F11",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 7.0,
+      "source_xy_cm": [
+        188.73089173889161,
+        994.8397772216795
+      ],
+      "unsupported_fallback_z_m": [
+        5.32,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.61,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.fa-G-0223": {
+      "category": "E.fa",
+      "type": "e_F1",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 5.0,
+      "source_xy_cm": [
+        189.15422215270996,
+        802.6886708374022
+      ],
+      "unsupported_fallback_z_m": [
+        5.3,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.59,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.emerg-G-0124": {
+      "category": "E.emerg",
+      "type": "e_F11",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 7.0,
+      "source_xy_cm": [
+        188.73089173889161,
+        854.7474405517578
+      ],
+      "unsupported_fallback_z_m": [
+        5.32,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.61,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.emerg-G-0135": {
+      "category": "E.emerg",
+      "type": "e_F11",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 7.0,
+      "source_xy_cm": [
+        597.3692215270996,
+        830.1992277832032
+      ],
+      "unsupported_fallback_z_m": [
+        5.32,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.61,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    },
+    "E.emerg-G-0136": {
+      "category": "E.emerg",
+      "type": "e_F11",
+      "level": "G",
+      "kind": "cyl",
+      "radius_cm": 7.0,
+      "source_xy_cm": [
+        597.5808329162599,
+        972.8313316650392
+      ],
+      "unsupported_fallback_z_m": [
+        5.32,
+        5.36
+      ],
+      "retained_assumed_z_m": [
+        2.61,
+        2.65
+      ],
+      "unsupported_ceil_dz": 2.31,
+      "retained_assumed_ceil_dz": -0.4
+    }
+  },
+  "scope_ar": "إلغاء ارتفاع مشتق نشأ من فقد قناع فتحة بعد إصلاح ترميز مطابق المجال؛ يرجع Z الافتراضي السابق فقط ولا يثبت منسوب تركيب من المصدر. XY من الرمز المرسوم يحفظ مستقلًا.",
+  "before_snapshot": "model-source-preflight-lhs-gc.json",
+  "after_snapshot": "model-source-preflight-before-wst.json"
+}

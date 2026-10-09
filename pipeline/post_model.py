@@ -23,14 +23,84 @@ from shapely.affinity import rotate as shp_rotate
 from shapely.strtree import STRtree
 
 SRC = os.path.join(os.path.dirname(HERE), "src", "model.json")
+# The X sequence uses a minimum of four digits; it may grow beyond 9999.
+# Parse the full sequence so later rebuilds retire/reuse every accessory once.
+X_SUFFIX = re.compile(r"-X(\d{4,})$")
 M = json.load(open(SRC, encoding="utf-8"))
+# Owner drawing-only mode keeps the current base shapes and all legacy analyses.
+# Regenerate only literal source alternatives; none enter correction engines.
+if M.get('meta',{}).get('owner_render_only'):
+    import source_drawings_delivery as _DRAW
+    from source_batch import remap_index_refs as _remap_source_indices
+    _before_ids=[e['id'] for e in M['els']]
+    M['els'][:]=[e for e in M['els'] if not e.get('a',{}).get('alt') and not e['id'].endswith('-ALT')]
+    M['_source_index_remap_pending']=True
+    try:
+        summary=_DRAW.apply(M)
+    finally:
+        M.pop('_source_index_remap_pending',None)
+    _DRAW.display_only(M)
+    _after_index={e['id']: i for i,e in enumerate(M['els'])}
+    _remap_source_indices(M,{i:_after_index[eid] for i,eid in enumerate(_before_ids) if eid in _after_index},
+                          [i for i,eid in enumerate(_before_ids) if eid not in _after_index])
+    with open(SRC+'.tmp','w',encoding='utf-8') as _output:
+        json.dump(M,_output,ensure_ascii=False,separators=(',',':'))
+    os.replace(SRC+'.tmp',SRC)
+    print('Source drawings written')
+    sys.exit(0)
+import source_audit_sidecar as _SOURCE_INPUTS
+M = _SOURCE_INPUTS.audit_model(M)
+M.setdefault('meta',{})['owner_render_only']=True
 els = M["els"]
-PREV_X = [e for e in els if re.search(r"-X\d{4}$", e["id"])]               # the accessories of the previous run: a rebuilt accessory with the same shape keeps its old id (see the X merge below)
-els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]      # accessories of pipeline/extras.py are rebuilt below (keep them out of every earlier pass)
+# Source alternatives are regenerated last; they never enter the existing model
+# correction, support, lifecycle or clash passes.
+els[:] = [e for e in els if not e.get('a',{}).get('alt') and not e['id'].endswith('-ALT')]
+import door_source_templates as _DOOR_SOURCE
+_DOOR_SOURCE.restore_before_post(M, els)
+import fire_cabinet_post_adapter as _FC_POST
+_fhc_captured_links = _FC_POST.capture_before_K_cleanup(M, els)
+import completion_post_adapter as _COMPLETION_POST
+print("restore continuation inputs:", _COMPLETION_POST.restore_before_post(M, els)["equipment_restored"])
+import core_stairs_source_surfaces as _CSF
+if M.get('meta', {}).get('core_stairs_source_surfaces'):
+    print('restore controlled stair input for legacy generators:', _CSF.restore_before_post(M, els))
+import structural_topology_repairs as _STP
+print("structural polygon representation repair:", _STP.apply(M, els))
+import raft_source_restore as _RAF
+_RAF.build(M, els, verbose=True)
+import stair01_roof_source_correction as _SCR
+_scr = _SCR.apply(M, els)
+print("stair01 roof source correction:", {k:v for k,v in _scr.items() if isinstance(v,(int,float,bool,str))})
+import top_roof_shaft_openings_source as _TRO
+_tro = _TRO.apply(M, els)
+print("top roof source shaft openings:", {k:v for k,v in _tro.items() if isinstance(v,(int,float,bool,str))})
+import d16_source_remaining as _D16
+_d16_existing = [e for e in els if '-D16' in e['id'] or e.get('a',{}).get('d16_source_remaining') or e.get('grp') == 'D16-G-source']
+if _d16_existing or M.get('meta',{}).get('d16_source_remaining'):
+    sys.path.insert(0, os.path.join(os.path.dirname(HERE), 'tools'))
+    import check_d16_source_remaining as _D16_GATE
+    _d16_check = _D16_GATE.audit(M)
+    if _d16_check['summary']['findings'] or _d16_check['summary']['uncovered']:
+        raise ValueError('Existing D16 original-source inventory failed before post corrections')
+# Reinsert the exact checked polygons after generic door/level corrections.
+_d16_ids = {e['id'] for e in _d16_existing}
+els[:] = [e for e in els if e['id'] not in _d16_ids]
+PREV_X = [e for e in els if X_SUFFIX.search(e["id"])]               # the accessories of the previous run: a rebuilt accessory with the same shape keeps its old id (see the X merge below)
+els[:] = [e for e in els if not X_SUFFIX.search(e["id"])]      # accessories of pipeline/extras.py are rebuilt below (keep them out of every earlier pass)
 els[:] = [e for e in els if not re.search(r"-K\d{4}$", e["id"])]      # derived connectors of pipeline/connectors.py are rebuilt at the end (keep them out of every earlier pass)
 els[:] = [e for e in els if not re.search(r"-V\d{4}$", e["id"])]      # inferred risers of pipeline/risers.py (suffix V; L belongs to the landscape elements) are rebuilt at the end (keep them out of every earlier pass)
 els[:] = [e for e in els if not re.search(r"-W\d{4}$", e["id"])]      # electrical conductors / boards of pipeline/elec_build.py (suffix W) are rebuilt at the end
 els[:] = [e for e in els if not re.search(r"-VT\d{4}$", e["id"])]     # ventilation ducts / diffusers / dampers / risers of pipeline/vent_build.py (suffix VT) are rebuilt before the support analysis
+els[:] = [e for e in els if not re.search(r"-SM\d{4}$", e["id"])]     # smoke-management ducts / fans / grilles of pipeline/smoke_build.py (suffix SM) are rebuilt before the support analysis
+els[:] = [e for e in els if not re.search(r"-ST\d{4}$", e["id"])]     # site drainage and storm water of pipeline/storm_build.py
+# Regenerated remaining drawing features must not enter earlier correction passes.
+els[:] = [e for e in els if not re.search(r"-(WS|FP|ELR|ARF|AD|SG|PG|DTR|DRG|DSM|ETR|SRF|LHS|GC|BND|WSC|WST|WMT|VSC)\d{4}$", e["id"])]
+_tank_rect_ids={f"P.cold-R-M{i:04d}" for i in range(25,29)}
+for _e in els:
+    if _e['id'] in _tank_rect_ids:
+        M.setdefault('meta',{}).setdefault('drawing_corrections',{}).setdefault(_e['id'],{'element':_e['id'],'level':'R','old_geometry':_e['g'],'source':'MECH2 ص17 وص22','note':'حدود خزان GRP استخرجت خطأ كمواسير22مم؛ استبدلت بجسمي الخزانين في موضعي المصدر.'})
+els[:] = [e for e in els if e['id'] not in _tank_rect_ids]
+
 # the apartment windows are rebuilt from the approved schedule (A801/A802 + A1500): keep the old single-slab modules (saved once to data/win_modules.json) out of every pass
 import arch_windows as _AW
 _AW.modules(M)
@@ -91,7 +161,7 @@ if "duct_mm_to_cm" not in FIXES:
             a["w_cm"], a["h_cm"] = round(w / 10, 1), round(h / 10, 1)
     FIXES.append("duct_mm_to_cm")
 
-if "offplan_removed" not in FIXES:
+if not M["meta"].get("owner_render_only") and "offplan_removed" not in FIXES:
     # sheet margins (details, legends, riser diagrams) were extracted as if they were plan content
     FP = level_footprints()
     keep_cats = {"A.site", "S.pile", "S.raft", "A.floor", "A.ceil", "S.slab"}
@@ -115,7 +185,7 @@ if "offplan_removed" not in FIXES:
     M["meta"]["removed_offplan"] = len(removed)
     print("removed off-plan elements:", len(removed))
 
-if "roof_wall_lights" not in FIXES:
+if not M["meta"].get("owner_render_only") and "roof_wall_lights" not in FIXES:
     # wall lights (TYPE-11) on the top-roof sheet were mounted 2.2 m above the T slab where there is no wall;
     # the rooms' walls belong to level R (their top is 26.4 m), so measure the 2.2 m from the R floor
     dz = LV["R"]["ffl"] - LV["T"]["ffl"]
@@ -126,7 +196,7 @@ if "roof_wall_lights" not in FIXES:
             e.setdefault("a", {})["mount_note"] = "الارتفاع 2.2 م محسوب من أرضية R (جدران الغرف العلوية تتبع R) — افتراض هندسي يحتاج تأكيد"
     FIXES.append("roof_wall_lights"); print("rehomed roof wall lights:", n)
 
-if "roof_dish_on_slab" not in FIXES:
+if not M["meta"].get("owner_render_only") and "roof_dish_on_slab" not in FIXES:
     # the 1.2 m SMATV dishes were placed 1.1 m above the roof floor with no support (height on the roof is not in the documents)
     n = 0
     for e in els:
@@ -135,17 +205,7 @@ if "roof_dish_on_slab" not in FIXES:
             e.setdefault("a", {})["mount_note"] = "وُضع الصحن على بلاطة السطح مباشرة؛ ارتفاع القاعدة غير مذكور في المستندات — افتراض هندسي يحتاج تأكيد"
     FIXES.append("roof_dish_on_slab"); print("dishes lowered onto slab:", n)
 
-if "piles_30cm_display" not in FIXES:
-    # request: show only 30 cm of each pile below the raft (they go underground); the real 13 m length stays in the card
-    n = 0
-    for e in els:
-        if e["c"] == "S.pile" and e["g"][0] == "cyl":
-            top = e["g"][5]
-            e["g"][4] = round(top - 0.30, 3)
-            a = e.setdefault("a", {})
-            a["display_note"] = "يُعرض 30 سم فقط تحت اللبشة للدلالة على امتداد الخازوق تحت الأرض؛ الطول الفعلي 13 م (من المخطط)"
-            n += 1
-    FIXES.append("piles_30cm_display"); print("piles shortened for display:", n)
+# Source length is restored in structural_source_restore below; no shortened pile geometry.
 
 # ------------------------------------------------------------------ site / ground-floor landscape (pipeline/site.py -> data/site.json)
 SITE_JSON = os.path.join(HERE, "data", "site.json")
@@ -345,6 +405,8 @@ if os.path.exists(ER_JSON):
         cnt_er[(e["c"], e["l"])] += 1
         els.append({"id": f"{e['c']}-{e['l']}-ER{cnt_er[(e['c'], e['l'])]:03d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx5(t) for t in e["src"]]})
     M["els"] = els
+    import electrical_room_source_corrections as _E6
+    _e6 = _E6.apply(M, els)
     # the HV / transformer / LV rooms are F.F.L. +0.90 (A102): lift their floor finishes, drop the 3.05 m ceilings that the 3.2 m transformer and 2.35 m switchgear would pierce
     ROOMS_UP = [box(2635, 240, 3185, 1185), box(2376, 1270, 2856, 1620)]
     ROOMS_NOCEIL = [box(2635, 240, 3185, 1185)]
@@ -417,13 +479,19 @@ if os.path.exists(MEPBG_JSON):
         return pidx[t]
     els[:] = [e for e in els if not re.search(r"-M\d+(c\d+)?$", e["id"])]
     cnt_ = collections.Counter()
+    _mep_added = 0
     for e in Mb["els"]:
         cnt_[(e["c"], e["l"])] += 1
         ne = {"id": f"{e['c']}-{e['l']}-M{cnt_[(e['c'], e['l'])]:04d}", "c": e["c"], "l": e["l"], "g": e["g"], "mark": e["mark"], "t": e["t"], "m": e["m"], "a": e["a"], "s": [sp_idx3(t) for t in e["src"]]}
+        if ne["id"] in _tank_rect_ids:
+            M.setdefault('meta',{}).setdefault('drawing_corrections',{}).setdefault(ne['id'],{'element':ne['id'],'level':'R','old_geometry':ne['g'],'source':'MECH2 ص22 WS-104، حدود خزاني GRP؛ موضع الجسم من ص17 WS-010','note':'حدود الخزان وإطاره ليست ماسورة. تستثنى من كل إعادة دمج المصدر وتستبدل بجسمي WS؛ عداد السورس محفوظ لتثبيت معرّفات القطع الأخرى.'})
+            continue
         if e.get("grp"): ne["grp"] = e["grp"]
         els.append(ne)
+        _mep_added += 1
     M["els"] = els
-    print("mep_bg elements merged:", len(Mb["els"]))
+    print("mep_bg elements merged:", _mep_added, "| tank outlines excluded:", len(Mb["els"])-_mep_added)
+    _fhc_stage = _FC_POST.apply_generated_after_mep_merge(M, els)
 
 # ------------------------------------------------------------------ placement fixes (audit: devices floating next to the wall they belong to)
 def _wall_geoms(level):
@@ -448,7 +516,7 @@ def _bbox_poly(g):
     return None
 
 STAIR03 = (3985.0, 1100.0, 4305.0, 1700.0)      # external stair 03 footprint (A604)
-if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re-merged on every run
+if not M["meta"].get("owner_render_only"):
     # the ground-floor sheets repeat the devices of the external stair 03; at G the stair is an open well (no ceiling, upstand walls up to +1.40 m),
     # so ceiling devices hover and wall devices float above the wall top. Remove the ceiling ones, bring the wall ones down to the upstand wall.
     gone, lowered = [], 0
@@ -480,6 +548,7 @@ if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re
     BIG = {"e_P18", "e_F8", "e_F9", "e_T20", "e_P14", "e_P16", "e_F19"}   # panels: wider tolerance
     cache = {}; moved = collections.Counter(); far = []
     for e in els:
+        if M.get('meta',{}).get('owner_render_only') or (e.get("a") or {}).get('alt') or (e.get("a") or {}).get("source_locked_xy") or (e.get("a") or {}).get("sys"): continue
         if e.get("t") not in wall_types or e["g"][0] not in ("b", "cyl", "r"): continue
         if e["l"] not in cache: cache[e["l"]] = _wall_geoms(e["l"])
         W_ = cache[e["l"]]
@@ -499,7 +568,7 @@ if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re
     M["meta"]["wall_snap_far"] = far
     (FIXES.append("wall_snap_v1") if "wall_snap_v1" not in FIXES else None); print("wall devices snapped:", sum(moved.values()), "| still off any wall:", len(far))
 
-if True:      # stateless + idempotent: merged sources (roof/mep_bg/site) are re-merged on every run
+if not M["meta"].get("owner_render_only"):
     # EP-103: "15A switch socket for FCU (double-pole switch with neon)" is drawn beside each FCU, which hangs in the ceiling void; the generic 1.30 m
     # wall height left 98 of the 106 switches floating in mid-air below the unit. Mount them on the casing of the FCU they serve (nearest unit on the level).
     fc = collections.defaultdict(list)
@@ -636,9 +705,9 @@ for _e in list(els):
     if _e["c"] == "S.slab" and _e["l"] == "R" and _e["g"][0] == "p":
         _lv = LV["R"]; _top = _e["g"][3]
         if _lv["ffl"] - _top > 0.05:
-            M["mats"].setdefault("roof_buildup", {"name": "طبقات سطح الدور R (عزل مائي/حراري + مونة + تشطيب) — غير محدّدة في المستندات", "color": "#d3d2cb", "code": "A105"})
-            els.append({"id": "A.floor-R-BU1", "c": "A.floor", "l": "R", "g": ["p", _e["g"][1], _top, _lv["ffl"], _e["g"][4] if len(_e["g"]) > 4 else None], "mark": "ROOF-BUILDUP", "t": "roof_buildup", "m": "roof_buildup",
-                         "a": {"kind": "roof_buildup", "thick_cm": round((_lv["ffl"] - _top) * 100), "note": "الفرق بين منسوب بلاطة السطح (+23.15) وF.F.L. (+23.35)؛ مكوّنات الطبقات غير مذكورة — افتراض"}, "s": []})
+            M["mats"].setdefault("roof_buildup", {"name": "طبقات سطح الدور R تحت بلاط F12 — تركيبها غير محدد", "color": "#d3d2cb", "code": "A105"})
+            els.append({"id": "A.floor-R-BU1", "c": "A.floor", "l": "R", "g": ["p", _e["g"][1], _top, round(_lv["ffl"]-0.03,3), _e["g"][4] if len(_e["g"]) > 4 else None], "mark": "ROOF-BUILDUP", "t": "roof_buildup", "m": "roof_buildup",
+                         "a": {"kind": "roof_buildup", "thick_cm": round((_lv["ffl"]-.03 - _top) * 100), "note": "الملء بين بلاطة السطح (+23.15) وأسفل بلاط F12 (+23.32)؛ مكوّنات التسوية والعزل غير معطاة — افتراض"}, "s": []})
             print("roof build-up layer added:", round((_lv["ffl"] - _top) * 100), "cm")
 M["els"] = els
 
@@ -717,15 +786,105 @@ _wt.discard("fhc")
 # (4) ceilings: rebuilt from the approved reflected-ceiling plans A1401 / A1600 / A1601 (pipeline/arch_ceilings.py): FCL +2.40 in the apartments, trays +2.35/+2.50 in corridors and lobbies,
 #     +3.40/+3.55 entrance, +3.50 retail, +2.80 services at the ground floor; no plates inside the stair / lift openings; ceiling devices follow their plate.  Runs before the support
 #     analysis so rods and hangers are computed from the real ceiling.
+import restore_network_source as _RNS
+_RNS.apply(M, els)
+import fire_source_corrections as _FSC
+_FSC.build(M, els)
+print("fire/source semantics corrected:", M["meta"].get("fire_source_corrections", {}).get("counts", "applied"))
+import electrical_source_restore as _ESR
+_esr = _ESR.apply(M, els)
+print("electrical source positions restored:", {k:v for k,v in _esr.items() if k != "corrections"})
+import electrical_symbol_semantics as _ESS
+_ess = _ESS.apply(M, els)
+print("electrical source semantics:", {k:v for k,v in _ess.items() if k != "changes"})
+import restore_hvac_source as _HVR
+_hvr = _HVR.apply(M, els)
+print("HVAC source anchors restored:", {k:v for k,v in _hvr.items() if k != "changes"})
+import restore_hvac_outlets_source as _HVO
+_hvo = _HVO.apply(M, els)
+print('HVAC actual outlet body graphics corrected:', {k:v for k,v in _hvo.items() if k != 'changes'})
+import hvac_damper_source as _HDB
+_hdb = _HDB.apply(M, els)
+print('HVAC source damper graphics corrected:', {k:v for k,v in _hdb.items() if k != 'changes'})
+# Correct valve anchors before ceiling offsets read their locations.
+import water_valve_source as _VSC
+_vsc = _VSC.apply(M, els)
+print("water valve source graphics:", {k: _vsc[k] for k in
+      ("existing_corrected_markers", "new_explicit_markers",
+       "new_generic_subtype_pending_markers", "checked_markers", "by_code")})
 import arch_stairs as _AS
 print("stairs vs concrete:", _AS.fix(M, els))
+# Classify the source floor once, before derived soffit/roof finishes read it.
+# arch_finfix invalidates its result when the source shape or zones change.
+import arch_finfix as _FF
+_ff = _FF.apply(M, els)
+print("finish fixes:", _ff)
+M["meta"].setdefault("finfix", {}).update(_ff)
+import structural_source_restore as _SSR
+print("structural pile source restored:", _SSR.apply(M, els))
+import lift_head_supports as _LHS
+_LHS.build(M, els, verbose=True)
+import boundary_source_remaining as _BND
+_BND.build(M, els, verbose=True)
+import roof_lift_source as _SRF
+_SRF.build(M, els, verbose=True)
+import arch_remaining as _ARF
+_ARF.build(M, els, verbose=True)
+import restore_drain_source as _RDS
+print("drain source symbols restored:", _RDS.apply(M, els))
+import restore_floortrap_source as _RFT
+_rft = _RFT.apply(M, els)
+print("floor-trap source circles restored:", {k:v for k,v in _rft.items() if k != "changes"})
+import restore_cleanout_source as _DCO
+_dco = _DCO.apply(M, els)
+print("cleanout source restore:", _dco)
 import arch_ceilings as _AC
 _ac = _AC.rebuild(M, els, LV)
+M['meta']['arch_ceiling_source_guard'] = {'encoding_induced_z_rollback_ids': list(json.load(open(_AC.Z_GUARD_DATA_PATH))['records']), 'rolled_back_this_run': _ac['encoding_induced_z_rollback'], 'source_xy_relocation_prohibited': True, 'void_device_source_mount_verified': False, 'source_Z_verified': False}
+els.extend(_d16_existing)
+_d16 = _D16.apply(M, els)
+print("D16 original source parts:", {k:v for k,v in _d16.items() if isinstance(v,(int,float,bool,str))})
+import d16_host_source_correction as _DHC
+print("D16 host source XY corrected:", _DHC.apply(M, els))
 print("ceilings rebuilt (A1401/A1601):", _ac["ceilings"], "plates | devices moved:", _ac["devices_moved"], _ac["by_level"])
 M["els"] = els
 # ventilation (MECH1 p23–29: extract + fresh-air ducts, diffusers, wire-mesh grilles, dampers, risers): built after the ceilings (the diffusers sit under their plates) and BEFORE the support analysis (rods / hangers)
 import vent_build as _VT
 _VT.build(M, els, verbose=True)
+import smoke_build as _SM                                                  # smoke management (MECH1 p17–22): same slot, after the ceilings (EAD plates) and before the support analysis
+_SM.build(M, els, verbose=True)
+import storm_build as _ST
+_ST.build(M, els, verbose=True)
+import drain_top_remaining as _DTR
+_DTR.build(M, els, verbose=True)
+import drain_site_remaining as _DRG
+_DRG.build(M, els, verbose=True)
+import drain_semantics as _DSM
+_DSM.build(M, els)
+import drain_trace_review as _DTRV
+print("legacy drain raw trace review:", _DTRV.apply(M, els))
+print("drain source semantics corrected: applied")
+import water_site_build as _WS
+_WS.build(M, els, verbose=True)
+import fire_pumps_build as _FP
+_FP.build(M, els, verbose=True)
+import electrical_remaining_build as _ELR
+_ELR.build(M, verbose=True)
+_ELR.apply_corrections(M, els)
+import arch_detail_remaining as _AD
+_AD.build(M, els, verbose=True)
+import signage_remaining as _SG
+_SG.build(M, els, verbose=True)
+import pergola_remaining as _PG
+_PG.build(M, els, verbose=True)
+import garbage_chute_remaining as _GC
+_GC.build(M, els, verbose=True)
+import water_supply_source_corrections as _WSC
+_WSC.apply(M, els, verbose=True)
+import water_supply_mixed_corrections as _WST
+_WST.apply(M, els, verbose=True)
+import water_meter_source_remaining as _WMT
+_WMT.apply(M, els, verbose=True)
 M["els"] = els
 
 _S = _SUP.Support(els, M["levels"], _wt)
@@ -737,6 +896,8 @@ for _i, _e in enumerate(els):
     if _mn.startswith("لا يوجد جدار/سقف/أرضية مضيف قريب") and not _a.get("guess_from"): _a.pop("mount_note", None)      # stale: re-derived below when it is still true
     if _e["c"][0] in "SA": continue
     _r = _S.analyse(_i); _k = _r["kind"]; _cnt[_k] += 1
+    if _k == "lower" and (_a.get("sys") or M["meta"].get("owner_render_only")):
+        _cnt["lower"] -= 1; _cnt["float"] += 1; _k = "float"
     if _k == "lower":                                                  # wall device above the top of its (lower) host wall: bring it down onto the wall
         _z0, _z1 = _SUP.zr(_e["g"]); _dz = round((_r["wall_top"] - 0.12) - _z1, 3); shift_z(_e, _dz)
         _a["mount_note"] = f"الجدار المضيف أخفض من ارتفاع التركيب الافتراضي؛ خُفض الجهاز {abs(round(_dz*100))} سم ليكون على الجدار — افتراض هندسي يحتاج تأكيد"
@@ -745,7 +906,7 @@ for _i, _e in enumerate(els):
     elif _k == "hang": _a["hang_cm"] = max(8, _r["gap_cm"])
     elif _k == "stand": _a["stand_cm"] = max(8, _r["gap_cm"])
     elif _k == "buried": _a["buried"] = 1; _a["mount_note"] = "مدفون في طبقة التسوية فوق اللبشة تحت أرضية المواقف (DR-100: مصائد أرضية + تفاصيل التمديد تحت الأرض/التغطية) — لا تعليقات من بلاطة الدور الأرضي؛ المنسوب افتراض"
-    elif _k == "float" and _e["l"] == "T" and _e["g"][0] in ("b", "cyl"):
+    elif _k == "float" and not M["meta"].get("owner_render_only") and not _a.get("sys") and _e["l"] == "T" and _e["g"][0] in ("b", "cyl"):
         _dz = LV["R"]["ffl"] - LV["T"]["ffl"]; shift_z(_e, _dz); _e["l"] = "R"; _r2 = _S.analyse(_i)
         if _r2["kind"] in ("ok", "rod"):
             _a["mount_note"] = "لا بلاطة علوية T تحته؛ نُقل إلى سطح الدور R (قائم على السطح) — افتراض هندسي يحتاج تأكيد"; _cnt["rehomed_T_to_R"] += 1
@@ -768,11 +929,7 @@ if _moved:
 M["meta"]["support"] = dict(_cnt)
 print("support analysis:", dict(_cnt), "| best-guess relocations:", len(_moved), "| no host found:", _failed)
 
-# ------------------------------------------------------------------ finish corrections B / G / R (pipeline/arch_finfix.py): car park (CSP) instead of lobby granite, plant rooms with abbreviated labels
-import arch_finfix as _FF
-_ff = _FF.apply(M, els)
-print("finish fixes:", _ff)
-M["meta"].setdefault("finfix", {}).update(_ff)
+# ------------------------------------------------------------------ wall finish layers; floor classification ran before ARF/support.
 import arch_wallfin as _WF
 _wf, _wfc = _WF.build(M, els)
 els.extend(_wf)
@@ -781,7 +938,7 @@ M["meta"].setdefault("wallfin", {}).update(_wfc)
 
 # ------------------------------------------------------------------ accessories added after the GitHub hand-off (pipeline/extras.py): cornices, ramp fence, site lights, parking canopies
 import extras as _EXT
-els[:] = [e for e in els if not re.search(r"-X\d{4}$", e["id"])]
+els[:] = [e for e in els if not X_SUFFIX.search(e["id"])]
 EXT = _EXT.build(M)
 els[:] = [e for e in els if e["t"] not in ("lift_car", "shed_sail")]                      # the two solid boxes are replaced by the detailed cars of extras.lifts()
 for _k, _v in EXT["mats"].items(): M["mats"].setdefault(_k, _v)
@@ -825,8 +982,23 @@ for _k, _e in enumerate(EXT["els"]):
     _c1 = _ctr(_e["g"])
     if _c1: _by_new[(_e["c"], _e["l"], _e.get("t"), _e.get("mark"))].append((_k, _c1))
 _plan = [None] * len(EXT["els"]); _taken = set(); _stable = _fresh = 0
+# WXY source corrections keep the procedural group/member identity.  Old
+# accessory centres are not a source anchor and may now be51cm away; the
+# generic proximity matcher must not exchange window glass/frame IDs.
+_wxy_previous = {e['id']: e for e in PREV_X}
+_wxy_previous_counts = collections.Counter(e['id'] for e in PREV_X)
+for _k, _e in enumerate(EXT['els']):
+    if not (_e.get('a') or {}).get('source_window_member_identity'):
+        continue
+    _wxy_id = _AW._SOURCE_XY.member_identity(_e, _wxy_previous)
+    if _wxy_previous_counts[_wxy_id] != 1:
+        raise ValueError('WXY previous procedural member ID not unique: ' + _wxy_id)
+    if _wxy_id in _taken:
+        raise ValueError('Duplicate WXY procedural member ID: ' + _wxy_id)
+    _plan[_k] = _wxy_id; _taken.add(_wxy_id); _stable += 1
 for _key, _nl in _by_new.items():
-    _ol = _by_old.get(_key)
+    _nl = [_n for _n in _nl if _plan[_n[0]] is None]
+    _ol = [_o for _o in _by_old.get(_key, []) if _o[0] not in _taken]
     if not _ol: continue
     _pairs = sorted((math.hypot(_n[1][0] - _o[1][0], _n[1][1] - _o[1][1]), _i, _j) for _i, _n in enumerate(_nl) for _j, _o in enumerate(_ol))
     _un = set(); _uo = set()
@@ -834,7 +1006,7 @@ for _key, _nl in _by_new.items():
         if _d > 60: break
         if _i in _un or _j in _uo: continue
         _un.add(_i); _uo.add(_j); _plan[_nl[_i][0]] = _ol[_j][0]; _taken.add(_ol[_j][0]); _stable += 1
-_max_x = max([int(_o["id"][-4:]) for _o in PREV_X] + [0])
+_max_x = max([int(X_SUFFIX.search(_o["id"]).group(1)) for _o in PREV_X] + [0])
 for _e, _id in zip(EXT["els"], _plan):
     _cx[(_e["c"], _e["l"])] += 1
     if _id is None:
@@ -857,6 +1029,8 @@ for _e in els:
         _e["a"].pop("mount_note", None); _cleared += 1
 if _cleared:
     _sp = M["meta"].setdefault("support", {}); _sp["float"] = max(0, _sp.get("float", 0) - _cleared); _sp["ok"] = _sp.get("ok", 0) + _cleared
+import source_support as _SS
+print("source electrical contacts:", len(_SS.apply(M, els)))
 print("sprinkler heads now carried by a drop nipple:", _cleared)
 
 # ------------------------------------------------------------------ types
@@ -868,6 +1042,10 @@ for k, d in kb.DOORS.items():
                ["المادة", d["mat"]], ["الإطار", d["frame"]], ["اتجاه الفتح", d["opens"]], ["بند BOQ (الكمية)", d["boq"]]],
         "sr": [f'جدول الأبواب {d["sheet"]}', f'جدول الكميات BOQ البند {d["boq"].split(" — ")[0]}'],
     }
+    if d.get("source_conflict"):
+        types["door_" + k]["cf"] = "derived"
+        types["door_" + k]["sp"][0] = ["الفتحة في المخطط؛ تعارض BOQ", d["dimension_note"]]
+        types["door_" + k]["asm"] = ["لم تحسم اختلافات المصدر، وأبعاد أجزاء الباب والتثبيت واللون تحتاج مرجعًا منفصلًا."]
 for code, v in kb.WINS.items():
     w, h, loc, qty = v[:4]
     types["win_" + code] = {
@@ -892,6 +1070,59 @@ M["types"].update(ER_TYPES)
 M["types"].update(EXT["types"])
 M["types"].update(_AC.types())
 M["types"].update(_VT.TYPES)                                           # ventilation types (cards written in pipeline/vent_build.py)
+M["types"].update(_SM.TYPES)                                           # smoke-management types (cards written in pipeline/smoke_build.py)
+M["types"].update(_WS.TYPES)
+M["types"].update(_FP.TYPES)
+M["types"].update(_ELR.TYPES)
+M["types"].update(_ARF.TYPES)
+M["types"].update(_PG.TYPES)
+M["types"].update(_AD.TYPES)
+M["types"].update(_SG.TYPES)
+import chw_review as _CHWR
+_CHWR.apply_sources(M, els)
+M["types"].update(_ST.TYPES)                                           # site and storm-water types
+M["types"].update(_DTR.TYPES)
+M["types"].update(_DRG.TYPES)
+M["types"].update(_FSC.TYPES)
+M["types"].update(_DSM.TYPES)
+M["types"].update(_ESS.TYPES)
+M["types"].update(_SSR.TYPES)
+M["types"].update(_SRF.TYPES)
+M["types"].update(_LHS.TYPES)
+M["types"].update(_GC.TYPES)
+M["types"].update(_BND.TYPES)
+M["types"].update(_WSC.TYPES)
+M["types"].update(_WST.TYPES)
+M["types"].update(_WMT.TYPES)
+M["types"].update(_VSC.TYPES)
+M["types"].update(_HVO.TYPES)
+M["types"].update(_HDB.TYPES)
+M["types"].update(_D16.TYPES)
+M["types"].update(_DHC.TYPES)
+M["mats"].update(_DHC.MATS)
+M["types"].update(_FC_POST.FC.TYPES)
+_csf = _CSF.apply(M, els)
+if _csf.get('retired_this_apply'):
+    import source_batch as _SOURCE_BATCH
+    _SOURCE_BATCH.remap_index_refs(M, _csf['old_to_new_indices'], _csf['retired_indices'], include_lifecycle=False, include_clashes=False)
+print('finished stair source surfaces:', {k:v for k,v in _csf.items() if isinstance(v,(int,float,bool,str))})
+M['types'].update(_CSF.TYPES)
+import water_heater_capacity_source as _HCS
+print("heater capacity source properties:", _HCS.apply(M, els))
+print("door source templates:", _DOOR_SOURCE.apply(M, els))
+import check_door_source_templates as _DOOR_GATE
+_door_source_audit = _DOOR_GATE.audit(M)
+import door_source_review_updates as _DOOR_REVIEW
+_review_notes=json.load(open(os.path.join(HERE,'data','remaining_review.json'),encoding='utf-8'))
+M['meta']['remaining_review']={'pages':_review_notes['page_count'],'sets':7,'total_source_pages':226,'note':'مراجعة78ورقةبلاcitationسابقًا،معنوعالمراجعة؛لايعنيجردالمراجعقبولتنسيقكلالقطع.'}
+for _r in _review_notes['pages']:
+    if (_r['set'],_r['page']) in (('MECH1',8),('MECH2',9)):
+        _s=f"{_r['set']} ص{_r['page']}: {_r['facts']}"
+        if _s not in M['sp']:M['sp'].append(_s)
+        for _t in ('fcu','fahu') if _r['set']=='MECH1' else ('floor_trap','cleanout','pipe_waste','site_mh'):
+            if _t in M['types']:
+                _card=M['types'][_t];_card.setdefault('sr',[])
+                if _s not in _card['sr']:_card['sr'].append(_s)
 # cards for every remaining type (structure, finishes, ducts, pipes, valves, sprinklers, site, planting): pipeline/kb_types.py — never overrides a card defined above
 import kb_types as _KBT
 _kb_new = _KBT.build(M)
@@ -929,7 +1160,7 @@ for e in els:
         _g = e["g"]; _m2 = max(abs(_g[3] - _g[1]), abs(_g[4] - _g[2])) / 100.0 * (_g[6] - _g[5])
         finq[fl[0]]["area"] += _m2
         if e["l"] in ("1", "2", "3", "4", "5"): finq[fl[0]]["tower"] += _m2
-    if e["c"] in ("A.floor", "A.ceil", "A.site") and len(fl) == 1:
+    if e["c"] in ("A.floor", "A.ceil", "A.site", "A.cfin") and len(fl) == 1:
         a = poly_area_cm2(e["g"])
         if a is not None:
             finq[fl[0]]["area"] += a / 1e4
@@ -1007,13 +1238,14 @@ KIND_AR = {
 }
 S_items = []   # (geom, z0, z1, elementIndex, skind)
 for i, e in enumerate(els):
-    if e["c"] in STRUCT:
+    if not e.get('a',{}).get('alt') and e["c"] in STRUCT:
         for geom, z0, z1 in shape_of(e["g"]):
             if not geom.is_empty:
                 S_items.append((geom, z0, z1, i, STRUCT[e["c"]]))
 S_tree = STRtree([s[0] for s in S_items])
 
 def mep_kind(e):
+    if e.get('a',{}).get('alt'): return None
     c = e["c"]
     if c == "M.duct": return "duct"
     if c == "M.equip": return "equip"
@@ -1102,8 +1334,12 @@ for d in pairs.values():
 clashes.sort(key=lambda c: -c["v"])
 M["clashes"] = clashes
 import clash_log as _CL
+import drawing_deviations as _DD
+_DD.apply(M, els)
+import source_component_issues as _SOURCE_COMPONENT_ISSUES
+_SOURCE_COMPONENT_ISSUES.apply(M)
+_DOOR_REVIEW.append_to(M, source_audit=_door_source_audit)
 _CL.merge_into(M, els)
-_CL.write_doc(M)
 M["clashKinds"] = {k: v for k, v in KIND_AR.items() if any(c["k"] == k for c in clashes)}
 M["clashNote"] = ("تعارضات هندسية مرجّحة (تقاطع الحجوم) بين عناصر النموذج. مناسيب الخدمات في فراغ السقف افتراضية (انظر بطاقة كل عنصر)، "
                   "لذلك هي مرشّحات للمراجعة وليست حكمًا نهائيًا. ثقوب العبور عبر الجدران والجسور لا تظهر في النموذج وقد تكون مصمَّمة فعلًا. "
@@ -1120,10 +1356,15 @@ for _i, _s in enumerate(M["sp"]):
 # derived connections between the parts of each system (the last pipe / duct piece the plans imply): added AFTER the clash pass so they never show up as clashes, BEFORE the grading
 import risers as _RS
 _RS.build(M, verbose=True)
+# The legacy V rows are rebuilt here; annotate all 798 source-reviewed identities.
+print('drain trace final metadata:', _DTRV.apply(M, els))
 import elec_build as _EB
 _EB.build(M, verbose=True)
+import electrical_trace_restore as _ETR
+_ETR.build(M, els, verbose=True)
 import connectors as _CN
-_CN.build(M, verbose=True)
+_CN.build(M, verbose=True, reserved_ids=_FC_POST.reserved_ids())
+_FC_POST.restore_after_connectors(M, _fhc_captured_links, els)
 import reliability as _REL
 _REL.assign(M)
 _GS.registry(M, els)
@@ -1154,8 +1395,47 @@ if _repaired:
     M["meta"].setdefault("fixes", []).append("invalid_polygons_repaired_v1")
     M["meta"]["invalid_polygons_repaired"] = _repaired
 print("polygons repaired:", len(_repaired))
+import source_material_review as _MR
+_mr = _MR.apply(M)
+_DOOR_REVIEW.update_material_review(M, _door_source_audit)
+import d16_host_review_updates as _DHC_REVIEW
+_DHC_REVIEW.update_material_review(M)
+print("material source review:", M["meta"]["source_material_review"])
+import coordination_review as _CR
+M["coordinationReview"] = _CR.audit(M)
+print("coordination source review:", M["coordinationReview"]["counts"], M["coordinationReview"]["coverage"])
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
+import check_component_coverage as _CC
+_cc = _CC.apply(M, raw_ws=True, raw_elec=True)
+import source_component_coverage as _SOURCE_CC
+_cc = _SOURCE_CC.refresh(M, _cc)
+_cc = _DOOR_REVIEW.update_component_review(M, _cc, _door_source_audit, external_report="pipeline/data/component_coverage.json")
+_cc = _DHC_REVIEW.refresh(M, _cc)
+# Final continuation layer runs after the frozen legacy guards/reviews.
+# Publish only its updated coverage/coordination/source reports, then inventory.
+_completion_post = _COMPLETION_POST.apply_after_legacy(M, _cc)
+_cc = _completion_post["coverage"]
+# Preserve the already displayed ceiling bodies; no approval or new corrections.
+import ceiling_shape_match as _DISPLAY_CEILINGS
+_DISPLAY_CEILINGS.apply(M)
+for _obsolete in ('modelMatching', 'raftModelAcceptance'):
+    M.pop(_obsolete, None)
+# Source alternative drawings are appended after the existing analysis passes.
+import source_drawings_delivery as _OWNER_DRAWINGS
+_owner_drawings = _OWNER_DRAWINGS.apply(M, els)
+print('source alternatives:', json.dumps(_owner_drawings, ensure_ascii=False))
+json.dump(M["coordinationReview"], open(os.path.join(HERE, "data", "coordination_review.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+json.dump(_completion_post["coordination"], open(os.path.join(HERE, "data", "completion_coordination.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+for _completion_name in ("stairs", "equipment", "doors"):
+    json.dump(_completion_post[_completion_name], open(os.path.join(HERE, "data", "completion_" + _completion_name + "_source_audit.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+print("continuation restored after legacy reviews:", _completion_post["proof"])
+_CL.write_doc(M)
+json.dump(_cc, open(os.path.join(HERE, "data", "component_coverage.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+print("all-component review:", _cc["model_elements"], _cc["counts"])
 import inventory as _INV
 _INV.build(M); _INV.write_doc(M)
+M = _SOURCE_INPUTS.save_inputs_and_compact(M)
+M = _OWNER_DRAWINGS.display_only(M)
 json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False)
 cnt = collections.Counter(c["k"] for c in clashes)
 print("types", len(types), "| fin", len(M["fin"]), "| clashes", len(clashes), dict(cnt), "|", round(os.path.getsize(SRC) / 1e6, 2), "MB")

@@ -1,0 +1,767 @@
+{
+  "reviewed_pages": {
+    "MECH1": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      29
+    ],
+    "MECH2": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37
+    ]
+  },
+  "submission_dates": {
+    "MECH1": "30-03-2022",
+    "MECH2": "09-02-2022"
+  },
+  "revision": "00 in both sets; Apr 12 2022 stamps in both",
+  "geometry_comparison": [
+    {
+      "level": "B",
+      "sheets": [
+        "MECH1:11",
+        "MECH2:32"
+      ],
+      "registration": [
+        {
+          "ox": -1078.7044999999998,
+          "oy": 5378.082,
+          "s": 3.751,
+          "nx": 17,
+          "ny": 11,
+          "nv": 17,
+          "nh": 11,
+          "ex": 8.462500000000546,
+          "ey": 9.115499999999884
+        },
+        {
+          "ox": -824.1860000000001,
+          "oy": 5196.7455,
+          "s": 3.537,
+          "nx": 17,
+          "ny": 11,
+          "nv": 17,
+          "nh": 11,
+          "ex": 5.446000000000367,
+          "ey": 4.269500000000335
+        }
+      ],
+      "layers": {
+        "M_CHI_S": {
+          "drawn_paths": [
+            46,
+            79
+          ],
+          "long_axis_count": [
+            11,
+            11
+          ],
+          "main_rings": [
+            [],
+            []
+          ],
+          "set1_to_set2": {
+            "sample_count": 234,
+            "median_cm": 0.5,
+            "over_5cm": 19,
+            "over_25cm": 4,
+            "max_cm": 57.9,
+            "max_at_cm": [
+              1165.3,
+              1031.9
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 234,
+            "median_cm": 0.5,
+            "over_5cm": 19,
+            "over_25cm": 4,
+            "max_cm": 57.9,
+            "max_at_cm": [
+              1356.9,
+              1039.1
+            ]
+          }
+        },
+        "M_CHI_R": {
+          "drawn_paths": [
+            29,
+            29
+          ],
+          "long_axis_count": [
+            9,
+            9
+          ],
+          "main_rings": [
+            [],
+            []
+          ],
+          "set1_to_set2": {
+            "sample_count": 223,
+            "median_cm": 0.6,
+            "over_5cm": 6,
+            "over_25cm": 0,
+            "max_cm": 15.9,
+            "max_at_cm": [
+              1082.0,
+              1043.1
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 223,
+            "median_cm": 0.6,
+            "over_5cm": 6,
+            "over_25cm": 0,
+            "max_cm": 15.9,
+            "max_at_cm": [
+              980.6,
+              1059.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "level": "G",
+      "sheets": [
+        "MECH1:12",
+        "MECH2:33"
+      ],
+      "registration": [
+        {
+          "ox": -1342.3239999999996,
+          "oy": 5331.252,
+          "s": 3.754,
+          "nx": 11,
+          "ny": 6,
+          "nv": 13,
+          "nh": 7,
+          "ex": 3.8970000000003893,
+          "ey": 3.5589999999997417
+        },
+        {
+          "ox": -1085.4219999999996,
+          "oy": 5148.816,
+          "s": 3.538,
+          "nx": 17,
+          "ny": 11,
+          "nv": 19,
+          "nh": 12,
+          "ex": 8.468999999998687,
+          "ey": 6.598000000000411
+        }
+      ],
+      "layers": {
+        "M_CHI_S": {
+          "drawn_paths": [
+            82,
+            119
+          ],
+          "long_axis_count": [
+            17,
+            14
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  937.9,
+                  751.1
+                ],
+                "diameter_symbol_cm": 11.3
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  970.4,
+                  1040.7
+                ],
+                "diameter_symbol_cm": 10.6
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 331,
+            "median_cm": 0.7,
+            "over_5cm": 74,
+            "over_25cm": 69,
+            "max_cm": 239.1,
+            "max_at_cm": [
+              1385.0,
+              1564.0
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 306,
+            "median_cm": 0.7,
+            "over_5cm": 49,
+            "over_25cm": 46,
+            "max_cm": 247.8,
+            "max_at_cm": [
+              2690.0,
+              404.9
+            ]
+          },
+          "main_ring_delta_cm": 291.4
+        },
+        "M_CHI_R": {
+          "drawn_paths": [
+            197,
+            192
+          ],
+          "long_axis_count": [
+            13,
+            14
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  954.4,
+                  750.9
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  986.7,
+                  1040.5
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 297,
+            "median_cm": 0.6,
+            "over_5cm": 40,
+            "over_25cm": 35,
+            "max_cm": 239.5,
+            "max_at_cm": [
+              1400.3,
+              1549.2
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 303,
+            "median_cm": 0.6,
+            "over_5cm": 47,
+            "over_25cm": 44,
+            "max_cm": 285.3,
+            "max_at_cm": [
+              2705.3,
+              389.6
+            ]
+          },
+          "main_ring_delta_cm": 291.4
+        }
+      }
+    },
+    {
+      "level": "1",
+      "sheets": [
+        "MECH1:13",
+        "MECH2:34"
+      ],
+      "registration": [
+        {
+          "ox": -274.15999999999997,
+          "oy": 2796.776,
+          "s": 1.876,
+          "nx": 11,
+          "ny": 6,
+          "nv": 12,
+          "nh": 7,
+          "ex": 3.467999999999961,
+          "ey": 1.4900000000002365
+        },
+        {
+          "ox": -324.30899999999997,
+          "oy": 2671.718,
+          "s": 1.769,
+          "nx": 11,
+          "ny": 6,
+          "nv": 12,
+          "nh": 7,
+          "ex": 3.376499999999851,
+          "ey": 1.6019999999996344
+        }
+      ],
+      "layers": {
+        "M_CHI_S": {
+          "drawn_paths": [
+            118,
+            198
+          ],
+          "long_axis_count": [
+            18,
+            18
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  938.7,
+                  752.0
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  969.8,
+                  1035.6
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 409,
+            "median_cm": 0.6,
+            "over_5cm": 199,
+            "over_25cm": 189,
+            "max_cm": 309.4,
+            "max_at_cm": [
+              2262.1,
+              266.1
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 364,
+            "median_cm": 0.5,
+            "over_5cm": 150,
+            "over_25cm": 132,
+            "max_cm": 157.1,
+            "max_at_cm": [
+              2167.6,
+              1265.0
+            ]
+          },
+          "main_ring_delta_cm": 285.3
+        },
+        "M_CHI_R": {
+          "drawn_paths": [
+            272,
+            252
+          ],
+          "long_axis_count": [
+            16,
+            18
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  955.3,
+                  751.7
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  986.4,
+                  1035.5
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 396,
+            "median_cm": 0.8,
+            "over_5cm": 184,
+            "over_25cm": 172,
+            "max_cm": 309.4,
+            "max_at_cm": [
+              2277.2,
+              281.1
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 361,
+            "median_cm": 0.5,
+            "over_5cm": 147,
+            "over_25cm": 128,
+            "max_cm": 153.1,
+            "max_at_cm": [
+              1252.4,
+              1250.6
+            ]
+          },
+          "main_ring_delta_cm": 285.5
+        }
+      }
+    },
+    {
+      "level": "TY",
+      "sheets": [
+        "MECH1:14",
+        "MECH2:35"
+      ],
+      "registration": [
+        {
+          "ox": -488.808,
+          "oy": 2802.404,
+          "s": 1.876,
+          "nx": 11,
+          "ny": 6,
+          "nv": 12,
+          "nh": 7,
+          "ex": 2.3220000000004575,
+          "ey": 1.795999999999367
+        },
+        {
+          "ox": -367.84799999999996,
+          "oy": 2633.908,
+          "s": 1.768,
+          "nx": 11,
+          "ny": 6,
+          "nv": 12,
+          "nh": 7,
+          "ex": 2.383999999999844,
+          "ey": 1.9120000000000346
+        }
+      ],
+      "layers": {
+        "M_CHI_S": {
+          "drawn_paths": [
+            120,
+            186
+          ],
+          "long_axis_count": [
+            18,
+            17
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  938.4,
+                  751.7
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  970.5,
+                  1037.8
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 436,
+            "median_cm": 28.3,
+            "over_5cm": 247,
+            "over_25cm": 218,
+            "max_cm": 323.0,
+            "max_at_cm": [
+              2324.4,
+              1477.0
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 357,
+            "median_cm": 0.3,
+            "over_5cm": 163,
+            "over_25cm": 130,
+            "max_cm": 159.2,
+            "max_at_cm": [
+              1157.9,
+              1018.0
+            ]
+          },
+          "main_ring_delta_cm": 287.9
+        },
+        "M_CHI_R": {
+          "drawn_paths": [
+            285,
+            242
+          ],
+          "long_axis_count": [
+            16,
+            17
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  955.1,
+                  751.5
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  987.0,
+                  1037.6
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 416,
+            "median_cm": 19.9,
+            "over_5cm": 233,
+            "over_25cm": 202,
+            "max_cm": 316.4,
+            "max_at_cm": [
+              2276.9,
+              270.6
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 349,
+            "median_cm": 0.2,
+            "over_5cm": 162,
+            "over_25cm": 127,
+            "max_cm": 142.7,
+            "max_at_cm": [
+              986.9,
+              986.5
+            ]
+          },
+          "main_ring_delta_cm": 287.9
+        }
+      }
+    },
+    {
+      "level": "R",
+      "sheets": [
+        "MECH1:15",
+        "MECH2:36"
+      ],
+      "registration": [
+        {
+          "ox": -412.0426064893713,
+          "oy": 2519.25119397452,
+          "s": 1.877,
+          "nx": 0,
+          "ny": 0,
+          "nv": 0,
+          "nh": 0,
+          "ex": 0,
+          "ey": 0,
+          "by": "layer",
+          "score": 0.6749116607773852
+        },
+        {
+          "ox": -365.9920000000002,
+          "oy": 2427.032,
+          "s": 1.768,
+          "nx": 11,
+          "ny": 6,
+          "nv": 12,
+          "nh": 7,
+          "ex": 3.2320000000000846,
+          "ey": 1.2240000000003874
+        }
+      ],
+      "layers": {
+        "M_CHI_S": {
+          "drawn_paths": [
+            44,
+            65
+          ],
+          "long_axis_count": [
+            12,
+            14
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  937.6,
+                  751.5
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  980.0,
+                  1059.6
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 230,
+            "median_cm": 0.6,
+            "over_5cm": 85,
+            "over_25cm": 78,
+            "max_cm": 288.5,
+            "max_at_cm": [
+              762.4,
+              752.3
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 220,
+            "median_cm": 0.6,
+            "over_5cm": 77,
+            "over_25cm": 69,
+            "max_cm": 205.1,
+            "max_at_cm": [
+              787.0,
+              1039.8
+            ]
+          },
+          "main_ring_delta_cm": 311.0
+        },
+        "M_CHI_R": {
+          "drawn_paths": [
+            267,
+            178
+          ],
+          "long_axis_count": [
+            16,
+            17
+          ],
+          "main_rings": [
+            [
+              {
+                "xy_cm": [
+                  954.2,
+                  751.5
+                ],
+                "diameter_symbol_cm": 11.0
+              }
+            ],
+            [
+              {
+                "xy_cm": [
+                  996.7,
+                  1059.4
+                ],
+                "diameter_symbol_cm": 10.8
+              }
+            ]
+          ],
+          "set1_to_set2": {
+            "sample_count": 288,
+            "median_cm": 0.4,
+            "over_5cm": 73,
+            "over_25cm": 43,
+            "max_cm": 141.1,
+            "max_at_cm": [
+              1680.1,
+              1056.4
+            ]
+          },
+          "set2_to_set1": {
+            "sample_count": 278,
+            "median_cm": 0.4,
+            "over_5cm": 64,
+            "over_25cm": 31,
+            "max_cm": 141.2,
+            "max_at_cm": [
+              2049.6,
+              1056.3
+            ]
+          },
+          "main_ring_delta_cm": 310.8
+        }
+      }
+    }
+  ],
+  "schedule_disagreements": [
+    {
+      "field": "قدرة التبريد لكل مبرد",
+      "MECH1:16": "70 TR",
+      "MECH2:37": "76 TR"
+    },
+    {
+      "field": "التدفق لكل مبرد",
+      "MECH1:16": "168 GPM",
+      "MECH2:37": "182.4 GPM"
+    },
+    {
+      "field": "قدرة المبرد",
+      "MECH1:16": "110 kW",
+      "MECH2:37": "120 kW"
+    },
+    {
+      "field": "تدفق مضخات CHW المقدر",
+      "MECH1:16": "168 GPM @100 ft",
+      "MECH2:37": "183 GPM @100 ft"
+    },
+    {
+      "field": "تدفق الشبكة عند السطح",
+      "MECH1:16": "311.1 GPM",
+      "MECH2:37": "323.16 GPM"
+    },
+    {
+      "field": "طول المبرد في الوسم التخطيطي",
+      "MECH1:16": "3.6 m",
+      "MECH2:37": "4.8 m"
+    },
+    {
+      "field": "طول المبرد في جدول الصفحة نفسها",
+      "MECH1:16": "3.6 m",
+      "MECH2:37": "3.6 m"
+    }
+  ],
+  "nonspatial_knowledge": {
+    "MECH1:9": [
+      "تفاصيل دعم مجاري التكييف والأنابيب وعبور الجدران والبلاطات؛ لا مواقع جديدة",
+      "الحد الأدنى لمجرى شفط الدخان 1.2 مم بغض النظر عن المقطع",
+      "مجرى شفط هود المطبخ مقاوم للحريق ساعتين وأقل سماكة 1.2 مم ولحام محكم"
+    ],
+    "MECH1:10": [
+      "نفس AC-107-B والنصوص الهندسية لصفحة 9؛ تُراجع كصفحة مكررة، بلا هندسة مكررة"
+    ],
+    "MECH1:29": [
+      "جدول FAHU: تغذية 3820 لتر/ث وشفط 3360 لتر/ث، قدرة مروحة 3.9 و3.4 kW؛ ملف تبريد 134 kW إجمالي/114 kW محسوس",
+      "ضغط ساكن 0.5 kPa؛ يجب إعادة حسابه بعد اعتماد المعدات",
+      "تشابك FAHU ومراوح الشفط مع إنذار الحريق؛ تصريف التكاثف إلى أقرب مصرف سطح، لكن مساره غير مرسوم",
+      "6 مراوح شفط بالجدول 70/45/80/60/85/130 لتر/ث؛ لا إضافة لمروحة من موضع اسم جدول"
+    ]
+  },
+  "decision": "المجموعة الحالية من MECH1 محفوظة لأنها المسقط المستخدم وتقديمه متأخر؛ لا تُدمج شبكات MECH2 المخالفة. قبول التصميم التنفيذي يتطلب حسم إصدار معتمد.",
+  "specific_conflicts": [
+    {
+      "location": "صاعد CHW الدور الأول/النمطي قرب اللوبي",
+      "kind": "اختلاف بين نسختي المخطط",
+      "sources": [
+        "MECH1 ص13–14",
+        "MECH2 ص34–35"
+      ],
+      "note": "الموقع الفعلي للدائرة يقارن في main_rings؛ موضع نص CHW PIPES ليس موضع الصاعد"
+    },
+    {
+      "location": "مبردا السطح x≈1165,1745 وy≈1626 سم",
+      "kind": "تعارض المسقط والجدول",
+      "sources": [
+        "MECH1 ص15–16",
+        "MECH2 ص36–37"
+      ],
+      "note": "المسقط≈480×250 سم؛ جدول كلا النسختين 360×250 سم، ووسم ص37 وحده 480 سم. لا تصغير أو تكرار للأجسام."
+    }
+  ]
+}

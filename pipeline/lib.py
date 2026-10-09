@@ -1,4 +1,4 @@
-import fitz, math, collections, os, pickle, sys
+import fitz, math, collections, os, pickle, sys, json
 sys.path.insert(0, os.path.dirname(__file__))
 import reg
 
@@ -108,6 +108,14 @@ class Sheet:
             pickle.dump({"D":D,"TX":TX,"WD":self.WD,"W":self.W,"H":self.H,"reg":None},open(cpath,"wb"))
         if scale is not None:
             self.s=scale
+        # Explicit source measurements override a cached weak grid fit.  In particular,
+        # the old free fit only searched scales <=3.8 cm/pt and misregistered site
+        # sheets printed at 1:150 / 1:200.  Keep the original registry intact.
+        verified_path = os.path.join(os.path.dirname(__file__), "data", "reg_verified.json")
+        if os.path.exists(verified_path):
+            measured = json.load(open(verified_path, encoding="utf-8")).get(f"{key}:{pageno}")
+            if measured:
+                self.reg = dict(measured["reg"])
         if auto_reg and self.reg is None:
             self.register(scale, ref)
     def register(self, scale=None, ref=None):

@@ -47,7 +47,10 @@ def extract_ws(page, ref_page):
                     if m and m.group(1) in("50","80"): cap=int(m.group(1))
             wh.append({"x":cx,"y":cy,"w":abs(x1-x0),"h":abs(y1-y0),"cap":cap})
     R["heaters"]=wh
-    # valves / meters by text
+    # Legacy archive token order is retained for source-bound ID stability.
+    # W/M in WASH is a washing-machine label, not a water meter: the mandatory
+    # post pass water_meter_source_remaining retires its five guarded proxies
+    # and creates circle-M markers from the actual WATER METER legend.
     R["valves"]=[{"x":sp["X"],"y":sp["Y"],"t":sp["s"]} for sp in MC.spans(sh,"M_WS_TEXT") if sp["s"] in("IV","NRV","W/M","GRV","GV","WHA")]
     return R
 

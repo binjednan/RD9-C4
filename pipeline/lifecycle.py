@@ -146,14 +146,28 @@ def _grp(e): return e.get("grp") or e["id"]
 
 # Every system: sources (where it is switched on), conductors (pipes / ducts / conduits and in-line valves / dampers), terminals (where it is used).
 # `variants` are separate conductor networks that must ALL reach a terminal (chilled-water supply and return).  `sink=True` runs the flow backwards (drainage: from the outlet to the fixtures).
-VENT_T = ("duct_ea", "duct_fa", "riser_ea", "riser_fa", "damper_ea", "damper_fa", "duct_flex_ea", "duct_flex_fa")       # the ventilation network (pipeline/vent_build.py) is tested apart from the supply air
-BOARDS_T = ("det_db", "e_P18")                                   # distribution boards: wired from their circuits, boundary of what the drawings connect
-def _is_board(e): return (e["c"] == "E.panel" and _t(e) == "det_db") or _t(e) == "e_P18"
+SMK_T = tuple(f"{k}_{a}_{f}" for a in ("cp", "co") for f in ("fa", "ea") for k in ("duct", "riser", "damper", "duct_flex"))     # the smoke-management network (pipeline/smoke_build.py)
+GROUPS = {"التهوية": "شبكتان منفصلتان: الهواء النقي والشفط، لا يصل بينهما مجرى. دمجهما في اختبار واحد يُظهر بينهما 275 نقطة تلامس هندسي (مجرى يعبر مجرى على المنسوب المفترض نفسه) فتُعدّ نهاية موصولة عبر الشبكة الأخرى؛ لذلك تُختبر كل شبكة بموصلاتها وحدها وتُجمع النتائج هنا.",
+          "إدارة الدخان": "أربع شبكات مستقلة بمراوح مستقلة: تعويض الموقف وشفطه، وتعويض الممرات وشفطها (SM-100…SM-105). تتلامس أجزاء شبكتي الممرات هندسيًا (18 تلامسًا على بعد 2.4–3.7 سم بين صاعدي الهواء والشفط ومخمّداتهما)، فلو دُمجت الشبكات لأمكن اعتبار نهاية موصولة عبر شبكة أخرى؛ لذلك تُختبر كل شبكة وحدها وتُجمع النتائج هنا."}
+VENT_T = ("duct_ea", "duct_fa", "riser_ea", "riser_fa", "damper_ea", "damper_fa", "duct_flex_ea", "duct_flex_fa") + SMK_T       # the ventilation + smoke networks are tested apart from the supply air
+BOARDS_T = ("det_db", "e_P17", "e_P18")                          # DB and SMDB source symbol types; category may retain a legacy emitter identity
+def _is_board(e): return (e["c"] == "E.panel" and _t(e) == "det_db") or _t(e) in ("e_P17", "e_P18")
 def _elec_load(e):
     t = _t(e)
     if e["c"] in ("E.light", "E.emerg"): return True
-    if e["c"] == "E.socket": return (t.startswith("e_S") or t.startswith("e_P")) and t not in ("e_P14", "e_P15", "e_P16", "e_P18")
+    if e["c"] == "E.socket": return (t.startswith("e_S") or t.startswith("e_P")) and t not in ("e_P14", "e_P15", "e_P16", "e_P17", "e_P18")
     return False
+
+
+def _smk_sys(sid, area, fam, name, icon, color, desc, src_name, term_t, term_name, sink=False):
+    cond = (f"duct_{area}_{fam}", f"riser_{area}_{fam}", f"damper_{area}_{fam}", f"duct_flex_{area}_{fam}")
+    d = dict(id=sid, name=name, icon=icon, color=color, desc=desc, family="إدارة الدخان",
+             source=lambda e: e["c"] == "M.fan" and _t(e) == f"fan_{area}_{fam}",
+             variants=[("الشبكة", lambda e: e["c"] in ("M.duct", "M.damper") and _t(e) in cond)],
+             terminal=lambda e: e["c"] == "M.outlet" and _t(e) == term_t,
+             term_name=lambda e: term_name, source_name=src_name, conductor_name="مجرى إدارة الدخان")
+    if sink: d["sink"] = True
+    return d
 
 
 SYSTEMS = [
@@ -166,8 +180,8 @@ SYSTEMS = [
     dict(id="fire", name="الإطفاء", icon="🔥", color="#D55E00",
          desc="خزانات الإطفاء ← أنابيب السحب ← الصاعدان ← شبكة الرشاشات وخط FFC ← الرشاشات وصناديق الخراطيم",
          source=lambda e: e["c"] == "P.tank" and _t(e) == "tank_water" and _m(e) in ("FT1", "FT2"),
-         edge=lambda e: e["c"] == "P.ff" and _t(e) in ("riser_spr", "riser_ffc") and _m(e) in ("G→1", "B→G"), edge_name="مخرج مضخات الإطفاء (غير مرسومة)",
-         variants=[("الشبكة", lambda e: e["c"] == "P.ff" and (_t(e).startswith("pipe_") or _t(e).startswith("riser_") or _t(e) == "sprk_drop"))],
+         edge=lambda e: e["c"] == "P.ff" and _t(e) in ("riser_spr", "riser_ffc") and _m(e) in ("G→1", "B→G"), edge_name="حد الصاعد؛ الربط الرأسي من المجموعة المرسومة إلى الشبكة غير مبين",
+         variants=[("الشبكة", lambda e: e["c"] == "P.ff" and not _t(e).startswith("pipe_fp_") and (_t(e).startswith("pipe_") or _t(e).startswith("riser_") or _t(e) == "sprk_drop"))],
          terminal=lambda e: e["c"] == "P.ff" and (_t(e) in ("sprk_pendent", "sprk_upright", "sprk_double") or _t(e) == "fhc"),
          term_name=lambda e: "صندوق خرطوم" if _t(e) == "fhc" else "رشاش", source_name="خزان إطفاء", conductor_name="أنبوب إطفاء"),
     dict(id="chw", name="المياه المبردة", icon="❄", color="#0072B2",
@@ -177,27 +191,39 @@ SYSTEMS = [
          terminal=lambda e: e["c"] == "M.equip" and _t(e) in ("fcu", "fahu"),
          term_name=lambda e: "وحدة مناولة" if _t(e) == "fahu" else "FCU", source_name="مبرّد / مضخة", conductor_name="أنبوب مياه مبردة"),
     dict(id="air", name="هواء التغذية", icon="≋", color="#56B4E9",
-         desc="وحدات FCU / FAHU ← مجاري الهواء والمخمّدات ← الناشرات وفتحات التغذية (الراجع عبر السقف المستعار بلا مجاري مرسومة)",
+         desc="وحدات FCU / FAHU ← مجاري الهواء والمخمّدات ← الناشرات وفتحات التغذية. خطوط الراجع الخام موثقة بسجل مستقل؛ دلالة المسار ومقاسه ومنسوبه ومنافذه قيد الفحص.",
          source=lambda e: e["c"] == "M.equip" and _t(e) in ("fcu", "fahu"),
          variants=[("الشبكة", lambda e: e["c"] in ("M.duct", "M.damper") and _t(e) not in VENT_T)],
          terminal=lambda e: e["c"] == "M.outlet" and _t(e) in ("diff_supply", "grille_supply"),
          term_name=lambda e: "ناشر تغذية" if _t(e) == "diff_supply" else "فتحة تغذية", source_name="FCU / FAHU", conductor_name="مجرى هواء"),
-    dict(id="vent_fa", name="التهوية — الهواء النقي", icon="⇣", color="#4d9a73",
+    dict(id="vent_fa", name="التهوية — الهواء النقي", icon="⇣", color="#4d9a73", family="التهوية",
          desc="وحدة معالجة الهواء النقي FAHU على السطح ← صاعد الهواء النقي (ينزل حتى البدروم) ← مجاري كل طابق ومخمّداتها ← الشبكات السلكية عند نهايات المجاري (المرسوم في مخططات التهوية VE-100…VE-105)",
          source=lambda e: e["c"] == "M.equip" and _t(e) == "fahu",
          variants=[("الشبكة", lambda e: (e["c"] == "M.duct" and _t(e) in ("duct_fa", "riser_fa", "duct_flex_fa")) or (e["c"] == "M.damper" and _t(e) == "damper_fa"))],
          terminal=lambda e: e["c"] == "M.outlet" and _t(e) == "grille_fa", term_name=lambda e: "شبكة هواء نقي", source_name="FAHU", conductor_name="مجرى هواء نقي"),
-    dict(id="vent_ea", name="التهوية — الشفط", icon="⇡", color="#b0763a", sink=True,
+    dict(id="vent_ea", name="التهوية — الشفط", icon="⇡", color="#b0763a", sink=True, family="التهوية",
          desc="الناشرات وشبكات الشفط في الحمامات والمطابخ ← مجاري الشفط ومخمّداتها ← صاعد الشفط ← قسم الشفط في وحدة FAHU على السطح (الاتجاه معكوس: يُختبر الوصل من المصدر نحو الناشرات)",
          source=lambda e: e["c"] == "M.equip" and _t(e) == "fahu",
          variants=[("الشبكة", lambda e: (e["c"] == "M.duct" and _t(e) in ("duct_ea", "riser_ea", "duct_flex_ea")) or (e["c"] == "M.damper" and _t(e) == "damper_ea"))],
          terminal=lambda e: e["c"] == "M.outlet" and _t(e) in ("diff_extract", "grille_ea"), term_name=lambda e: "ناشر شفط" if _t(e) == "diff_extract" else "شبكة شفط", source_name="FAHU (قسم الشفط)", conductor_name="مجرى شفط"),
+    _smk_sys("smk_cp_fa", "cp", "fa", "إدارة الدخان — هواء تعويض الموقف", "🅿", "#3f8fb0",
+             "مروحة هواء التعويض المعلّقة بالسقف في البدروم (9000 لتر/ث) ← الشفت 1400×1000 مم والمخمّد FD ← المجرى الرئيسي بمقاطعه المتناقصة ← الفروع 300×200 مم ومخمّدات VCD ← 13 شبكة FAG 1500×200 مم (المرسوم في SM-100 وSM-101 وSM-105)",
+             "مروحة هواء تعويض الموقف", "grille_cp_fa", "شبكة FAG"),
+    _smk_sys("smk_cp_ea", "cp", "ea", "إدارة الدخان — شفط دخان الموقف", "💨", "#9a5a3c",
+             "الشبكات EAG 1700×200 مم (13) ← الفروع ومخمّدات VCD ← المجرى الرئيسي ← المخمّد FD والمروحة المعلّقة بالسقف (10600 لتر/ث) ← الشفت 1600×1000 مم (الاتجاه معكوس: يُختبر الوصل من المروحة نحو الشبكات)",
+             "مروحة شفط دخان الموقف", "grille_cp_ea", "شبكة EAG", sink=True),
+    _smk_sys("smk_co_fa", "co", "fa", "إدارة الدخان — هواء تعويض الممرات", "🚪", "#5aa9a0",
+             "مروحة السطح SMSF (284 لتر/ث) ← مجرى السطح 400×250 مم والمخمّد MFD ← الصاعد ينزل بين الطوابق ← فرع كل طابق ومخمّده MFD ← شبكة SMS FAG 400×200 مم (142 لتر/ث) في الطوابق 1–5 (SM-102…SM-105)",
+             "مروحة السطح SMSF", "grille_co_fa", "شبكة SMS FAG"),
+    _smk_sys("smk_co_ea", "co", "ea", "إدارة الدخان — شفط دخان الممرات", "🌫", "#8a6f9e",
+             "ناشرا SMS EAD (225×225 مم، 84 لتر/ث لكلٍّ) في كل طابق ← مجرى الممر 250×150 مم ومخمّدا VCD ← الفرع 300×200 مم والمخمّد MFD ← الصاعد إلى السطح ← المخمّد والمجرى 300×200 مم ← المروحة SMEF (167 لتر/ث) (الاتجاه معكوس: يُختبر الوصل من المروحة نحو الناشرات)",
+             "مروحة السطح SMEF", "diff_co_ea", "ناشر SMS EAD", sink=True),
     dict(id="cold", joint_end_only=False, name="المياه الباردة", icon="💧", color="#06b6d4",
          desc="خزان المياه المنزلي ← مواسير المياه الباردة والمحابس ← مداخل الأجهزة الصحية والسخانات",
          source=lambda e: e["c"] == "P.tank" and _t(e) == "tank_water" and _m(e) == "DT",
-         edge=lambda e: e["c"] == "P.cold" and e["g"][0] == "t" and e["l"] in ("R", "G", "B") and ((e.get("a") or {}).get("dia_mm") or 0) >= 50 and not (e.get("a") or {}).get("connector"),
-         edge_name="رئيسيات غرف المضخات (مضخات الرفع والتعزيز غير مرسومة)",
-         variants=[("الشبكة", lambda e: e["c"] == "P.cold")],
+         edge=lambda e: e["c"] == "P.cold" and (e.get("a") or {}).get("sys") != "water_site" and e["g"][0] == "t" and e["l"] in ("R", "G", "B") and ((e.get("a") or {}).get("dia_mm") or 0) >= 50 and not (e.get("a") or {}).get("connector"),
+         edge_name="نهايات رئيسيات غرف المضخات؛ رموز معدات الرفع والتعزيز مرسومة، لكن أجسامها وفتحات اتصالها والربط الرأسي لم تُثبت",
+         variants=[("الشبكة", lambda e: e["c"] == "P.cold" and (e.get("a") or {}).get("sys") != "water_site")],
          terminal=lambda e: fix_cold_inlet(e) or e["c"] == "P.heater", group=_grp,
          term_name=lambda e: "سخان" if e["c"] == "P.heater" else "مدخل جهاز صحي", source_name="خزان منزلي", conductor_name="ماسورة مياه باردة"),
     dict(id="hot", joint_end_only=False, name="المياه الساخنة", icon="♨", color="#DB7F4A",
@@ -206,12 +232,44 @@ SYSTEMS = [
          variants=[("الشبكة", lambda e: e["c"] == "P.hot")],
          terminal=fix_hot_inlet, group=_grp,
          term_name=lambda e: "خلاط / دش", source_name="سخان", conductor_name="ماسورة مياه ساخنة"),
+    dict(id="storm", name="تصريف مياه الأمطار", icon="🌧", color="#3a7ca5", sink=True,
+         desc="مصارف السطح ← صواعد بين الطوابق ← خطوط الدور الأرضي بفتحات التنظيف ← نهايات التصريف الحر؛ تُختبر الهندسة المرسومة فقط ولا تُفترض شبكة موقع للأمطار",
+         source=lambda e:e["c"]=="P.storm" and _t(e)=="storm_outlet",
+         variants=[("الشبكة",lambda e:e["c"]=="P.storm" and _t(e) in ("storm_pipe","storm_stack","storm_co"))],
+         terminal=lambda e:e["c"]=="P.storm" and _t(e)=="storm_rd",
+         term_name=lambda e:"مصرف أمطار",source_name="تصريف حر",conductor_name="ماسورة أمطار"),
+    dict(id="lightning",name="الحماية من الصواعق",icon="⚡",color="#8c73a7",no_connectors=True,
+         desc="قضبان الالتقاط ← شرائط السطح والموصلات النازلة ← حفر الصواعق؛ تحفظ فجوات اختلاف الرموز بين الطوابق",
+         source=lambda e:_t(e)=="elr_air_terminal",variants=[("الموصل",lambda e:_t(e) in ("elr_tape","elr_down","elr_bond","elr_clip","elr_earth_rod") and (e.get("a") or {}).get("sys")=="ltg")],
+         terminal=lambda e:_t(e)=="elr_earth_pit" and (e.get("a") or {}).get("sys")=="ltg",term_name=lambda e:"حفرة صواعق",source_name="قضيب التقاط",conductor_name="شريط نحاس"),
+    dict(id="earthing",name="التأريض",icon="⏚",color="#727b48",no_connectors=True,
+         desc="قضبان التجميع والموصلات المرسومة إلى الحفر؛ لا تفترض وصلات التسليح من التفاصيل NTS",
+         source=lambda e:_t(e)=="elr_earth_bar",variants=[("الموصل",lambda e:_t(e) in ("elr_earth","elr_earth_rod") and (e.get("a") or {}).get("sys")=="earth")],
+         terminal=lambda e:_t(e) in ("elr_earth_pit","elr_clean_pit") and (e.get("a") or {}).get("sys")=="earth",term_name=lambda e:"حفرة تأريض",source_name="قضيب تجميع",conductor_name="موصل70مم²"),
+    dict(id="telephone",name="الهاتف والألياف",icon="☎",color="#825bbd",no_connectors=True,
+         desc="رفا MDF ومدخل الموقع وحوامل الهاتف؛ توصيل المخارج إلى ONU غير مرسوم مكانيًا، فلا ينشأ من المخطط التوضيحي",
+         source=lambda e:_t(e)=="elr_mdf_rack",variants=[("المدخل والحامل",lambda e:_t(e) in ("elr_site_phone","elr_fiber","elr_phone_tray","elr_gsm_tray","elr_mini_odf","elr_onu"))],
+         terminal=lambda e:_t(e) in ("elr_rj45_single","elr_rj45_dual","elr_floorbox"),term_name=lambda e:"مخرج هاتف/بيانات",source_name="MDF",conductor_name="جراب/حامل"),
+    dict(id="water_site", name="تعبئة مياه الموقع", icon="💧", color="#418da8", no_connectors=True,
+         desc="خط ADDC والعدادات الأربع إلى مقاطع تعبئة الخزانات؛ لا تُستنتج شبكة رفع من المخطط الرأسي",
+         source=lambda e:_t(e)=="ws_site_pipe" and e["g"][0]=="t" and abs(e["g"][1][0][0]-e["g"][1][-1][0])<1,
+         variants=[("الخط",lambda e:_t(e) in ("ws_site_pipe","ws_site_meter","ws_fill_drop"))],
+         terminal=lambda e:_t(e)=="ws_fill_drop",term_name=lambda e:"تعبئة خزان", source_name="خط ADDC",conductor_name="ماسورة50مم"),
+    dict(id="irrigation", name="الري", icon="🌱", color="#598854", no_connectors=True,
+         desc="مضختا الري والخطوط والغرفة من IR-100/101؛ اختلاف موضع الصاعد بين المسقطين محفوظ كفجوة",
+         source=lambda e:_t(e)=="irr_pump",variants=[("الخط",lambda e:_t(e)=="irr_pipe")],
+         terminal=lambda e:_t(e)=="irr_chamber",term_name=lambda e:"غرفة الري",source_name="مضخة الري",conductor_name="ماسورة الري"),
+    dict(id="fire_pumps", name="مجموعة مضخات الإطفاء", icon="🔥", color="#ad5448", no_connectors=True,
+         desc="المضخات الثلاث والمجمع والفروع والوعاء داخل FF-101؛ لا يفترض الربط إلى الشبكة الخارجية",
+         source=lambda e:_t(e) in ("fp_electric","fp_diesel","fp_jockey"),
+         variants=[("المجمع",lambda e:_t(e) in ("pipe_fp_header","pipe_fp_branch"))],
+         terminal=lambda e:_t(e)=="fp_pressure_vessel",term_name=lambda e:"وعاء ضغط",source_name="مضخة إطفاء",conductor_name="فرع/مجمع"),
     dict(id="drain", joint_end_only=False, name="الصرف", icon="⇩", color="#8a6d4b", sink=True,
          desc="المخرج ← مواسير الصرف والصاعدان ← المصائد ← مصارف الأجهزة (المسار عكس اتجاه الجريان)",
          source=lambda e: e["c"] == "P.drain" and _t(e) == "drain_outlet",
-         edge=lambda e: e["c"] == "P.drain" and _t(e).startswith("pipe_") and e["l"] in ("B", "G") and not (e.get("a") or {}).get("connector"),
-         edge_name="مواسير الصرف تحت الأرض (المخرج إلى المجمّع العام غير مرسوم)",
-         variants=[("الشبكة", lambda e: e["c"] == "P.drain" and (_t(e).startswith("pipe_") or _t(e) in ("cleanout", "floor_trap", "stack")))],
+         edge=lambda e: e["c"] == "P.drain" and _t(e).startswith("pipe_") and _t(e) != "pipe_vent" and e["l"] in ("B", "G") and not (e.get("a") or {}).get("connector"),
+         edge_name="مواسير الصرف تحت الأرض (DR-102 يرسم المخرج إلى غرف الموقع؛ حدود الشبكة غير المتصلة تظهر في الاختبار)",
+         variants=[("الشبكة", lambda e: e["c"] == "P.drain" and ((_t(e).startswith("pipe_") and _t(e) != "pipe_vent") or _t(e) in ("cleanout", "floor_trap", "stack", "site_mh")))],
          terminal=lambda e: fix_waste_outlet(e) or (e["c"] == "P.drain" and _t(e) == "floor_trap"), group=_grp,
          term_name=lambda e: "مصيدة أرضية" if _t(e) == "floor_trap" else "مصرف جهاز", source_name="مخرج الصرف", conductor_name="ماسورة صرف"),
 ]
@@ -289,16 +347,16 @@ def plan_dist_cm(e, conds):
 
 def analyse_system(M, sd, world):
     els = M["els"]
-    src = [i for i, e in enumerate(els) if sd["source"](e)]
-    edge = [i for i, e in enumerate(els) if sd.get("edge") and sd["edge"](e)]
-    ter = [i for i, e in enumerate(els) if sd["terminal"](e)]
+    src = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and sd["source"](e)]
+    edge = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and sd.get("edge") and sd["edge"](e)]
+    ter = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and sd["terminal"](e)]
     grp = sd.get("group")
     units = collections.OrderedDict()
     for i in ter: units.setdefault(grp(els[i]) if grp else els[i]["id"], []).append(i)
     var = []
     allcon = set()
     for vname, vpred in sd["variants"]:
-        con = [i for i, e in enumerate(els) if vpred(e)]
+        con = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and vpred(e)]
         kind = {}
         for i in con: kind[i] = "c"
         for i in ter: kind[i] = "t"
@@ -408,6 +466,8 @@ def run(M, verbose=False):
 
 def pack(M, results):
     """compact JSON for the viewer: parallel arrays so 10k nodes stay ~100 kB"""
+    import display_palette
+    palette = display_palette.apply(M)
     S = []
     els = M["els"]
     for sd, R in results:
@@ -417,11 +477,11 @@ def pack(M, results):
         for i, d in reach:
             role.append("s" if i in srcs else "e" if i in eds else "t" if i in ters else "c")
         unreached_ter = [i for k in R["bad"] for i in R["units"][k]]
-        S.append(dict(id=sd["id"], name=sd["name"], icon=sd["icon"], color=sd["color"], desc=sd["desc"],
+        S.append(dict(id=sd["id"], name=sd["name"], icon=sd["icon"], color=palette["systems"].get(sd["id"], {}).get("color", "#69788C"), desc=sd["desc"], grp=sd.get("family"),
                       cnt=dict(src=len(R["src"]), edge=len(R["edge"]), con=len(R["allcon"]), ter=len(R["units"]), ok=len(R["ok"]), chain=len(R["chain"]), orph=len(R["orph"]), isl=len(R["isl"]), near=len(R["near"]), far=len(R["far"]), lone=len(R["lone"])),
                       tests=[dict(id=t["id"], n=t["n"], ok=t["ok"], of=t["of"], p=1 if t["pass_"] else 0, **({"d": t["detail"]} if "detail" in t else {})) for t in R["tests"]],
                       src=R["src"], ri=[i for i, d in reach], rd=[int(round(d * 10)) for i, d in reach], rk="".join(role), x=unreached_ter, o=R["orph"]))
-    return {"v": 1, "tol": TOL, "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "systems": S}
+    return {"v": 1, "tol": TOL, "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "systems": S, "groups": GROUPS}
 
 
 def apply(M, verbose=False):
@@ -445,6 +505,8 @@ def write_doc(M, results):
         t = R["tests"]; np_ = sum(1 for x in t if x["pass_"])
         w(f"| {sd['icon']} {sd['name']} | {len(R['src'])} | {len(R['allcon'])} | {len(R['units'])} | {len(R['ok'])} | {len(R['near'])} | {len(R['far'])} | {len(R['orph'])} | {np_} / {len(t)} |")
     w("")
+    for name, note in GROUPS.items():
+        w(f"**{name}:** {note}"); w("")
     for sd, R in results:
         w(f"## {sd['icon']} {sd['name']}"); w(""); w(sd["desc"]); w("")
         w("| الاختبار | النتيجة | العدد |"); w("|---|---|---|")

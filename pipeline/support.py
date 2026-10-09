@@ -33,7 +33,7 @@ def zr(g):
     if k == "b": return g[6], g[7]
     if k == "cyl": return g[4], g[5]
     if k == "p": return g[2], g[3]
-    if k in ("t", "d", "rs", "tri"):
+    if k in ("t", "d", "rs", "tri", "mesh"):
         zs = [p[2] for p in g[1] if len(p) > 2]; return (min(zs), max(zs)) if zs else (None, None)
     if k == "sph": return g[4], g[5]
     return (None, None)
@@ -49,9 +49,10 @@ class Idx:
 WALL_MOUNT_DEFAULT = {"thermostat"}
 class Support:
     def __init__(self, els, levels, wall_types=()):
-        self.els = els; self.LV = {l["id"]: l for l in levels}; self.wall_types = set(wall_types) | WALL_MOUNT_DEFAULT
+        self.els = els; self.by_id = {e["id"]: e for e in els}; self.LV = {l["id"]: l for l in levels}; self.wall_types = set(wall_types) | WALL_MOUNT_DEFAULT
         self.H = Idx(); self.V = Idx(); self.B = Idx(); self.P = Idx()
         for i, e in enumerate(els):
+            if e.get('a',{}).get('alt'): continue
             c, g = e["c"], e["g"]; z0, z1 = zr(g)
             if z0 is None: continue
             if c in ("A.floor", "A.site", "S.raft", "S.stair"): self.H.add(poly_of(g), z1, z1, i, "floor")
@@ -63,6 +64,7 @@ class Support:
                     dx, dy = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dy) or 1; nx, ny = -dy / L * hw, dx / L * hw
                     q = Polygon([(a[0] + nx, a[1] + ny), (b[0] + nx, b[1] + ny), (b[0] - nx, b[1] - ny), (a[0] - nx, a[1] - ny)])
                     self.H.add(q, min(a[2], b[2]), max(a[2], b[2]), i, "floor")
+                    if len(g) > 3 and g[3]: self.H.add(q, min(a[2], b[2]) - g[3], max(a[2], b[2]) - g[3], i, "ceil")          # the soffit of the ramp slab carries what is hung under it (the car-park extract duct passes under the top of the ramp)
             if c in ("A.wall", "S.wall", "S.col", "A.rail", "A.fix", "A.clad", "S.beam"): self.V.add(poly_of(g), z0, z1, i, c)
             if c in ("M.equip", "P.heater", "E.panel", "E.gen", "M.fan", "A.fix"): self.B.add(poly_of(g), z0, z1, i, c)
             if c in ("M.pipe", "M.duct", "P.cold", "P.hot", "P.drain", "P.ff") and g[0] in ("t", "d"):
@@ -90,11 +92,84 @@ class Support:
             if h[3] == "floor" and z - maxgap <= h[1] <= z + 0.04:
                 d = max(0.0, z - h[1]); best = d if best is None or d < best else best
         return best
+    def owner_bracket(self, e):
+        """A verified explicit owner bracket carries only its named device.
+
+        A.detail is deliberately absent from every host index above.
+        """
+        a = e.get('a') or {}; b = self.by_id.get(a.get('support_bracket_id'))
+        if not b or b.get('c') != 'A.detail' or b.get('a', {}).get('alt'): return None
+        ba = b.get('a') or {}; h = self.by_id.get(ba.get('host_id'))
+        if ba.get('bracket_for') != e['id'] or not ba.get('not_a_host') or not h: return None
+        if h.get('a', {}).get('alt') or h['l'] != e['l'] or b['l'] != e['l']: return None
+        ep, hp = poly_of(e['g']), poly_of(h['g']); ez, hz = zr(e['g']), zr(h['g'])
+        if ep is None or hp is None or ez[0] is None or hz[0] is None: return None
+        g = b['g']; kind = b.get('t')
+        if kind == 'owner_flexible_bracket' and g[0] == 't' and len(g[1]) == 2 and g[2] == 2:
+            if e.get('t') != 'e_P5' or h['c'] not in ('M.equip', 'M.fan'): return None
+            pts = g[1]; limit = 60
+        elif kind == 'owner_box_bracket' and g[0] == 'b' and g[4] == 4 and abs(g[7]-g[6]-.04)<1e-8:
+            if h['c'] not in ('A.wall','S.wall','S.col'): return None
+            ang = math.radians(g[5]); dx, dy = math.cos(ang)*g[3]/2, math.sin(ang)*g[3]/2
+            z = (g[6]+g[7])/2
+            pts = [[g[1]-dx,g[2]-dy,z],[g[1]+dx,g[2]+dy,z]]; limit = 100 if ba.get("owner_limit_cm") == 100 else 30
+        elif kind == 'owner_box_bracket' and g[0] == 'mesh' and ba.get('owner_limit_cm') == 100:
+            if h['c'] not in ('A.wall','S.wall','S.col','A.ceil','S.slab') or len(g[1]) != 8 or ba.get('cross_section_cm') != [4,4]: return None
+            pts = ba.get('anchor_points_cm_m',[]); limit = 100
+            if len(pts) != 2: return None
+            for j,pt in zip((0,4),pts):
+                center = [sum(v[k] for v in g[1][j:j+4])/4 for k in range(3)]
+                if math.sqrt((pt[0]-center[0])**2+(pt[1]-center[1])**2+((pt[2]-center[2])*100)**2)>1e-3: return None
+        else: return None
+        c = ep.centroid; center = (c.x,c.y,(ez[0]+ez[1])/2)
+        distance = lambda x,y: math.sqrt((x[0]-y[0])**2+(x[1]-y[1])**2+((x[2]-y[2])*100)**2)
+        if min(distance(x,center) for x in pts) > 1e-3 or distance(*pts) > limit+1e-6: return None
+        end = max(pts,key=lambda x:distance(x,center))
+        if hp.distance(Point(end[:2])) > 1e-3 or not hz[0]-1e-8 <= end[2] <= hz[1]+1e-8: return None
+        return b['id']
+
+    def owner_clips(self, e):
+        a = e.get('a') or {}; b = self.by_id.get(a.get('support_clip_id'))
+        if not a.get('support_clip_complete') or not b or b.get('t') != 'owner_wire_clip': return None
+        ba = b.get('a') or {}; anchors = ba.get('anchors',[])
+        if ba.get('clip_for') != e['id'] or ba.get('partial_support') or not ba.get('not_a_host'): return None
+        if b.get('c') != 'A.detail' or b['l'] != e['l'] or b.get('a',{}).get('alt'): return None
+        if e['g'][0] != 't' or b['g'][0] != 'mesh' or len(b['g'][1]) != len(anchors)*8 or not anchors: return None
+        dist = lambda x,y: math.sqrt((x[0]-y[0])**2+(x[1]-y[1])**2+((x[2]-y[2])*100)**2)
+        segments = list(zip(e['g'][1],e['g'][1][1:])); total = sum(dist(x,y) for x,y in segments)
+        positions = [q['station_cm'] for q in anchors]
+        if abs(positions[0])>1e-3 or abs(positions[-1]-total)>1e-3 or any(y-x>300+1e-5 or y<x for x,y in zip(positions,positions[1:])): return None
+        for k,q in enumerate(anchors):
+            h=self.by_id.get(q['host_id'])
+            if not h or h['c'] not in ('A.wall','S.wall','S.col','S.slab','A.floor','A.ceil') or h.get('a',{}).get('alt'): return None
+            p=poly_of(h['g']);z=zr(h['g']);wp=q['wire_point'];hp=q['host_point']
+            if p is None or z[0] is None or p.distance(Point(hp[:2]))>1e-3 or not z[0]-1e-8<=hp[2]<=z[1]+1e-8 or dist(wp,hp)>80+1e-5: return None
+            remain=q['station_cm'];expected=None
+            for x,y in segments:
+                length=dist(x,y)
+                if length and remain<=length+1e-5:
+                    f=min(max(remain/length,0),1);expected=[x[i]+f*(y[i]-x[i]) for i in range(3)];break
+                remain-=length
+            if expected is None or dist(expected,wp)>1e-3:return None
+            # The two square end faces must remain centred at the recorded ends.
+            v=b['g'][1][k*8:k*8+8];ends=[[sum(pt[i] for pt in v[j:j+4])/4 for i in range(3)] for j in (0,4)]
+            if dist(wp,hp)>1e-6 and (dist(ends[0],wp)>1e-3 or dist(ends[1],hp)>1e-3):return None
+        return b['id']
+
     def analyse(self, i):
         """-> dict(kind, ...) kind in ok | rod | hang | stand | float | skip"""
-        e = self.els[i]; g = e["g"]; z0, z1 = zr(g)
+        e = self.els[i]
+        if e.get('a',{}).get('alt'): return {'kind':'skip'}
+        bracket = self.owner_bracket(e)
+        if bracket: return {'kind':'ok','bracket_id':bracket}
+        clips = self.owner_clips(e)
+        if clips: return {'kind':'ok','clip_id':clips}
+        g = e["g"]; z0, z1 = zr(g)
         if z0 is None: return {"kind": "skip"}
         if (e.get("a") or {}).get("shaft"): return {"kind": "ok"}                    # a ventilation riser (pipeline/vent_build.py) stands through the slabs it passes: carried by them, never «relocated»
+        if e["c"] in ("M.damper", "M.outlet") and (e.get("a") or {}).get("sys"):      # an in-line damper / a grille at a duct end of the ventilation and smoke networks (a.sys) is carried by the duct it sits on: never «relocated» to a wall
+            pl0 = poly_of(g)
+            if pl0 is not None and any(h[3] == "M.duct" and h[2] != i and h[0] - 0.06 <= z1 and h[1] >= z0 - 0.06 for h in self.P.hits(pl0, 6)): return {"kind": "ok"}
         if g[0] in ("t", "d"):
             # under the floor finish and resting on a slab / raft just below: buried in the screed (basement drains: DR-100 floor traps + bedding details) -> nothing hangs it
             ffl_ = self.LV[e["l"]]["ffl"]; pts_ = g[1]
@@ -117,6 +192,10 @@ class Support:
             return {"kind": "float"}
         pl = poly_of(g)
         if pl is None: return {"kind": "skip"}
+        # Real local floor/site levels may differ from the general level datum
+        # (e.g. the irrigation chamber on a +0.85 m terrace).  Test the actual
+        # underside against its host before the height-based wall classification.
+        if self.floor_gap(pl, z0, 0.08, 6) is not None: return {"kind": "ok"}
         zone = self.zone(e)
         if zone == "ceil":
             s0 = self.soffit_gap(pl, z1, 3.5, 6)

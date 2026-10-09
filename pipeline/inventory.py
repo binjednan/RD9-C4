@@ -27,7 +27,7 @@ FEATURES = [
     ("تنبيه", "الملاحظات والمناظير تُحفظ في هذا المتصفح فقط؛ انسخها (أو انسخ الرابط) لتبقى", "notes.js", r"c4notes", "warn"),
     ("تنبيه", "الظلال والعمق تتوقفان أثناء القص وفي وضع الأداء", "look.js", r"clipActive", "warn"),
     ("تنبيه", "الكماليات الإخراجية (أثاث وأشجار وسيارات) للعرض لا للتنفيذ، وتُخفى من «الأقسام»", "app.js", r"STAGE_KINDS", "warn"),
-    ("تنبيه", "الخوازيق تُعرض 30 سم تحت اللبشة للدلالة فقط (الطول الفعلي 13 م)", "pipeline/post_model.py", r"يُعرض 30 سم فقط", "warn"),
+    ("تنبيه", "الخوازيق بطول13م وقطر60سم حسب P1؛ منسوب الرأس مشتق والغرس وقطع الرأس النهائي غير مثبتين", "pipeline/post_model.py", r"_SSR\.apply", "warn"),
     ("تنبيه", "صور العينات مرخّصة ومنسوبة لأصحابها (docs/PHOTO_CREDITS.md)", "samples-ui.js", r"photoFigure", "warn"),
     ("3D", "نموذج ثلاثي الأبعاد بالمجسمات المجمّعة (Three.js) في ملف واحد", "app.js", r"buildAll\(", None),
     ("3D", "تحكم بالكاميرا: ماوس / تراك باد / لمس (إصبع تدوير، إصبعان تحريك وقرص)", "controls.js", r"pinchInZooms", None),
@@ -41,7 +41,10 @@ FEATURES = [
     ("التحليل", "سجل التخمينات وأفضل موضع للمكوّنات بلا حامل", "pipeline/guesses.py", r"def relocate", None),
     ("التحليل", "درجة موثوقية لكل عنصر (موثّق / مشتق / تخمين / إخراجي)", "pipeline/reliability.py", r"def assign", None),
     ("الأنظمة", "التهوية: مجاري الشفط والهواء النقي والناشرات والشبكات السلكية والمخمّدات والصواعد ومراوح الدور الأرضي (مخططات VE-100…VE-105)", "pipeline/vent_build.py", r"def build", None),
-    ("الأنظمة", "اختبارات دورة الحياة لتسعة أنظمة (كهرباء، إطفاء، مبردة، هواء تغذية، تهوية نقية وشفط، باردة، ساخنة، صرف)", "pipeline/lifecycle.py", r"SYSTEMS", None),
+    ("الأنظمة", "إدارة الدخان: مجاري هواء التعويض وشفط الدخان لموقف البدروم (13 شبكة FAG و13 EAG) وصاعدا الممرات ومخمّدات MFD ومروحتا السطح (مخططات SM-100…SM-105)", "pipeline/smoke_build.py", r"def build", None),
+    ("الأنظمة", "تصريف الموقع ومياه الأمطار: ثلاث غرف تفتيش وخط الموقع ومصارف السطح والصواعد والتصريف الحر (MECH2 ص1 وص27–31)", "pipeline/storm_build.py", r"def build", None),
+    ("الأنظمة", "اختبارات دورة الحياة لعشرين نظامًا، ومنها مياه الموقع والري ومضخات الإطفاء والصواعق والتأريض والهاتف؛ تبقى شبكات التهوية والدخان مستقلة هندسيًا", "pipeline/lifecycle.py", r"SYSTEMS", None),
+    ("الواجهة", "تجميع بطاقتي التهوية وأربع بطاقات إدارة الدخان في عائلتين مع جمع النتائج دون دمج الشبكات", "life.js", r"lf-grp", None),
     ("العينات", "مكتبة عينات تفصيلية بمعاينة منفردة وانتقال إلى الموضع", "samples-ui.js", r"openPreview", None),
     ("العينات", "حديد التسليح بالأسياخ المستديرة عند الطلب", "detail.js", r"setRebar", None),
     ("الواجهة", "تبديل ما يفعله السحب بإصبع واحد (أزرار الوضع)", "app.js", r"setModes", None),
@@ -66,8 +69,16 @@ def _loc(pattern):
 def sheets(M):
     idx = json.load(open(os.path.join(HERE, "data", "sheet_index.json"), encoding="utf-8"))
     cites = collections.Counter()
-    texts = list(M.get("sp", []))
-    for t in (M.get("types") or {}).values(): texts += list(t.get("sr") or [])
+    # Count citations bound to live elements/types, not unused archive pool
+    # entries. A citation proves that a sheet is referenced, not full extraction
+    # or independent acceptance of every detail on that sheet.
+    pool = M.get('sp', [])
+    source_indices = sorted({i for e in M['els'] for i in e.get('s', [])})
+    assert all(isinstance(i, int) and 0 <= i < len(pool) for i in source_indices)
+    texts = [pool[i] for i in source_indices]
+    live_types = {e.get('t') for e in M['els']}
+    for key, t in (M.get("types") or {}).items():
+        if key in live_types: texts += list(t.get("sr") or [])
     for tx in texts:
         for m in PAT.finditer(str(tx)):
             s = m.group(1); a = int(m.group(2)); b = int(m.group(3)) if m.group(3) else a
@@ -131,7 +142,7 @@ def build(M):
     docs = sorted(f for f in os.listdir(os.path.join(ROOT, "docs")) if f.endswith(".md")) if os.path.isdir(os.path.join(ROOT, "docs")) else []
     idx = os.path.join(ROOT, "index.html")
     inv = {"v": 1, "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-           "model": {"els": len(els), "types": len(M.get("types", {})), "levels": len(M["levels"]), "units": len(M.get("units", [])), "mats": len(M.get("mats", {})), "fin": len(M.get("fin", {})),
+           "model": {"els": len(els), "types": len({e.get('t') for e in els}), "type_catalogue": len(M.get("types", {})), "levels": len(M["levels"]), "units": len(M.get("units", [])), "mats": len(M.get("mats", {})), "fin": len(M.get("fin", {})),
                      "stage": sum(1 for e in els if e["c"] == "A.stage")},
            "grades": rel.get("overall", {}), "axes": rel.get("axes", {}), "layers": layers, "levels": levels, "sheets": sheets(M), "closure": closure(), "features": features(),
            "issues": {"clash": {"c": ct.get("c", 0), "k": ct.get("k", 0), "m": ct.get("m", 0), "groups": len(M.get("clashGroups", []))},
@@ -152,7 +163,7 @@ def write_doc(M):
     P("")
     m = inv["model"]; g = inv["grades"]; tot = sum(g.values()) or 1
     P("## 1) النموذج"); P("")
-    P(f"- **{m['els']:,}** عنصرًا في **{m['types']}** نوعًا على **{m['levels']}** مستويات و**{m['units']}** وحدة سكنية، بـ**{m['mats']}** خامة و**{m['fin']}** رمز تشطيب (A500).")
+    P(f"- **{m['els']:,}** عنصرًا في **{m['types']}** نوعًا مستخدمًا فعليًا على **{m['levels']}** مستويات و**{m['units']}** وحدة سكنية. سجل التعريفات يضم **{m['type_catalogue']}** نوعًا و**{m['mats']}** مادة عرض و**{m['fin']}** رمز تشطيب (A500)؛ ليس اعتمادًا للمواد الفعلية.")
     P(f"- كماليات إخراجية (للعرض لا للتنفيذ): **{m['stage']:,}** عنصرًا.")
     P("")
     P("### درجات الموثوقية (ما يمكن الاعتماد عليه من كل عنصر)"); P("")
@@ -171,7 +182,7 @@ def write_doc(M):
     P("")
     sh = inv["sheets"]
     P("## 2) المصادر (المخططات)"); P("")
-    P(f"{sh['total']} ورقة في 7 ملفات؛ **{sh['used']}** منها مُستشهَد بها في النموذج ({sh['used'] * 100 // max(1, sh['total'])}%).")
+    P(f"{sh['total']} ورقة في 7 ملفات؛ **{sh['used']}** منها مذكورة في مراجع العناصر والأنواع الموجودة فعليًا ({sh['used'] * 100 / max(1, sh['total']):.1f}%). لا يعد الاستشهاد استخراجًا كاملًا أو مراجعة كل تفاصيل الورقة؛ مراجع الأرشيف غير المستخدمة مستبعدة.")
     P(""); P("| الملف | الأوراق | المستعملة |"); P("|---|---:|---:|")
     for s in sh["sets"]: P(f"| {s['name']} | {s['pages']} | {s['used']} |")
     P(""); P("| نوع الورقة | العدد | المستعمل |"); P("|---|---:|---:|")

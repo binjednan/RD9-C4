@@ -1,0 +1,665 @@
+{
+  "pass": true,
+  "global_findings": [],
+  "source_checks": [
+    {
+      "ref": "('STR', 29):drawing4760",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing4761",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing4762",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing4763",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing4764",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing4765",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing4766",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5121",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5122",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5123",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5124",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5125",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5126",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5127",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5128",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5129",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5523",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5524",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5525",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5526",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5527",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5528",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5529",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5548",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5549",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5550",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5551",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5552",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5553",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5554",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5904",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5905",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5906",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5907",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5908",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5909",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing5910",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6406",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6407",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6408",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6520",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6521",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6541",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6542",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6779",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6784",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6785",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6839",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6848",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6849",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6859",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6860",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6870",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing6871",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7084",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7085",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7086",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7087",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7088",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7089",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7090",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7091",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7092",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7094",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7095",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7109",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7110",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7111",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7112",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7113",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7114",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):drawing7115",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2032",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2035",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2038",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2041",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2044",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2047",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2050",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2053",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2056",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2059",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2070",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2351",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing2352",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):drawing4383",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text41",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text43",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text45",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text46",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text47",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text48",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text49",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text50",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text51",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text52",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text53",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text86",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text87",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text89",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 21):text90",
+      "pass": true
+    },
+    {
+      "ref": "('A500', 1):text12",
+      "pass": true
+    },
+    {
+      "ref": "('A500', 1):text35",
+      "pass": true
+    },
+    {
+      "ref": "('BOQ', 9):text299",
+      "pass": true
+    },
+    {
+      "ref": "('BOQ', 9):text300",
+      "pass": true
+    },
+    {
+      "ref": "('BOQ', 9):text302",
+      "pass": true
+    },
+    {
+      "ref": "('BOQ', 9):text303",
+      "pass": true
+    },
+    {
+      "ref": "('BOQ', 9):text308",
+      "pass": true
+    },
+    {
+      "ref": "('BOQ', 9):text309",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation12",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation39",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation64",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation65",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation66",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation67",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation68",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation69",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation70",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation75",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation85",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation86",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation87",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation88",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation89",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation90",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation91",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation95",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation98",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation100",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation102",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation104",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation106",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation108",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation110",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation112",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation114",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation116",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation118",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation120",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation122",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation124",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation133",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation135",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation136",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation137",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation169",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation170",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation178",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation180",
+      "pass": true
+    },
+    {
+      "ref": "('STR', 29):annotation182",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S24-stair1-typical-G.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S24-G3-profile.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S24-base.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S24-right.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S24-1010.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S16-core1.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-S25.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-A500.png",
+      "pass": true
+    },
+    {
+      "ref": "archive-stairs-BOQ-F10.png",
+      "pass": true
+    },
+    {
+      "ref": "original_segment_count13_vs_numbered_plan11",
+      "pass": true
+    },
+    {
+      "ref": "waist_dimension_normal_not_vertical",
+      "pass": true,
+      "normalized_dot": 0.0006190490784035639
+    }
+  ],
+  "source_data_sha256": "1a52346a1afd74f71765c7f851d330f2d98dc80e7306813cb7a7ae8329368c60",
+  "summary": {
+    "reviewed_assemblies": 5,
+    "geometry_changes": 0,
+    "concrete_solids_added": 0,
+    "source_waist_thickness_cm": 25,
+    "source_landing_thickness_cm": 25,
+    "section_plan_conflicts": 1,
+    "whole_body_matching_ar": "تعارض مسجل",
+    "physical_acceptance": false
+  },
+  "whole_body_matching_ar": "تعارض مسجل",
+  "source_conflicts_resolved": false,
+  "geometry_changes": 0
+}

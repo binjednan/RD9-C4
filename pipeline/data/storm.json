@@ -1,0 +1,1284 @@
+{
+  "site": {
+    "page": 1,
+    "manholes": [
+      {
+        "mark": "MH-01",
+        "x": 2059.1,
+        "y": 1990.2,
+        "size_cm": 100
+      },
+      {
+        "mark": "MH-02",
+        "x": 1265.0,
+        "y": 1990.2,
+        "size_cm": 100
+      },
+      {
+        "mark": "MH-03",
+        "x": 964.5,
+        "y": 1990.2,
+        "size_cm": 100
+      }
+    ],
+    "pipe_axis": [
+      [
+        626.4,
+        1990.2
+      ],
+      [
+        2029.2,
+        1990.2
+      ]
+    ],
+    "arrows": [
+      {
+        "x": 626.4,
+        "y": 1990.2,
+        "direction": "غرب"
+      },
+      {
+        "x": 1481.7,
+        "y": 1990.2,
+        "direction": "غرب"
+      }
+    ],
+    "outlet": {
+      "x": 626.4,
+      "y": 1990.2,
+      "note": "TO BE CONNECTED WITH؛ وجهة الربط غير مرسومة"
+    },
+    "label_inventory": [
+      {
+        "text": "MH-01",
+        "x": 831.0,
+        "y": 1562.4
+      },
+      {
+        "text": "MH-02",
+        "x": 829.7,
+        "y": 1509.8
+      },
+      {
+        "text": "MH-03",
+        "x": 829.3,
+        "y": 1456.7
+      },
+      {
+        "text": "6\"Ø",
+        "x": 1437.3,
+        "y": 2036.9
+      },
+      {
+        "text": "CONNECTED",
+        "x": 435.3,
+        "y": 2007.3
+      }
+    ]
+  },
+  "sheets": {
+    "G": {
+      "page": 27,
+      "risers": [
+        {
+          "x": 123.2,
+          "y": 712.4,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 104.9
+          }
+        },
+        {
+          "x": 533.2,
+          "y": 556.2,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 233.1
+          }
+        },
+        {
+          "x": 917.3,
+          "y": 748.1,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 145.8
+          }
+        },
+        {
+          "x": 2026.0,
+          "y": 1205.2,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 329.1
+          }
+        },
+        {
+          "x": 2172.0,
+          "y": 368.2,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 327.8
+          }
+        }
+      ],
+      "drains": [],
+      "pipes": [
+        {
+          "kind": "dashed",
+          "name": "east",
+          "points": [
+            [
+              2205.3,
+              438.9
+            ],
+            [
+              2205.3,
+              988.5
+            ]
+          ],
+          "diameter_cm": 15
+        },
+        {
+          "kind": "dashed",
+          "name": "northeast",
+          "points": [
+            [
+              2025.8,
+              1205.0
+            ],
+            [
+              2177.3,
+              1053.5
+            ]
+          ],
+          "diameter_cm": 15
+        },
+        {
+          "kind": "dashed",
+          "name": "southwest",
+          "points": [
+            [
+              378.1,
+              711.4
+            ],
+            [
+              533.0,
+              556.0
+            ]
+          ],
+          "diameter_cm": 15
+        },
+        {
+          "kind": "dashed",
+          "name": "west",
+          "points": [
+            [
+              118.3,
+              712.2
+            ],
+            [
+              849.6,
+              712.2
+            ]
+          ],
+          "diameter_cm": 15
+        },
+        {
+          "kind": "solid",
+          "name": "free-discharge-line",
+          "points": [
+            [
+              -112.6,
+              712.0
+            ],
+            [
+              143.8,
+              712.0
+            ]
+          ],
+          "diameter_cm": 15
+        },
+        {
+          "kind": "solid",
+          "name": "free-discharge-line",
+          "points": [
+            [
+              2026.0,
+              1184.2
+            ],
+            [
+              2026.0,
+              1936.3
+            ]
+          ],
+          "diameter_cm": 15
+        }
+      ],
+      "cleanouts": [
+        {
+          "x": 143.8,
+          "y": 712.2,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14511,
+            0
+          ],
+          "source_pdf_point": [
+            381.19998,
+            1254.08008
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": {
+            "text": "CO",
+            "x": 161.1,
+            "y": 727.6
+          },
+          "label_distance_cm": 23.2
+        },
+        {
+          "x": 901.0,
+          "y": 712.2,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14508,
+            0
+          ],
+          "source_pdf_point": [
+            595.28003,
+            1254.08008
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": {
+            "text": "CO",
+            "x": 921.7,
+            "y": 711.5
+          },
+          "label_distance_cm": 20.7
+        },
+        {
+          "x": 931.1,
+          "y": 762.3,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14533,
+            0
+          ],
+          "source_pdf_point": [
+            603.79999,
+            1239.92004
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": {
+            "text": "CO",
+            "x": 948.8,
+            "y": 765.8
+          },
+          "label_distance_cm": 18.0
+        },
+        {
+          "x": 2025.8,
+          "y": 1184.2,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14528,
+            0
+          ],
+          "source_pdf_point": [
+            913.27991,
+            1120.64001
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": null,
+          "note": "رمز CLEAN OUT مطابق للمفتاح في المسقط، بلا وسم CO مستقل؛ لم يُستنتج موضعه من قرب الماسورة"
+        },
+        {
+          "x": 2157.3,
+          "y": 354.0,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14567,
+            0
+          ],
+          "source_pdf_point": [
+            950.47992,
+            1355.35999
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": {
+            "text": "CO",
+            "x": 2149.6,
+            "y": 339.6
+          },
+          "label_distance_cm": 16.3
+        },
+        {
+          "x": 2205.3,
+          "y": 381.6,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14523,
+            0
+          ],
+          "source_pdf_point": [
+            964.03992,
+            1347.56006
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": {
+            "text": "CO",
+            "x": 2204.8,
+            "y": 366.4
+          },
+          "label_distance_cm": 15.2
+        },
+        {
+          "x": 2219.3,
+          "y": 1011.9,
+          "mark": "CO",
+          "symbol": "نهاية خط بعارضة عمودية كما في مفتاح CLEAN OUT",
+          "source_primitive": [
+            14525,
+            0
+          ],
+          "source_pdf_point": [
+            967.99994,
+            1169.35999
+          ],
+          "source_transform": {
+            "ox": -1204.5154999999995,
+            "oy": 5147.9095,
+            "s": 3.537,
+            "nx": 17,
+            "ny": 11,
+            "nv": 19,
+            "nh": 12,
+            "ex": 5.152000000000726,
+            "ey": 6.052500000000691
+          },
+          "label": {
+            "text": "CO",
+            "x": 2233.2,
+            "y": 1001.3
+          },
+          "label_distance_cm": 17.5
+        }
+      ],
+      "outlets": [
+        {
+          "x": -112.6,
+          "y": 712.0,
+          "label_x": 4.4,
+          "label_y": 741.7
+        },
+        {
+          "x": 2026.0,
+          "y": 1936.3,
+          "label_x": 2119.4,
+          "label_y": 1967.5
+        }
+      ],
+      "label_inventory": [
+        {
+          "text": "6\"Ø",
+          "x": -0.1,
+          "y": 630.2
+        },
+        {
+          "text": "RAIN",
+          "x": 67.0,
+          "y": 630.2
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 188.3,
+          "y": 630.2
+        },
+        {
+          "text": "CO",
+          "x": 921.7,
+          "y": 711.5
+        },
+        {
+          "text": "discharge",
+          "x": 4.4,
+          "y": 741.7
+        },
+        {
+          "text": "CO",
+          "x": 2204.8,
+          "y": 366.4
+        },
+        {
+          "text": "CO",
+          "x": 2233.2,
+          "y": 1001.3
+        },
+        {
+          "text": "discharge",
+          "x": 2119.4,
+          "y": 1967.5
+        },
+        {
+          "text": "6\"Ø",
+          "x": 2166.7,
+          "y": 1203.6
+        },
+        {
+          "text": "RAIN",
+          "x": 2233.8,
+          "y": 1203.6
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 2355.1,
+          "y": 1203.6
+        },
+        {
+          "text": "6\"Ø",
+          "x": 793.2,
+          "y": 878.9
+        },
+        {
+          "text": "RAIN",
+          "x": 860.3,
+          "y": 878.9
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 981.6,
+          "y": 878.9
+        },
+        {
+          "text": "CO",
+          "x": 161.1,
+          "y": 727.6
+        },
+        {
+          "text": "CO",
+          "x": 948.8,
+          "y": 765.8
+        },
+        {
+          "text": "6\"Ø",
+          "x": 563.2,
+          "y": 474.4
+        },
+        {
+          "text": "RAIN",
+          "x": 630.2,
+          "y": 474.4
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 751.5,
+          "y": 474.4
+        },
+        {
+          "text": "CO",
+          "x": 2149.6,
+          "y": 339.6
+        },
+        {
+          "text": "6\"Ø",
+          "x": 2311.4,
+          "y": 366.6
+        },
+        {
+          "text": "RAIN",
+          "x": 2378.5,
+          "y": 366.6
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 2499.8,
+          "y": 366.6
+        }
+      ],
+      "symbol_counts": {
+        "vertical_circles": 5,
+        "rd_grates": 0,
+        "rd": 0,
+        "risers": 5,
+        "cleanouts": 7,
+        "cleanout_labels": 6
+      }
+    },
+    "1": {
+      "page": 28,
+      "risers": [
+        {
+          "x": 533.4,
+          "y": 556.3,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 218.7
+          }
+        },
+        {
+          "x": 917.2,
+          "y": 748.1,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 146.8
+          }
+        },
+        {
+          "x": 2040.8,
+          "y": 1213.8,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 6,
+            "distance_cm": 165.2
+          }
+        },
+        {
+          "x": 2171.5,
+          "y": 368.1,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 266.9
+          }
+        },
+        {
+          "x": 2176.8,
+          "y": 1424.9,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 233.7
+          }
+        }
+      ],
+      "drains": [],
+      "pipes": [],
+      "cleanouts": [],
+      "outlets": [],
+      "label_inventory": [
+        {
+          "text": "6\"ØRAIN",
+          "x": 139.2,
+          "y": 556.4
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 314.7,
+          "y": 556.4
+        },
+        {
+          "text": "6\"Ø",
+          "x": 769.3,
+          "y": 878.5
+        },
+        {
+          "text": "RAIN",
+          "x": 836.3,
+          "y": 878.5
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 984.7,
+          "y": 878.5
+        },
+        {
+          "text": "6\"Ø",
+          "x": 2201.6,
+          "y": 472.8
+        },
+        {
+          "text": "RAIN",
+          "x": 2268.6,
+          "y": 472.8
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 2417.0,
+          "y": 472.8
+        },
+        {
+          "text": "6\"Ø",
+          "x": 1765.8,
+          "y": 1354.4
+        },
+        {
+          "text": "RAIN",
+          "x": 1832.8,
+          "y": 1354.4
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 1954.1,
+          "y": 1354.4
+        },
+        {
+          "text": "6\"Ø",
+          "x": 2207.9,
+          "y": 1505.4
+        },
+        {
+          "text": "RAIN",
+          "x": 2275.0,
+          "y": 1505.4
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 2396.2,
+          "y": 1505.4
+        }
+      ],
+      "symbol_counts": {
+        "vertical_circles": 5,
+        "rd_grates": 0,
+        "rd": 0,
+        "risers": 5,
+        "cleanouts": 0,
+        "cleanout_labels": 0
+      }
+    },
+    "TY": {
+      "page": 29,
+      "risers": [
+        {
+          "x": 533.4,
+          "y": 556.3,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 218.7
+          }
+        },
+        {
+          "x": 917.2,
+          "y": 748.1,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 147.0
+          }
+        },
+        {
+          "x": 2171.5,
+          "y": 368.3,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 266.9
+          }
+        },
+        {
+          "x": 2177.0,
+          "y": 1424.9,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 171.2
+          }
+        }
+      ],
+      "drains": [],
+      "pipes": [],
+      "cleanouts": [],
+      "outlets": [],
+      "label_inventory": [
+        {
+          "text": "6\"ØRAIN",
+          "x": 139.2,
+          "y": 556.5
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 314.7,
+          "y": 556.5
+        },
+        {
+          "text": "6\"Ø",
+          "x": 769.2,
+          "y": 878.7
+        },
+        {
+          "text": "RAIN",
+          "x": 836.3,
+          "y": 878.7
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 984.7,
+          "y": 878.7
+        },
+        {
+          "text": "6\"Ø",
+          "x": 2201.5,
+          "y": 472.9
+        },
+        {
+          "text": "RAIN",
+          "x": 2268.6,
+          "y": 472.9
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 2417.0,
+          "y": 472.9
+        },
+        {
+          "text": "6\"Ø",
+          "x": 1850.8,
+          "y": 1555.5
+        },
+        {
+          "text": "RAIN",
+          "x": 1917.9,
+          "y": 1555.5
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 2066.3,
+          "y": 1555.5
+        }
+      ],
+      "symbol_counts": {
+        "vertical_circles": 4,
+        "rd_grates": 0,
+        "rd": 0,
+        "risers": 4,
+        "cleanouts": 0,
+        "cleanout_labels": 0
+      }
+    },
+    "R": {
+      "page": 30,
+      "risers": [
+        {
+          "x": 132.2,
+          "y": 732.3,
+          "diameter_in": 6,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 6,
+            "distance_cm": 245.6
+          }
+        },
+        {
+          "x": 1745.0,
+          "y": 1248.3,
+          "diameter_in": 4,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 4,
+            "distance_cm": 151.0
+          }
+        },
+        {
+          "x": 2459.8,
+          "y": 1218.2,
+          "diameter_in": 4,
+          "label": {
+            "text": "W.PIPE-F/A",
+            "diameter_in": 4,
+            "distance_cm": 123.5
+          }
+        }
+      ],
+      "drains": [
+        {
+          "x": 533.4,
+          "y": 556.7,
+          "diameter_in": 6,
+          "mark": "RD 6\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 6,
+            "distance_cm": 146.2
+          }
+        },
+        {
+          "x": 917.2,
+          "y": 748.5,
+          "diameter_in": 6,
+          "mark": "RD 6\"",
+          "vertical_label": {
+            "text": "W.PIPE-F/A-T/B",
+            "diameter_in": 6,
+            "distance_cm": 148.1
+          }
+        },
+        {
+          "x": 2171.5,
+          "y": 368.5,
+          "diameter_in": 6,
+          "mark": "RD 6\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 6,
+            "distance_cm": 147.5
+          }
+        },
+        {
+          "x": 2176.8,
+          "y": 1425.3,
+          "diameter_in": 6,
+          "mark": "RD 6\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 6,
+            "distance_cm": 162.7
+          }
+        }
+      ],
+      "pipes": [],
+      "cleanouts": [],
+      "outlets": [
+        {
+          "x": 1745.0,
+          "y": 1248.3,
+          "label_x": 1715.9,
+          "label_y": 1338.0
+        },
+        {
+          "x": 2459.8,
+          "y": 1218.2,
+          "label_x": 2648.8,
+          "label_y": 1320.6
+        },
+        {
+          "x": 132.2,
+          "y": 732.3,
+          "label_x": 388.6,
+          "label_y": 641.1
+        }
+      ],
+      "label_inventory": [
+        {
+          "text": "RD",
+          "x": 907.3,
+          "y": 834.1
+        },
+        {
+          "text": "6\"",
+          "x": 939.9,
+          "y": 834.1
+        },
+        {
+          "text": "4\"Ø",
+          "x": 1621.9,
+          "y": 1112.1
+        },
+        {
+          "text": "RAIN",
+          "x": 1689.0,
+          "y": 1112.1
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 1810.2,
+          "y": 1112.1
+        },
+        {
+          "text": "4\"ØRAIN",
+          "x": 2380.6,
+          "y": 1115.9
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 2529.0,
+          "y": 1115.9
+        },
+        {
+          "text": "6\"Ø",
+          "x": 162.2,
+          "y": 844.7
+        },
+        {
+          "text": "RAIN",
+          "x": 229.3,
+          "y": 844.7
+        },
+        {
+          "text": "W.PIPE-F/A",
+          "x": 350.6,
+          "y": 844.7
+        },
+        {
+          "text": "RD",
+          "x": 2161.0,
+          "y": 312.8
+        },
+        {
+          "text": "6\"",
+          "x": 2193.5,
+          "y": 312.8
+        },
+        {
+          "text": "RD",
+          "x": 2240.1,
+          "y": 1423.3
+        },
+        {
+          "text": "6\"",
+          "x": 2272.6,
+          "y": 1423.3
+        },
+        {
+          "text": "6\"ØRAIN",
+          "x": 2088.3,
+          "y": 500.8
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 2236.7,
+          "y": 500.8
+        },
+        {
+          "text": "6\"Ø",
+          "x": 769.2,
+          "y": 616.7
+        },
+        {
+          "text": "RAIN",
+          "x": 836.3,
+          "y": 616.7
+        },
+        {
+          "text": "W.PIPE-F/A-T/B",
+          "x": 984.7,
+          "y": 616.7
+        },
+        {
+          "text": "6\"Ø",
+          "x": 2053.9,
+          "y": 1276.3
+        },
+        {
+          "text": "RAIN",
+          "x": 2120.9,
+          "y": 1276.3
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 2242.2,
+          "y": 1276.3
+        },
+        {
+          "text": "DISCHARGE",
+          "x": 1715.9,
+          "y": 1338.0
+        },
+        {
+          "text": "DISCHARGE",
+          "x": 2648.8,
+          "y": 1320.6
+        },
+        {
+          "text": "RD",
+          "x": 444.6,
+          "y": 551.9
+        },
+        {
+          "text": "6\"",
+          "x": 477.1,
+          "y": 551.9
+        },
+        {
+          "text": "DISCHARGE",
+          "x": 388.6,
+          "y": 641.1
+        },
+        {
+          "text": "6\"Ø",
+          "x": 407.3,
+          "y": 689.0
+        },
+        {
+          "text": "RAIN",
+          "x": 474.3,
+          "y": 689.0
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 595.6,
+          "y": 689.0
+        }
+      ],
+      "symbol_counts": {
+        "vertical_circles": 7,
+        "rd_grates": 4,
+        "rd": 4,
+        "risers": 3,
+        "cleanouts": 0,
+        "cleanout_labels": 0
+      }
+    },
+    "T": {
+      "page": 31,
+      "risers": [],
+      "drains": [
+        {
+          "x": 131.7,
+          "y": 732.1,
+          "diameter_in": 6,
+          "mark": "RD 6\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 6,
+            "distance_cm": 267.3
+          }
+        },
+        {
+          "x": 917.1,
+          "y": 748.2,
+          "diameter_in": 4,
+          "mark": "RD 4\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 6,
+            "distance_cm": 144.8
+          }
+        },
+        {
+          "x": 1745.2,
+          "y": 1248.4,
+          "diameter_in": 4,
+          "mark": "RD 4\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 4,
+            "distance_cm": 144.8
+          }
+        },
+        {
+          "x": 2460.4,
+          "y": 1218.2,
+          "diameter_in": 4,
+          "mark": "RD 4\"",
+          "vertical_label": {
+            "text": "W.PIPE-T/B",
+            "diameter_in": 4,
+            "distance_cm": 144.8
+          }
+        }
+      ],
+      "pipes": [],
+      "cleanouts": [],
+      "outlets": [],
+      "label_inventory": [
+        {
+          "text": "RD",
+          "x": 121.2,
+          "y": 793.1
+        },
+        {
+          "text": "6\"",
+          "x": 153.7,
+          "y": 793.1
+        },
+        {
+          "text": "RD",
+          "x": 1735.4,
+          "y": 1183.7
+        },
+        {
+          "text": "4\"",
+          "x": 1767.9,
+          "y": 1183.7
+        },
+        {
+          "text": "RD",
+          "x": 2450.7,
+          "y": 1153.8
+        },
+        {
+          "text": "4\"",
+          "x": 2483.3,
+          "y": 1153.8
+        },
+        {
+          "text": "RD",
+          "x": 923.6,
+          "y": 683.6
+        },
+        {
+          "text": "4\"",
+          "x": 956.1,
+          "y": 683.6
+        },
+        {
+          "text": "6\"Ø",
+          "x": 793.9,
+          "y": 877.5
+        },
+        {
+          "text": "RAIN",
+          "x": 861.0,
+          "y": 877.5
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 982.3,
+          "y": 877.5
+        },
+        {
+          "text": "4\"Ø",
+          "x": 1622.2,
+          "y": 1377.6
+        },
+        {
+          "text": "RAIN",
+          "x": 1689.3,
+          "y": 1377.6
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 1810.6,
+          "y": 1377.6
+        },
+        {
+          "text": "4\"Ø",
+          "x": 2337.4,
+          "y": 1347.4
+        },
+        {
+          "text": "RAIN",
+          "x": 2404.5,
+          "y": 1347.4
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 2525.8,
+          "y": 1347.4
+        },
+        {
+          "text": "6\"Ø",
+          "x": 161.5,
+          "y": 577.7
+        },
+        {
+          "text": "RAIN",
+          "x": 228.6,
+          "y": 577.7
+        },
+        {
+          "text": "W.PIPE-T/B",
+          "x": 349.9,
+          "y": 577.7
+        }
+      ],
+      "symbol_counts": {
+        "vertical_circles": 4,
+        "rd_grates": 4,
+        "rd": 4,
+        "risers": 0,
+        "cleanouts": 0,
+        "cleanout_labels": 0
+      }
+    }
+  },
+  "continuity_gaps": [
+    {
+      "from_level": "G",
+      "to_level": "1",
+      "x": 123.2,
+      "y": 712.4,
+      "label": "W.PIPE-F/A",
+      "distance_cm": 438.9
+    }
+  ],
+  "diameter_mismatches": [
+    {
+      "from_level": "R",
+      "to_level": "T",
+      "x": 917.2,
+      "y": 748.5,
+      "diameter_in": 6,
+      "next_diameter_in": 4
+    }
+  ],
+  "units": "cm",
+  "source": "MECH2 ص1 وص27–31"
+}

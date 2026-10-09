@@ -1,0 +1,10 @@
+{
+  "schema": "saved-geometry-integrity-v1",
+  "elements_checked": 33105,
+  "polygon_prisms_checked": 3270,
+  "findings": [],
+  "triangle_meshes_checked": 39,
+  "pass": true,
+  "source_geometry_acceptance": false,
+  "limit_ar": "صلاحية الترميز والمضلعات والأرقام والمعرفات فقط؛ لا تثبت مطابقة المخطط أو المنسوب أو التنفيذ."
+}

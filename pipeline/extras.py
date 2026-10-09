@@ -173,15 +173,18 @@ def parking_canopies(M):
 
 
 # ------------------------------------------------------------------------------------------------------------- 5 lifts (cars with lights + landing doors)
-LIFT_SRC = ["ARCH2 ص17 (A900 تفاصيل المصاعد): مصعدان متجاوران، فتحة إنشائية للباب ارتفاعها 230 سم، توقفات B وG و1–5 والسطح",
+LIFT_SRC = ["ARCH2 ص17 (A900 تفاصيل المصاعد): مصعدان متجاوران، فتحة إنشائية للباب ارتفاعها230سم؛ التوقفات المرسومة B وG و1–5. غطاء البئر +24.20؛ لا توقف سطح.",
             "ARCH1 ص6–7 (A103/A104): موضع البئرين وجدرانهما؛ المقصورة 140×160 سم مقدَّرة من فتحة البئر (كما كانت في النموذج)"]
 LIFT_CARS = [("L1", 1565.0, 1705.0, "G"), ("L2", 1785.0, 1925.0, "3")]
-LIFT_STOPS = ["B", "G", "1", "2", "3", "4", "5", "R"]
+LIFT_STOPS = ["B", "G", "1", "2", "3", "4", "5"]
+# A101 local lift lobby and A900 section A-A/4 both say -350 FFL.
+# This affects landing parts only; the general B datum, pit and cars stay separate.
+LIFT_LANDING_FFL = {"B": -3.50}
 YA, YB, YF = 1040.0, 1200.0, 1020.0          # car front / back, landing-door plane (front of the shaft)
 
 def lifts(M):
     out = []; LV = {l["id"]: l for l in M["levels"]}
-    stops = "B,G,1–5,R"
+    stops = "B,G,1–5"
     for car, xa, xb, lv0 in LIFT_CARS:
         xc = (xa + xb) / 2.0; z0 = LV[lv0]["ffl"] + 0.05
         a = {"car": car, "stops": stops, "cab_cm": "140×160 (تقديري من فتحة البئر)", "door_clear_cm": 110, "cab_h_m": 2.20}
@@ -194,12 +197,17 @@ def lifts(M):
         part(xa, YA, xb, YB, 2.26, 2.32, "lift_steel")
         part(xc - 45, (YA + YB) / 2 - 45, xc + 45, (YA + YB) / 2 + 45, 2.245, 2.26, "lift_light")
         part(xa + 8, YB - 8, xb - 8, YB - 4, 0.88, 0.93, "lift_steel")                 # back handrail
-    ld_src = LIFT_SRC + ["ARCH2 ص17: باب هبوط ثنائي الضلفة مركزي الفتح من فولاذ مقاوم للصدأ؛ عرض الفتحة الصافي 110 سم"]
+    ld_src = LIFT_SRC + ["ARCH2 ص17: باب هبوط ثنائي الضلفة مركزي الفتح من فولاذ مقاوم للصدأ؛ عرض الفتحة الصافي 110 سم",
+                         "ARCH1 ص4 A101 ردهة المصاعد / ARCH2 ص17 A900 قطاع A-A/4 Annotation27/xref6756: هبوط البدروم FFL−3.50 م؛ لا تعديل للمرجع العام B−3.70 م."]
     for lv in LIFT_STOPS:
-        L = LV[lv]; ffl = L["ffl"]; top = L["top"]
+        L = LV[lv]; ffl = LIFT_LANDING_FFL.get(lv, L["ffl"]); top = L["top"]
         for car, xa, xb, _ in LIFT_CARS:
             xc = (xa + xb) / 2.0
-            ad = {"car": car, "level": lv, "clear_w_cm": 110, "clear_h_cm": 210}
+            ad = {"car": car, "level": lv, "clear_w_cm": 110, "clear_h_cm": 210,
+                  "landing_ffl_m": ffl, "source_landing_ffl_verified": lv == "B"}
+            if lv == "B":
+                ad.update(source_landing_ffl_page="ARCH2:17", source_landing_ffl_annotation=27,
+                          source_landing_ffl_xref=6756, landing_ffl_correction_m=0.20)
             def el(c, t, x0, y0, x1, y1, za, zb, mat, mark, extra=None, grp=None):
                 aa = dict(ad); aa.update(extra or {})
                 out.append(_e(c, lv, ["r", x0, y0, x1, y1, round(za, 3), round(zb, 3)], t, mat, mark, aa, ld_src, grp=grp or f"landing-{car}-{lv}"))
@@ -210,8 +218,12 @@ def lifts(M):
             el("A.door", "lift_landing_door", xc - 60, YF + 2, xc - 55, YF + 14, ffl, ffl + 2.10, "lift_steel", f"LD-{car}-{lv}"); el("A.door", "lift_landing_door", xc + 55, YF + 2, xc + 60, YF + 14, ffl, ffl + 2.10, "lift_steel", f"LD-{car}-{lv}")
             el("A.door", "lift_landing_door", xc - 55, YF + 5, xc - 0.5, YF + 11, ffl + 0.02, ffl + 2.10, "lift_door", f"LD-{car}-{lv}"); el("A.door", "lift_landing_door", xc + 0.5, YF + 5, xc + 55, YF + 11, ffl + 0.02, ffl + 2.10, "lift_door", f"LD-{car}-{lv}")
             out.append(_e("A.fix", lv, ["r", xc - 10, YF - 4, xc + 10, YF + 2, round(ffl + 2.36, 3), round(ffl + 2.44, 3)], "lift_indicator", "lift_btn", f"LI-{car}-{lv}", dict(ad), ld_src, grp=f"landing-{car}-{lv}"))
-        out.append(_e("A.fix", lv, ["r", 1739, 996, 1751, 1000, round(ffl + 1.00, 3), round(ffl + 1.22, 3)], "lift_call_panel", "lift_steel", f"LCP-{lv}", {"level": lv}, ld_src, grp=f"callpanel-{lv}"))
-        out.append(_e("A.fix", lv, ["r", 1743, 995, 1747, 996, round(ffl + 1.08, 3), round(ffl + 1.12, 3)], "lift_call_panel", "lift_btn", f"LCP-{lv}", {"level": lv}, ld_src, grp=f"callpanel-{lv}"))
+        call_a = {"level": lv, "landing_ffl_m": ffl, "source_landing_ffl_verified": lv == "B"}
+        if lv == "B":
+            call_a.update(source_landing_ffl_page="ARCH2:17", source_landing_ffl_annotation=27,
+                          source_landing_ffl_xref=6756, landing_ffl_correction_m=0.20)
+        out.append(_e("A.fix", lv, ["r", 1739, 996, 1751, 1000, round(ffl + 1.00, 3), round(ffl + 1.22, 3)], "lift_call_panel", "lift_steel", f"LCP-{lv}", dict(call_a), ld_src, grp=f"callpanel-{lv}"))
+        out.append(_e("A.fix", lv, ["r", 1743, 995, 1747, 996, round(ffl + 1.08, 3), round(ffl + 1.12, 3)], "lift_call_panel", "lift_btn", f"LCP-{lv}", dict(call_a), ld_src, grp=f"callpanel-{lv}"))
     return out
 
 
@@ -242,7 +254,11 @@ def parking_details():
             for k in range(24):
                 an = 2 * math.pi * k / 24; ring.append([round(hx + 6 + 26 * math.cos(an), 1), round(hy - 42 + 26 * math.sin(an), 1)])
             hole = [[round(hx + 6 + 20 * math.cos(2 * math.pi * k / 24), 1), round(hy - 42 + 20 * math.sin(2 * math.pi * k / 24), 1)] for k in range(24)]
-            out.append(_e("A.site", "G", ["p", ring, 0.205, 0.21, hole], "park_access_sign", "site_access_white", f"ACCESS-{num}", a, src, grp=f"bay-{num}"))
+            # Polygon prisms encode a list of hole rings, even with one hole.
+            # The wheel coordinates and Z are unchanged; this restores the
+            # intended annulus instead of feeding a point list as many rings.
+            wheel_a = dict(a, geometry_encoding_correction="حلقة عجلة الرمز: تصحيح قائمة الثقب دون تغيير رؤوسها أو Z؛ ليس تحقق مقاس من المخطط")
+            out.append(_e("A.site", "G", ["p", ring, 0.205, 0.21, [hole]], "park_access_sign", "site_access_white", f"ACCESS-{num}", wheel_a, src, grp=f"bay-{num}"))
     return out
 
 SHED_TOP = [(1265, 2975), (1665, 2975), (2065, 2975)]; SHED_BOT = [(1065, 2355), (1465, 2355), (1865, 2355), (2265, 2355)]; ZT, ZB = 4.50, 3.50

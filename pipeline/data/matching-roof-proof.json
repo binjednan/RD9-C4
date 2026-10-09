@@ -1,0 +1,373 @@
+{
+  "schema": "c4.roof-finish-matching-audit.v1",
+  "pass": true,
+  "data_sha256": "bc61d0dc937b73a5eba98b126441ad36650a4f03ecc9267b682f068cef6e622b",
+  "source_hashes": {
+    "ARCH1": "4a4d8f7bf79e70013fbea8648e1a5d43a5a13b49ec547b7c98382a434fc3cd55",
+    "ARCH2": "14260cf79e5d125f4f204f8e35bbe1729d9761ea4077b03acfe0f0c8918c0178",
+    "STR": "278f642ecf0dfca3c7c4ef747c5c93adbb0737c5a30ccd71a932fcf5e8381e59"
+  },
+  "accepted_ids": [
+    "A.floor-R-SRF0002",
+    "A.wall-R-SRF0003",
+    "A.wall-R-SRF0004",
+    "A.wall-R-SRF0005"
+  ],
+  "records": [
+    {
+      "id": "A.floor-R-SRF0002",
+      "category": "A.floor",
+      "type": "floor_F12",
+      "status": "matched_location_and_shape",
+      "geometry_sha256": "d0e6105fe9631447d9ca5cf90e0075a4c89b0a151014dc12929569010b8d2319",
+      "expected_g": [
+        "p",
+        [
+          [
+            1534.8878,
+            1020.4579
+          ],
+          [
+            1954.6227,
+            1020.4579
+          ],
+          [
+            1954.6227,
+            1220.1706
+          ],
+          [
+            1534.8878,
+            1220.1706
+          ]
+        ],
+        24.17,
+        24.2,
+        null
+      ],
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "ARCH1:18 A500"
+      ],
+      "xy_checked": true,
+      "absolute_z_checked": true,
+      "shape_checked": true,
+      "acceptance_scope": "architectural_model_component_location_and_solid_envelope",
+      "excluded_claims": [
+        "installed_material",
+        "fixing",
+        "waterproofing_layers",
+        "structural_slab_extent",
+        "operation",
+        "site_as_built"
+      ]
+    },
+    {
+      "id": "A.wall-R-SRF0003",
+      "category": "A.wall",
+      "type": "lift_roof_source_upstand",
+      "status": "matched_location_and_shape",
+      "geometry_sha256": "22d6e2059d0914e747845d01f569d8fd5dc6368f771ecf9a5d533061e516ecfd",
+      "expected_g": [
+        "p",
+        [
+          [
+            1515.0011,
+            1000.5712
+          ],
+          [
+            1534.8878,
+            1000.5712
+          ],
+          [
+            1534.8878,
+            1240.4804
+          ],
+          [
+            1515.0011,
+            1240.4804
+          ]
+        ],
+        24.0,
+        24.65,
+        null
+      ],
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "xy_checked": true,
+      "absolute_z_checked": true,
+      "shape_checked": true,
+      "acceptance_scope": "architectural_model_component_location_and_solid_envelope",
+      "excluded_claims": [
+        "installed_material",
+        "fixing",
+        "waterproofing_layers",
+        "structural_slab_extent",
+        "operation",
+        "site_as_built"
+      ]
+    },
+    {
+      "id": "A.wall-R-SRF0004",
+      "category": "A.wall",
+      "type": "lift_roof_source_upstand",
+      "status": "matched_location_and_shape",
+      "geometry_sha256": "05803a3994dd4b892421c038525cc982c4c4aebae52e7eeac73c7ae00ff54d61",
+      "expected_g": [
+        "p",
+        [
+          [
+            1534.8878,
+            1000.5712
+          ],
+          [
+            1954.6227,
+            1000.5712
+          ],
+          [
+            1954.6227,
+            1020.4579
+          ],
+          [
+            1534.8878,
+            1020.4579
+          ]
+        ],
+        24.0,
+        24.65,
+        null
+      ],
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "xy_checked": true,
+      "absolute_z_checked": true,
+      "shape_checked": true,
+      "acceptance_scope": "architectural_model_component_location_and_solid_envelope",
+      "excluded_claims": [
+        "installed_material",
+        "fixing",
+        "waterproofing_layers",
+        "structural_slab_extent",
+        "operation",
+        "site_as_built"
+      ]
+    },
+    {
+      "id": "A.wall-R-SRF0005",
+      "category": "A.wall",
+      "type": "lift_roof_source_upstand",
+      "status": "matched_location_and_shape",
+      "geometry_sha256": "b2ddb60c47990cd0c17db8883c3f1b16ef06d4fd3fa8ff84dfe63d4a399e1efe",
+      "expected_g": [
+        "p",
+        [
+          [
+            1534.8878,
+            1220.1706
+          ],
+          [
+            1954.6227,
+            1220.1706
+          ],
+          [
+            1954.6227,
+            1240.4804
+          ],
+          [
+            1534.8878,
+            1240.4804
+          ]
+        ],
+        24.0,
+        24.65,
+        null
+      ],
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "xy_checked": true,
+      "absolute_z_checked": true,
+      "shape_checked": true,
+      "acceptance_scope": "architectural_model_component_location_and_solid_envelope",
+      "excluded_claims": [
+        "installed_material",
+        "fixing",
+        "waterproofing_layers",
+        "structural_slab_extent",
+        "operation",
+        "site_as_built"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "A.floor-R-SRF0002",
+      "status": "matched",
+      "position_match": true,
+      "shape_match": true,
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "ARCH1:18 A500"
+      ],
+      "source_refs": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "ARCH1:18 A500"
+      ],
+      "conflict_ids": [],
+      "proof_file": "../review-evidence/roof-finish-matching/source-proof.json",
+      "geometry_sha256": "f0f05ba04bf2769cac07833d8e08466afebbb8bb14f9a0e1ba40d4ef166dcbad",
+      "scope_ar": "الموقع والشكل المجسم لعنصر التشطيب أو الدروة فقط؛ لايشملموادالتوريدأوالتثبيتوماوراءطبقةالتشطيب."
+    },
+    {
+      "id": "A.wall-R-SRF0003",
+      "status": "matched",
+      "position_match": true,
+      "shape_match": true,
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "source_refs": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "conflict_ids": [],
+      "proof_file": "../review-evidence/roof-finish-matching/source-proof.json",
+      "geometry_sha256": "6982905259e37646f58bd665440c74efea7239dbee9fb767c752af2f3a3467fb",
+      "scope_ar": "الموقع والشكل المجسم لعنصر التشطيب أو الدروة فقط؛ لايشملموادالتوريدأوالتثبيتوماوراءطبقةالتشطيب."
+    },
+    {
+      "id": "A.wall-R-SRF0004",
+      "status": "matched",
+      "position_match": true,
+      "shape_match": true,
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "source_refs": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "conflict_ids": [],
+      "proof_file": "../review-evidence/roof-finish-matching/source-proof.json",
+      "geometry_sha256": "546db4d3262db7fe1fdaee4f40fcd7ebe5229d63f710fb6528f6d3f49a6a2dc4",
+      "scope_ar": "الموقع والشكل المجسم لعنصر التشطيب أو الدروة فقط؛ لايشملموادالتوريدأوالتثبيتوماوراءطبقةالتشطيب."
+    },
+    {
+      "id": "A.wall-R-SRF0005",
+      "status": "matched",
+      "position_match": true,
+      "shape_match": true,
+      "evidence": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "source_refs": [
+        "ARCH1:8 A105",
+        "ARCH2:17 A900 section 5",
+        "STR:23 CL+24.00 only"
+      ],
+      "conflict_ids": [],
+      "proof_file": "../review-evidence/roof-finish-matching/source-proof.json",
+      "geometry_sha256": "ee718c3f4e601a817622ac71f04f819306af1665f84af1fd61468ddc8c5baee1",
+      "scope_ar": "الموقع والشكل المجسم لعنصر التشطيب أو الدروة فقط؛ لايشملموادالتوريدأوالتثبيتوماوراءطبقةالتشطيب."
+    }
+  ],
+  "accepted_count": 4,
+  "registration": {
+    "ox": -1825.3899999999994,
+    "oy": 5180.856,
+    "s": 3.526,
+    "nx": 11,
+    "ny": 6,
+    "nv": 13,
+    "nh": 7,
+    "ex": 3.184000000000424,
+    "ey": 3.2460000000000946
+  },
+  "raw_plan_inner_pdf": [
+    [
+      952.9999389648438,
+      1179.9200439453125
+    ],
+    [
+      1072.0399169921875,
+      1179.9200439453125
+    ],
+    [
+      1072.0399169921875,
+      1123.280029296875
+    ],
+    [
+      952.9999389648438,
+      1123.280029296875
+    ]
+  ],
+  "raw_plan_outer_pdf": [
+    [
+      947.3599243164062,
+      1185.56005859375
+    ],
+    [
+      1072.0399169921875,
+      1185.56005859375
+    ],
+    [
+      1072.0399169921875,
+      1117.52001953125
+    ],
+    [
+      947.3599243164062,
+      1117.52001953125
+    ]
+  ],
+  "literal_inner_dimensions_cm": [
+    420,
+    200
+  ],
+  "registered_inner_dimensions_cm": [
+    419.7349625244142,
+    199.7126916503912
+  ],
+  "registered_minus_literal_cm": [
+    -0.2650374755858138,
+    -0.2873083496087929
+  ],
+  "comparison_rule": "exact equality to reconstructed original PDF geometry after existing model rounding to 0.0001 cm; literal dimension residual reported, never used to move the outline",
+  "floor_z_m": [
+    24.17,
+    24.2
+  ],
+  "floor_thickness_cm": 3,
+  "upstand_z_m": [
+    24.0,
+    24.65
+  ],
+  "upstand_above_finish_cm": 45.0,
+  "section_side_base_from_level_scale_m": 23.999294309102282,
+  "unmodeled_buildup_gap_cm": 17.0,
+  "unrelated_structural_cap_accepted": false,
+  "model_metadata_used_as_proof": false,
+  "limits_ar": [
+    "الحكم على موقع وشكل طبقةتشطيب واحدة وثلاثةأجسامدروة معمارية فقط.",
+    "طبقات17سم بينCL+24.00 وأسفلF12 غير ممثلة؛ لا تؤثر على تطابق طبقةF12 نفسها ولا تصبح معتمدة بهذا الفحص.",
+    "الأبعاد النصية420×200سم؛ إسقاط خطوطPDF يعطي419.735×199.713سم ضمن رسم المصدر المسجل، وحُفظ الفرق العددي صراحة.",
+    "لايشملA.detail-R-SRF0001 أو أيS.slab أومادةتوريد أوتثبيت أوعزل أوتشغيل أوتنفيذميداني."
+  ]
+}

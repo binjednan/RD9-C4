@@ -42,6 +42,9 @@ def _by_prefix(table, c):
 def grade(e, T):
     """returns the three-letter code of one element"""
     a = e.get("a") or {}; c = e["c"]; t = T.get(e.get("t"), {})
+    if a.get('core_stairs_source_surfaces'):
+        # Raw nosings; interpolated flight surface levels; physical solid spec pending.
+        return 'dva'
     if c == "A.stage" or e.get("stage"): return "sss"
     if a.get("connector") or a.get("riser"): return "vvv"      # derived link between documented ends / riser inferred from the plans (pipeline/connectors.py, pipeline/risers.py)
     spec = LET.get(t.get("cf") or "doc", "d")

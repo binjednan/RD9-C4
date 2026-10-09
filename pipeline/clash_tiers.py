@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Clash tiers, plain-language titles, suggested resolutions and groups (owner 2026-10-07: «حدد التعارضات: ما هو مؤكد تعارض، وما هو مرشح اختلاف منسوب، وما هو في القائمة»).
+"""Legacy clash priority, titles, local height hints and groups.
 
-The old list showed 521 volumes of overlap between a service and a structural element with the same weight.  Most services (ducts, pipes, trays, FCUs) are drawn in plan only: their
-elevation in the ceiling void is assumed, so an overlap with a beam may disappear when the service runs at another height.  Every clash is therefore classified by asking
-«can the service be moved vertically inside the void and clear the obstruction?»:
+c means a model overlap which needs coordination; k means a possible height or
+shape correction; m means a small volume/depth. None of these labels verifies
+source bounds, drawing tolerance, site conditions or acceptance. A local clear
+band is a diagnostic hint, not a solved route or an approved penetration.
 
-  c  تعارض مؤكد              the overlap survives any elevation inside the void (column / concrete wall across the whole height, a beam deeper than the free height, two services that cannot
-                             be stacked) or both elements have documented elevations   -> needs a sleeve / re-route / structural decision
-  k  مرشح — اختلاف منسوب     a clear vertical band exists under (or over) the obstruction: the clash comes from the assumed elevation and disappears at the suggested level
-  m  هامشي (في القائمة)       overlap thinner than 3 cm or smaller than 3 litres: drawing tolerance, listed for completeness only
-
-Numbers (free band, needed clearance, suggested elevation) are stored on every clash so the viewer can show them; groups collect the clashes of one service run against one kind of
-obstruction on one level, so one pipe crossing six beams is one issue with six places (the way Navisworks / ACC group clashes)."""
+Vertical routes cannot be stacked using their story length as thickness.
+Nonpositive ceiling voids are unknown. Water domains and possibly shared tank
+concrete require semantic review. Canonical source confidence is returned by
+coordination_review.audit with separate 3-D and plan-crossing evidence.
+"""
 import math, collections
 from shapely.geometry import Polygon, LineString, box
 from shapely.ops import unary_union
 import support as SUP
 
 MARGIN_M = 0.05
-TIER_AR = {"c": "تعارض مؤكد", "k": "مرشح — اختلاف منسوب", "m": "هامشي (في القائمة)"}
+TIER_AR = {"c": "تداخل يحتاج تنسيقًا", "k": "مرشح منسوب أو شكل", "m": "أثر صغير يحتاج تحققًا"}
 OBS_AR = {"S.col": "عمود خرساني", "S.wall": "جدار/نواة خرسانية", "S.beam": "جسر خرساني", "M.duct": "مجرى هواء", "M.pipe": "أنبوب", "P.": "أنبوب"}
 ROLE_SERVICE = ("M.", "P.", "E.")
 
@@ -90,16 +89,36 @@ def classify(M, els):
             pass
         tier = "k"; why = ""; fix = ""; band = None
         ocat = obs["c"]; scat = svc["c"]
-        if (depth is not None and depth < 3.0) or c["v"] < 0.003:
-            tier = "m"; why = "تداخل طفيف (أقل من 3 سم أو 3 لترات): فرق رسم/تقريب لا يستوجب إجراء"; fix = "لا إجراء؛ يُتحقق منه عند تنسيق الموقع"
-        elif scat == "P.tank":
-            tier = "c"; band = None
-            why = "جسم الخزان في A2500 يتقاطع مع عنصر إنشائي في المخطط الإنشائي: خلاف بين الورقتين لا علاقة له بالمنسوب"
-            fix = "طابق A2500 مع المخطط الإنشائي: اخصم العنصر الإنشائي من الحجم الصافي أو عدّل جدار الخزان"
+        vertical = any((e.get("a") or {}).get("shaft") or str(e.get("t", "")).startswith(("riser_", "storm_stack")) for e in (svc, obs))
+        water_domain = any(e.get("t") == "tank_water" for e in (svc, obs))
+        shared_concrete = scat == "P.tank" and svc.get("t") == "tank_wall" and ocat.startswith("S.")
+        void_valid = zs > zc
+        c.pop("band", None)
+        c["classification_checks"] = {"vertical_route": bool(vertical), "water_domain": water_domain,
+                                       "possible_shared_concrete": shared_concrete, "void_positive": void_valid,
+                                       "source_confirmation": "not established by legacy tier"}
+        if water_domain:
+            tier = "k"
+            why = "حجم الماء الحسابي يتقاطع مع عنصر في المجسم؛ هذا ليس جسم خدمة صلبًا ولا يثبت وحده تصادمًا ماديًا"
+            fix = "تحقق من حدود الخزان وصافي حجم الماء والعناصر الداخلية في المصدر؛ لا نقل للعمود أو تعديل الجدار دون حسم"
+        elif shared_concrete:
+            tier = "k"
+            why = "جدار الخزان والعنصر الإنشائي قد يمثلان اتصالًا مقصودًا أو وصفين لجسم خرساني مشترك"
+            fix = "طابق المسقط والقطاع والدلالة الإنشائية قبل تصنيفه كتصادم غير مقصود"
+        elif not void_valid:
+            tier = "k"
+            why = "حدود الفراغ الرأسي المحسوبة غير موجبة؛ لا تصلح للحكم على إمكان المرور أو التكديس"
+            fix = "تحقق من المستوى والحدود الرأسية الفعلية للمضيف والخدمة؛ لا اقتراح منسوب من هذا الفراغ"
+        elif vertical:
+            tier = "k"
+            why = "مسار رأسي يتداخل في المجسم؛ طوله بين الطوابق ليس سماكة قابلة للتكديس في فراغ السقف"
+            fix = "راجع مقطع الصاعد وفتحة العبور وموضع الخدمات في المسقط؛ لا يفترض حله بوضع أحد الصاعدين فوق الآخر"
+        elif (depth is not None and depth < 3.0) or c["v"] < 0.003:
+            tier = "m"; why = "أثر صغير بحسب عتبة العمق أو الحجم؛ لا تثبت هذه العتبة سماحة رسم مقبولة"; fix = "تحقق من المصدر والمقاس والدلالة قبل إغلاق الحالة"
         elif ocat in ("S.col", "S.wall"):
             tier = "c"; kind_ar = "العمود" if ocat == "S.col" else "الجدار/النواة الخرسانية"
-            why = f"{kind_ar} يمتد على كل ارتفاع الدور فلا منسوب يتجنّبه؛ الخدمة تعبره في المسقط"
-            fix = "كمّ عبور (sleeve) باعتماد المهندس الإنشائي أو تحويل المسار حول العنصر"
+            why = f"الخدمة تعبر مسقط {kind_ar} وتتداخل معه ضمن حدودZ الحالية في المجسم؛ دليل المصدر وحدود الامتداد والعبور يحتاج تحققًا"
+            fix = "تحقق من الموضع والقطاع وفتحة العبور؛ أي sleeve أو تحويل مسار يحتاج قرارًا تصميميًا"
         elif ocat == "S.beam":
             under = oz0 - zc - thick                                        # clear height under the beam for a service of this thickness
             band = [round(zc, 2), round(oz0, 2)]
@@ -109,8 +128,8 @@ def classify(M, els):
                 fix = f"اضبط قمة الخدمة عند ≤ {z_sug + thick:.2f} م (مركزها ≈ {z_sug + thick / 2:.2f} م) لتمرّ تحت الجسر بخلوص {MARGIN_M*100:.0f} سم"
             else:
                 tier = "c"
-                why = f"أسفل الجسر ({oz0:.2f} م) لا يتسع لخدمة بسماكة {thick*100:.0f} سم فوق {zc:.2f} م: المتاح {max(0.0, oz0 - zc)*100:.0f} سم"
-                fix = "كمّ عبر الجسر باعتماد المهندس الإنشائي، أو خفض السقف المستعار/تحويل المسار"
+                why = f"الفراغ المحلي المحسوب تحت الجسر ({oz0:.2f} م) لا يتسع لسماكة المجسم {thick*100:.0f} سم فوق {zc:.2f} م؛ هذا حكم على الأبعاد والحدود الحالية لا اعتماد مصدر"
+                fix = "تحقق من مقاس الخدمة ومنسوبها وحد الفراغ وفتحات العبور قبل قرار تغيير السقف أو المسار"
         elif ocat.startswith(("M.", "P.", "E.")):
             need_both = thick + othick + MARGIN_M
             band = [round(zc, 2), round(zs, 2)]
@@ -118,12 +137,13 @@ def classify(M, els):
                 tier = "k"; why = f"الخدمتان بمنسوبين افتراضيين؛ ارتفاع الفراغ {void_h:.2f} م يتسع لتراكبهما ({need_both:.2f} م)"
                 fix = f"ضع إحداهما فوق الأخرى بخلوص {MARGIN_M*100:.0f} سم (الأنبوب أسفل المجرى عادة)"
             else:
-                tier = "c"; why = f"ارتفاع الفراغ {void_h:.2f} م لا يتسع لتراكب الخدمتين ({need_both:.2f} م)"
-                fix = "حوّل مسار إحداهما أو اخفض السقف المستعار موضعيًا"
+                tier = "c"; why = f"ارتفاع الفراغ المحلي المحسوب {void_h:.2f} م لا يتسع لأبعاد المجسم الحالية ({need_both:.2f} م)؛ يلزم تحقق المصدر"
+                fix = "تحقق من المقاسات والمناسيب وحدود الفراغ والمسار كاملًا قبل اقتراح تحويل أو تغيير السقف"
         else:
             tier = "k"; why = "تقاطع بمنسوب افتراضي"; fix = "راجع المنسوب في مخطط التنفيذ"
-        if scat == "M.equip" and ocat == "S.col" and tier != "m":
-            tier = "c"; why = "وحدة التكييف تتداخل مع عمود في المسقط؛ الارتفاع لا يغيّر ذلك"; fix = "أزِح الوحدة عن العمود أو اعتمد موضعًا بديلًا"
+        if (scat == "M.equip" and ocat == "S.col" and tier != "m"
+                and void_valid and not vertical and not water_domain and not shared_concrete):
+            tier = "c"; why = "وحدة التكييف تتداخل مع مسقط العمود وحدوده الحالية في المجسم؛ مصدر الموضع وحدودZ يحتاج تحققًا"; fix = "تحقق من مسقط المعدة والعمود والقاعدة والارتفاع قبل اعتماد موضع بديل"
         sysname = next((s_[1] for L_ in M["layers"] for s_ in L_["subs"] if s_[0] == scat), scat)
         obsn = OBS_AR.get(ocat) or (tname(obs) if ocat[0] in "MPE" else ocat)
         svc_t = tname(svc)
@@ -147,8 +167,8 @@ def classify(M, els):
     glist.sort(key=lambda g: ({"c": 0, "k": 1, "m": 2}[g["t"]], -g["tc"], -g["v"]))
     M["clashGroups"] = glist
     M["clashTiers"] = {"c": TIER_AR["c"], "k": TIER_AR["k"], "m": TIER_AR["m"]}
-    M["clashNote"] = ("تصنيف كل تعارض بالسؤال: هل تزول المشكلة بتغيير منسوب الخدمة داخل الفراغ؟ «مؤكد»: العنصر الإنشائي ممتد على كل الارتفاع أو لا يتسع الفراغ؛ "
-                      "«مرشح — اختلاف منسوب»: يوجد نطاق خالٍ فتزول المشكلة عند المنسوب المقترح؛ «هامشي»: تداخل أقل من 3 سم أو 3 لترات. مناسيب الخدمات في فراغ السقف افتراضية، "
-                      "وثقوب العبور عبر الجدران والجسور غير ظاهرة في النموذج وقد تكون مصمَّمة فعلًا.")
+    M["clashNote"] = ("هذه درجات أولوية لتداخلات المجسم،وليست تأكيدًا من المصدر أو الموقع. حدود الفراغ والمقاسات والمناسيب قد تكون مفترضة؛ "
+                      "الاقتراح الرأسي فحص موضعي ولا يثبت صلاحية المسار كاملًا. الصواعد لا تُكدّس بطولها،وحجم الماء يحتاج مراجعة صافي السعة، "
+                      "والأثر الصغير لا يساوي سماحة رسم مقبولة. الحكم المستقل للمصدر في coordination_review؛فتحات العبور غير الممثلة تحتاج تحققًا.")
     print("clash tiers:", dict(stats), "| groups:", len(glist))
     return stats
