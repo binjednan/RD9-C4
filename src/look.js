@@ -5,15 +5,16 @@
 function initLook(ctx){
   const {THREE,renderer,scene,camera,U,groups,hemi,sun,sun2,wake,toast,$,LP,getPreset,isPerf,clipActive,getLens}=ctx;
   const PALETTES={
-    materials:{label:'ألوان المواد',bg:0xecefe9,neutral:[0.86,0.88,0.92],ground:0x9e9b90,hemi:0.72,sun:1.30,fill:0.34,edl:0.50,ao:0.28},
-    day:{label:'نهاري',bg:0xedf1f5,neutral:[0.86,0.88,0.92],ground:0x9fa9b5,hemi:0.58,sun:1.25,fill:0.26,edl:0.48,ao:0.30},
-    dark:{label:'داكن',bg:0x17212d,neutral:[0.46,0.52,0.58],ground:0x667180,hemi:0.48,sun:1.45,fill:0.28,edl:0.48,ao:0.28},
-    clay:{label:'مجسم محايد',bg:0xf0eee9,neutral:[0.76,0.73,0.68],ground:0xa7a9ad,hemi:0.34,sun:1.85,fill:0.16,edl:0.70,ao:0.44},
-    xray:{label:'شفاف للشبكات',bg:0xe9f0f5,neutral:[0.65,0.69,0.73],ground:0x9baaba,hemi:0.95,sun:0.70,fill:0.34,edl:0.38,ao:0.24}
+    materials:{label:'ألوان المواد',bg:0xecefe9,neutral:[0.86,0.88,0.92],ground:0xb2b3af,hemi:0.82,sun:1.05,fill:0.38,edl:0.20,ao:0.18},
+    day:{label:'نهاري',bg:0xedf1f5,neutral:[0.86,0.88,0.92],ground:0xacb3ba,hemi:0.76,sun:1.08,fill:0.34,edl:0.20,ao:0.18},
+    dark:{label:'داكن',bg:0x17212d,neutral:[0.46,0.52,0.58],ground:0x7b8590,hemi:0.58,sun:1.12,fill:0.36,edl:0.18,ao:0.16},
+    clay:{label:'مجسم محايد',bg:0xf0eee9,neutral:[0.76,0.73,0.68],ground:0xb1b2af,hemi:0.62,sun:1.25,fill:0.28,edl:0.22,ao:0.20},
+    xray:{label:'شفاف للشبكات',bg:0xe9f0f5,neutral:[0.65,0.69,0.73],ground:0x9baaba,hemi:0.95,sun:0.70,fill:0.34,edl:0,ao:0}
   };
   const alias=m=>m==='white'?'clay':m==='mat'?'materials':m==='daylight'?'day':PALETTES[m]?m:'day';
   let mode='materials', shadowsOn=true, edgesOn=true, dirtyShadow=true, postOk=null;
   let sceneRenderInfo={calls:0,triangles:0};
+  let postEffects={edges:0,ambient:0,antialias:'native'};
   const captureSceneInfo=()=>{sceneRenderInfo={calls:renderer.info.render.calls,triangles:renderer.info.render.triangles};};
   try{ localStorage.removeItem('c4look'); const s=JSON.parse(localStorage.getItem('c4look-v3')||'null'); if(s){ mode=alias(s.mode); shadowsOn=s.s!==0; edgesOn=s.e!==0; } }catch(e){}
   const save=()=>{ try{ localStorage.setItem('c4look-v3',JSON.stringify({mode,s:shadowsOn?1:0,e:edgesOn?1:0})); }catch(e){} };
@@ -149,21 +150,22 @@ function initLook(ctx){
       // attributes are shared instead of copied into a second set of buffers.
       for(const key of ['position','aUnit','aClip','aHide','aLens'])g.setAttribute(key,source.attributes[key]);
       g.setIndex(new THREE.Uint32BufferAttribute(ids,1));g.boundingSphere=source.boundingSphere.clone();
-      const mat=new THREE.LineBasicMaterial({clippingPlanes:G.matBase.clippingPlanes,color:0x8da5bc,transparent:true,opacity:.22,depthTest:true,depthWrite:false,toneMapped:false});
+      const mat=new THREE.LineBasicMaterial({clippingPlanes:G.matBase.clippingPlanes,color:0x8da5bc,linewidth:1,transparent:true,opacity:.22,depthTest:true,depthWrite:false,toneMapped:false});
       // Bundled r128 Color.setHex stores raw components. These display hexes
       // are sRGB: convert once before the renderer's sRGB output conversion.
       // Otherwise pale feature lines are brightened a second time by output.
       mat.color.convertSRGBToLinear();
       mat.onBeforeCompile=sh=>{
         sh.uniforms.uIso=U.iso;sh.uniforms.uMask=U.mask;sh.uniforms.uMaskBox=U.maskBox;sh.uniforms.uLensOn=U.lensOn;
-        sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec2 aUnit;attribute float aClip;attribute float aHide;attribute float aLens;uniform float uLensOn;varying vec2 vUnit;varying float vClip;varying vec3 vWPos;')
+        sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec2 aUnit;attribute float aClip;attribute float aHide;attribute float aLens;uniform float uLensOn;varying vec2 vUnit;varying float vClip;varying vec3 vWPos;varying float vEdgeDepth;')
           .replace('#include <begin_vertex>','#include <begin_vertex>\nvUnit=aUnit;vClip=aClip;vWPos=(modelMatrix*vec4(transformed,1.0)).xyz;')
-          .replace('#include <project_vertex>','#include <project_vertex>\nvec4 edgeView=mvPosition;edgeView.z+=0.0002;gl_Position=projectionMatrix*edgeView;\nif(aHide>0.5||(uLensOn>0.5&&aLens>254.5))gl_Position=vec4(2.0,2.0,2.0,1.0);');
-        sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uIso;uniform sampler2D uMask;uniform vec4 uMaskBox;varying vec2 vUnit;varying float vClip;varying vec3 vWPos;')
-          .replace('void main() {','void main() {\nif(uIso>-.5&&vClip<.5&&abs(vUnit.x-uIso)>.5&&abs(vUnit.y-uIso)>.5)discard;\nif(uIso>-.5&&vClip>.5){vec2 uv=(vWPos.xz-uMaskBox.xy)/uMaskBox.zw;if(uv.x<0.||uv.x>1.||uv.y<0.||uv.y>1.||texture2D(uMask,uv).r<.5)discard;}');
+          .replace('#include <project_vertex>','#include <project_vertex>\nvEdgeDepth=-mvPosition.z;vec4 edgeView=mvPosition;edgeView.z+=0.0002;gl_Position=projectionMatrix*edgeView;\nif(aHide>0.5||(uLensOn>0.5&&aLens>254.5))gl_Position=vec4(2.0,2.0,2.0,1.0);');
+        sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uIso;uniform sampler2D uMask;uniform vec4 uMaskBox;varying vec2 vUnit;varying float vClip;varying vec3 vWPos;varying float vEdgeDepth;')
+          .replace('void main() {','void main() {\nif(uIso>-.5&&vClip<.5&&abs(vUnit.x-uIso)>.5&&abs(vUnit.y-uIso)>.5)discard;\nif(uIso>-.5&&vClip>.5){vec2 uv=(vWPos.xz-uMaskBox.xy)/uMaskBox.zw;if(uv.x<0.||uv.x>1.||uv.y<0.||uv.y>1.||texture2D(uMask,uv).r<.5)discard;}')
+          .replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.a*=mix(1.0,0.55,smoothstep(55.0,180.0,vEdgeDepth));');
       };
       const compile=mat.onBeforeCompile;mat.onBeforeCompile=sh=>{compile(sh);ctx.buildFX.patch(sh);};mat.defaultAttributeValues={aBuild:[0,0]};
-      mat.customProgramCacheKey=()=> 'c4-feature-lines-build';
+      mat.customProgramCacheKey=()=> 'c4-feature-lines-depth-build';
       const lines=new THREE.LineSegments(g,mat);lines.renderOrder=2;lines.userData.presentationOnly=true;lines.raycast=()=>{};G.mesh.add(lines);
       featureLines.push({G,lines,ids:g.index.array});featureStats.segments+=ids.length/2;lines.userData.buildVertices=featureLines[featureLines.length-1].ids;ctx.buildFX.bindEdges(G,g,lines.userData.buildVertices);
     });
@@ -173,8 +175,8 @@ function initLook(ctx){
     featureLines.forEach(f=>{
       f.lines.visible=active;
       if(!active)return;
-      f.lines.material.color.setHex(mode==='dark'?0xb5c5d2:mode==='clay'?0x5d5c59:0x30383f).convertSRGBToLinear();
-      f.lines.material.opacity=(mode==='materials'||mode==='day'?(/^[MEP]\./.test(f.G.cat)? .56:.46):.38)*Math.min(1,f.G.matBase.opacity*2);
+      f.lines.material.color.setHex(mode==='dark'?0xb5c5d2:mode==='clay'?0x666763:0x465059).convertSRGBToLinear();
+      f.lines.material.opacity=(mode==='materials'||mode==='day'?(/^[MEP]\./.test(f.G.cat)? .42:.34):.32)*Math.min(1,f.G.matBase.opacity*2);
 
     });
   }
@@ -219,18 +221,25 @@ function initLook(ctx){
   const QV='varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }';
   const EDL_F=`precision highp float; varying vec2 vUv; uniform sampler2D tColor; uniform sampler2D tDepth; uniform vec2 uTexel; uniform float uNear; uniform float uFar; uniform float uEdl; uniform float uAo; uniform float uRad;
     float lin(float d){ float z=d*2.0-1.0; return 2.0*uNear*uFar/(uFar+uNear-z*(uFar-uNear)); }
+    float depthAt(vec2 uv,float fallback){ float d=texture2D(tDepth,uv).r; return d>0.99995?fallback:lin(d); }
     void main(){
       vec4 c=texture2D(tColor,vUv); float d=texture2D(tDepth,vUv).r;
       if(d>0.99995){ gl_FragColor=c; return; }
-      float z=lin(d), lz=log2(z), edl=0.0, ao=0.0;
+      float z=lin(d), edl=0.0, ao=0.0;
+      // Remove the local plane slope before estimating contact occlusion. A
+      // sloping wall/slab must not shadow itself just because its depth varies.
+      float xp=depthAt(vUv+vec2(uTexel.x,0.0),z)-z,xm=z-depthAt(vUv-vec2(uTexel.x,0.0),z);
+      float yp=depthAt(vUv+vec2(0.0,uTexel.y),z)-z,ym=z-depthAt(vUv-vec2(0.0,uTexel.y),z);
+      vec2 slope=vec2(abs(xp)<abs(xm)?xp:xm,abs(yp)<abs(ym)?yp:ym);
       for(int i=0;i<8;i++){
-        float a=float(i)*0.7853982; vec2 o=vec2(cos(a),sin(a))*uRad*uTexel;
-        float dn=texture2D(tDepth,vUv+o).r; float zn=dn>0.99995?z*3.0:lin(dn);
-        edl+=max(0.0,lz-log2(zn));
-        float dz=z-zn; ao+=smoothstep(0.03,0.30,dz)*(1.0-smoothstep(0.9,3.0,dz));
-        vec2 o2=o*2.6; float dn2=texture2D(tDepth,vUv+o2).r; float zn2=dn2>0.99995?z*3.0:lin(dn2); float dz2=z-zn2; ao+=0.7*smoothstep(0.05,0.45,dz2)*(1.0-smoothstep(1.4,4.0,dz2));
+        float a=float(i)*0.7853982; vec2 px=vec2(cos(a),sin(a))*uRad,o=px*uTexel;
+        float zn=depthAt(vUv+o,z*3.0),dz=z+dot(slope,px)-zn;
+        edl+=clamp(dz/max(z,0.3),0.0,0.35);
+        ao+=smoothstep(0.03,0.25,dz)*(1.0-smoothstep(0.45,1.2,dz));
+        float zn2=depthAt(vUv+o*2.6,z*3.0),dz2=z+dot(slope,px*2.6)-zn2;
+        ao+=0.7*smoothstep(0.05,0.35,dz2)*(1.0-smoothstep(0.7,1.6,dz2));
       }
-      float shade=exp(-edl*uEdl)*(1.0-uAo*clamp(ao/13.6,0.0,1.0));
+      float shade=max(0.72,exp(-edl*uEdl)*(1.0-uAo*clamp(ao/13.6,0.0,1.0)));
       gl_FragColor=vec4(c.rgb*shade,c.a);
     }`;
   const FXAA_F=`precision highp float; varying vec2 vUv; uniform sampler2D tColor; uniform vec2 uTexel;
@@ -270,10 +279,16 @@ function initLook(ctx){
     syncFeatureLines();
     const sh=shadowActive(); if(sun.castShadow!==sh) sun.castShadow=sh;
     if(sh&&dirtyShadow){ renderer.shadowMap.needsUpdate=true; dirtyShadow=false; }
-    if(!(edgesOn&&!isPerf()&&!ctx.isMoving?.()&&ensurePost())){ renderer.render(scene,camera); captureSceneInfo(); return; }
+    // Autodesk-style shaded display: edges and ambient shadows are independent.
+    // Navigation uses the canvas MSAA; depth effects resume only when stationary.
+    const depthEffects=mode!=='xray'&&!isPerf()&&!ctx.isMoving?.();
+    const contour=depthEffects&&edgesOn?PALETTES[mode].edl:0,ambient=depthEffects&&shadowsOn?PALETTES[mode].ao:0;
+    postEffects={edges:contour,ambient,antialias:'native'};
+    if(!((contour||ambient)&&ensurePost())){postEffects.edges=postEffects.ambient=0;renderer.render(scene,camera); captureSceneInfo(); return;}
+    postEffects.antialias='FXAA';
     renderer.setRenderTarget(post.rt); renderer.render(scene,camera); captureSceneInfo();
     const u=post.edl.uniforms; u.tColor.value=post.rt.texture; u.tDepth.value=post.rt.depthTexture; u.uTexel.value.set(1/post.w,1/post.h); u.uNear.value=camera.near; u.uFar.value=camera.far; u.uRad.value=Math.max(1.0,1.15*renderer.getPixelRatio());
-    u.uEdl.value=PALETTES[mode].edl; u.uAo.value=PALETTES[mode].ao;
+    u.uEdl.value=contour; u.uAo.value=ambient;
     post.quad.material=post.edl; renderer.setRenderTarget(post.rt2); renderer.render(post.qs,post.qc);
     const f=post.fxaa.uniforms; f.tColor.value=post.rt2.texture; f.uTexel.value.set(1/post.w,1/post.h); post.quad.material=post.fxaa; renderer.setRenderTarget(null); renderer.render(post.qs,post.qc);
   }
@@ -300,17 +315,18 @@ function initLook(ctx){
   function setFlag(k,on){ if(k==='shadows') shadowsOn=on; else if(k==='edges') edgesOn=on; save(); apply(false); }
   function ui(){
     document.querySelectorAll('button[data-look]').forEach(b=>{const on=alias(b.dataset.look)===mode;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
-    document.querySelectorAll('button[data-lk]').forEach(b=>{ const wanted=b.dataset.lk==='shadows'?shadowsOn:edgesOn; const inactive=isPerf()||(b.dataset.lk==='shadows'&&mode==='xray');const on=wanted&&!inactive; b.classList.toggle('on',on); b.disabled=inactive; b.setAttribute('aria-pressed',on?'true':'false'); });
+    document.querySelectorAll('button[data-lk]').forEach(b=>{ const wanted=b.dataset.lk==='shadows'?shadowsOn:edgesOn; const inactive=isPerf()||mode==='xray';const on=wanted&&!inactive; b.classList.toggle('on',on); b.disabled=inactive; b.setAttribute('aria-pressed',on?'true':'false'); });
     ['materials','day','dark','clay','xray'].forEach(k=>document.body.classList.toggle('look-'+k,k===mode));
     document.body.classList.toggle('look-white',mode==='clay');
     document.body.classList.toggle('theme-dark',mode==='dark');
     document.body.dataset.look=mode;
+    const theme=document.querySelector('meta[name="theme-color"]');if(theme)theme.content=mode==='dark'?'#20242b':'#f4f5f7';
   }
   document.addEventListener('click',ev=>{ const b=ev.target.closest('button[data-look],button[data-lk]'); if(!b||b.disabled) return; ev.stopPropagation();
     if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
   apply(true);
   return {set,snapshot,restore,render,dirty(){ opacity();dirtyShadow=true; },afterPreset:lights,setFog:fog,get lastRenderInfo(){return sceneRenderInfo;},get active(){ return true; },get edges(){ return edgesOn&&!isPerf()&&postOk!==false; },get white(){ return mode==='clay'; },get mode(){ return mode; },
-    state(){ return {mode,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()&&mode!=='xray'},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
+    state(){ return {mode,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()&&mode!=='xray'},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,postEffects:{...postEffects},fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
 }
 window.initLook=initLook;
 })();
