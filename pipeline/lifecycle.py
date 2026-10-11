@@ -196,6 +196,13 @@ SYSTEMS = [
          variants=[("الشبكة", lambda e: e["c"] in ("M.duct", "M.damper") and _t(e) not in VENT_T)],
          terminal=lambda e: e["c"] == "M.outlet" and _t(e) in ("diff_supply", "grille_supply"),
          term_name=lambda e: "ناشر تغذية" if _t(e) == "diff_supply" else "فتحة تغذية", source_name="FCU / FAHU", conductor_name="مجرى هواء"),
+    dict(id="air_return", name="الهواء الراجع", icon="↩", color="#658c9c", sink=True,
+         desc="فتحات الهواء الراجع إلى وحدات FCU؛ مسارات الراجع المرشحة من المصدر غير مثبتة، وتبقى خارج اختبار الاتصال. المقترحات مستقلة عن شبكة التغذية.",
+         source=lambda e: e['c'] == 'M.equip' and _t(e) == 'fcu' and not
+             ('Decorative' in str(e.get('a', {}).get('fcu_kind', '')) and e.get('a', {}).get('esp_pa') == 0),
+         variants=[('الراجع', lambda e: e['c'] == 'M.duct' and _t(e) == 'duct_return')],
+         terminal=lambda e: e['c'] == 'M.outlet' and _t(e) in ('diff_return', 'grille_return'),
+         term_name=lambda e: 'فتحة هواء راجع', source_name='FCU', conductor_name='مجرى هواء راجع'),
     dict(id="vent_fa", name="التهوية — الهواء النقي", icon="⇣", color="#4d9a73", family="التهوية",
          desc="وحدة معالجة الهواء النقي FAHU على السطح ← صاعد الهواء النقي (ينزل حتى البدروم) ← مجاري كل طابق ومخمّداتها ← الشبكات السلكية عند نهايات المجاري (المرسوم في مخططات التهوية VE-100…VE-105)",
          source=lambda e: e["c"] == "M.equip" and _t(e) == "fahu",
@@ -365,8 +372,9 @@ def analyse_system(M, sd, world):
         for i in list(kind): world.prim(i)
         adj = neighbours(world, list(kind))
         pt = bool(sd.get("pass_terminal"))
-        chain = flood(world, src, kind, adj, pt)                              # strict: only from the real sources
-        dist = flood(world, src + [i for i in edge if i in kind and i not in src], kind, adj, pt)   # distribution: also from the boundary entries (what the model does not draw lies behind them)
+        active_src = [i for i in src if not source_context_reason(sd, els[i])]
+        chain = flood(world, active_src, kind, adj, pt)                       # only the sources that feed this distribution system
+        dist = flood(world, active_src + [i for i in edge if i in kind and i not in src], kind, adj, pt)
         var.append(dict(name=vname, con=con, dist=dist, chain=chain, adj=adj, kind=kind))
         allcon.update(con)
     # a unit (terminal) is OK when it is reached through EVERY variant
@@ -379,6 +387,8 @@ def analyse_system(M, sd, world):
     for vr in var:
         for i, d in vr["dist"].items():
             if i not in reached_any or d < reached_any[i]: reached_any[i] = d
+    # Context devices remain visible, but never energise an unrelated distribution circuit.
+    for i in src: reached_any.setdefault(i, 0.0)
     orphans = [i for vr in var for i in vr["con"] if i not in vr["dist"]]
     edge_ok = [i for i in edge if any(i in vr["chain"] for vr in var)]
     return dict(src=src, edge=edge, edge_ok=edge_ok, ter=ter, units=units, ok=ok_units, bad=bad_units, chain=chain_units, var=var, reach=reached_any, orph=orphans, allcon=allcon)
@@ -429,11 +439,71 @@ def islands(M, R):
 def levels_of(els, idxs): return collections.Counter(els[i]["l"] for i in idxs)
 
 
+def source_context_reason(sd, e):
+    a = e.get('a', {})
+    if sd['id'] == 'air':
+        if e['t'] == 'fahu':
+            return 'FAHU تتبع اختباري الهواء النقي والشفط؛ ليست مصدر مجاري تغذية FCU.'
+        if 'Decorative' in str(a.get('fcu_kind', '')) and a.get('esp_pa') == 0:
+            return 'وحدة ظاهرة Decorative بضغط خارجي 0 حسب جدولها؛ تغذي الغرفة مباشرة دون مجرى توزيع.'
+    return None
+
+
+def source_ports(M, sd, R):
+    """Check each source and each circuit, not just terminals reached by *some* source.
+
+    A source with a short blind branch is not a complete circuit. Conducting
+    source geometry (e.g. the ADDC inlet pipe) can pass flow; an FCU cannot
+    bridge two otherwise separate duct branches during this check.
+    """
+    els = M['els']; context = []; required = []
+    for i in R['src']:
+        e = els[i]; reason = source_context_reason(sd, e)
+        if reason:
+            context.append(dict(id=e['id'], reason=reason))
+        else:
+            required.append(i)
+    ports = []; pending = collections.OrderedDict()
+    for vi, vr in enumerate(R['var']):
+        con = set(vr['con']); viable = set(R['ter']); todo = list(viable)
+        while todo:
+            i = todo.pop()
+            for j in vr['adj'].get(i, {}):
+                # CHW pumps/chillers are inline equipment in a water circuit.
+                # Supply and return are still walked separately; FCUs never bridge ducts.
+                if (j in con or (sd['id'] == 'chw' and j in R['src'])) and j not in viable:
+                    viable.add(j); todo.append(j)
+        missing, blind = [], []
+        for i in required:
+            adjacent = [j for j in vr['adj'].get(i, {}) if j in con]
+            if not adjacent:
+                missing.append(i); why = 'لا يلامس موصلًا'
+            elif not any(j in viable for j in adjacent):
+                blind.append(i); why = 'فرعه لا يصل إلى نهاية استهلاك'
+            else:
+                continue
+            row = pending.setdefault(i, dict(id=els[i]['id'], reasons=[]))
+            row['reasons'].append(vr['name'] + ': ' + why)
+        ports.append(dict(name=vr['name'], required=len(required),
+                          connected=len(required)-len(missing),
+                          serving=len(required)-len(missing)-len(blind)))
+    R['source_ports'] = ports
+    R['source_pending'] = list(pending.values())
+    R['source_context'] = context
+
+
 def tests_of(M, sd, R):
     els = M["els"]; T = []; sid = sd["id"]
     nsrc, nu = len(R["src"]), len(R["units"])
     tname = (sd["term_name"](els[R["ter"][0]]) + (" …" if len({sd["term_name"](els[i]) for i in R["ter"]}) > 1 else "")) if R["ter"] else "نهايات الاستهلاك"
     T.append(dict(id=sid + ".src", n="توجد عناصر مصدر في النموذج (" + sd["source_name"] + ")", ok=nsrc, of=max(nsrc, 1), pass_=nsrc > 0))
+    source_ports(M, sd, R)
+    for vi, port in enumerate(R['source_ports']):
+        n = port['required']
+        T.append(dict(id=f'{sid}.source_links_{vi}', n='كل مصدر يحتاج شبكة يلامس موصلها — ' + port['name'],
+                      ok=port['connected'], of=n, pass_=port['connected'] == n))
+        T.append(dict(id=f'{sid}.source_service_{vi}', n='لكل مصدر مسار إلى نهاية استهلاك — ' + port['name'],
+                      ok=port['serving'], of=n, pass_=port['serving'] == n))
     T.append(dict(id=sid + ".dist", n="كل نهاية استهلاك موصولة بالشبكة الموزّعة من " + ("مصدرها أو من نقاط دخولها" if R["edge"] else "مصدرها") + " (" + tname + ")", ok=len(R["ok"]), of=max(nu, 1), pass_=nu > 0 and len(R["ok"]) == nu))
     T.append(dict(id=sid + ".cov", n="السلسلة كاملة: كل نهاية استهلاك موصولة بالمصدر نفسه (" + sd["source_name"] + ") عبر موصلات فعلية", ok=len(R["chain"]), of=max(nu, 1), pass_=nu > 0 and len(R["chain"]) == nu))
     if R["edge"]:
@@ -481,8 +551,20 @@ def pack(M, results):
         S.append(dict(id=sd["id"], name=sd["name"], icon=sd["icon"], color=palette["systems"].get(sd["id"], {}).get("color", "#69788C"), desc=sd["desc"], grp=sd.get("family"),
                       cnt=dict(src=len(R["src"]), edge=len(R["edge"]), con=len(R["allcon"]), ter=len(R["units"]), ok=len(R["ok"]), chain=len(R["chain"]), orph=len(R["orph"]), isl=len(R["isl"]), near=len(R["near"]), far=len(R["far"]), lone=len(R["lone"])),
                       tests=[dict(id=t["id"], n=t["n"], ok=t["ok"], of=t["of"], p=1 if t["pass_"] else 0, **({"d": t["detail"]} if "detail" in t else {})) for t in R["tests"]],
+                      source_ports=R['source_ports'], source_pending=R['source_pending'], source_context=R['source_context'],
                       src=R["src"], ri=[i for i, d in reach], rd=[int(round(d * 10)) for i, d in reach], rk="".join(role), x=unreached_ter, o=R["orph"]))
     return {"v": 1, "tol": TOL, "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "systems": S, "groups": GROUPS}
+
+
+def proposal_definition(source_sd):
+    sd = dict(source_sd, include_proposals=True)
+    sd['variants'] = [(name, lambda e, pred=pred, vi=vi, sid=sd['id']:
+        (e.get('a', {}).get('proposal_system') == sid and e.get('a', {}).get('proposal_variant') == vi)
+        if e.get('a', {}).get('network_proposal') else
+        (pred(e) or (sid == 'fire' and _t(e) in ('fp_electric', 'fp_diesel', 'fp_jockey',
+            'fp_pressure_vessel', 'pipe_fp_header', 'pipe_fp_branch'))))
+        for vi, (name, pred) in enumerate(source_sd['variants'])]
+    return sd
 
 
 def add_proposals(M):
@@ -492,11 +574,7 @@ def add_proposals(M):
     for source_sd in SYSTEMS:
         if source_sd['id'] not in proposed:
             continue
-        sd = dict(source_sd, include_proposals=True)
-        sd['variants'] = [(name, lambda e, pred=pred, vi=vi, sid=sd['id']:
-            (e.get('a', {}).get('proposal_system') == sid and e.get('a', {}).get('proposal_variant') == vi)
-            if e.get('a', {}).get('network_proposal') else pred(e))
-            for vi, (name, pred) in enumerate(source_sd['variants'])]
+        sd = proposal_definition(source_sd)
         R = analyse_system(M, sd, world)
         R['isl'], R['near'], R['far'] = diagnose(M, sd, R) if R['bad'] else ([], [], [])
         R['islands'], R['lone'] = islands(M, R)

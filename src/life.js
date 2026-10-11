@@ -11,13 +11,13 @@ function initLife(ctx){
   if(!LC||!LC.systems||!LC.systems.length){ box.innerHTML='<div class="muted">لا تتوفر نتائج اختبار الشبكات في هذه النسخة.</div>'; return null; }
   const RP=(M.displayPalette||window.C4_PALETTE).lifecycle;
   const CLS=[{k:'src',n:'مصدر',c:RP.src,h:'نقطة تشغيل ممثلة في المجسم'},{k:'con',n:'موصل مُغذّى',c:RP.con,h:'تماس هندسي بالمصدر ضمن تسامح النموذج، وليس اعتماد تشغيل موقعي'},
-    {k:'ok',n:'نهاية تجتاز مسار المجسم',c:RP.ok,h:'مسار داخل المجسم ضمن سماحة الاختبار'},{k:'bad',n:'نهاية غير موصولة',c:RP.bad,h:'اختبار المجسم لا يجد مسارًا من المصدر'},{k:'orph',n:'موصل يتيم',c:RP.orph,h:'لا يصل إلى مصدر أو نقطة دخول في المجسم'},{k:'edge',n:'نقطة دخول',c:RP.edge,h:'حد توزيع ممثل؛ لا يثبت تشغيل ما قبله'}];
+    {k:'ok',n:'نهاية تجتاز مسار المجسم',c:RP.ok,h:'مسار داخل المجسم ضمن سماحة الاختبار'},{k:'bad',n:'نهاية غير موصولة',c:RP.bad,h:'اختبار المجسم لا يجد مسارًا من المصدر'},{k:'orph',n:'موصل يتيم',c:RP.orph,h:'لا يصل إلى مصدر أو نقطة دخول في المجسم'},{k:'edge',n:'نقطة دخول',c:RP.edge,h:'حد توزيع ممثل؛ لا يثبت تشغيل ما قبله'},{k:'source_gap',n:'مصدر يحتاج وصلة',c:RP.bad,h:'لا يصل إلى نهاية استهلاك في أحد فروعه'},{k:'independent',n:'جهاز مستقل أو ضمن شبكة أخرى',c:'#8b939b',h:'سبب استقلاله ظاهر في بطاقة الشبكة'}];
   let cur=0, timer=0, playing=false, T=0, hideOther=false, finalMode=false, preview=false, previewSystem=null,useProposals=false;
-  const proposalCache={};
+  const proposalCache={}, indexById=new Map(M.els.map((e,i)=>[e.id,i]));
   function proposed(s){
     if(proposalCache[s.id])return proposalCache[s.id];
     const p=LC.proposals?.[s.id];if(!p)return s;
-    const indices=new Map(M.els.map((e,i)=>[e.id,i])),out={...p,proposal:true};
+    const indices=indexById,out={...p,proposal:true};
     for(const k of ['src','ri','x','o'])out[k]=p[k].map(id=>indices.get(id));
     if(out.ri.some(i=>i===undefined))return s;
     return proposalCache[s.id]=out;
@@ -50,6 +50,8 @@ function initLife(ctx){
     for(let k=0;k<n&&s.rd[k]<=upto;k++){ const i=s.ri[k], r=s.rk[k];
       if(r==='s') map.set(i,1); else if(r==='e') map.set(i,6); else if(r==='c') map.set(i,2); else P.expand(i).forEach(j=>{ if(!map.has(j)||map.get(j)!==1) map.set(j,3); }); }
     if(fin){ s.x.forEach(i=>{ P.expand(i).forEach(j=>{ if(!map.has(j)) map.set(j,4); }); }); s.o.forEach(i=>{ if(!map.has(i)) map.set(i,5); }); }
+    for(const row of s.source_context||[]){const i=indexById.get(row.id);if(map.has(i))map.set(i,8);}
+    if(fin)for(const row of s.source_pending||[]){const i=indexById.get(row.id);if(i!==undefined)map.set(i,7);}
     return map;
   }
   function paint(upto,fin){ const s=sys(); setLens('custom',{classes:CLS,map:classMap(s,upto,fin),label:(s.proposal?'مسارات مقترحة: ':'دورة حياة: ')+s.name,hideRest:hideOther}); document.querySelectorAll('#viewMenu button[data-lens]').forEach(b=>b.classList.remove('on')); }
@@ -63,7 +65,7 @@ function initLife(ctx){
     paint(T,false); wake(dur+500);
     timer=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/dur), e=k; T=e*max; setBar(e*100); if(k>=1){ finalMode=true; stop(true); setBar(100); paint(max,true); result(); } else paint(T,false); wake(400); },120);
   }
-  function result(){ const s=sys(); toast(s.icon+' '+s.name+': '+s.cnt.ok.toLocaleString('en')+' من '+s.cnt.ter.toLocaleString('en')+' نهاية تجتاز مسار المجسم'+(s.cnt.ter-s.cnt.ok?' — '+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+' غير موصولة':'')+(s.cnt.orph?' · '+s.cnt.orph.toLocaleString('en')+' موصل يتيم':''),5200); }
+  function result(){ const s=sys(); toast(s.icon+' '+s.name+': '+s.cnt.ok.toLocaleString('en')+' من '+s.cnt.ter.toLocaleString('en')+' نهاية تجتاز مسار المجسم'+(s.cnt.ter-s.cnt.ok?' — '+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+' غير موصولة':'')+(s.cnt.orph?' · '+s.cnt.orph.toLocaleString('en')+' موصل يتيم':'')+((s.source_pending||[]).length?' · '+s.source_pending.length+' مصدر يحتاج استكمالًا':''),5200); }
   function showFinal(){ enter(); stop(true); const s=sys(), P=prep(s); finalMode=true; setBar(100); paint(Math.max(P.maxD,1),true); wake(800); }
   function focusUnits(keys,color){ const s=sys(), P=prep(s); const idx=[]; keys.forEach(k=>{ (P.bad.get(k)||[]).forEach(i=>P.expand(i).forEach(j=>idx.push(j))); }); if(!idx.length) return; const u=[...new Set(idx)]; if(select) select(-1); highlight(u,color||0xd55e00,true,0.5); flyToBox(bboxOf(u)); }
   /* ---- panel ---- */
@@ -87,6 +89,9 @@ function initLife(ctx){
     h+='<table class="lf-t"><tbody>'+s.tests.map(t=>'<tr class="'+(t.p?'ok':'no')+'"><td class="lf-st">'+(t.p?'✔':'✖')+'</td><td>'+esc(t.n)+'</td><td class="lf-n">'+t.ok.toLocaleString('en')+' / '+t.of.toLocaleString('en')+'</td></tr>').join('')+'</tbody></table>';
     const d=s.cnt, iso=d.isl||0;
     h+='<div class="lf-diag">'+(s.cnt.edge?'<span title="حدّ ما هو مرسوم في النموذج">نقاط دخول <b>'+s.cnt.edge.toLocaleString('en')+'</b> · السلسلة الكاملة من المصدر <b>'+(s.cnt.chain||0).toLocaleString('en')+'</b>/'+s.cnt.ter.toLocaleString('en')+'</span>':'')+(s.cnt.ter-s.cnt.ok?'<span>غير موصولة <b>'+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+'</b></span>':'')+(d.orph?'<span>موصلات يتيمة <b>'+d.orph.toLocaleString('en')+'</b></span>':'')+(d.near?'<span title="يوجد موصل من النظام قربها في المسقط">وصلة أخيرة ناقصة <b>'+d.near+'</b></span>':'')+(d.far?'<span title="لا يجد اختبار المجسم موصلًا قريبًا">لا شيء قربها <b>'+d.far+'</b></span>':'')+'</div>';
+    const pending=s.source_pending||[], context=s.source_context||[];
+    if(pending.length)h+='<div class="lf-fh"><b>مصادر تحتاج استكمالًا ('+pending.length+')</b></div><div class="lf-fl">'+pending.map(row=>{const e=M.els[indexById.get(row.id)];return '<button type="button" class="lf-fi" data-lf="source" data-id="'+esc(row.id)+'"><b>'+esc(e?.mark||row.id)+'</b> · '+esc(lvName(e?.l))+'<small>'+esc(row.reasons.join('؛ '))+'</small></button>';}).join('')+'</div>';
+    if(context.length)h+='<details class="lf-lv"><summary>أجهزة مستقلة أو ضمن شبكة أخرى ('+context.length+')</summary>'+context.map(row=>{const e=M.els[indexById.get(row.id)];return '<button type="button" class="lf-fi" data-lf="source" data-id="'+esc(row.id)+'"><b>'+esc(e?.mark||row.id)+'</b><small>'+esc(row.reason)+'</small></button>';}).join('')+'</details>';
     // failing list
     const keys=[...P.bad.keys()];
     if(keys.length){
@@ -98,23 +103,25 @@ function initLife(ctx){
         if(byL[l].length>40) h+='<small class="muted">و'+(byL[l].length-40)+' أخرى</small>';
         h+='</details>'; });
       h+='</div>';
-    } else h+='<div class="lf-allok">كل نهايات هذا النظام تجتاز اختبار مسار المجسم ضمن سماحته.</div>';
+    } else h+='<div class="'+(pending.length||s.cnt.orph?'muted':'lf-allok')+'">'+(pending.length||s.cnt.orph?'المخارج موصولة؛ تبقى فجوات المصادر أو الموصلات الموضحة أعلاه.':'كل نهايات هذا النظام تجتاز اختبار مسار المجسم ضمن سماحته.')+'</div>';
     h+='</div>';
     box.innerHTML=h; setBar(finalMode?100:0);
   }
   box.addEventListener('click',ev=>{ const b=ev.target.closest('[data-lf]'); if(!b) return; ev.stopPropagation(); const a=b.dataset.lf;
     if(a==='proposal'){stop(true);useProposals=b.checked;T=0;finalMode=false;render();showFinal();}
-    else if(a==='sel'){ stop(); T=0; cur=+b.dataset.i; finalMode=false; render(); }
+    else if(a==='sel'){ choose(+b.dataset.i); }
     else if(a==='play'){ if(playing) { stop(true); } else play(); }
     else if(a==='final'){ showFinal(); }
     else if(a==='hide'){ hideOther=!hideOther; b.classList.toggle('on',hideOther); if(finalMode) showFinal(); else if(LENS&&LENS.mode==='custom') paint(T,false); }
     else if(a==='off'){ exit(); }
     else if(a==='allbad'){ focusUnits([...prep(sys()).bad.keys()]); }
     else if(a==='lvbad'){ const l=b.dataset.l, P=prep(sys()); focusUnits([...P.bad.keys()].filter(k=>M.els[P.bad.get(k)[0]].l===l)); }
+    else if(a==='source'){const i=indexById.get(b.dataset.id);if(i!==undefined){showFinal();select?.(-1);highlight([i],0xd55e00,true,0.5);flyToBox(bboxOf([i]));}}
     else if(a==='one'){ focusUnits([b.dataset.k]); } });
   box.addEventListener('input',ev=>{ if(ev.target.id==='lfBar'){ enter(); stop(true); const s=sys(), P=prep(s), v=+ev.target.value; T=P.maxD*v/100; finalMode=v>=100; paint(T,finalMode); setBar(v); } });
+  function choose(i){stop();T=0;finalMode=false;cur=i;render();if(preview)showFinal();}
   render();
-  return {render,play,stop,exit,get isActive(){return preview;},select:i=>{stop();T=0;finalMode=false;cur=i;render();},get systems(){ return LC.systems; },state:()=>({cur,playing,hideOther,finalMode,T,useProposals,proposalActive:!!sys().proposal,result:sys().cnt})};
+  return {render,play,stop,exit,get isActive(){return preview;},select:choose,get systems(){ return LC.systems; },state:()=>({cur,playing,hideOther,finalMode,T,useProposals,proposalActive:!!sys().proposal,result:sys().cnt})};
 }
 window.initLife=initLife;
 })();

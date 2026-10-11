@@ -102,6 +102,10 @@
     "garbage_chute": {
       "name": "مجرى النفايات — مكونات المصدر",
       "color": "#6B7484"
+    },
+    "air_return": {
+      "name": "الهواء الراجع",
+      "color": "#658c9c"
     }
   },
   "disciplines": {

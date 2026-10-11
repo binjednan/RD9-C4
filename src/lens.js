@@ -17,7 +17,8 @@ function sysOf(e){
  const c=e.c,a=e.a||{},v=a.sys||'';
  if(v.startsWith('smk_'))return v;
  if(v==='garbage_chute')return 'garbage_chute';
- if(v==='hvac_controls')return 'hvac_controls';if(v==='air')return 'air';
+ if(v==='hvac_controls')return 'hvac_controls';if(v==='air'||v==='air_return')return v;
+ if(e.t==='diff_return'||e.t==='grille_return'||e.t==='duct_return')return 'air_return';
  if(v==='cold'||v==='hot')return v;
  if(v==='fa'||v==='ea')return 'vent_'+v;
  if(v==='ltg')return 'lightning';if(v==='earth')return 'earthing';
