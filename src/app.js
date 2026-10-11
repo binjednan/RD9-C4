@@ -381,7 +381,12 @@ function bboxOf(idxs){const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];idxs.forEach(ei
 /* ---------- camera fly (interpolated in spherical coords so it never cuts through the building) ---------- */
 let fly=null;
 function sphOf(p,t){const o=p.clone().sub(t);const r=Math.max(o.length(),1e-6);return {r,ph:Math.acos(THREE.MathUtils.clamp(o.y/r,-1,1)),th:Math.atan2(o.x,o.z)};}
-function flyTo(pos,tgt,ms=900){const a=sphOf(camera.position,controls.target),b=sphOf(pos,tgt);let dth=b.th-a.th;dth=Math.atan2(Math.sin(dth),Math.cos(dth));controls.stop();fly={t0:controls.target.clone(),t1:tgt.clone(),a,b,dth,s:performance.now(),d:ms};wake(ms+300);}
+function flyTo(pos,tgt,ms=900){
+  controls.stop();
+  if(controls.reducedMotion){fly=null;camera.position.copy(pos);controls.target.copy(tgt);camera.lookAt(tgt);wake();return;}
+  const a=sphOf(camera.position,controls.target),b=sphOf(pos,tgt);let dth=b.th-a.th;dth=Math.atan2(Math.sin(dth),Math.cos(dth));
+  fly={t0:controls.target.clone(),t1:tgt.clone(),a,b,dth,s:performance.now(),d:ms};wake(ms+300);
+}
 function stepFly(){
   const k=Math.min(1,(performance.now()-fly.s)/fly.d);const e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
   controls.target.lerpVectors(fly.t0,fly.t1,e); const r=fly.a.r+(fly.b.r-fly.a.r)*e,ph=fly.a.ph+(fly.b.ph-fly.a.ph)*e,th=fly.a.th+fly.dth*e,sp=Math.sin(ph);
@@ -477,12 +482,11 @@ function select(ei,fit=false){
   const e=M.els[ei]; selSet=(e.grp&&grpMap[e.grp])?grpMap[e.grp]:[ei];
   highlight(selSet); showInfo(ei); if(fit) flyToBox(bboxOf(selSet));
 }
-let downXY=null, lastTap={t:0,x:0,y:0}, touchDbl=0, lastClick={t:0,ei:-2};
+let lastTap={t:0,x:0,y:0}, touchDbl=0, lastClick={t:0,ei:-2};
 const cv=renderer.domElement;
-cv.addEventListener('pointerdown',ev=>{downXY=[ev.clientX,ev.clientY,ev.button];});
+cv.addEventListener('pointercancel',()=>{lastTap.t=lastClick.t=0;});
 cv.addEventListener('pointerup',ev=>{
-  if(!downXY) return; const d=downXY; downXY=null;
-  if(d[2]!==0||Math.hypot(ev.clientX-d[0],ev.clientY-d[1])>6||controls.lastGestureMulti) return;
+  if(!controls.isTap(ev)){lastTap.t=lastClick.t=0;return;}
   if(window.MEASURE&&window.MEASURE.tap&&window.MEASURE.tap(ev.clientX,ev.clientY)) return;
   if(window.ISSUES&&window.ISSUES.tap&&window.ISSUES.tap(ev.clientX,ev.clientY)) return;
   if(window.NOTES&&window.NOTES.tap&&window.NOTES.tap(ev.clientX,ev.clientY)) return;
@@ -496,7 +500,7 @@ cv.addEventListener('pointerup',ev=>{
   if(ei>=0&&!quick&&selSet.includes(ei)){select(-1);return;}
   select(ei);
 });
-cv.addEventListener('dblclick',ev=>{if(performance.now()-touchDbl<700) return; const ei=pick(ev.clientX,ev.clientY); if(ei>=0) select(ei,true);});
+cv.addEventListener('dblclick',ev=>{if(!controls.isTap(ev)||performance.now()-touchDbl<700) return; const ei=pick(ev.clientX,ev.clientY); if(ei>=0) select(ei,true);});
 
 /* ---------- visibility helpers used by search / clashes / materials ---------- */
 function setCatVis(c,on){catVis[c]=on; const cb=document.querySelector(`#layers input[data-cat="${c}"]`); if(cb) cb.checked=on; const L=CATS[c].layer; const lc=document.querySelector(`#layers input[data-layer="${L}"]`); if(lc) lc.checked=Object.keys(CATS).some(k=>CATS[k].layer===L&&catVis[k]);}

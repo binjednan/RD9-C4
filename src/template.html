@@ -56,6 +56,7 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 #modes{position:absolute;bottom:calc(12px + var(--sa-b));left:50%;transform:translateX(-50%);display:none;gap:2px;background:#fffffff2;border:1px solid var(--bd);border-radius:24px;padding:3px;box-shadow:var(--sh);z-index:7;max-width:calc(100% - 16px)}
 #modes button{border:0;background:none;border-radius:20px;padding:9px 14px;font-size:13px;cursor:pointer;white-space:nowrap;min-height:40px;color:var(--tx)}
 #modes button.on{background:var(--ac);color:#fff;font-weight:600}
+@media(any-pointer:coarse){#modes button{min-height:44px;min-width:64px}}
 #modes .sep{width:1px;background:var(--bd);margin:6px 2px}
 body.modes-on #modes{display:flex}
 #info{display:none;position:absolute;left:10px;top:calc(52px + var(--sa-t));width:300px;max-height:min(62%,560px);overflow:auto;background:var(--pn);border:1px solid var(--bd);border-radius:12px;box-shadow:var(--sh);padding:0 12px 8px;z-index:6;-webkit-overflow-scrolling:touch}
