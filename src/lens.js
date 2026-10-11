@@ -32,6 +32,7 @@ function sysOf(e){
  if(c==='P.irr')return 'irrigation';if(c[0]==='E')return 'power';
  if(c==='M.equip')return 'chw';if(c==='P.pump'||c==='P.tank')return 'equipment';return null;
 }
+function softColor(c){const h={};const color=new THREE.Color(c);color.getHSL(h);return '#'+color.setHSL(h.h,h.s*.62,Math.min(.76,h.l+.025)).getHexString();}
 function hex(c){const n=parseInt(c.replace('#',''),16); return [((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255];}
 
 function initLens(ctx){
@@ -75,14 +76,14 @@ function initLens(ctx){
     finishW:finMode('finishW','التشطيبات — الجدران','رمز الجدار في A500 (W)'),
     finishC:finMode('finishC','التشطيبات — الأسقف','رمز السقف في A500 (C)'),
   };
-  document.querySelectorAll('button[data-lens] .lsw').forEach(sw=>{const m=sw.parentElement.dataset.lens,cls=MODES[m]?.cls()||[{c:'#8793A1'}];sw.style.background='linear-gradient(90deg,'+cls.slice(0,8).map(p=>p.c).join(',')+')';});
+  document.querySelectorAll('button[data-lens] .lsw').forEach(sw=>{const m=sw.parentElement.dataset.lens,cls=MODES[m]?.cls()||[{c:'#8793A1'}];sw.style.background='linear-gradient(90deg,'+cls.slice(0,8).map(p=>softColor(p.c)).join(',')+')';});
   function paint(clsIdx){ // clsIdx(ei) -> 0..31 | 255
     for(const k in groups){const G=groups[k]; if(G.lensAttr) G.lensAttr.needsUpdate=true;}
     const touched=new Set();
     for(let ei=0;ei<N;ei++){const rg=elRange[ei]; if(!rg) continue; const G=groups[rg.gk]; if(!G||!G.lensAttr) continue; G.lensAttr.array.fill(clsIdx(ei),rg.start*3,(rg.start+rg.count)*3); touched.add(G);}
     touched.forEach(G=>{G.lensAttr.needsUpdate=true;});
   }
-  function setPalette(list){for(let i=0;i<32;i++) pal[i].set(0.86,0.89,0.93); list.slice(0,31).forEach((c,i)=>{const h=hex(c.c); pal[i+1].set(h[0]<=.04045?h[0]/12.92:Math.pow((h[0]+.055)/1.055,2.4),h[1]<=.04045?h[1]/12.92:Math.pow((h[1]+.055)/1.055,2.4),h[2]<=.04045?h[2]/12.92:Math.pow((h[2]+.055)/1.055,2.4));});}
+  function setPalette(list){for(let i=0;i<32;i++) pal[i].set(0.86,0.89,0.93); list.slice(0,31).forEach((c,i)=>{const h=hex(softColor(c.c)); pal[i+1].set(h[0]<=.04045?h[0]/12.92:Math.pow((h[0]+.055)/1.055,2.4),h[1]<=.04045?h[1]/12.92:Math.pow((h[1]+.055)/1.055,2.4),h[2]<=.04045?h[2]/12.92:Math.pow((h[2]+.055)/1.055,2.4));});}
   /* which legend classes are coloured: a clicked set (multi-select). Empty = all classes in the colour look, none in the white look (the model stays white / grey until a section is chosen) —
      except for a custom lens or while «عزل» is on, where empty always means all. Non-coloured elements are washed (colour look) or plain white / grey (white look, shader uMono). */
   let sel=new Set(), idxOfMode=null;
@@ -99,11 +100,11 @@ function initLens(ctx){
     if(M.meta?.owner_render_only&&m==='grade')m='off';
     opt=opt||{}; if(m!==mode||opt.keepSel!==true) sel.clear(); mode=m; hideRest=!!opt.hideRest;
     if(m==='off'){U.lensOn.value=0; legend=[]; custom=null; label=''; idxOfMode=null; paint(()=>0); renderLegend(); ctx.onChange&&ctx.onChange(mode); applyVis(); return;}
-    if(m==='custom'){const C=opt.classes||[]; setPalette(C); custom={C,map:opt.map}; idxOfMode=null; legend=C.map(c=>({...c,n:c.n,count:0})); repaint();
+    if(m==='custom'){const C=opt.classes||[]; setPalette(C); custom={C,map:opt.map}; idxOfMode=null; legend=C.map(c=>({...c,c:softColor(c.c),n:c.n,count:0})); repaint();
       legend.forEach((l,i)=>{let n=0; opt.map.forEach(v=>{if(v===i+1) n++;}); l.count=n;}); U.lensOn.value=1; label=opt.label||'تلوين مخصّص'; renderLegend(); ctx.onChange&&ctx.onChange(mode); applyVis(); return;}
     const D=MODES[m]; if(!D) return; const cls=D.cls(); setPalette(cls); idxOfMode=new Map(cls.map((c,i)=>[c.k,i+1])); const counts=new Array(cls.length).fill(0);
     for(let ei=0;ei<N;ei++){const e=M.els[ei]; const k=D.ofi?D.ofi(ei):D.of(e); const i=idxOfMode.get(k); if(i) counts[i-1]++;}
-    repaint(); legend=cls.map((c,i)=>({...c,count:counts[i]})); U.lensOn.value=1; label=D.n; custom=null; renderLegend(); ctx.onChange&&ctx.onChange(mode); applyVis();
+    repaint(); legend=cls.map((c,i)=>({...c,c:softColor(c.c),count:counts[i]})); U.lensOn.value=1; label=D.n; custom=null; renderLegend(); ctx.onChange&&ctx.onChange(mode); applyVis();
   }
   function renderLegend(){
     const box=$('lensLegend'); if(!box) return;
@@ -128,7 +129,7 @@ function initLens(ctx){
   });
   /* the class of one element as painted (0 = not concerned, 255 = hidden, -1 when no lens is on): the picker skips what the lens hides and, while classes are chosen or «عزل» is on, what it only dims */
   function classOf(ei){ if(U.lensOn.value<0.5) return -1; const rg=elRange[ei]; if(!rg) return 0; const G=groups[rg.gk]; return (G&&G.lensAttr)?G.lensAttr.array[rg.start*3]:0; }
-  return {set,refresh,setSelection,classOf,get restrict(){return mode!=='off'&&(hideRest||sel.size>0);},get hideRest(){return hideRest;},get solo(){return sel.size;},get selected(){return [...sel];},get mode(){return mode;},modes:Object.keys(MODES).map(k=>({id:k,n:MODES[k].n,d:MODES[k].d})),GRADE,TIER,CONF,OKABE,tierOf,guessInfo,legendOf:()=>legend};
+  return {set,refresh,setSelection,classOf,capture:()=>({mode,hideRest,selected:[...sel],classes:custom?.C,map:custom?.map,label}),restore:s=>{if(s){set(s.mode,{classes:s.classes,map:s.map,label:s.label,hideRest:s.hideRest});setSelection(s.selected);}},get restrict(){return mode!=='off'&&(hideRest||sel.size>0);},get hideRest(){return hideRest;},get solo(){return sel.size;},get selected(){return [...sel];},get mode(){return mode;},modes:Object.keys(MODES).map(k=>({id:k,n:MODES[k].n,d:MODES[k].d})),GRADE,TIER,CONF,OKABE,tierOf,guessInfo,legendOf:()=>legend};
 }
 window.initLens=initLens; window.LENS_PAL={GRADE,TIER,CONF,OKABE};
 })();

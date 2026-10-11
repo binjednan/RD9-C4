@@ -6,8 +6,20 @@ function triNormal(a,b,c){const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=c[0]-a
 function W(x,y,z){return [x*S,z,-y*S];}
 
 class Group{
-  constructor(key,cl){this.key=key;this.pos=[];this.nrm=[];this.unit=[];this.mat=[];this.clip=[];this.cl=cl||0;this.n=0;}
-  tri(a,b,c,u1,u2,mi){const n=triNormal(a,b,c);for(const p of [a,b,c]){this.pos.push(p[0],p[1],p[2]);this.nrm.push(n[0],n[1],n[2]);this.unit.push(u1,u2);this.mat.push(mi);this.clip.push(this.cl);}this.n++;}
+  constructor(key,cl){this.key=key;this.cl=cl||0;this.n=0;this.capacity=0;this.pos=this.nrm=this.unit=this.mat=this.clip=null;}
+  reserve(){
+    if(this.n<this.capacity)return;
+    this.capacity=Math.max(64,this.capacity*2);
+    for(const [key,Type,stride] of [['pos',Float64Array,9],['nrm',Float64Array,9],['unit',Int16Array,6],['mat',Uint16Array,3],['clip',Uint8Array,3]]){
+      const next=new Type(this.capacity*stride);if(this[key])next.set(this[key]);this[key]=next;
+    }
+  }
+  tri(a,b,c,u1,u2,mi){
+    this.reserve();const n=triNormal(a,b,c),offset=this.n*9,vertex=this.n*3;
+    for(let j=0;j<3;j++){const p=j===0?a:j===1?b:c,k=offset+j*3,v=vertex+j;this.pos[k]=p[0];this.pos[k+1]=p[1];this.pos[k+2]=p[2];this.nrm[k]=n[0];this.nrm[k+1]=n[1];this.nrm[k+2]=n[2];this.unit[v*2]=u1;this.unit[v*2+1]=u2;this.mat[v]=mi;this.clip[v]=this.cl;}
+    this.n++;
+  }
+  seal(){for(const [key,stride] of [['pos',9],['nrm',9],['unit',6],['mat',3],['clip',3]])if(this[key])this[key]=this[key].subarray(0,this.n*stride);}
   quad(a,b,c,d,u1,u2,mi){this.tri(a,b,c,u1,u2,mi);this.tri(a,c,d,u1,u2,mi);}
 }
 // Indexed source surfaces: plan coordinates are cm, elevation is m. Preserve

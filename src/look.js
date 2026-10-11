@@ -59,7 +59,7 @@ function initLook(ctx){
     }
   }
 
-  function isGlass(G){return /glass/i.test(G.mat||'')||(G.cat==='A.glass');}
+  function isGlass(G){return !/glass_span|spandrel/i.test(G.mat||'')&&(/glass/i.test(G.mat||'')||(G.cat==='A.glass'));}
   function opacity(){
     for(const k in groups){
       const G=groups[k],m=G.matBase; if(!m) continue;
@@ -85,19 +85,29 @@ function initLook(ctx){
      clipping and exploded-level transforms apply to these lines as well. */
   const featureLines=[];
   const featureStats={elements:0,segments:0,byCategory:{}};
-  let featuresBuilt=false;
-  function buildFeatureLines(){
-    if(featuresBuilt)return;featuresBuilt=true;
+  const featureBuilt=new Set(),featureQueued=new Set(),featureQueue=[];let featureItems=null,featureTimer=0;
+  function queueFeatureLines(){
     if(!ctx.M||!ctx.elRange)return;
+    if(!featureItems){featureItems=new Map();ctx.M.els.forEach((e,i)=>{const r=ctx.elRange[i],G=r&&groups[r.gk];if(!G?.mesh||G.stage||!/^[ASMEP]\./.test(e.c)||!r.count)return;if(!featureItems.has(r.gk))featureItems.set(r.gk,[]);featureItems.get(r.gk).push(i);});}
+    for(const key of featureItems.keys())if(groups[key].mesh.visible&&!featureBuilt.has(key)&&!featureQueued.has(key)){featureQueued.add(key);featureQueue.push(key);}
+    if(featureQueue.length&&!featureTimer)featureTimer=setTimeout(buildNextFeatures,0);
+  }
+  function buildNextFeatures(){
+    featureTimer=0;const until=performance.now()+8;
+    while(featureQueue.length&&performance.now()<until){const key=featureQueue.shift();featureQueued.delete(key);if(groups[key].mesh.visible)buildFeatureLines(key);}
+    wake(250);if(featureQueue.length)featureTimer=setTimeout(buildNextFeatures,0);
+  }
+  function buildFeatureLines(groupKey){
+    if(featureBuilt.has(groupKey))return;featureBuilt.add(groupKey);
     const byGroup=new Map();
-    ctx.M.els.forEach((e,ei)=>{
+    featureItems.get(groupKey).forEach(ei=>{const e=ctx.M.els[ei];
       const rg=ctx.elRange[ei],G=rg&&groups[rg.gk];if(!G?.mesh||G.stage||!/^[ASMEP]\./.test(e.c)||!rg.count)return;
       // These primitives are round bodies tessellated for rendering. Their
       // 5/6/8-sided axial facets are not fabricated equipment panel seams.
       const rounded=e.g&&['t','cyl','sph'].includes(e.g[0]);
       const crease=Math.cos((rounded?75:20)*Math.PI/180);
       const p=G.posArr,edges=new Map(),ids=[];
-      const key=v=>[p[v*3],p[v*3+1],p[v*3+2]].map(x=>Math.round(x*10000)).join(',');
+      const key=v=>Math.round(p[v*3]*10000)+','+Math.round(p[v*3+1]*10000)+','+Math.round(p[v*3+2]*10000);
       for(let t=rg.start*3;t<(rg.start+rg.count)*3;t+=3){
         const ax=p[(t+1)*3]-p[t*3],ay=p[(t+1)*3+1]-p[t*3+1],az=p[(t+1)*3+2]-p[t*3+2];
         const bx=p[(t+2)*3]-p[t*3],by=p[(t+2)*3+1]-p[t*3+1],bz=p[(t+2)*3+2]-p[t*3+2];
@@ -134,10 +144,12 @@ function initLook(ctx){
       if(ids.length){let list=byGroup.get(rg.gk);if(!list){list=[];byGroup.set(rg.gk,list);}ids.forEach(i=>list.push(i));featureStats.elements++;featureStats.byCategory[e.c]=(featureStats.byCategory[e.c]||0)+1;}
     });
     byGroup.forEach((ids,k)=>{
-      const G=groups[k],source=G.mesh.geometry,position=[],unit=[],clip=[];
-      ids.forEach(i=>{position.push(G.posArr[i*3],G.posArr[i*3+1],G.posArr[i*3+2]);unit.push(source.attributes.aUnit.array[i*2],source.attributes.aUnit.array[i*2+1]);clip.push(source.attributes.aClip.array[i]);});
-      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(position,3));g.setAttribute('aUnit',new THREE.Int16BufferAttribute(unit,2));g.setAttribute('aClip',new THREE.Uint8BufferAttribute(clip,1));g.setAttribute('aHide',new THREE.Uint8BufferAttribute(new Uint8Array(ids.length),1));g.setAttribute('aLens',new THREE.Uint8BufferAttribute(new Uint8Array(ids.length),1));g.computeBoundingSphere();
-      const mat=new THREE.LineBasicMaterial({color:0x8da5bc,transparent:true,opacity:.22,depthTest:true,depthWrite:false,toneMapped:false});
+      const G=groups[k],source=G.mesh.geometry,g=new THREE.BufferGeometry();
+      // Feature lines index the existing surface vertices; visibility and animation
+      // attributes are shared instead of copied into a second set of buffers.
+      for(const key of ['position','aUnit','aClip','aHide','aLens'])g.setAttribute(key,source.attributes[key]);
+      g.setIndex(new THREE.Uint32BufferAttribute(ids,1));g.boundingSphere=source.boundingSphere.clone();
+      const mat=new THREE.LineBasicMaterial({clippingPlanes:G.matBase.clippingPlanes,color:0x8da5bc,transparent:true,opacity:.22,depthTest:true,depthWrite:false,toneMapped:false});
       // Bundled r128 Color.setHex stores raw components. These display hexes
       // are sRGB: convert once before the renderer's sRGB output conversion.
       // Otherwise pale feature lines are brightened a second time by output.
@@ -150,22 +162,20 @@ function initLook(ctx){
         sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uIso;uniform sampler2D uMask;uniform vec4 uMaskBox;varying vec2 vUnit;varying float vClip;varying vec3 vWPos;')
           .replace('void main() {','void main() {\nif(uIso>-.5&&vClip<.5&&abs(vUnit.x-uIso)>.5&&abs(vUnit.y-uIso)>.5)discard;\nif(uIso>-.5&&vClip>.5){vec2 uv=(vWPos.xz-uMaskBox.xy)/uMaskBox.zw;if(uv.x<0.||uv.x>1.||uv.y<0.||uv.y>1.||texture2D(uMask,uv).r<.5)discard;}');
       };
-      mat.customProgramCacheKey=()=> 'c4-feature-lines-v3';
+      const compile=mat.onBeforeCompile;mat.onBeforeCompile=sh=>{compile(sh);ctx.buildFX.patch(sh);};mat.defaultAttributeValues={aBuild:[0,0]};
+      mat.customProgramCacheKey=()=> 'c4-feature-lines-build';
       const lines=new THREE.LineSegments(g,mat);lines.renderOrder=2;lines.userData.presentationOnly=true;lines.raycast=()=>{};G.mesh.add(lines);
-      featureLines.push({G,lines,ids:new Uint32Array(ids),hideVersion:-1,lensVersion:-1});featureStats.segments+=ids.length/2;
+      featureLines.push({G,lines,ids:g.index.array});featureStats.segments+=ids.length/2;lines.userData.buildVertices=featureLines[featureLines.length-1].ids;ctx.buildFX.bindEdges(G,g,lines.userData.buildVertices);
     });
   }
   function syncFeatureLines(){
-    const active=edgesOn&&!isPerf()&&mode!=='xray';if(active)buildFeatureLines();
+    const active=edgesOn&&!isPerf()&&mode!=='xray';if(active)queueFeatureLines();
     featureLines.forEach(f=>{
       f.lines.visible=active;
       if(!active)return;
       f.lines.material.color.setHex(mode==='dark'?0xb5c5d2:mode==='clay'?0x5d5c59:0x30383f).convertSRGBToLinear();
       f.lines.material.opacity=(mode==='materials'||mode==='day'?(/^[MEP]\./.test(f.G.cat)? .56:.46):.38)*Math.min(1,f.G.matBase.opacity*2);
-      for(const pair of [['hideVersion','aHide',f.G.hideAttr],['lensVersion','aLens',f.G.lensAttr]]){
-        const [version,key,source]=pair;if(!source||f[version]===source.version)continue;
-        const target=f.lines.geometry.attributes[key];for(let i=0;i<f.ids.length;i++)target.array[i]=source.array[f.ids[i]];target.needsUpdate=true;f[version]=source.version;
-      }
+
     });
   }
 
@@ -300,7 +310,7 @@ function initLook(ctx){
     if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
   apply(true);
   return {set,snapshot,restore,render,dirty(){ opacity();dirtyShadow=true; },afterPreset:lights,setFog:fog,get lastRenderInfo(){return sceneRenderInfo;},get active(){ return true; },get edges(){ return edgesOn&&!isPerf()&&postOk!==false; },get white(){ return mode==='clay'; },get mode(){ return mode; },
-    state(){ return {mode,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,active:edgesOn&&!isPerf()&&mode!=='xray'},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
+    state(){ return {mode,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()&&mode!=='xray'},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
 }
 window.initLook=initLook;
 })();

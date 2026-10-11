@@ -347,16 +347,17 @@ def plan_dist_cm(e, conds):
 
 def analyse_system(M, sd, world):
     els = M["els"]
-    src = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and sd["source"](e)]
-    edge = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and sd.get("edge") and sd["edge"](e)]
-    ter = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and sd["terminal"](e)]
+    eligible = lambda e: not e.get("a", {}).get("network_proposal") or sd.get("include_proposals", False)
+    src = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and sd["source"](e)]
+    edge = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and sd.get("edge") and sd["edge"](e)]
+    ter = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and sd["terminal"](e)]
     grp = sd.get("group")
     units = collections.OrderedDict()
     for i in ter: units.setdefault(grp(els[i]) if grp else els[i]["id"], []).append(i)
     var = []
     allcon = set()
     for vname, vpred in sd["variants"]:
-        con = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and vpred(e)]
+        con = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and vpred(e)]
         kind = {}
         for i in con: kind[i] = "c"
         for i in ter: kind[i] = "t"
@@ -484,10 +485,39 @@ def pack(M, results):
     return {"v": 1, "tol": TOL, "built": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "systems": S, "groups": GROUPS}
 
 
+def add_proposals(M):
+    """A separate opt-in result; original test populations and baseline stay intact."""
+    proposed = {e.get('a', {}).get('proposal_system') for e in M['els'] if e.get('a', {}).get('network_proposal')}
+    world = World(M['els']); results = []
+    for source_sd in SYSTEMS:
+        if source_sd['id'] not in proposed:
+            continue
+        sd = dict(source_sd, include_proposals=True)
+        sd['variants'] = [(name, lambda e, pred=pred, vi=vi, sid=sd['id']:
+            (e.get('a', {}).get('proposal_system') == sid and e.get('a', {}).get('proposal_variant') == vi)
+            if e.get('a', {}).get('network_proposal') else pred(e))
+            for vi, (name, pred) in enumerate(source_sd['variants'])]
+        R = analyse_system(M, sd, world)
+        R['isl'], R['near'], R['far'] = diagnose(M, sd, R) if R['bad'] else ([], [], [])
+        R['islands'], R['lone'] = islands(M, R)
+        R['tests'] = tests_of(M, sd, R)
+        results.append((sd, R))
+    records = pack(M, results)['systems'] if results else []
+    for record in records:
+        for key in ('src', 'ri', 'x', 'o'):
+            record[key] = [M['els'][i]['id'] for i in record[key]]
+        record['refs'] = 'ids'
+        record['desc'] = 'اتصال هندسي مع مسارات افتراضية مقترحة؛ نتيجة المخططات الأصلية محفوظة منفصلة. لا يثبت السعة أو التنسيق أو اعتماد التنفيذ.'
+        record['route_ids'] = [e['id'] for e in M['els'] if e.get('a', {}).get('proposal_system') == record['id']]
+    M['lifecycle']['proposals'] = {r['id']: r for r in records}
+    return records
+
+
 def apply(M, verbose=False):
     """called by post_model.py: analyse and store M['lifecycle'], write the report"""
     results = run(M, verbose)
     M["lifecycle"] = pack(M, results)
+    add_proposals(M)
     write_doc(M, results)
     return results
 
@@ -545,7 +575,7 @@ if __name__ == "__main__":
         json.dump({t["id"]: t["ok"] for sd, R in results for t in R["tests"]}, open(BASE, "w", encoding="utf-8"), indent=1)
         print("baseline recorded")
     if "--save" in sys.argv:
-        M["lifecycle"] = pack(M, results); json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False); print("saved M['lifecycle']")
+        M["lifecycle"] = pack(M, results); add_proposals(M); json.dump(M, open(SRC, "w", encoding="utf-8"), separators=(",", ":"), ensure_ascii=False); print("saved M['lifecycle']")
     bad = regress(results)
     for b in bad: print("REGRESSION", b)
     sys.exit(1 if bad else 0)

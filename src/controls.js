@@ -2,7 +2,7 @@
    - pointer events only (no legacy touch events); camera position/target stay the source of truth,
      so external animations (flyTo) can overwrite them freely.
    - mode ('rotate'|'pan'|'zoom') decides what a one-finger / left-button drag does.
-   - mouse: left = mode action, right / Shift+left = pan, middle = zoom, wheel = zoom to cursor.
+   - mouse: left = mode action, right / Shift+left = pan, middle = orbit around the surface under the cursor, wheel = zoom to cursor.
    - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = pan; rotate = three-finger drag (macOS turns it into a
      mouse drag) or Alt + two-finger scroll.
    - touch (tablets): one finger = rotate (the bottom mode buttons can change it), two fingers moving TOGETHER = pan, two fingers moving APART = zoom in, moving TOWARD each
@@ -37,7 +37,7 @@ class CameraRig extends THREE.EventDispatcher{
   _clampTarget(){const t=this.target,b=this.bounds,x=t.x,y=t.y,z=t.z; t.clamp(b.min,b.max); if(t.x!==x||t.y!==y||t.z!==z){this.camera.position.add(this._o.set(t.x-x,t.y-y,t.z-z));}}
   /* ---- primitive motions ---- */
   rotate(dth,dph){
-    const P=this.pivotFn?this.pivotFn():null; if(P){ this._rotateAbout(P,dth,dph); if(this.onPivot) this.onPivot(P); return; }
+    const P=this._orbitPivot||(this.pivotFn?this.pivotFn():null); if(P){ this._rotateAbout(P,dth,dph); if(this.onPivot) this.onPivot(P); return; }
     const s=this._sph();this._setSph(s.r,s.ph+dph,s.th+dth);
   }
   /* rigid turn of camera and look-at point about the vertical axis through P (dth) and about the camera's right axis through P (dph): P keeps its place on the screen.
@@ -91,6 +91,7 @@ class CameraRig extends THREE.EventDispatcher{
   _bind(){
     const d=this.dom; d.style.touchAction='none'; d.style.userSelect='none'; d.style.webkitUserSelect='none'; d.tabIndex=0; d.style.outline='none';
     d.addEventListener('contextmenu',e=>e.preventDefault());
+    d.addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault();});
     d.addEventListener('pointerdown',e=>this._down(e)); d.addEventListener('pointermove',e=>this._move(e));
     d.addEventListener('pointerup',e=>this._up(e)); d.addEventListener('pointercancel',e=>this._up(e));
     d.addEventListener('wheel',e=>this._wheel(e),{passive:false});
@@ -102,10 +103,12 @@ class CameraRig extends THREE.EventDispatcher{
   }
   /* ---- pointers ---- */
   _down(e){
-    if(!this.enabled) return; try{this.dom.setPointerCapture(e.pointerId);}catch(_){}
+    if(!this.enabled) return; if(e.button===1)e.preventDefault(); try{this.dom.setPointerCapture(e.pointerId);}catch(_){}
     if(!this._ptrs.size) this.lastGestureMulti=false;
     this._ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY,type:e.pointerType,btn:e.button,t:performance.now()});
     this._vel.th=this._vel.ph=0; this._start();
+    this._orbitPivot=null;
+    if(this._ptrs.size===1&&(e.button===1||(!e.button&&!e.shiftKey&&this.mode==='rotate'))){const hit=this.hitTest?.(e.clientX,e.clientY);this._orbitPivot=(hit||this.target).clone();}
     if(this._ptrs.size===1){this._drag={x:e.clientX,y:e.clientY,btn:e.button,type:e.pointerType,shift:e.shiftKey||e.ctrlKey||e.metaKey,last:performance.now(),moved:0};}
     else if(this._ptrs.size===2){this.lastGestureMulti=true; this._drag=null; this._initPinch();}
     if(e.pointerType==='mouse') this.dom.focus({preventScroll:true});
@@ -129,7 +132,7 @@ class CameraRig extends THREE.EventDispatcher{
       P.dist=dist; P.mx=mx; P.my=my; return;
     }
     const D=this._drag; if(!D) return; D.moved+=Math.abs(dx)+Math.abs(dy);
-    let act; if(D.type==='mouse'){ act=D.btn===2?'pan':D.btn===1?'zoom':(D.shift?'pan':this.mode);} else act=this.mode;
+    let act; if(D.type==='mouse'){ act=D.btn===2?'pan':D.btn===1?'rotate':(D.shift?'pan':this.mode);} else act=this.mode;
     const h=Math.max(this.dom.clientHeight,300),k=2*Math.PI/h*this.rotateSpeed;
     if(act==='rotate'){this.rotate(-dx*k,-dy*k); const now=performance.now(),dt=Math.max(now-D.last,1); D.last=now; this._vel.th=0.7*this._vel.th+0.3*(-dx*k)/dt*16; this._vel.ph=0.7*this._vel.ph+0.3*(-dy*k)/dt*16;}
     else if(act==='pan') this.pan(dx,dy);
@@ -197,5 +200,5 @@ class CameraRig extends THREE.EventDispatcher{
     }
     return busy||this._ptrs.size>0;
   }
-  stop(){this._vel.th=this._vel.ph=0;}
+  stop(){this._vel.th=this._vel.ph=0;this._orbitPivot=null;}
 }

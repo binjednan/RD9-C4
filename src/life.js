@@ -12,19 +12,38 @@ function initLife(ctx){
   const RP=(M.displayPalette||window.C4_PALETTE).lifecycle;
   const CLS=[{k:'src',n:'مصدر',c:RP.src,h:'نقطة تشغيل ممثلة في المجسم'},{k:'con',n:'موصل مُغذّى',c:RP.con,h:'تماس هندسي بالمصدر ضمن تسامح النموذج، وليس اعتماد تشغيل موقعي'},
     {k:'ok',n:'نهاية تجتاز مسار المجسم',c:RP.ok,h:'مسار داخل المجسم ضمن سماحة الاختبار'},{k:'bad',n:'نهاية غير موصولة',c:RP.bad,h:'اختبار المجسم لا يجد مسارًا من المصدر'},{k:'orph',n:'موصل يتيم',c:RP.orph,h:'لا يصل إلى مصدر أو نقطة دخول في المجسم'},{k:'edge',n:'نقطة دخول',c:RP.edge,h:'حد توزيع ممثل؛ لا يثبت تشغيل ما قبله'}];
-  let cur=0, timer=0, playing=false, T=0, hideOther=false, finalMode=false; const sys=()=>LC.systems[cur];
+  let cur=0, timer=0, playing=false, T=0, hideOther=false, finalMode=false, preview=false, previewSystem=null,useProposals=false;
+  const proposalCache={};
+  function proposed(s){
+    if(proposalCache[s.id])return proposalCache[s.id];
+    const p=LC.proposals?.[s.id];if(!p)return s;
+    const indices=new Map(M.els.map((e,i)=>[e.id,i])),out={...p,proposal:true};
+    for(const k of ['src','ri','x','o'])out[k]=p[k].map(id=>indices.get(id));
+    if(out.ri.some(i=>i===undefined))return s;
+    return proposalCache[s.id]=out;
+  }
+  const sys=()=>useProposals?proposed(LC.systems[cur]):LC.systems[cur];
+  const transport=document.createElement('div');transport.id='lifeTransport';transport.hidden=true;transport.dir='rtl';transport.setAttribute('role','toolbar');transport.setAttribute('aria-label','اختبار النظام');
+  transport.innerHTML='<span id="lifeRunName"></span><button type="button" data-run="pause">إيقاف مؤقت</button><button type="button" data-run="details">النتائج</button><button type="button" data-run="exit">إنهاء</button>';
+  document.body.appendChild(transport);
+  const style=document.createElement('style');style.textContent='#lifeTransport{position:fixed;z-index:80;inset-inline:12px;bottom:calc(68px + env(safe-area-inset-bottom));margin:auto;max-width:600px;display:flex;align-items:center;gap:7px;padding:9px;border:1px solid var(--line,#dbe1e8);border-radius:12px;background:var(--panel,#fff);box-shadow:0 3px 16px #13233322;color:var(--text,#1c2a3b)}#lifeTransport[hidden]{display:none}#lifeRunName{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}#lifeTransport button{min-height:44px;padding:5px 9px;border:1px solid var(--line,#dbe1e8);border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:12px}@media(max-width:860px){body.panel-open #lifeTransport{display:none}}.lf-select summary{padding:12px 8px;cursor:pointer;font-weight:600}.lf-select{margin:10px 0;border:1px solid var(--line,#dbe1e8);border-radius:9px}@media(min-width:861px){#lifeTransport{inset-inline-start:auto;inset-inline-end:20px;min-width:430px}}';document.head.appendChild(style);
+  function syncRun(){transport.hidden=!preview;transport.querySelector('[data-run=pause]').textContent=playing?'إيقاف مؤقت':finalMode?'إعادة':'استئناف';const s=sys();$('lifeRunName').textContent=s.name+(s.proposal?' · مقترح':'')+' · '+(finalMode?'انتهى العرض · '+s.cnt.ok+' / '+s.cnt.ter+' موصول':'تقدّم العرض '+Math.round(+($('lfBar')?.value||0))+'%');}
+  function enter(){const key=sys().id+(sys().proposal?':proposed':''),fresh=!preview||previewSystem!==key;if(!preview){ctx.begin?.();preview=true;}ctx.showProposals?.(sys().proposal?sys().id:null);if(fresh){ctx.focus?.(sys());previewSystem=key;}syncRun();}
+  function exit(){stop(true);if(preview){preview=false;previewSystem=null;ctx.end?.();}clearHL();syncRun();}
+  transport.onclick=ev=>{const a=ev.target.closest('[data-run]')?.dataset.run;if(a==='exit')exit();else if(a==='details')ctx.showPanel?.();else if(a==='pause'){if(playing)stop(true);else play();}};
+  document.addEventListener('click',ev=>{if(preview&&!box.contains(ev.target)&&!transport.contains(ev.target)&&ev.target.closest('#secnav button,#workspaceNav button,.acc-h,#btnAll,#btnHome,#isoExit,#viewMenu button,#bar button:not(#btnMore)'))exit();},true);
   const lvName=l=>(LVL[l]&&LVL[l].name)||l;
   const total=(s)=>s.tests.length, passN=s=>s.tests.filter(t=>t.p).length;
   /* ---- per-system derived sets (built once on demand) ---- */
   const cache={};
   function prep(s){
-    if(cache[s.id]) return cache[s.id];
+    const key=s.id+(s.proposal?':proposed':'');if(cache[key]) return cache[key];
     const els=M.els, n=s.ri.length; const grpOf=i=>els[i].grp||null; const srcSet=new Set(s.src);
     const unitOf=i=>{ const g=grpOf(i); return g?('g:'+g):('e:'+i); };
     const bad=new Map(); s.x.forEach(i=>{ const k=unitOf(i); if(!bad.has(k)) bad.set(k,[]); bad.get(k).push(i); });
     const ok=new Set(); for(let k=0;k<n;k++){ if(s.rk[k]==='t') ok.add(unitOf(s.ri[k])); }
     const expand=(i)=>{ const g=grpOf(i); return g&&grpMap&&grpMap[g]?grpMap[g]:[i]; };
-    return cache[s.id]={bad,ok,expand,srcSet,maxD:s.rd.length?s.rd[s.rd.length-1]:0};
+    return cache[key]={bad,ok,expand,srcSet,maxD:s.rd.length?s.rd[s.rd.length-1]:0};
   }
   function classMap(s,upto,fin){
     const P=prep(s), map=new Map(); const n=s.ri.length;
@@ -33,37 +52,38 @@ function initLife(ctx){
     if(fin){ s.x.forEach(i=>{ P.expand(i).forEach(j=>{ if(!map.has(j)) map.set(j,4); }); }); s.o.forEach(i=>{ if(!map.has(i)) map.set(i,5); }); }
     return map;
   }
-  function paint(upto,fin){ const s=sys(); setLens('custom',{classes:CLS,map:classMap(s,upto,fin),label:'دورة حياة: '+s.name,hideRest:hideOther}); document.querySelectorAll('#viewMenu button[data-lens]').forEach(b=>b.classList.remove('on')); }
+  function paint(upto,fin){ const s=sys(); setLens('custom',{classes:CLS,map:classMap(s,upto,fin),label:(s.proposal?'مسارات مقترحة: ':'دورة حياة: ')+s.name,hideRest:hideOther}); document.querySelectorAll('#viewMenu button[data-lens]').forEach(b=>b.classList.remove('on')); }
   /* ---- player ---- */
-  function stop(keep){ playing=false; clearInterval(timer); timer=0; const b=$('lfPlay'); if(b){ b.textContent='▶ تشغيل الدورة'; b.classList.remove('on'); } if(!keep) setBar(0); }
-  function setBar(v){ const r=$('lfBar'); if(r) r.value=v; const t=$('lfBarT'); if(t) t.textContent=Math.round(v)+'%'; }
+  function stop(keep){ playing=false; clearInterval(timer); timer=0; const b=$('lfPlay'); if(b){ b.textContent='▶ تشغيل الدورة'; b.classList.remove('on'); } if(!keep) setBar(0); syncRun(); }
+  function setBar(v){ const r=$('lfBar'); if(r) r.value=v; const t=$('lfBarT'); if(t) t.textContent=finalMode?'انتهى العرض':'العرض '+Math.round(v)+'%'; syncRun(); }
   function play(){
-    const s=sys(), P=prep(s); if(!s.ri.length){ toast('لا يجد الاختبار مصدرًا متصلًا في هذا المجسم؛ لا يُضاء مسار'); paint(0,true); return; }
-    stop(true); playing=true; finalMode=false; T=0; const b=$('lfPlay'); if(b){ b.textContent='⏸ إيقاف'; b.classList.add('on'); }
-    const t0=performance.now(), dur=7000, max=Math.max(P.maxD,1);
-    paint(0,false); wake(dur+500);
-    timer=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/dur), e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2; T=e*max; setBar(e*100); if(k>=1){ stop(true); setBar(100); finalMode=true; paint(max,true); result(); } else paint(T,false); wake(400); },120);
+    enter(); const s=sys(), P=prep(s); if(!s.ri.length){ toast('لا يجد الاختبار مصدرًا متصلًا في هذا المجسم؛ لا يُضاء مسار'); finalMode=true;setBar(100);paint(0,true);return; }
+    const resume=preview&&!finalMode?T:0;stop(true); playing=true; finalMode=false; T=resume; const b=$('lfPlay'); if(b){ b.textContent='⏸ إيقاف'; b.classList.add('on'); }
+    const dur=7000,max=Math.max(P.maxD,1),t0=performance.now()-(T/max)*dur;syncRun();
+    paint(T,false); wake(dur+500);
+    timer=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/dur), e=k; T=e*max; setBar(e*100); if(k>=1){ finalMode=true; stop(true); setBar(100); paint(max,true); result(); } else paint(T,false); wake(400); },120);
   }
   function result(){ const s=sys(); toast(s.icon+' '+s.name+': '+s.cnt.ok.toLocaleString('en')+' من '+s.cnt.ter.toLocaleString('en')+' نهاية تجتاز مسار المجسم'+(s.cnt.ter-s.cnt.ok?' — '+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+' غير موصولة':'')+(s.cnt.orph?' · '+s.cnt.orph.toLocaleString('en')+' موصل يتيم':''),5200); }
-  function showFinal(){ stop(true); const s=sys(), P=prep(s); finalMode=true; setBar(100); paint(Math.max(P.maxD,1),true); wake(800); }
+  function showFinal(){ enter(); stop(true); const s=sys(), P=prep(s); finalMode=true; setBar(100); paint(Math.max(P.maxD,1),true); wake(800); }
   function focusUnits(keys,color){ const s=sys(), P=prep(s); const idx=[]; keys.forEach(k=>{ (P.bad.get(k)||[]).forEach(i=>P.expand(i).forEach(j=>idx.push(j))); }); if(!idx.length) return; const u=[...new Set(idx)]; if(select) select(-1); highlight(u,color||0xd55e00,true,0.5); flyToBox(bboxOf(u)); }
   /* ---- panel ---- */
   const pct=(a,b)=>b?Math.round(a*100/b):0;
   function render(){
     const all=LC.systems.reduce((a,s)=>a+total(s),0), pass=LC.systems.reduce((a,s)=>a+passN(s),0);
     let h='<div class="lf-top"><b>'+pass+' من '+all+' اختبار شبكة يجتاز فحص المجسم</b><small class="muted">بناء '+esc(LC.built||'')+' · سماحة اختبار المجسم '+Math.round(LC.tol*100)+' سم</small></div>';
-    h+='<p class="muted lf-how">يحاكي الاختبار المسار من المصدر أو نقطة الدخول عبر موصلات المجسم ضمن سماحته، بما فيها الوصلات المشتقة. المسار المنقطع يبقى مظلمًا ويظهر للمراجعة. النتيجة لا تثبت التلامس الفعلي أو التركيب أو التشغيل في الموقع.</p>';
+    h+='<p class="muted lf-how">اختبار مسارات النموذج؛ ليس اعتماد تشغيل موقعيًا.</p>';
     const cardOf=(s,i)=>{ const p=pct(s.cnt.ok,s.cnt.ter), np=passN(s); return '<button type="button" class="lf-card'+(i===cur?' on':'')+'" data-lf="sel" data-i="'+i+'" style="--lc:'+esc(s.color)+'"><span class="lf-ic">'+esc(s.icon)+'</span><b>'+esc(s.name)+'</b><span class="lf-pb"><i style="width:'+p+'%"></i></span><small>'+s.cnt.ok.toLocaleString('en')+' / '+s.cnt.ter.toLocaleString('en')+' موصول'+(s.cnt.edge?' من نقاط الدخول':'')+' · '+np+'/'+total(s)+' اختبار</small></button>'; };
     const gOrder=[], gIdx={}; LC.systems.forEach((s,i)=>{ const g=s.grp||''; if(!(g in gIdx)){ gIdx[g]=[]; gOrder.push(g); } gIdx[g].push(i); });
-    h+='<div class="lf-cards">'+gOrder.map(g=>{
+    h+='<details class="lf-select"><summary>النظام: '+esc(sys().name)+'</summary><div class="lf-cards">'+gOrder.map(g=>{
       if(!g) return gIdx[g].map(i=>cardOf(LC.systems[i],i)).join('');
       const ids=gIdx[g], ok=ids.reduce((a,i)=>a+LC.systems[i].cnt.ok,0), ter=ids.reduce((a,i)=>a+LC.systems[i].cnt.ter,0), np=ids.reduce((a,i)=>a+passN(LC.systems[i]),0), nt=ids.reduce((a,i)=>a+total(LC.systems[i]),0), note=(LC.groups&&LC.groups[g])||'';
       return '<div class="lf-grp"><div class="lf-gh"><b>'+esc(g)+'</b><span>'+ok.toLocaleString('en')+' / '+ter.toLocaleString('en')+' موصول · '+np+'/'+nt+' اختبار</span></div>'+(note?'<small class="muted">'+esc(note)+'</small>':'')+'<div class="lf-gc">'+ids.map(i=>cardOf(LC.systems[i],i)).join('')+'</div></div>';
-    }).join('')+'</div>';
+    }).join('')+'</div></details>';
     const s=sys(), P=prep(s);
     h+='<div class="lf-det"><h4>'+esc(s.icon)+' '+esc(s.name)+'</h4><p class="muted">'+esc(s.desc)+'</p>';
-    h+='<div class="lf-ctl"><button type="button" id="lfPlay" class="lf-pri" data-lf="play">▶ تشغيل الدورة</button><button type="button" data-lf="final">النتيجة</button><button type="button" data-lf="hide" class="'+(hideOther?'on':'')+'" title="إخفاء كل ما ليس من هذا النظام">عزل النظام</button><button type="button" data-lf="off">إيقاف التلوين</button></div>';
-    h+='<div class="lf-bar"><input id="lfBar" type="range" min="0" max="100" value="0" aria-label="تقدّم الدورة"><span id="lfBarT">0%</span></div>';
+    if(LC.proposals?.[s.id])h+='<label style="display:flex;gap:8px;align-items:center;padding:10px 0"><input type="checkbox" data-lf="proposal" '+(useProposals?'checked':'')+'> تضمين المسارات المقترحة</label><p class="muted">الأصل: '+LC.systems[cur].cnt.ok+' / '+LC.systems[cur].cnt.ter+' موصول · مع المقترحات: '+LC.proposals[s.id].cnt.ok+' / '+LC.proposals[s.id].cnt.ter+'</p>';
+    h+='<div class="lf-ctl"><button type="button" id="lfPlay" class="lf-pri" data-lf="play">▶ تشغيل الدورة</button><button type="button" data-lf="final">النتيجة</button><button type="button" data-lf="hide" class="'+(hideOther?'on':'')+'" title="إخفاء كل ما ليس من هذا النظام">عزل النظام</button><button type="button" data-lf="off">إنهاء الاختبار</button></div>';
+    h+='<div class="lf-bar"><input id="lfBar" type="range" min="0" max="100" value="0" aria-label="تقدّم عرض الاختبار"><span id="lfBarT">العرض 0%</span></div>';
     h+='<table class="lf-t"><tbody>'+s.tests.map(t=>'<tr class="'+(t.p?'ok':'no')+'"><td class="lf-st">'+(t.p?'✔':'✖')+'</td><td>'+esc(t.n)+'</td><td class="lf-n">'+t.ok.toLocaleString('en')+' / '+t.of.toLocaleString('en')+'</td></tr>').join('')+'</tbody></table>';
     const d=s.cnt, iso=d.isl||0;
     h+='<div class="lf-diag">'+(s.cnt.edge?'<span title="حدّ ما هو مرسوم في النموذج">نقاط دخول <b>'+s.cnt.edge.toLocaleString('en')+'</b> · السلسلة الكاملة من المصدر <b>'+(s.cnt.chain||0).toLocaleString('en')+'</b>/'+s.cnt.ter.toLocaleString('en')+'</span>':'')+(s.cnt.ter-s.cnt.ok?'<span>غير موصولة <b>'+(s.cnt.ter-s.cnt.ok).toLocaleString('en')+'</b></span>':'')+(d.orph?'<span>موصلات يتيمة <b>'+d.orph.toLocaleString('en')+'</b></span>':'')+(d.near?'<span title="يوجد موصل من النظام قربها في المسقط">وصلة أخيرة ناقصة <b>'+d.near+'</b></span>':'')+(d.far?'<span title="لا يجد اختبار المجسم موصلًا قريبًا">لا شيء قربها <b>'+d.far+'</b></span>':'')+'</div>';
@@ -83,17 +103,18 @@ function initLife(ctx){
     box.innerHTML=h; setBar(finalMode?100:0);
   }
   box.addEventListener('click',ev=>{ const b=ev.target.closest('[data-lf]'); if(!b) return; ev.stopPropagation(); const a=b.dataset.lf;
-    if(a==='sel'){ stop(); cur=+b.dataset.i; finalMode=false; render(); }
-    else if(a==='play'){ if(playing) { stop(); } else play(); }
+    if(a==='proposal'){stop(true);useProposals=b.checked;T=0;finalMode=false;render();showFinal();}
+    else if(a==='sel'){ stop(); T=0; cur=+b.dataset.i; finalMode=false; render(); }
+    else if(a==='play'){ if(playing) { stop(true); } else play(); }
     else if(a==='final'){ showFinal(); }
     else if(a==='hide'){ hideOther=!hideOther; b.classList.toggle('on',hideOther); if(finalMode) showFinal(); else if(LENS&&LENS.mode==='custom') paint(T,false); }
-    else if(a==='off'){ stop(); setLens('off'); clearHL(); }
+    else if(a==='off'){ exit(); }
     else if(a==='allbad'){ focusUnits([...prep(sys()).bad.keys()]); }
     else if(a==='lvbad'){ const l=b.dataset.l, P=prep(sys()); focusUnits([...P.bad.keys()].filter(k=>M.els[P.bad.get(k)[0]].l===l)); }
     else if(a==='one'){ focusUnits([b.dataset.k]); } });
-  box.addEventListener('input',ev=>{ if(ev.target.id==='lfBar'){ stop(true); const s=sys(), P=prep(s), v=+ev.target.value; T=P.maxD*v/100; finalMode=v>=100; paint(T,finalMode); $('lfBarT').textContent=Math.round(v)+'%'; } });
+  box.addEventListener('input',ev=>{ if(ev.target.id==='lfBar'){ enter(); stop(true); const s=sys(), P=prep(s), v=+ev.target.value; T=P.maxD*v/100; finalMode=v>=100; paint(T,finalMode); setBar(v); } });
   render();
-  return {render,play,stop,select:i=>{ cur=i; render(); },get systems(){ return LC.systems; },state:()=>({cur,playing,hideOther,finalMode,T})};
+  return {render,play,stop,exit,get isActive(){return preview;},select:i=>{stop();T=0;finalMode=false;cur=i;render();},get systems(){ return LC.systems; },state:()=>({cur,playing,hideOther,finalMode,T,useProposals,proposalActive:!!sys().proposal,result:sys().cnt})};
 }
 window.initLife=initLife;
 })();

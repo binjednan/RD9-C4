@@ -85,6 +85,13 @@ function stepUnder(){ const o=camera.position.y-controls.target.y, r=Math.max(ca
 const clipY=new THREE.Plane(new THREE.Vector3(0,-1,0),1000);
 const clipX=new THREE.Plane(new THREE.Vector3(-1,0,0),1000);
 renderer.clippingPlanes=[clipY,clipX];
+// Shared per-discipline planes animate only the view, without editing geometry.
+const buildPhase=cat=>/^[MEP]\./.test(cat)?0:cat.startsWith('S.')?1:2;
+const buildPlanes=Array.from({length:3},()=>new THREE.Plane(new THREE.Vector3(0,-1,0),1000));
+function setBuildHeights(heights){
+  buildPlanes.forEach((p,i)=>p.constant=heights?heights[i]:1000);
+  clipY.constant=clipYv=heights?Math.max(...heights):1000;wake(100);
+}
 
 /* ---------- shader patch: unit isolation ---------- */
 const U={highKey:{value:0},xray:{value:0},iso:{value:-1},maskOn:{value:0},mask:{value:null},maskBox:{value:new THREE.Vector4(0,-21,34,23)},lensOn:{value:0},mono:{value:1},neutral:{value:new THREE.Vector3(.86,.88,.9)},lensPal:{value:Array.from({length:32},()=>new THREE.Vector3(0.86,0.89,0.93))}};
@@ -96,18 +103,20 @@ function patch(mat){
       .replace('#include <project_vertex>','#include <project_vertex>\n if(aHide>0.5 || (uLensOn>0.5 && aLens>254.5)) gl_Position=vec4(2.0,2.0,2.0,1.0);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vUnit; varying float vClip; varying vec3 vWPos; varying vec3 vLensC; varying float vLensK; uniform float uLensOn; uniform float uMono; uniform vec3 uNeutral; uniform float uXray; uniform float uHighKey; uniform float uContextTone; uniform float uIso; uniform float uMaskOn; uniform sampler2D uMask; uniform vec4 uMaskBox;')
       .replace('#include <color_fragment>','#include <color_fragment>\n { vec3 lb=diffuseColor.rgb; float lu=clamp(dot(lb,vec3(0.299,0.587,0.114)),0.0,1.0); vec3 mn=uNeutral*mix(1.0,uContextTone,uXray);\n if(uLensOn>0.5){ diffuseColor.rgb=(vLensK>0.5)?vLensC:(uMono>0.5?mn:mix(lb,vec3(0.88,0.9,0.93),0.76)); } else if(uMono>0.5){ diffuseColor.rgb=mn; } }')
-      .replace('#include <tonemapping_fragment>','#include <tonemapping_fragment>\n if(uHighKey>0.5 && !(uLensOn>0.5 && vLensK>0.5)){ float surfaceTone=clamp((dot(gl_FragColor.rgb,vec3(.2126,.7152,.0722))-.12)/.72,0.0,1.0); gl_FragColor.rgb=mix(vec3(.62,.70,.79),vec3(.965,.985,1.0),surfaceTone); }\n if(uLensOn>0.5 && vLensK>0.5){ float analyticalShade=clamp(dot(gl_FragColor.rgb,vec3(.2126,.7152,.0722))*1.6,.68,1.0); gl_FragColor.rgb=vLensC*analyticalShade; }')
+      .replace('#include <tonemapping_fragment>','#include <tonemapping_fragment>\n if(uHighKey>0.5 && !(uLensOn>0.5 && vLensK>0.5)){ float surfaceTone=clamp((dot(gl_FragColor.rgb,vec3(.2126,.7152,.0722))-.12)/.72,0.0,1.0); gl_FragColor.rgb=mix(vec3(.62,.70,.79),vec3(.965,.985,1.0),surfaceTone); }')
       .replace('void main() {','void main() {\n if(uIso>-0.5 && vClip<0.5 && abs(vUnit.x-uIso)>0.5 && abs(vUnit.y-uIso)>0.5) discard;\n if(uIso>-0.5 && vClip>0.5){ vec2 uv=(vWPos.xz-uMaskBox.xy)/uMaskBox.zw; if(uv.x<0.||uv.x>1.||uv.y<0.||uv.y>1.||texture2D(uMask,uv).r<0.5) discard; }');
   };
-  mat.customProgramCacheKey=()=> 'bimpatch';
+  const compile=mat.onBeforeCompile;mat.onBeforeCompile=sh=>{compile(sh);BUILD.patch(sh);};mat.defaultAttributeValues={aBuild:[0,0]};
+  mat.customProgramCacheKey=()=> 'bimpatch-build';
   return mat;
 }
 
 /* ---------- build merged geometry ---------- */
 const groups={}; const elRange=new Array(M.els.length); const elBB=new Float32Array(M.els.length*6);
+const BUILD=window.createBuildAnimator({THREE,M,groups,elRange,elBB});
 const grpMap={}; // grp -> [element idx]
 const stageCount={}; let stageTotal=0;
-function gkey(e){const st=stageKind(e);const a=e.a||{},alt=a.alt?'|alt:'+JSON.stringify([a.alt_conflict,a.alt_source?.file,a.alt_source?.page]):'';return alt+e.c+'|'+e.l+'|'+(e.m||'conc')+(st?'|st:'+st:'')+(e.t==='lift_car'?'|'+((e.a&&e.a.car)||e.id):'');}
+function gkey(e){const st=stageKind(e);const a=e.a||{},alt=a.alt?'|alt:'+JSON.stringify([a.alt_conflict,a.alt_source?.file,a.alt_source?.page]):'';return (a.network_proposal?'|proposal:'+a.proposal_system:'')+alt+e.c+'|'+e.l+'|'+(e.m||'conc')+(st?'|st:'+st:'')+(e.t==='lift_car'?'|'+((e.a&&e.a.car)||e.id):'');}
 function uidx(u){return (u==null)?-1:(unitIndex[u]!==undefined?unitIndex[u]:-1);}
 
 /* ---------- supports: what carries every element (pipeline/support.py wrote rod_cm / hang_cm / stand_cm on the elements that need one) ---------- */
@@ -137,8 +146,12 @@ function addSupports(g,e,geo,u1,u2,mi){
 }
 function buildAll(){
   const t0=performance.now();
-  M.els.forEach((e,ei)=>{
-    const k=gkey(e); const st=stageKind(e); let G=groups[k]; if(!G){G=groups[k]={key:k,g:new Group(k,(e.c==='S.slab'||e.c==='S.beam')?1:0),cat:e.c,lvl:e.l,alt:!!e.a?.alt,mat:e.m||'conc',clip:(e.c==='S.slab'||e.c==='S.beam'),stage:st,lift:e.t==='lift_car',dy:0};}
+  const buckets=new Map();
+  M.els.forEach((e,i)=>{const k=gkey(e);if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push(i);});
+  for(const [k,indices] of buckets){
+    indices.forEach(ei=>{
+      const e=M.els[ei];
+    const st=stageKind(e); let G=groups[k]; if(!G){G=groups[k]={key:k,g:new Group(k,(e.c==='S.slab'||e.c==='S.beam')?1:0),cat:e.c,lvl:e.l,alt:!!e.a?.alt,proposal:e.a?.network_proposal?e.a.proposal_system:null,mat:e.m||'conc',clip:(e.c==='S.slab'||e.c==='S.beam'),stage:st,lift:e.t==='lift_car',dy:0};}
     if(st){stageCount[st]=(stageCount[st]||0)+1; stageTotal++;}
     const g=G.g; const u1=uidx(e.u), u2=uidx(e.u2); const mi=(matIndex[e.m]!==undefined?matIndex[e.m]:0);
     const n0=g.n; const geo=e.g;
@@ -164,8 +177,7 @@ function buildAll(){
     elBB.set([mn[0],mn[1],mn[2],mx[0],mx[1],mx[2]],ei*6);
     if(e.grp){(grpMap[e.grp]=grpMap[e.grp]||[]).push(ei);}
   });
-  for(const k in groups){
-    const G=groups[k]; const g=G.g; if(!g.n) continue;
+    const G=groups[k]; const g=G.g; if(!g.n) continue;g.seal();
     const bg=new THREE.BufferGeometry();
     bg.setAttribute('position',new THREE.Float32BufferAttribute(g.pos,3));
     // Normals are unit vectors; normalized int16 saves render memory without changing positions.
@@ -177,6 +189,7 @@ function buildAll(){
     const m=MATS[G.mat]||{color:'#bbbbbb'};
     const op=G.cat==='A.win'?.28:1; // analytical transparency for seeing the geometry; not a glass specification
     const mat=patch(new THREE.MeshStandardMaterial({color:new THREE.Color('#D4DADD'),roughness:.78,metalness:0,side:THREE.DoubleSide,transparent:op<1,opacity:op,depthWrite:op>=1,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));
+    mat.clippingPlanes=[buildPlanes[buildPhase(G.cat)]];
     mat.userData.baseOpacity=op; mat.userData.modelCategory=G.cat; G.matBase=mat;
     const mesh=new THREE.Mesh(bg,mat); mesh.userData={cat:G.cat,lvl:G.lvl,key:k}; mesh.frustumCulled=true; G.mesh=mesh; scene.add(mesh);   // a group the camera cannot see is not sent to the GPU (close-ups drop ~40–55 % of the triangles)
     g.pos=g.nrm=g.unit=g.mat=g.clip=null; G.posArr=bg.attributes.position.array;
@@ -205,10 +218,12 @@ const catOp={}; Object.keys(CATS).forEach(c=>catOp[c]=1);
 const stageVis={all:false}; Object.keys(stageCount).forEach(k=>stageVis[k]=true);
 let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, focusSamples=false, CLASH=null, ISSUES=null;
 let sourceAlternativeGroups=new Set();
-let buildHidden=null, buildViewState=null;
+let buildHidden=null, buildViewState=null,visibleProposalSystem=null;
+function showNetworkProposals(sid){visibleProposalSystem=sid;applyVis();}
 function setSourceAlternatives(ids=[],enabled=true){if(!enabled||!ids.length)clearHL();sourceAlternativeGroups=new Set(enabled?ids.map(id=>M.els.findIndex(e=>e.id===id)).filter(i=>i>=0&&M.els[i].a?.alt).map(i=>elRange[i]?.gk):[]);applyVis();}
 const stageOn=k=>stageVis.all&&stageVis[k]!==false;
 function groupVisible(G){
+  if(G.proposal&&G.proposal!==visibleProposalSystem&&visibleProposalSystem!=="all")return false;
   if(buildHidden) return !G.alt&&G.buildVisible>0;
   if(G.alt&&!sourceAlternativeGroups.has(G.key))return false;
   if(G.stage&&!stageOn(G.stage)) return false;
@@ -221,7 +236,7 @@ function effOpacity(G,noGhost){if(buildHidden)return G.matBase.userData.baseOpac
 function applyVis(){
   for(const k in groups){const G=groups[k]; if(!G.mesh) continue; G.mesh.visible=groupVisible(G);
     const o=effOpacity(G),m=G.matBase,tr=o<0.999; m.opacity=o; if(m.transparent!==tr){m.transparent=tr;m.needsUpdate=true;} m.depthWrite=!tr;
-    const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+(G.dy||0);
+    const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+(buildHidden?0:(G.dy||0));
   }
   if(LOD) LOD.invalidate();
   updateGlow();
@@ -265,7 +280,7 @@ function setLens(m,opt){if(!LENS)return;LENS.set(m,opt);syncDisplayUI();}
 
 /* ---------- picking ---------- */
 const ray=new THREE.Raycaster(); const mouse=new THREE.Vector2();
-function offOf(ei){const e=M.els[ei];const lv=LVL[e.l];const G=groups[elRange[ei].gk];return explode*(lv?lv.idx:0)+((G&&G.dy)||0);}
+function offOf(ei){const e=M.els[ei];const lv=LVL[e.l];const G=groups[elRange[ei].gk];return explode*(lv?lv.idx:0)+(buildHidden?0:((G&&G.dy)||0));}
 /* elements hidden by the owner («إخفاء العنصر», src/notes.js): bit 2 of the per-vertex aHide flag (bit 1 belongs to the detail swap, which keeps bit 2 intact) */
 const uHid=new Set();
 function setUserHidden(idxs,on){
@@ -284,11 +299,15 @@ function elVisible(ei){
 }
 /* A transient construction preview shares aHide with notes and detail swaps.
    Bit 4 is owned here; the model and saved visibility preferences are untouched. */
-function beginBuildPreview(){
+function beginBuildPreview(owner='build'){
+  if(owner!=='life')window.LIFE?.exit?.();
   endBuildPreview();
   window.LIFE?.stop(true); window.TOURS?.stop?.(); select(-1); clearHL();
-  buildViewState={iso:U.iso.value,mask:U.maskOn.value,lens:U.lensOn.value,ghost:ghost.visible,y:clipY.constant,x:clipX.constant};
-  U.iso.value=-1;U.maskOn.value=0;U.lensOn.value=0;ghost.visible=false;clipY.constant=clipX.constant=1000;
+  fly=null;
+  buildViewState={proposal:visibleProposalSystem,iso:U.iso.value,mask:U.maskOn.value,lens:U.lensOn.value,lensState:LENS?.capture(),ghost:ghost.visible,y:clipY.constant,x:clipX.constant,cy:clipYv,cx:clipXv,explode,isoBar:$('isoBar').classList.contains('on'),pos:camera.position.clone(),target:controls.target.clone()};
+  U.iso.value=-1;U.maskOn.value=0;U.lensOn.value=0;ghost.visible=false;clipY.constant=clipX.constant=1000;clipYv=clipXv=1000;explode=0;$('isoBar').classList.remove('on');
+  if(!DESK.matches)closePanel();
+  LOD?.clear();
   buildHidden=new Uint8Array(M.els.length);buildHidden.fill(1);
   for(const G of Object.values(groups)){G.buildVisible=0;if(!G.hideAttr)continue;const a=G.hideAttr.array;for(let j=0;j<a.length;j++)a[j]=(a[j]&1)|4;G.hideAttr.needsUpdate=true;}
   applyVis();
@@ -300,16 +319,19 @@ function revealBuildElements(indices){
   for(const G of touched)G.hideAttr.needsUpdate=true;
   applyVis();
 }
+function hideBuildElements(indices){
+  if(!buildHidden)return;const touched=new Set();for(const i of indices){if(buildHidden[i])continue;const r=elRange[i],G=groups[r?.gk];if(!G?.hideAttr)continue;buildHidden[i]=1;G.buildVisible--;for(let j=r.start*3;j<(r.start+r.count)*3;j++)G.hideAttr.array[j]|=4;touched.add(G);}for(const G of touched)G.hideAttr.needsUpdate=true;applyVis();
+}
 function endBuildPreview(){
   if(!buildHidden)return;
-  buildHidden=null;
+  BUILD.stop();buildHidden=null;buildPlanes.forEach(p=>p.constant=1000);
   for(const G of Object.values(groups)){delete G.buildVisible;if(!G.hideAttr)continue;const a=G.hideAttr.array;for(let j=0;j<a.length;j++)a[j]&=~4;G.hideAttr.needsUpdate=true;}
   setUserHidden([...uHid],true);
-  const s=buildViewState;if(s){U.iso.value=s.iso;U.maskOn.value=s.mask;U.lensOn.value=s.lens;ghost.visible=s.ghost;clipY.constant=s.y;clipX.constant=s.x;}buildViewState=null;
+  const s=buildViewState;if(s){visibleProposalSystem=s.proposal;U.iso.value=s.iso;U.maskOn.value=s.mask;LENS?.restore(s.lensState);U.lensOn.value=s.lens;syncDisplayUI();ghost.visible=s.ghost;clipY.constant=s.y;clipX.constant=s.x;clipYv=s.cy;clipXv=s.cx;explode=s.explode;$('isoBar').classList.toggle('on',s.isoBar);flyTo(s.pos,s.target,350);}buildViewState=null;
   applyVis();
 }
 /* what a click may select: visible, and — while a lens class is isolated or «عزل» is on — only what the lens concerns (dimmed elements let the click pass through to the isolated ones behind them) */
-function elPickable(ei){ if(!elVisible(ei)) return false; if(LENS&&LENS.restrict&&LENS.classOf(ei)<0.5) return false; return true; }
+function elPickable(ei){ if(!BUILD.pickable(ei)||!elVisible(ei)) return false; if(U.lensOn.value>0.5&&LENS&&LENS.restrict&&LENS.classOf(ei)<0.5) return false; return true; }
 function rayAABB(o,d,bb,off){let tmin=0,tmax=1e9;for(let i=0;i<3;i++){const lo=bb[i]+(i===1?off:0),hi=bb[i+3]+(i===1?off:0);const oi=o[i],di=d[i];if(Math.abs(di)<1e-9){if(oi<lo||oi>hi)return -1;}else{let t1=(lo-oi)/di,t2=(hi-oi)/di;if(t1>t2){const t=t1;t1=t2;t2=t;}if(t1>tmin)tmin=t1;if(t2<tmax)tmax=t2;if(tmin>tmax)return -1;}}return tmin;}
 function rayTri(o,d,a,b,c){const e1=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],e2=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];const p=[d[1]*e2[2]-d[2]*e2[1],d[2]*e2[0]-d[0]*e2[2],d[0]*e2[1]-d[1]*e2[0]];const det=e1[0]*p[0]+e1[1]*p[1]+e1[2]*p[2];if(Math.abs(det)<1e-12)return -1;const iv=1/det;const t=[o[0]-a[0],o[1]-a[1],o[2]-a[2]];const u=(t[0]*p[0]+t[1]*p[1]+t[2]*p[2])*iv;if(u<0||u>1)return -1;const q=[t[1]*e1[2]-t[2]*e1[1],t[2]*e1[0]-t[0]*e1[2],t[0]*e1[1]-t[1]*e1[0]];const v=(d[0]*q[0]+d[1]*q[1]+d[2]*q[2])*iv;if(v<0||u+v>1)return -1;const tt=(e2[0]*q[0]+e2[1]*q[1]+e2[2]*q[2])*iv;return tt>1e-4?tt:-1;}
 function pickHit(clientX,clientY){
@@ -330,7 +352,7 @@ function pickHit(clientX,clientY){
     const [t0,ei,off]=cand[k]; const rg=elRange[ei]; const G=groups[rg.gk]; const P=G.posArr;
     for(let tri=rg.start;tri<rg.start+rg.count;tri++){
       const i=tri*9; const a=[P[i],P[i+1]+off,P[i+2]],b=[P[i+3],P[i+4]+off,P[i+5]],c=[P[i+6],P[i+7]+off,P[i+8]];
-      const t=rayTri(o,d,a,b,c); if(t>0){const hp=[o[0]+d[0]*t,o[1]+d[1]*t,o[2]+d[2]*t]; if(hp[1]>clipYv||hp[0]>clipXv) continue; if(!best||t<best[0]) best=[t,ei,a,b,c];}
+      const t=rayTri(o,d,a,b,c); if(t>0){const hp=[o[0]+d[0]*t,o[1]+d[1]*t,o[2]+d[2]*t]; if(!BUILD.pickable(ei,hp)||hp[1]>clipYv||hp[0]>clipXv||hp[1]>buildPlanes[buildPhase(M.els[ei].c)].constant) continue; if(!best||t<best[0]) best=[t,ei,a,b,c];}
     }
   }
   return best?{ei:best[1],t:best[0],pt:new THREE.Vector3(o[0]+d[0]*best[0],o[1]+d[1]*best[0],o[2]+d[2]*best[0]),tri:[best[2],best[3],best[4]]}:null;
@@ -384,17 +406,14 @@ controls.addEventListener('start',()=>{fly=null;closeMenus();});
 controls.onHome=goHome; controls.onFocus=()=>{if(selIdx>=0) flyToBox(bboxOf(selSet));};
 /* orbit pivot (owner 2026-10-08, «مبدأ التدوير»): when an element is selected the view turns about THAT element (the centre of its box; the whole group of a grouped element); when nothing is selected the
    orbit is exactly what it was before (it turns about the point the camera looks at: controls.js, pivotFn returns null).  The turn about a selection is rigid, so the element keeps its place on the screen;
-   a small ring marks it while (and shortly after) the view turns. */
+   the pivot remains invisible while the view turns. */
 const pivotV=new THREE.Vector3();
 controls.pivotFn=()=>{
   if(selIdx>=0&&selSet.length){ const b=bboxOf(selSet); return pivotV.set(b.c[0],b.c[1]+offOf(selSet[0]),b.c[2]); }
   return null;
 };
-const pvTex=(()=>{ const c=document.createElement('canvas'); c.width=c.height=64; const g=c.getContext('2d'); g.lineWidth=9; g.strokeStyle='rgba(18,28,48,0.92)'; g.beginPath(); g.arc(32,32,20,0,6.2832); g.stroke(); g.lineWidth=4; g.strokeStyle='rgba(255,255,255,0.98)'; g.beginPath(); g.arc(32,32,20,0,6.2832); g.stroke(); g.fillStyle='rgba(18,28,48,0.92)'; g.beginPath(); g.arc(32,32,8,0,6.2832); g.fill(); g.fillStyle='rgba(230,120,20,1)'; g.beginPath(); g.arc(32,32,5,0,6.2832); g.fill(); return new THREE.CanvasTexture(c); })();   // dark + white ring, orange centre: readable on any colour
-const pvGeo=new THREE.BufferGeometry(); pvGeo.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0],3));
-const pvPts=new THREE.Points(pvGeo,new THREE.PointsMaterial({map:pvTex,size:36,sizeAttenuation:false,transparent:true,depthTest:false,depthWrite:false,alphaTest:0.05}));
-pvPts.renderOrder=1007; pvPts.frustumCulled=false; pvPts.visible=false; pvPts.raycast=()=>{}; scene.add(pvPts);
-let pvT=0; controls.onPivot=P=>{ pvPts.position.copy(P); pvPts.visible=true; clearTimeout(pvT); pvT=setTimeout(()=>{ pvPts.visible=false; wake(); },650); };
+// Keep the true surface pivot without a visible marker.
+controls.onPivot=null;
 
 /* ---------- info panel ---------- */
 function row(k,v){return `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;}
@@ -667,7 +686,7 @@ $('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إ
 /* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
 if(window.SampleLOD&&window.__SAMPLES__){
   LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,mono:U.mono,neutral:U.neutral,exploded:()=>explode!==0,liftRunning:()=>liftSim,
-    unitVisible:u=>U.lensOn.value<0.5&&u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});   // detailed samples keep their own colours, so they are off while a lens colours / isolates the model
+    unitVisible:u=>!buildHidden&&U.lensOn.value<0.5&&u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});   // detailed samples keep their own colours, so they are off while a lens colours / isolates the model
   const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod-v2');}catch(e){} chk.checked=false; LOD.setEnabled(false); // explicit sample inspection remains available, source model is the default
     const rb=$('rebarChk'); if(rb){ let sv=null; try{sv=localStorage.getItem('c4rebar');}catch(e){} if(sv==='1'){rb.checked=true; LOD.setRebar(true);}
       rb.onchange=ev=>{LOD.setRebar(ev.target.checked); try{localStorage.setItem('c4rebar',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب من الأعمدة والجسور والجدران يظهر حديد التسليح داخل الخرسانة الشفافة':'الخرسانة تبقى مصمتة عند التقريب (حديد التسليح مخفي)');};}
@@ -709,7 +728,7 @@ function setPerf(on,auto){perfMode=on; renderer.setPixelRatio(ratioFor()); resiz
 $('btnPerf').onclick=()=>setPerf(!perfMode); $('perfChk').onchange=ev=>setPerf(ev.target.checked);
 $('ptrKind').onchange=ev=>{controls.pointerKind=ev.target.value;};
 const helpOpen=on=>$('help').classList.toggle('on',on); $('btnHelp').onclick=()=>helpOpen(true); $('helpBtn2').onclick=()=>helpOpen(true); $('helpClose').onclick=()=>helpOpen(false); $('help').onclick=ev=>{if(ev.target===$('help')) helpOpen(false);};
-window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else if(window.MEASURE&&window.MEASURE.esc&&window.MEASURE.esc()){} else{ closeMenus(); if(window.TOURS&&TOURS.active) TOURS.stop(); else if(ISSUES&&ISSUES.active) ISSUES.close(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
+window.addEventListener('keydown',ev=>{ if(ev.key==='Escape'){ if($('help').classList.contains('on')) helpOpen(false); else if(window.MEASURE&&window.MEASURE.esc&&window.MEASURE.esc()){} else{ closeMenus(); if(window.LIFE?.isActive)window.LIFE.exit();else if(window.TOURS&&TOURS.active) TOURS.stop(); else if(ISSUES&&ISSUES.active) ISSUES.close(); if(selIdx>=0) select(-1); document.body.classList.remove('panel-open'); } } });
 function syncPanelUI(){const visible=DESK.matches?!document.body.classList.contains('dock-off'):document.body.classList.contains('panel-open');$('fab').setAttribute('aria-expanded',visible?'true':'false');$('btnDisplay').setAttribute('aria-expanded',visible&&document.querySelector('.acc[data-sec="pDisplay"]').classList.contains('on')?'true':'false');}
 function setDock(off,noSave){document.body.classList.toggle('dock-off',!!off);const b=$('dockBtn');b.textContent=off?'\u2039':'\u203A';b.setAttribute('aria-expanded',off?'false':'true');if(!noSave){try{localStorage.setItem('c4dock',off?'1':'0');}catch(e){}}refreshInfo();syncPanelUI();setTimeout(resize,40);}
 function openPanel(id){if(id)openSec(id);if(DESK.matches)setDock(false);else{document.body.classList.add('panel-open');syncPanelUI();}closeMenus();}
@@ -776,7 +795,7 @@ function loop(){requestAnimationFrame(loop);
   if(fly){stepFly();wake(300);}
   stepInset(dt);
   if(controls.update()){wake(300);motionUntil=now+220;}
-  if(liftSim&&lifts.length){stepLifts(dt);wake(300);}
+  if(liftSim&&!buildHidden&&lifts.length){stepLifts(dt);wake(300);}
   if(LOD&&LOD.update()) wake(300);
   stepPLights(now); stepUnder();
   if(CLASH) CLASH.frame(now,dt);
@@ -784,7 +803,7 @@ function loop(){requestAnimationFrame(loop);
   if(window.NOTES) window.NOTES.frame();
   if(window.MEASURE) window.MEASURE.frame();
   if(window.SECTIONS) window.SECTIONS.frame();
-  const moving=!!fly||now<motionUntil; if(moving!==renderMoving){renderMoving=moving;renderer.setPixelRatio(ratioFor());resize();wake(500);}
+  const moving=!!fly||now<motionUntil||!!window.PROJECT_BUILD?.playing; if(moving!==renderMoving){renderMoving=moving;renderer.setPixelRatio(ratioFor());resize();wake(500);}
   if(now<awakeUntil){ const renderAt=performance.now(); if(window.LOOK) window.LOOK.render(); else renderer.render(scene,camera); const renderMs=performance.now()-renderAt;renderProfile.samples.push(renderMs);if(renderProfile.samples.length>180)renderProfile.samples.shift();renderProfile.moving=renderMoving;const renderInfo=window.LOOK?.lastRenderInfo||renderer.info.render;renderProfile.calls=renderInfo.calls;renderProfile.triangles=renderInfo.triangles;
     if(renderMoving){renderProfile.motionSamples.push(renderMs);if(renderProfile.motionSamples.length>180)renderProfile.motionSamples.shift();if(renderProfile.lastMotionFrame){const span=now-renderProfile.lastMotionFrame;if(span>0&&span<250){renderProfile.motionFrameIntervals.push(span);if(renderProfile.motionFrameIntervals.length>180)renderProfile.motionFrameIntervals.shift();}}renderProfile.lastMotionFrame=now;}else renderProfile.lastMotionFrame=0;frames++;
   }
@@ -805,7 +824,7 @@ if(window.initHub) initHub({M,$,esc,LVL,setLens,openSec,onlyLevel,showAllLevels,
 if(window.initIssues){ ISSUES=initIssues({M,THREE,scene,camera,controls,renderer,$,esc,normAr,LVL,LAYER,CATS,TYPES,UNITS,wake,flyTo,flyToBox,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf,setLens,openSec,onlyLevel,showAllLevels,elVisible,levelVisible:l=>lvlVis[l]!==false,exploded:()=>explode!==0,showDrawer,hideDrawer,CLASH,LENS,PAL:issuePalette(window.LENS_PAL),elementDisplayName,PlanMap:window.PlanMap}); window.ISSUES=ISSUES; }
 if(window.initProjectReview) window.PROJECT_REVIEW=initProjectReview({M,setSourceAlternatives,$,esc,LVL,setLens,openSec,bboxOf,flyToBox,ensureVisible,highlight,addHL,clearHL,setGhost,showDrawer,hideDrawer,toast,wake});
 /* white / grey look with soft shadows and depth (src/look.js) */
-if(window.initLook) window.LOOK=initLook({M,elRange,THREE,renderer,scene,camera,U,groups,hemi,sun,sun2,wake,toast,$,LP,setPresetLight:()=>applyPreset("day"),getPreset:()=>lightPreset,isPerf:()=>perfMode,isMoving:()=>renderMoving,clipActive:()=>clipYv<999||clipXv<999,getLens:()=>LENS,lodMats:()=>(LOD&&LOD.mats)?Object.keys(LOD.mats).map(k=>LOD.mats[k]):[]});
+if(window.initLook) window.LOOK=initLook({M,elRange,THREE,renderer,scene,camera,U,groups,hemi,sun,sun2,wake,toast,$,LP,setPresetLight:()=>applyPreset("day"),getPreset:()=>lightPreset,isPerf:()=>perfMode,isMoving:()=>renderMoving,buildFX:BUILD,clipActive:()=>BUILD.active||clipYv<999||clipXv<999,getLens:()=>LENS,lodMats:()=>(LOD&&LOD.mats)?Object.keys(LOD.mats).map(k=>LOD.mats[k]):[]});
 /* saved views + shareable link (src/views.js) */
 if(window.initViews) window.VIEWS=initViews({THREE,renderer,camera,controls,$,esc,wake,toast,M,CATS,lvlVis,catVis,UNITS,flyTo,applyVis,setLvlVis,setCatVis,isolate,exitIso,getIso:()=>isoUnit!==null?UNITS[isoUnit].id:null,getLens:()=>LENS,setLens,getPreset:()=>lightPreset,applyPreset,
   getClip:()=>({y:+$('clipY').value,x:+$('clipX').value}),setClip:(y,x)=>{ $('clipY').value=y; $('clipX').value=x; $('clipY').dispatchEvent(new Event('input')); $('clipX').dispatchEvent(new Event('input')); },
@@ -818,9 +837,13 @@ if(window.initSections) window.SECTIONS=initSections({THREE,scene,camera,$,M,wak
 if(window.initNotes){ window.NOTES=initNotes({M,THREE,scene,camera,renderer,$,esc,LVL,UNITS,TYPES,CATS,wake,toast,bboxOf,grpMap,userHidden:uHid,setUserHidden,sel:()=>({idx:selIdx,set:selSet}),clearHL,highlight,focusEl,flyTo,levelVisible:l=>lvlVis[l]!==false,openSec}); }
 $('stat').textContent=M.els.length.toLocaleString('en')+' عنصر';
 /* system life-cycle tests (src/life.js, data: M.lifecycle from pipeline/lifecycle.py) */
-if(window.initLife) window.LIFE=initLife({M,$,esc,LVL,UNITS,TYPES,setLens,LENS,wake,flyToBox,bboxOf,highlight,clearHL,select,toast,grpMap,openSec});
+if(window.initLife) window.LIFE=initLife({M,$,esc,LVL,UNITS,TYPES,setLens,LENS,wake,flyToBox,bboxOf,highlight,clearHL,select,toast,grpMap,openSec,
+  begin:()=>{window.PROJECT_BUILD?.stop();beginBuildPreview('life');revealBuildElements(M.els.map((_,i)=>i));},
+  end:endBuildPreview,focus:s=>{const ids=[...new Set([...(s.src||[]),...(s.ri||[]),...(s.x||[]),...(s.o||[])])];if(ids.length)flyToBox(bboxOf(ids));if(!DESK.matches)closePanel();},
+  showProposals:showNetworkProposals,
+  showPanel:()=>openPanel('pLife')});
 /* first-visit hint (src/hint.js) */
-if(window.initHint) window.HINT=initHint({$,wake});
+window.HINT={shown:false}; // Help stays available on request; no first-visit overlay.
 WORKSPACES.tools.push('pBuild');
-if(window.initProjectBuild)window.PROJECT_BUILD=initProjectBuild({M,$,esc,LVL,UNITS,openSec,wake,toast,begin:beginBuildPreview,reveal:revealBuildElements,end:endBuildPreview,isHidden:i=>!!buildHidden?.[i]});
-window.__dbg={renderProfile,setLens,get LENS(){return LENS;},setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},get ISSUES(){return ISSUES;},get NOTES(){return window.NOTES;},get LOOK(){return window.LOOK;},get MEASURE(){return window.MEASURE;},get SECTIONS(){return window.SECTIONS;},get LIFE(){return window.LIFE;},get VIEWS(){return window.VIEWS;},uHid,setUserHidden,get selIdx(){return selIdx;},flyToBox,bboxOf,flyTo,scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};
+if(window.initProjectBuild)window.PROJECT_BUILD=initProjectBuild({M,$,esc,LVL,UNITS,openSec,wake,toast,begin:beginBuildPreview,reveal:revealBuildElements,end:endBuildPreview,bounds:i=>[elBB[i*6+1],elBB[i*6+4]],canDraw:i=>!!elRange[i]?.count,canInclude:i=>!M.els[i].a?.network_proposal,fx:BUILD,hide:hideBuildElements,phase:i=>buildPhase(M.els[i].c),setHeights:setBuildHeights,frame:ids=>flyToBox(bboxOf(ids))});
+window.__dbg={BUILD,renderProfile,setLens,get LENS(){return LENS;},setLightsOn,applyPreset,LOD,get CLASH(){return CLASH;},get ISSUES(){return ISSUES;},get NOTES(){return window.NOTES;},get LOOK(){return window.LOOK;},get MEASURE(){return window.MEASURE;},get SECTIONS(){return window.SECTIONS;},get LIFE(){return window.LIFE;},get VIEWS(){return window.VIEWS;},uHid,setUserHidden,get selIdx(){return selIdx;},flyToBox,bboxOf,flyTo,scene,camera,controls,groups,renderer,select,isolate,pick,M,focusEl,viewPreset,setPerf,layerOp,catOp,applyVis,runSearch,wake,get perfMode(){return perfMode;},get flying(){return !!fly;},pickHit,get awake(){return awakeUntil;}};

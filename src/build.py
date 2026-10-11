@@ -63,12 +63,15 @@ boot="""<script id="appsrc" type="text/plain">%s</script>
 requestAnimationFrame(function(){setTimeout(async function(){
   try{
     const encoded=JSON.parse(document.getElementById('mdl').textContent);
-    const bytes=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));
+    const binary=atob(encoded),bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
     const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
     window.__MODEL__=JSON.parse(await new Response(stream).text());
     try{window.__SAMPLES__=JSON.parse(document.getElementById('smp').textContent);}catch(e){window.__SAMPLES__=null;}
     try{window.__PHOTOS__=JSON.parse(document.getElementById('pho').textContent);}catch(e){window.__PHOTOS__=null;}
-    var s=document.createElement('script'); s.text=document.getElementById('appsrc').textContent; document.body.appendChild(s);
+    var s=document.createElement('script'); s.text=document.getElementById('appsrc').textContent;
+    for(const id of ['mdl','smp','pho','appsrc'])document.getElementById(id).remove();
+    document.body.appendChild(s);s.remove();
   }catch(e){ var m=document.getElementById('lmsg'); if(m) m.textContent='تعذّر تشغيل النموذج: '+e.message; console.error(e); }
 },40);});
 </script>""" % (safe(app),safe(model),safe(smp),safe(photos))

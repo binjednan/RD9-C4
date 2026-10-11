@@ -82,7 +82,7 @@ function initTours(ctx){
   function tick(){ if(!T||!play) return; if(i>=T.steps.length-1){ setPlay(false); return; } show(i+1); play=setTimeout(tick,9000); }
   function setPlay(on){ clearTimeout(play); play=null; if(on&&T){ play=setTimeout(tick,9000); } if(T) render(); }
   function start(id){
-    const t=TOURS.find(x=>x.id===id); if(!t) return; if(closeMenus) closeMenus(); if(window.PROJECT_REVIEW?.state().selected)window.PROJECT_REVIEW.exit({quiet:true}); if(T) stop(true); T=t; saved=snapshot(); document.body.classList.add('tour-on'); bar.hidden=false; show(0); }
+    const t=TOURS.find(x=>x.id===id); if(!t) return;window.LIFE?.exit?.();window.PROJECT_BUILD?.stop?.(); if(closeMenus) closeMenus(); if(window.PROJECT_REVIEW?.state().selected)window.PROJECT_REVIEW.exit({quiet:true}); if(T) stop(true); T=t; saved=snapshot(); document.body.classList.add('tour-on'); bar.hidden=false; show(0); }
   function stop(quiet){
     if(!T) return; clearTimeout(play); play=null; const s=saved; T=null; bar.hidden=true; bar.innerHTML=''; document.body.classList.remove('tour-on');
     reset(); if(saved?.look&&window.LOOK)window.LOOK.restore(saved.look); if(window.ISSUES&&ISSUES.suspend) ISSUES.suspend(false); if(s){ M.levels.forEach(l=>setLvlVis(l.id,s.lv[l.id]!==false)); Object.keys(CATS).forEach(c=>setCatVis(c,s.cat[c]!==false)); applyVis(); if(s.unit)isolate(s.unit); if(s.look&&window.LOOK)window.LOOK.restore(s.look); Object.entries(s.presentation||{}).forEach(([id,value])=>{$(id).value=value;$(id).dispatchEvent(new Event('input',{bubbles:true}));}); if(LENS&&s.lens&&s.lens!=='off') setLens(s.lens); if(!quiet) flyTo(s.pos,s.tgt); }
