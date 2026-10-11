@@ -12,12 +12,16 @@ function initLook(ctx){
     xray:{label:'شفاف للشبكات',bg:0xe9f0f5,neutral:[0.65,0.69,0.73],ground:0x9baaba,hemi:0.95,sun:0.70,fill:0.34,edl:0,ao:0}
   };
   const alias=m=>m==='white'?'clay':m==='mat'?'materials':m==='daylight'?'day':PALETTES[m]?m:'day';
-  let mode='materials', shadowsOn=true, edgesOn=true, dirtyShadow=true, postOk=null;
+  let mode='materials', theme='light', shadingOn=true, shadowsOn=true, edgesOn=true, dirtyShadow=true, postOk=null;
   let sceneRenderInfo={calls:0,triangles:0};
   let postEffects={edges:0,ambient:0,antialias:'native'};
   const captureSceneInfo=()=>{sceneRenderInfo={calls:renderer.info.render.calls,triangles:renderer.info.render.triangles};};
-  try{ localStorage.removeItem('c4look'); const s=JSON.parse(localStorage.getItem('c4look-v3')||'null'); if(s){ mode=alias(s.mode); shadowsOn=s.s!==0; edgesOn=s.e!==0; } }catch(e){}
-  const save=()=>{ try{ localStorage.setItem('c4look-v3',JSON.stringify({mode,s:shadowsOn?1:0,e:edgesOn?1:0})); }catch(e){} };
+  try{ localStorage.removeItem('c4look'); const s=JSON.parse(localStorage.getItem('c4look-v3')||'null'); if(s){ mode=alias(s.mode==='dark'?'clay':s.mode);theme=s.mode==='dark'?'dark':'light';shadingOn=s.sh!==0; shadowsOn=s.s!==0; edgesOn=s.e!==0; } }catch(e){}
+  try{const t=localStorage.getItem('c4theme');if(t==='dark'||t==='light')theme=t;}catch(e){}
+  const surfaceShading={value:shadingOn?1:0};
+  function patchShading(m){if(!m||m.userData.c4Shading)return;m.userData.c4Shading=true;const compile=m.onBeforeCompile,key=m.customProgramCacheKey.bind(m);const oldKey=key();m.onBeforeCompile=sh=>{compile.call(m,sh);sh.uniforms.uSurfaceShading=surfaceShading;sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uSurfaceShading;').replace('#include <tonemapping_fragment>','gl_FragColor.rgb=mix(diffuseColor.rgb,gl_FragColor.rgb,uSurfaceShading);\n#include <tonemapping_fragment>');};m.customProgramCacheKey=()=>oldKey+'|surface-shading';m.needsUpdate=true;}
+  Object.values(groups).forEach(g=>patchShading(g.matBase));ctx.lodMats?.().forEach(patchShading);
+  const save=()=>{ try{ localStorage.setItem('c4look-v3',JSON.stringify({mode,sh:shadingOn?1:0,s:shadowsOn?1:0,e:edgesOn?1:0})); }catch(e){} };
   const TG=new THREE.Vector3(18,8,-17);                      // centre of the building (shadow frustum)
   const v2=new THREE.Vector2();
   const opacityBases=new WeakMap();
@@ -171,11 +175,11 @@ function initLook(ctx){
     });
   }
   function syncFeatureLines(){
-    const active=edgesOn&&!isPerf()&&mode!=='xray';if(active)queueFeatureLines();
+    const active=edgesOn&&!isPerf();if(active)queueFeatureLines();
     featureLines.forEach(f=>{
       f.lines.visible=active;
       if(!active)return;
-      f.lines.material.color.setHex(mode==='dark'?0xb5c5d2:mode==='clay'?0x666763:0x465059).convertSRGBToLinear();
+      f.lines.material.color.setHex(theme==='dark'?0xb5c5d2:mode==='clay'?0x666763:0x465059).convertSRGBToLinear();
       f.lines.material.opacity=(mode==='materials'||mode==='day'?(/^[MEP]\./.test(f.G.cat)? .42:.34):.32)*Math.min(1,f.G.matBase.opacity*2);
 
     });
@@ -197,7 +201,7 @@ function initLook(ctx){
   sun.shadow.bias=-0.0005; sun.shadow.normalBias=0.07; scene.add(sun.target);
   for(const k in groups){ const G=groups[k]; if(!G.mesh) continue; G.mesh.castShadow=!(G.matBase&&(G.matBase.userData.baseOpacity||1)<1); G.mesh.receiveShadow=true; G.mesh.customDepthMaterial=depthMat; }
   const matsUpdate=()=>{ for(const k in groups){ const G=groups[k]; if(G.matBase) G.matBase.needsUpdate=true; } if(ctx.lodMats) ctx.lodMats().forEach(m=>{m.needsUpdate=true;}); };
-  const shadowActive=()=>mode!=='xray'&&shadowsOn&&!isPerf()&&!clipActive();
+  const shadowActive=()=>mode!=='xray'&&shadingOn&&shadowsOn&&!isPerf()&&!clipActive();
 
   /* ---------------- lights, fog ---------------- */
   function lights(){
@@ -208,7 +212,7 @@ function initLook(ctx){
     if(shadowActive()){ sun.target.position.copy(TG); sun.position.copy(TG).addScaledVector(d,120); }
     else { sun.target.position.set(0,0,0); sun.position.set(sp[0],sp[1],sp[2]); }
     if(scene.background&&scene.background.isTexture) scene.background.dispose();
-    scene.background=new THREE.Color(p.bg);
+    scene.background=new THREE.Color(theme==='dark'?0x20242b:p.bg);
     sun.target.updateMatrixWorld(); dirtyShadow=true; wake();
   }
   function fog(){
@@ -282,7 +286,7 @@ function initLook(ctx){
     // Autodesk-style shaded display: edges and ambient shadows are independent.
     // Navigation uses the canvas MSAA; depth effects resume only when stationary.
     const depthEffects=mode!=='xray'&&!isPerf()&&!ctx.isMoving?.();
-    const contour=depthEffects&&edgesOn?PALETTES[mode].edl:0,ambient=depthEffects&&shadowsOn?PALETTES[mode].ao:0;
+    const contour=0,ambient=depthEffects&&shadingOn&&shadowsOn?PALETTES[mode].ao:0;
     postEffects={edges:contour,ambient,antialias:'native'};
     if(!((contour||ambient)&&ensurePost())){postEffects.edges=postEffects.ambient=0;renderer.render(scene,camera); captureSceneInfo(); return;}
     postEffects.antialias='FXAA';
@@ -295,6 +299,7 @@ function initLook(ctx){
 
   /* ---------------- switching ---------------- */
   function apply(first){
+    surfaceShading.value=shadingOn?1:0;
     U.mono.value=mode==='materials'?0:1;if(U.highKey)U.highKey.value=mode==='day'?1:0;if(U.xray)U.xray.value=mode==='xray'?1:0;
     const nc=PALETTES[mode].neutral;
     if(U.neutral){ const n=U.neutral.value; if(n&&n.setRGB) n.setRGB(nc[0],nc[1],nc[2]); else if(n&&n.set) n.set(nc[0],nc[1],nc[2]); else U.neutral.value=nc.slice(); }
@@ -303,30 +308,32 @@ function initLook(ctx){
     if(ctx.setPresetLight&&getPreset()!=='day') ctx.setPresetLight('day');
     surfaceAppearance(); opacity(); fog(); lights();
     if(wasShadow!==wantShadow||first||(!!scene.fog)!==fogWas){ matsUpdate(); } fogWas=!!scene.fog; dirtyShadow=true;
-    ui(); const L=getLens(); if(L&&L.refresh) L.refresh(); wake(1500);
+    ui();window.__dbg?.LOD?.invalidate(); const L=getLens(); if(L&&L.refresh) L.refresh(); wake(1500);
   }
   let fogWas=false;
+  function setTheme(value){theme=value==='dark'?'dark':'light';try{localStorage.setItem('c4theme',theme);}catch(e){}lights();ui();window.__dbg?.LOD?.invalidate();wake();}
   function set(name,opt){
+    if(name==='dark'){setTheme('dark');return;}
     const next=alias(name); if(next===mode&&!(opt&&opt.force)) return; mode=next; save(); apply(false);
     if(!(opt&&opt.quiet)) toast('المظهر: '+PALETTES[mode].label+(mode==='materials'?' — درجات الخامات تقريبية':''),2600);
   }
-  function snapshot(){ return {mode,w:mode==='clay'?1:0,s:shadowsOn?1:0,e:edgesOn?1:0}; }
-  function restore(o){ mode=o&&o.mode?alias(o.mode):o&&o.w?'clay':'materials'; shadowsOn=!(o&&o.s===0); edgesOn=!(o&&o.e===0); save(); apply(false); }
-  function setFlag(k,on){ if(k==='shadows') shadowsOn=on; else if(k==='edges') edgesOn=on; save(); apply(false); }
+  function snapshot(){ return {mode,w:mode==='clay'?1:0,sh:shadingOn?1:0,s:shadowsOn?1:0,e:edgesOn?1:0}; }
+  function restore(o){ mode=o&&o.mode?alias(o.mode==='dark'?'clay':o.mode):o&&o.w?'clay':'materials'; shadingOn=!(o&&o.sh===0); shadowsOn=!(o&&o.s===0); edgesOn=!(o&&o.e===0); save(); apply(false); }
+  function setFlag(k,on){ if(k==='shading')shadingOn=on;else if(k==='shadows') shadowsOn=on; else if(k==='edges') edgesOn=on; save(); apply(false); }
   function ui(){
     document.querySelectorAll('button[data-look]').forEach(b=>{const on=alias(b.dataset.look)===mode;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
-    document.querySelectorAll('button[data-lk]').forEach(b=>{ const wanted=b.dataset.lk==='shadows'?shadowsOn:edgesOn; const inactive=isPerf()||mode==='xray';const on=wanted&&!inactive; b.classList.toggle('on',on); b.disabled=inactive; b.setAttribute('aria-pressed',on?'true':'false'); });
-    ['materials','day','dark','clay','xray'].forEach(k=>document.body.classList.toggle('look-'+k,k===mode));
+    document.querySelectorAll('button[data-lk]').forEach(b=>{ const wanted=b.dataset.lk==='shading'?shadingOn:b.dataset.lk==='shadows'?shadowsOn:edgesOn; const inactive=b.dataset.lk==='shadows'&&(isPerf()||mode==='xray'||!shadingOn);const on=wanted&&!inactive; b.classList.toggle('on',on); b.disabled=inactive; b.setAttribute('aria-pressed',on?'true':'false'); });
+    ['materials','day','dark','clay','xray'].forEach(k=>document.body.classList.toggle('look-'+k,k==='dark'?theme==='dark':k===mode));
     document.body.classList.toggle('look-white',mode==='clay');
-    document.body.classList.toggle('theme-dark',mode==='dark');
+    document.body.classList.toggle('theme-dark',theme==='dark');document.querySelectorAll('[data-theme]').forEach(b=>{const on=b.dataset.theme===theme;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
     document.body.dataset.look=mode;
-    const theme=document.querySelector('meta[name="theme-color"]');if(theme)theme.content=mode==='dark'?'#20242b':'#f4f5f7';
+    const themeMeta=document.querySelector('meta[name="theme-color"]');if(themeMeta)themeMeta.content=theme==='dark'?'#20242b':'#f4f5f7';
   }
-  document.addEventListener('click',ev=>{ const b=ev.target.closest('button[data-look],button[data-lk]'); if(!b||b.disabled) return; ev.stopPropagation();
-    if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
+  document.addEventListener('click',ev=>{ const b=ev.target.closest('button[data-look],button[data-lk],button[data-theme]'); if(!b||b.disabled) return; ev.stopPropagation();
+    if(b.dataset.theme)setTheme(b.dataset.theme);else if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shading'?shadingOn:b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
   apply(true);
-  return {set,snapshot,restore,render,dirty(){ opacity();dirtyShadow=true; },afterPreset:lights,setFog:fog,get lastRenderInfo(){return sceneRenderInfo;},get active(){ return true; },get edges(){ return edgesOn&&!isPerf()&&postOk!==false; },get white(){ return mode==='clay'; },get mode(){ return mode; },
-    state(){ return {mode,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()&&mode!=='xray'},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,postEffects:{...postEffects},fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
+  return {set,setTheme,snapshot,restore,render,dirty(){ opacity();dirtyShadow=true; },afterPreset:lights,setFog:fog,get lastRenderInfo(){return sceneRenderInfo;},get active(){ return true; },get edges(){ return edgesOn&&!isPerf()&&postOk!==false; },get white(){ return mode==='clay'; },get mode(){ return mode; },
+    state(){ return {mode,theme,shadingOn,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,postEffects:{...postEffects},fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
 }
 window.initLook=initLook;
 })();

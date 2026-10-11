@@ -385,8 +385,8 @@ body #msBar{top:auto;bottom:calc(88px + var(--sa-b));background:var(--pn);color:
 </div></div></section>
 <section class="acc" data-sec="pDisplay"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">إعدادات العرض والتحليل</span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pDisplay"><div id="displaySettings">
 <div class="display-current"><div><small>المظهر والعدسة النشطان</small><b id="displayState" aria-live="polite">ألوان المواد · بلا عدسة</b></div><div class="settings-actions"><button type="button" class="mini" id="btnLensClear">إيقاف العدسة</button><button type="button" class="mini" id="btnDisplayReset">ضبط العرض</button></div></div>
-<div class="visual-styles"><h6>نمط العرض</h6><div class="visual-style-grid"><button data-look="materials" class="on">ألوان المواد</button><button data-look="day">نهاري واضح</button><button data-look="dark">داكن للمراجعة</button><button data-look="clay">محايد هندسي</button><button data-look="xray">شفاف للشبكات</button></div></div><p class="settings-note">المظاهر محايدة والعدسات ألوان تحليلية. اللون الفعلي لا يُثبت إلا بمرجع صريح في المخطط أو جدول التشطيب.</p>
-<div class="setting-pair"><button type="button" class="setting-btn on" data-lk="shadows" aria-pressed="true">ظلال الأسطح</button><button type="button" class="setting-btn on" data-lk="edges" aria-pressed="true">حواف المكونات</button></div><details class="settings-group" id="lensChoices"><summary>العدسات التحليلية <span id="lensActiveName">بلا عدسة</span></summary><div class="lens-grid"><button data-lens="off" class="on"><i class="lsw" style="background:linear-gradient(90deg,#B9A89A,#8A94A3,#3F7FBF)"></i>بلا عدسة</button>
+<div class="visual-styles"><h6>سمة الواجهة</h6><div class="visual-style-grid"><button type="button" data-theme="light" aria-pressed="true">فاتح</button><button type="button" data-theme="dark" aria-pressed="false">داكن</button></div></div><div class="visual-styles"><h6>نمط المجسم</h6><div class="visual-style-grid"><button data-look="materials" class="on">ألوان المواد</button><button data-look="day">نهاري واضح</button><button data-look="clay">محايد هندسي</button><button data-look="xray">شفاف للشبكات</button></div></div><p class="settings-note">المظاهر محايدة والعدسات ألوان تحليلية. اللون الفعلي لا يُثبت إلا بمرجع صريح في المخطط أو جدول التشطيب.</p>
+<div class="setting-pair"><button type="button" class="setting-btn on" data-lk="shading" aria-pressed="true">تظليل الأسطح</button><button type="button" class="setting-btn on" data-lk="edges" aria-pressed="true">حواف المكونات</button><button type="button" class="setting-btn on" data-lk="shadows" aria-pressed="true">الظلال</button></div><details class="settings-group" id="lensChoices"><summary>العدسات التحليلية <span id="lensActiveName">بلا عدسة</span></summary><div class="lens-grid"><button data-lens="off" class="on"><i class="lsw" style="background:linear-gradient(90deg,#B9A89A,#8A94A3,#3F7FBF)"></i>بلا عدسة</button>
 <button data-lens="layer"><i class="lsw" style="background:linear-gradient(90deg,#8A94A3,#B9A89A,#3F7FBF,#9A6FD0,#1FA187)"></i>التخصصات</button>
 <button data-lens="level"><i class="lsw" style="background:linear-gradient(90deg,#2D2A6E,#2A99C3,#86DD7F)"></i>الطوابق</button>
 <button data-lens="system"><i class="lsw" style="background:linear-gradient(90deg,#3b82c4,#06b6d4,#ef6c3a,#8C6BD0)"></i>أنظمة الخدمات</button>
@@ -404,11 +404,11 @@ body #msBar{top:auto;bottom:calc(88px + var(--sa-b));background:var(--pn);color:
 
 <label class="row" for="perfChk"><span>تقليل دقة العرض لأجهزة أضعف</span><input type="checkbox" id="perfChk"></label><button type="button" class="setting-btn" id="btnPerf" aria-pressed="false">تبديل وضع الأداء</button>
 
-<label class="row" for="lodChk"><span>عينات توضيحية عند التقريب<br><small>لا تثبت شكل العنصر أو مقاسه</small></span><input type="checkbox" id="lodChk"></label>
+<label class="row" for="lodChk"><span>التفاصيل المحسّنة<br><small>مظهر توضيحي ضمن حدود العنصر؛ القياس من المصدر</small></span><input type="checkbox" id="lodChk"></label>
 <label class="row" for="rebarChk"><span>عينات التسليح عند التقريب<br><small>اقرأ مصدر العينة وافتراضاتها</small></span><input type="checkbox" id="rebarChk"></label>
 <div class="row" id="liftRow" style="display:none"><span>محاكاة حركة المصعد</span><button class="mini" id="liftBtn">تشغيل</button></div>
 <div class="row"><span>دليل التحكم والاختصارات</span><button class="mini" id="helpBtn2">عرض</button></div></details>
-<details class="settings-group"><summary>التحكم واللمس</summary><label class="row" for="ptrKind"><span>جهاز التأشير</span><select id="ptrKind"><option value="auto">تلقائي</option><option value="mouse">ماوس</option><option value="pad">تراك باد</option></select></label><label class="row" for="pinchChk"><span>عكس اتجاه التقريب باللمس<br><small>الافتراضي: تباعد الإصبعين = تقريب</small></span><input type="checkbox" id="pinchChk"></label><button type="button" class="setting-btn" id="btnModes">أزرار تدوير / تحريك / تقريب</button></details>
+<details class="settings-group"><summary>التحديد</summary><label class="row" for="openPropsChk"><span>فتح الخصائص عند التحديد</span><input type="checkbox" id="openPropsChk"></label></details><details class="settings-group"><summary>التحكم واللمس</summary><label class="row" for="ptrKind"><span>جهاز التأشير</span><select id="ptrKind"><option value="auto">تلقائي</option><option value="mouse">ماوس</option><option value="pad">تراك باد</option></select></label><label class="row" for="pinchChk"><span>عكس اتجاه التقريب باللمس<br><small>الافتراضي: تباعد الإصبعين = تقريب</small></span><input type="checkbox" id="pinchChk"></label><button type="button" class="setting-btn" id="btnModes">أزرار تدوير / تحريك / تقريب</button></details>
 <details class="settings-group"><summary>الكماليات الإخراجية</summary><div id="stageBox"></div></details>
 </div></div></div></section>
 <section class="acc" data-sec="pUnits"><button class="acc-h" type="button" aria-expanded="false"><span class="acc-t">الوحدات (الشقق)</span><span class="acc-n" id="accN_pUnits"></span><span class="acc-c">▾</span></button><div class="acc-b"><div class="pane" id="pUnits"><h3>اختر وحدة لعزلها وعرض تفاصيلها</h3><div id="units"></div></div></div></section>
@@ -425,12 +425,12 @@ body #msBar{top:auto;bottom:calc(88px + var(--sa-b));background:var(--pn);color:
 </div>
 <div id="moreMenu"><button id="btnAll" title="إظهار الأقسام والطوابق">إظهار جميع المكونات</button><button id="btnSaveView" title="احفظ زاوية الكاميرا مع ما هو ظاهر ومُلوَّن">حفظ هذا المنظور</button><button id="btnLinkView" title="رابط يعيد المنظور نفسه لمن يفتحه">نسخ رابط المنظور</button><button id="btnFs">ملء الشاشة</button><button id="btnHelp">اختصارات التحكم</button></div>
 
-<div id="hud"><span id="hudm"><span id="fps"></span><span id="stat"></span> · </span><span id="ver">v2026.10.11-2227</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info" class="infoD"></div><div id="clashPin"></div>
+<div id="hud"><span id="hudm"><span id="fps"></span><span id="stat"></span> · </span><span id="ver">v2026.10.11-2312</span></div><div id="isoBar"><b id="isoName"></b><span id="isoCount" class="muted"></span><button id="isoExit">إنهاء العزل</button></div><div id="info" class="infoD"></div><div id="clashPin"></div>
 <div id="inspectMenu" role="dialog" aria-modal="false" aria-labelledby="inspectTitle"><div class="popover-head"><b id="inspectTitle">المقاطع</b><button type="button" id="inspectClose" aria-label="إغلاق">×</button></div><div id="sectionControls"><h3>قص أفقي <span id="clipYV">بدون</span></h3><input id="clipY" aria-label="منسوب القص الأفقي" type="range" min="-4" max="30" step="0.1" value="30"><h3>قص طولي <span id="clipXV">بدون</span></h3><input id="clipX" aria-label="موضع القص الطولي" type="range" min="0" max="46" step="0.1" value="46"><button type="button" id="clearSections" class="mini">إلغاء القص</button></div><div id="explodeControls" hidden><label for="expl">المسافة بين الطوابق</label><input id="expl" type="range" min="0" max="60" value="0"><button type="button" id="clearExplode" class="mini">إعادة الطوابق</button></div></div><div id="navDock" role="toolbar" aria-label="الحركة والفحص"><button type="button" id="btnHome"  aria-label="احتواء" title="احتواء"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 8h8v8H8z"/></svg><span>احتواء</span></button><div class="tool-separator"></div><div id="modes" role="group" aria-label="طريقة الحركة"><button type="button" id="navrotate" data-m="rotate" aria-pressed="true" class="on" aria-label="تدوير" title="تدوير"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="5"/><ellipse cx="12" cy="12" rx="5" ry="10"/><circle cx="12" cy="12" r="1"/></svg><span>تدوير</span></button><button type="button" id="navpan" data-m="pan" aria-pressed="false" aria-label="تحريك" title="تحريك"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12V6a1.5 1.5 0 0 1 3 0v5-7a1.5 1.5 0 0 1 3 0v7-5a1.5 1.5 0 0 1 3 0v6-2a1.5 1.5 0 0 1 3 0v5c0 4-3 7-7 7-3 0-5-2-6-4l-3-5c-1-2 1-3 2-2l2 2"/></svg><span>تحريك</span></button><button type="button" id="navzoom" data-m="zoom" aria-pressed="false" aria-label="تقريب" title="تقريب"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6M10 7v6M7 10h6"/></svg><span>تقريب</span></button></div><div class="tool-separator"></div><button type="button" id="btnMeasure" aria-pressed="false" aria-label="قياس" title="قياس"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 16 13-13 5 5L8 21zM7 12l2 2m1-5 2 2m1-5 2 2"/></svg><span>قياس</span></button><button type="button" id="btnSection" aria-controls="inspectMenu" aria-haspopup="dialog" aria-expanded="false" aria-label="مقطع" title="مقطع"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM2 12h20M9 8l6 8m-6 0 6-8"/></svg><span>مقطع</span></button><button type="button" id="btnExplode" aria-controls="inspectMenu" aria-haspopup="dialog" aria-expanded="false" aria-label="تفكيك" title="تفكيك"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4-8 4-8-4zM4 12l8 4 8-4M4 18l8 4 8-4"/></svg><span>تفكيك</span></button></div><div id="toast"></div></div></div>
 <button type="button" id="fab" aria-controls="side" aria-expanded="false">النموذج</button>
 <div id="smpPrev"><div class="smpbox"><div class="smphead"><span>معاينة عينة</span><button id="smpClose" aria-label="إغلاق">✕</button></div><div class="spbody"><div id="smpCanvas"></div><div id="smpInfo"></div></div></div></div>
 <div id="help"><div class="hb"><div class="hh"><span>دليل التحكم بالنموذج</span><button id="helpClose" aria-label="إغلاق">✕</button></div>
-<h4>اللمس (جوال / لوح)</h4><ul><li>إصبع واحد: دوران حول نقطة اللمس.</li><li>إصبعان: تحريك وتقريب متزامنان.</li><li>إصبعان تتباعدان: تقريب (Zoom in). إصبعان تقتربان من بعضهما: ابتعاد (Zoom out). الاتجاه قابل للعكس من «عرض وتحليل ← التحكم واللمس».</li><li>أدوات الحركة والقياس والمقاطع أسفل المجسم.</li><li>نقرة على عنصر: بطاقة الأصل. نقرتان سريعتان: تركيز الكاميرا عليه.</li></ul>
+<h4>اللمس (جوال / لوح)</h4><ul><li>إصبع واحد: دوران حول نقطة اللمس.</li><li>في وضع التدوير: إصبعان للتحريك. في وضع التحريك: إصبعان للتدوير. القرص للتقريب في الحالتين.</li><li>إصبعان تتباعدان: تقريب (Zoom in). إصبعان تقتربان من بعضهما: ابتعاد (Zoom out). الاتجاه قابل للعكس من «عرض وتحليل ← التحكم واللمس».</li><li>أدوات الحركة والقياس والمقاطع أسفل المجسم.</li><li>نقرة على عنصر: تحديده. زر «الخصائص» يعرض تفاصيله. نقرتان سريعتان: تركيز الكاميرا عليه.</li></ul>
 <h4>الماوس</h4><ul><li>الزر الأيسر: تدوير حرّ من أعلى نقطة إلى أسفلها، فتستطيع النظر إلى الأعلى من تحت لرؤية بطون البلاطات والسقوف والأساس والخوازيق. <b>محور التدوير:</b> العنصر المحدد إن وُجد (تظهر حلقة عند مركزه أثناء التدوير)، وإن لم يكن شيء محددًا فالتدوير كما كان حول نقطة النظر. الزر الأيمن أو <kbd>Shift</kbd> + السحب: تحريك. الأوسط: تقريب.</li><li>العجلة: تقريب نحو مؤشر الماوس. نقرتان على عنصر: تركيز عليه.</li></ul>
 <h4>التراك باد</h4><ul><li>قرص بإصبعين: تقريب / تبعيد. تمرير بإصبعين: تحريك المشهد.</li><li>التدوير: السحب بثلاثة أصابع (على ماك: الإعدادات ← إمكانية الوصول ← التحكم بالمؤشر ← خيارات التراك باد ← «السحب بثلاثة أصابع»)، أو <kbd>Alt</kbd> مع تمرير الإصبعين، أو زر «تدوير» مع السحب.</li></ul>
 <h4>لوحة المفاتيح</h4><ul><li><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd>: تدوير. <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>: تحريك. <kbd>Q</kbd> <kbd>E</kbd>: خفض / رفع.</li><li><kbd>+</kbd> <kbd>−</kbd>: تقريب / تبعيد. <kbd>Home</kbd>: العرض الكامل. <kbd>F</kbd>: تركيز على العنصر المحدد. <kbd>M</kbd>: القياس بين نقطتين (Esc للإلغاء). <kbd>H</kbd>: إخفاء العنصر المحدد أو إظهاره، و<kbd>Shift</kbd> + <kbd>H</kbd>: إظهار كل المخفية. <kbd>Esc</kbd>: إلغاء التحديد. <kbd>Shift</kbd>: أسرع.</li><li><kbd>[</kbd> <kbd>]</kbd>: العنصر السابق / التالي في «المتابعة» (التعارضات والتخمينات).</li></ul></div></div>
@@ -630,7 +630,7 @@ function rampStrip(g,pts,width,thick,u1,u2,mi){
    - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = pan; rotate = three-finger drag (macOS turns it into a
      mouse drag) or Alt + two-finger scroll.
    - touch / pen: one contact = orbit about the touched surface (or the selected drag mode).
-     Two fingers pan and pinch together about one surface anchor, sampled once per frame.
+     Two fingers perform the complementary action: pan in orbit mode, orbit in pan mode; pinch remains available in both.
      Lifting one finger never changes a pinch into an orbit; both must lift to begin a new drag.
      The saved pinchInZooms preference reverses pinch direction; the default is spread to zoom in.
    - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.
@@ -719,7 +719,7 @@ class CameraRig extends THREE.EventDispatcher{
   /* ---- plumbing ---- */
   _start(){if(!this._started){this._started=true;this.dispatchEvent({type:'start'});}}
   _end(){if(this._started&&!this._ptrs.size&&!this._keys.size){this._started=false;this.dispatchEvent({type:'end'});}}
-  setMode(m){this.mode=m;this.dispatchEvent({type:'mode',mode:m});}
+  setMode(m){if(m!==this.mode)this._cancel();this.mode=m;this.dispatchEvent({type:'mode',mode:m});}
   _bind(){
     const d=this.dom; d.style.touchAction='none'; d.style.userSelect='none'; d.style.webkitUserSelect='none'; d.tabIndex=0; d.style.outline='none';
     d.addEventListener('contextmenu',e=>e.preventDefault());
@@ -759,7 +759,7 @@ class CameraRig extends THREE.EventDispatcher{
   _initPinch(){
     const [a,b]=[...this._ptrs.values()],dist=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
     const anchor=this.hitTest?.(mx,my)?.clone()||this._pointOnTargetPlane(mx,my,new THREE.Vector3());
-    this._pinch={dist,mx,my,anchor,normal:this.target.clone().sub(this.camera.position).normalize(),work:new THREE.Vector3(),active:false,pending:false};
+    this._pinch={dist,mx,my,anchor,action:this.mode==='pan'?'rotate':'pan',normal:this.target.clone().sub(this.camera.position).normalize(),work:new THREE.Vector3(),active:false,pending:false};
   }
   _pinchScale(prev,cur){const r=this.pinchInZooms?cur/prev:prev/cur; return Math.pow(r,this.zoomSpeed);}   // < 1 = camera moves closer
   _flushPinch(){
@@ -775,8 +775,13 @@ class CameraRig extends THREE.EventDispatcher{
     const lo=Math.min(1,Math.max(this.minDistance/r,this.minSurface/Math.max(depth,1e-6))),hi=Math.max(1,this.maxDistance/r);
     const k=THREE.MathUtils.clamp(this._pinchScale(P.dist,dist),lo,hi);
     cam.sub(P.anchor).multiplyScalar(k).add(P.anchor); this.target.sub(P.anchor).multiplyScalar(k).add(P.anchor);
-    this._pointOnPlane(mx,my,P.anchor,P.normal,P.work); P.work.subVectors(P.anchor,P.work);
-    cam.add(P.work); this.target.add(P.work); this._clampTarget(); this.camera.lookAt(this.target);
+    if(P.action==='rotate'){
+      const speed=2*Math.PI/Math.max(this.dom.clientHeight,300)*this.rotateSpeed*.65;
+      this._rotateAbout(P.anchor,-(mx-P.mx)*speed,-(my-P.my)*speed);
+    }else{
+      this._pointOnPlane(mx,my,P.anchor,P.normal,P.work); P.work.subVectors(P.anchor,P.work);
+      cam.add(P.work); this.target.add(P.work); this._clampTarget(); this.camera.lookAt(this.target);
+    }
     P.dist=dist; P.mx=mx; P.my=my;
   }
   _slop(type){return type==='touch'?7:3;}
@@ -878,10 +883,10 @@ class CameraRig extends THREE.EventDispatcher{
   stop(){this._vel.th=this._vel.ph=0;this._orbitPivot=null;}
 }
 </script>
-<script>/* ===== sample library + level-of-detail swapping =====
-   samples.json (window.__SAMPLES__) holds one detailed, realistic sample per component type of the project.
-   When the camera comes close to an element that has a sample, the plain proxy of the model is hidden (per-vertex aHide flag)
-   and the sample is drawn in its place (instanced meshes). Far away the original proxy is shown again.
+<script>/* ===== illustrative detail fitted to retained source solids =====
+   samples.json holds a shared sample for each supported component type.
+   Compatible solids use fitted instanced details at every distance; only curve
+   tessellation changes with distance. Source paths and openings stay intact.
    Units: model cm for sample dimensions, metres in the scene. Local sample frame: x = width, y = up, z = depth (+z = front). */
 (function(){
 'use strict';
@@ -1006,6 +1011,7 @@ function shiftPart(p,off,v){const q=Object.assign({},p); const sh=(a)=>a?a.map((
 function mirrorPart(p,v,axis){const q=Object.assign({},p); const k=axis==='x'?0:2; const neg=(a)=>a?a.map((x,i)=>i===k?`-(${x})`:x):a; if(q.p) q.p=neg(q.p); if(q.a){q.a=neg(q.a);q.b=neg(q.b);} if(q.poly) q.poly=q.poly.map(pt=>pt.map((x,i)=>i===(axis==='x'?0:1)?`-(${x})`:x)); q.mx=false;q.mz=false;q.rep=null; return q;}
 
 /* ---------- engine ---------- */
+const cUniform=(ctx,k,fallback)=>ctx.U?.[k]||{value:fallback};
 class SampleLOD{
   constructor(ctx){
     this.c=ctx; this.lib=window.__SAMPLES__; this.enabled=true; this.active=new Map(); this.units=[]; this.dirty=true; this.lastPos=new THREE.Vector3(1e9,0,0); this.lastT=0; this.entries=new Map(); this.stat={active:0,units:0,types:0}; this.rebarOn=false; this.structSids=new Set();
@@ -1019,11 +1025,12 @@ class SampleLOD{
       this.mats[k]=m;}
     for(const k of Object.keys(this.lib.samples)) if(this.lib.samples[k].cat==='structure') this.structSids.add(k);
     this.index();
+    this.refinedEntries=new Map();this.refinedBatches=new Map();this.refinedActive=new Map();this.refinedUniforms={shade:{value:1},edgeColor:{value:new THREE.Color(0x465059)},lens:cUniform(ctx,'lensOn',0),pal:cUniform(ctx,'lensPal',[]),mono:ctx.mono,neutral:ctx.neutral};
   }
   /* reinforcement (structure samples: columns, walls, beams, piles) is shown only on request: concrete stays solid when the camera comes close */
   setRebar(on){this.rebarOn=!!on; this.dirty=true; this.invalidate();}
   ruleFor(e){
-    const R=this.rules; for(const r of R){ if(r.c&&r.c!==e.c) continue; if(r.t){ if(r.tp){ if(!(e.t&&e.t.startsWith(r.tp))) continue; } else if(r.t!==e.t) continue; } return r.s; }
+    const R=this.rules; for(const r of R){ if(r.c&&r.c!==e.c) continue; if(r.tp){if(!(e.t&&e.t.startsWith(r.tp)))continue;}else if(r.t&&r.t!==e.t)continue; return r.s; }
     return null;
   }
   index(){
@@ -1077,7 +1084,7 @@ class SampleLOD{
       if(pl.mount==='wall'){const n=this.hostNormal(u); if(n){ang=Math.atan2(n[0],-n[1])*180/Math.PI;u.n=n;}}
       if(!u.n&&(pl.orient==='side'||pl.mount==='wall')){const sd=(u.a&&u.a.side)||''; const nm={S:[0,-1],N:[0,1],E:[1,0],W:[-1,0]}[sd]; if(nm){ang=Math.atan2(nm[0],-nm[1])*180/Math.PI;u.n=nm;}}
       u.th=ang*Math.PI/180;
-      const vars={W:Math.round(u.W*2)/2,D:Math.round(u.D*2)/2,H:Math.round(H*2)/2};
+      const vars={W:u.W,D:u.D,H};
       const a=u.a||{}; if(smp.varmap){for(const k of Object.keys(smp.varmap)){const v=a[smp.varmap[k]];if(typeof v==='number') vars[k]=v;}}
       if(smp.defaults){for(const k of Object.keys(smp.defaults)) if(vars[k]===undefined) vars[k]=smp.defaults[k];}
       u.vars=vars; u.key=u.sid+'|'+Object.keys(vars).sort().map(k=>k+vars[k]).join(',');
@@ -1098,7 +1105,7 @@ class SampleLOD{
   }
   setEnabled(on){this.enabled=!!on; this.dirty=true; if(!on) this.clear();}
   invalidate(){this.dirty=true;}
-  clear(){for(const [i,u] of this.active) this.hide(u,false); this.active.clear(); for(const e of this.entries.values()){for(const m of Object.values(e.meshes)) m.count=0;} if(this.pathMeshes) for(const m of Object.values(this.pathMeshes)) m.visible=false; this.c.wake(); this.stat.active=0;}
+  clear(){if(this.refinedActive){for(const {u} of this.refinedActive.values())this.hide(u,false);this.refinedActive.clear();for(const b of this.refinedBatches.values()){for(const m of b.meshes)m.count=0;if(b.lines)b.lines.geometry.instanceCount=0;}}for(const [i,u] of this.active) this.hide(u,false); this.active.clear(); for(const e of this.entries.values()){for(const m of Object.values(e.meshes)) m.count=0;} if(this.pathMeshes) for(const m of Object.values(this.pathMeshes)) m.visible=false; this.c.wake(); this.stat.active=0;}
   hide(u,on){const c=this.c; for(const ei of u.eis){const rg=c.elRange[ei]; const G=c.groups[rg.gk]; if(!G||!G.hideAttr) continue; const arr=G.hideAttr.array; for(let i=rg.start*3,n=(rg.start+rg.count)*3;i<n;i++) arr[i]=(arr[i]&~1)|(on?1:0); G.hideAttr.needsUpdate=true;}}   // bit 1 = swapped for its detailed sample; bit 2 = hidden by the owner (src/notes.js) and must survive the swap
   entryFor(u){
     let e=this.entries.get(u.key); if(e) return e;
@@ -1111,7 +1118,99 @@ class SampleLOD{
     for(const cl of Object.keys(e.geoms)){ if(e.meshes[cl]){this.root.remove(e.meshes[cl]); e.meshes[cl].dispose&&e.meshes[cl].dispose();}
       const m=new THREE.InstancedMesh(e.geoms[cl],this.mats[cl]||this.mats.matte,cap); m.frustumCulled=false; m.count=0; m.renderOrder=cl==='glass'?7:5; this.root.add(m); e.meshes[cl]=m; }
   }
-  update(){
+
+  /* Shared illustrative shapes are fitted inside source solids. Source faces,
+     IDs and reference picking remain intact; no wall opening or route is replaced. */
+  refinedEntry(u,tier){
+    const key=u.sid+'|'+u.mode+'|'+tier;
+    if(this.refinedEntries.has(key))return this.refinedEntries.get(key);
+    const smp=this.lib.samples[u.sid],parts=smp.parts.map(p=>({...p,seg:Math.min(p.seg||16,tier?16:8),sv:Math.min(p.sv||8,tier?8:4)}));
+    const bufs=buildBufs({...smp,parts},u.vars),lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
+    for(const b of Object.values(bufs))for(let i=0;i<b.pos.length;i++){const j=i%3;lo[j]=Math.min(lo[j],b.pos[i]);hi[j]=Math.max(hi[j],b.pos[i]);}
+    const size=hi.map((v,i)=>v-lo[i]);if(size.some(v=>!Number.isFinite(v)||v<1e-6)){this.refinedEntries.set(key,null);return null;}
+    const geoms={},positions=[];
+    for(const [cl,b] of Object.entries(bufs)){
+      if(!b.pos.length)continue;
+      const p=new Float32Array(b.pos.length),n=new Float32Array(b.nrm.length),col=new Float32Array(b.col.length);
+      for(let i=0;i<p.length;i+=3){
+        p[i]=(b.pos[i]-lo[0])/size[0]-.5;p[i+1]=(b.pos[i+1]-lo[1])/size[1];p[i+2]=(b.pos[i+2]-lo[2])/size[2]-.5;
+        // engine.cylinder uses a 14-sided source prism. Fit inside those faces,
+        // including its slightly narrower north/south bounds, not an outer circle.
+        if(u.mode==='cyl'){const r=Math.hypot(p[i],p[i+2]),step=2*Math.PI/14,angle=Math.atan2(p[i+2],p[i]),mid=(Math.floor(angle/step)+.5)*step,limit=.5*Math.cos(step/2)/Math.cos(angle-mid);if(r>limit){p[i]*=limit/r;p[i+2]*=limit/r;}}
+        let x=b.nrm[i]*size[0],y=b.nrm[i+1]*size[1],z=b.nrm[i+2]*size[2],d=Math.hypot(x,y,z)||1;n[i]=x/d;n[i+1]=y/d;n[i+2]=z/d;
+        const gray=b.col[i]*.299+b.col[i+1]*.587+b.col[i+2]*.114;for(let j=0;j<3;j++)col[i+j]=b.col[i+j]*.68+gray*.32;
+      }
+      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));g.setAttribute('normal',new THREE.BufferAttribute(n,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));geoms[cl]=g;positions.push(p);
+    }
+    const all=new Float32Array(positions.reduce((n,a)=>n+a.length,0));let offset=0;for(const a of positions){all.set(a,offset);offset+=a.length;}
+    const full=new THREE.BufferGeometry();full.setAttribute('position',new THREE.BufferAttribute(all,3));const edges=new THREE.EdgesGeometry(full,35);full.dispose();
+    const e={key,geoms,edges};this.refinedEntries.set(key,e);return e;
+  }
+  refinedMaterial(cl,ghost,line=false){
+    const base=this.mats[cl]||this.mats.matte;
+    const m=line?new THREE.LineBasicMaterial({color:0x465059,transparent:true,opacity:.32,depthWrite:false,toneMapped:false}):new THREE.MeshStandardMaterial({vertexColors:true,roughness:base?.roughness??.7,metalness:base?.metalness??0,side:THREE.DoubleSide,transparent:ghost||!!base?.transparent,opacity:base?.opacity??1,depthWrite:!ghost&&!base?.transparent});
+    m.onBeforeCompile=sh=>{
+      const u=this.refinedUniforms;Object.assign(sh.uniforms,{uDetailLens:u.lens,uDetailPal:u.pal,uDetailMono:u.mono,uDetailNeutral:u.neutral,uDetailShade:u.shade,uDetailEdge:u.edgeColor});
+      sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float aDetailLens;attribute float aDetailOpacity;varying float vDetailLens;varying float vDetailOpacity;'+(line?'\nattribute mat4 detailMatrix;':''))
+        .replace('#include <begin_vertex>','#include <begin_vertex>\nvDetailLens=aDetailLens;vDetailOpacity=aDetailOpacity;'+(line?'transformed=(detailMatrix*vec4(transformed,1.)).xyz;':''));
+      sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uDetailLens;uniform vec3 uDetailPal[32];uniform float uDetailMono;uniform vec3 uDetailNeutral;uniform float uDetailShade;uniform vec3 uDetailEdge;varying float vDetailLens;varying float vDetailOpacity;')
+        .replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.a*=vDetailOpacity;'+(line?'diffuseColor.rgb=uDetailEdge;':'if(uDetailLens>.5){int k=int(clamp(vDetailLens,0.,31.)+.5);diffuseColor.rgb=vDetailLens>.5?uDetailPal[k]:mix(diffuseColor.rgb,vec3(.88,.9,.93),.76);}else if(uDetailMono>.5){diffuseColor.rgb=uDetailNeutral;}'));
+      if(!line)sh.fragmentShader=sh.fragmentShader.replace('#include <tonemapping_fragment>','gl_FragColor.rgb=mix(diffuseColor.rgb,gl_FragColor.rgb,uDetailShade);\n#include <tonemapping_fragment>');
+    };
+    m.customProgramCacheKey=()=>line?'refined-lines-v1':'refined-surfaces-v1';return m;
+  }
+  refinedBatch(e,ghost,n){
+    const key=e.key+'|'+(ghost?1:0);let b=this.refinedBatches.get(key);
+    if(b&&b.cap>=n)return b;
+    if(b){for(const m of [...b.meshes,b.lines]){this.root.remove(m);m.geometry.dispose();m.material.dispose();}}
+    const cap=Math.max(16,2**Math.ceil(Math.log2(n))),matrix=new THREE.InstancedBufferAttribute(new Float32Array(cap*16),16),lens=new THREE.InstancedBufferAttribute(new Float32Array(cap),1),opacity=new THREE.InstancedBufferAttribute(new Float32Array(cap),1),meshes=[];
+    for(const [cl,source] of Object.entries(e.geoms)){
+      const g=new THREE.BufferGeometry();for(const [k,v] of Object.entries(source.attributes))g.setAttribute(k,v);g.setAttribute('aDetailLens',lens);g.setAttribute('aDetailOpacity',opacity);
+      const m=new THREE.InstancedMesh(g,this.refinedMaterial(cl,ghost),cap);m.instanceMatrix=matrix;m.count=0;m.frustumCulled=false;m.receiveShadow=true;m.raycast=()=>{};m.userData.presentationOnly=true;this.root.add(m);meshes.push(m);
+    }
+    const g=new THREE.InstancedBufferGeometry();g.setAttribute('position',e.edges.attributes.position);g.setAttribute('detailMatrix',matrix);g.setAttribute('aDetailLens',lens);g.setAttribute('aDetailOpacity',opacity);g.instanceCount=0;
+    const lines=new THREE.LineSegments(g,this.refinedMaterial('matte',ghost,true));lines.frustumCulled=false;lines.raycast=()=>{};lines.renderOrder=2;lines.userData.presentationOnly=true;this.root.add(lines);
+    b={cap,matrix,lens,opacity,meshes,lines};this.refinedBatches.set(key,b);return b;
+  }
+  updateRefined(){
+    if(!this.enabled||!this.lib)return false;const c=this.c,now=performance.now(),cam=c.camera.position;
+    if(!this.dirty&&now-this.lastT<160)return false;
+    if(!this.dirty&&cam.distanceToSquared(this.lastPos)<.0144&&!c.animating?.())return false;
+    this.lastPos.copy(cam);this.lastT=now;this.dirty=false;
+    const look=window.LOOK?.state(),edges=look?look.edgesOn: true;this.refinedUniforms.shade.value=look?.shadingOn===false?0:1;this.refinedUniforms.edgeColor.value.setHex(look?.theme==='dark'?0xb5c5d2:0x465059).convertSRGBToLinear();
+    const next=new Map(),batches=new Map(),start=performance.now();let pending=false,high=0;
+    for(let ui=0;ui<this.units.length;ui++){
+      const u=this.units[ui],e0=c.M.els[u.eis[0]];
+      if(u.mode==='path'||u.mode==='group'||e0.a?.alt||!(u.W>0&&u.D>0&&u.H>0))continue;
+      if(this.structSids.has(u.sid)&&(!this.rebarOn||cam.distanceTo(new THREE.Vector3(u.cx,u.cy,u.cz))>u.R))continue;
+      if(this.skipSids?.has(u.sid)||!c.unitVisible(u))continue;
+      const distance=Math.max(.5,Math.hypot(cam.x-u.cx,cam.y-u.cy,cam.z-u.cz)),px=Math.max(u.W,u.D,u.H)*.01/distance*400;
+      const tier=px>90&&high<700?1:0;if(tier)high++;
+      const key=u.sid+'|'+u.mode+'|'+tier;
+      if(!this.refinedEntries.has(key)&&performance.now()-start>6){pending=true;continue;}
+      const entry=this.refinedEntry(u,tier);if(!entry)continue;
+      const opacity=c.opacityOf?.(u.eis[0])??1,ghost=opacity<.999,bkey=entry.key+'|'+(ghost?1:0);
+      if(!batches.has(bkey))batches.set(bkey,{entry,ghost,items:[]});batches.get(bkey).items.push({u,ui,opacity});next.set(ui,{u,entry});
+    }
+    for(const [ui,{u}] of this.refinedActive)if(!next.has(ui))this.hide(u,false);
+    for(const [ui,{u}] of next)if(!this.refinedActive.has(ui))this.hide(u,true);
+    for(const b of this.refinedBatches.values()){for(const m of b.meshes)m.count=0;b.lines.geometry.instanceCount=0;}
+    const matrix=new THREE.Matrix4(),quat=new THREE.Quaternion(),axis=new THREE.Vector3(0,1,0),scale=new THREE.Vector3(),pos=new THREE.Vector3();
+    for(const {entry,ghost,items} of batches.values()){
+      const b=this.refinedBatch(entry,ghost,items.length);
+      items.forEach(({u,opacity},i)=>{quat.setFromAxisAngle(axis,u.ang*Math.PI/180);pos.set(u.x*S,u.z0+(c.offsetOf?.(u.eis[0])||0),-u.y*S);scale.set(u.W*S,u.H*S,u.D*S);matrix.compose(pos,quat,scale);matrix.toArray(b.matrix.array,i*16);b.lens.array[i]=c.lensClass?.(u.eis[0])||0;b.opacity.array[i]=opacity;});
+      b.matrix.needsUpdate=b.lens.needsUpdate=b.opacity.needsUpdate=true;for(const m of b.meshes)m.count=items.length;b.lines.geometry.instanceCount=edges?items.length:0;
+    }
+    this.refinedActive=next;this.stat.active=next.size;this.stat.refinedTypes=new Set([...next.values()].map(v=>v.u.sid)).size;this.stat.pending=pending;this.stat.retainedSourcePaths=this.units.filter(u=>u.mode==='path').length;
+    if(pending){this.dirty=true;c.wake(500);}return true;
+  }
+  selectionPositions(ei){
+    const hit=[...this.refinedActive.values()].find(v=>v.u.eis.includes(ei));if(!hit)return null;
+    const {u,entry}=hit,m=new THREE.Matrix4().compose(new THREE.Vector3(u.x*S,u.z0+(this.c.offsetOf?.(ei)||0),-u.y*S),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),u.ang*Math.PI/180),new THREE.Vector3(u.W*S,u.H*S,u.D*S)),v=new THREE.Vector3(),out=[];
+    for(const g of Object.values(entry.geoms)){const a=g.attributes.position.array;for(let i=0;i<a.length;i+=3){v.fromArray(a,i).applyMatrix4(m);out.push(v.x,v.y,v.z);}}return out;
+  }
+  update(){return this.updateRefined();}
+  updateLegacy(){
     if(!this.enabled||!this.lib||!this.units.length) return false;
     const c=this.c, cam=c.camera.position, now=performance.now();
     const moved=cam.distanceTo(this.lastPos);
@@ -2879,12 +2978,16 @@ function initLook(ctx){
     xray:{label:'شفاف للشبكات',bg:0xe9f0f5,neutral:[0.65,0.69,0.73],ground:0x9baaba,hemi:0.95,sun:0.70,fill:0.34,edl:0,ao:0}
   };
   const alias=m=>m==='white'?'clay':m==='mat'?'materials':m==='daylight'?'day':PALETTES[m]?m:'day';
-  let mode='materials', shadowsOn=true, edgesOn=true, dirtyShadow=true, postOk=null;
+  let mode='materials', theme='light', shadingOn=true, shadowsOn=true, edgesOn=true, dirtyShadow=true, postOk=null;
   let sceneRenderInfo={calls:0,triangles:0};
   let postEffects={edges:0,ambient:0,antialias:'native'};
   const captureSceneInfo=()=>{sceneRenderInfo={calls:renderer.info.render.calls,triangles:renderer.info.render.triangles};};
-  try{ localStorage.removeItem('c4look'); const s=JSON.parse(localStorage.getItem('c4look-v3')||'null'); if(s){ mode=alias(s.mode); shadowsOn=s.s!==0; edgesOn=s.e!==0; } }catch(e){}
-  const save=()=>{ try{ localStorage.setItem('c4look-v3',JSON.stringify({mode,s:shadowsOn?1:0,e:edgesOn?1:0})); }catch(e){} };
+  try{ localStorage.removeItem('c4look'); const s=JSON.parse(localStorage.getItem('c4look-v3')||'null'); if(s){ mode=alias(s.mode==='dark'?'clay':s.mode);theme=s.mode==='dark'?'dark':'light';shadingOn=s.sh!==0; shadowsOn=s.s!==0; edgesOn=s.e!==0; } }catch(e){}
+  try{const t=localStorage.getItem('c4theme');if(t==='dark'||t==='light')theme=t;}catch(e){}
+  const surfaceShading={value:shadingOn?1:0};
+  function patchShading(m){if(!m||m.userData.c4Shading)return;m.userData.c4Shading=true;const compile=m.onBeforeCompile,key=m.customProgramCacheKey.bind(m);const oldKey=key();m.onBeforeCompile=sh=>{compile.call(m,sh);sh.uniforms.uSurfaceShading=surfaceShading;sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uSurfaceShading;').replace('#include <tonemapping_fragment>','gl_FragColor.rgb=mix(diffuseColor.rgb,gl_FragColor.rgb,uSurfaceShading);\n#include <tonemapping_fragment>');};m.customProgramCacheKey=()=>oldKey+'|surface-shading';m.needsUpdate=true;}
+  Object.values(groups).forEach(g=>patchShading(g.matBase));ctx.lodMats?.().forEach(patchShading);
+  const save=()=>{ try{ localStorage.setItem('c4look-v3',JSON.stringify({mode,sh:shadingOn?1:0,s:shadowsOn?1:0,e:edgesOn?1:0})); }catch(e){} };
   const TG=new THREE.Vector3(18,8,-17);                      // centre of the building (shadow frustum)
   const v2=new THREE.Vector2();
   const opacityBases=new WeakMap();
@@ -3038,11 +3141,11 @@ function initLook(ctx){
     });
   }
   function syncFeatureLines(){
-    const active=edgesOn&&!isPerf()&&mode!=='xray';if(active)queueFeatureLines();
+    const active=edgesOn&&!isPerf();if(active)queueFeatureLines();
     featureLines.forEach(f=>{
       f.lines.visible=active;
       if(!active)return;
-      f.lines.material.color.setHex(mode==='dark'?0xb5c5d2:mode==='clay'?0x666763:0x465059).convertSRGBToLinear();
+      f.lines.material.color.setHex(theme==='dark'?0xb5c5d2:mode==='clay'?0x666763:0x465059).convertSRGBToLinear();
       f.lines.material.opacity=(mode==='materials'||mode==='day'?(/^[MEP]\./.test(f.G.cat)? .42:.34):.32)*Math.min(1,f.G.matBase.opacity*2);
 
     });
@@ -3064,7 +3167,7 @@ function initLook(ctx){
   sun.shadow.bias=-0.0005; sun.shadow.normalBias=0.07; scene.add(sun.target);
   for(const k in groups){ const G=groups[k]; if(!G.mesh) continue; G.mesh.castShadow=!(G.matBase&&(G.matBase.userData.baseOpacity||1)<1); G.mesh.receiveShadow=true; G.mesh.customDepthMaterial=depthMat; }
   const matsUpdate=()=>{ for(const k in groups){ const G=groups[k]; if(G.matBase) G.matBase.needsUpdate=true; } if(ctx.lodMats) ctx.lodMats().forEach(m=>{m.needsUpdate=true;}); };
-  const shadowActive=()=>mode!=='xray'&&shadowsOn&&!isPerf()&&!clipActive();
+  const shadowActive=()=>mode!=='xray'&&shadingOn&&shadowsOn&&!isPerf()&&!clipActive();
 
   /* ---------------- lights, fog ---------------- */
   function lights(){
@@ -3075,7 +3178,7 @@ function initLook(ctx){
     if(shadowActive()){ sun.target.position.copy(TG); sun.position.copy(TG).addScaledVector(d,120); }
     else { sun.target.position.set(0,0,0); sun.position.set(sp[0],sp[1],sp[2]); }
     if(scene.background&&scene.background.isTexture) scene.background.dispose();
-    scene.background=new THREE.Color(p.bg);
+    scene.background=new THREE.Color(theme==='dark'?0x20242b:p.bg);
     sun.target.updateMatrixWorld(); dirtyShadow=true; wake();
   }
   function fog(){
@@ -3149,7 +3252,7 @@ function initLook(ctx){
     // Autodesk-style shaded display: edges and ambient shadows are independent.
     // Navigation uses the canvas MSAA; depth effects resume only when stationary.
     const depthEffects=mode!=='xray'&&!isPerf()&&!ctx.isMoving?.();
-    const contour=depthEffects&&edgesOn?PALETTES[mode].edl:0,ambient=depthEffects&&shadowsOn?PALETTES[mode].ao:0;
+    const contour=0,ambient=depthEffects&&shadingOn&&shadowsOn?PALETTES[mode].ao:0;
     postEffects={edges:contour,ambient,antialias:'native'};
     if(!((contour||ambient)&&ensurePost())){postEffects.edges=postEffects.ambient=0;renderer.render(scene,camera); captureSceneInfo(); return;}
     postEffects.antialias='FXAA';
@@ -3162,6 +3265,7 @@ function initLook(ctx){
 
   /* ---------------- switching ---------------- */
   function apply(first){
+    surfaceShading.value=shadingOn?1:0;
     U.mono.value=mode==='materials'?0:1;if(U.highKey)U.highKey.value=mode==='day'?1:0;if(U.xray)U.xray.value=mode==='xray'?1:0;
     const nc=PALETTES[mode].neutral;
     if(U.neutral){ const n=U.neutral.value; if(n&&n.setRGB) n.setRGB(nc[0],nc[1],nc[2]); else if(n&&n.set) n.set(nc[0],nc[1],nc[2]); else U.neutral.value=nc.slice(); }
@@ -3170,30 +3274,32 @@ function initLook(ctx){
     if(ctx.setPresetLight&&getPreset()!=='day') ctx.setPresetLight('day');
     surfaceAppearance(); opacity(); fog(); lights();
     if(wasShadow!==wantShadow||first||(!!scene.fog)!==fogWas){ matsUpdate(); } fogWas=!!scene.fog; dirtyShadow=true;
-    ui(); const L=getLens(); if(L&&L.refresh) L.refresh(); wake(1500);
+    ui();window.__dbg?.LOD?.invalidate(); const L=getLens(); if(L&&L.refresh) L.refresh(); wake(1500);
   }
   let fogWas=false;
+  function setTheme(value){theme=value==='dark'?'dark':'light';try{localStorage.setItem('c4theme',theme);}catch(e){}lights();ui();window.__dbg?.LOD?.invalidate();wake();}
   function set(name,opt){
+    if(name==='dark'){setTheme('dark');return;}
     const next=alias(name); if(next===mode&&!(opt&&opt.force)) return; mode=next; save(); apply(false);
     if(!(opt&&opt.quiet)) toast('المظهر: '+PALETTES[mode].label+(mode==='materials'?' — درجات الخامات تقريبية':''),2600);
   }
-  function snapshot(){ return {mode,w:mode==='clay'?1:0,s:shadowsOn?1:0,e:edgesOn?1:0}; }
-  function restore(o){ mode=o&&o.mode?alias(o.mode):o&&o.w?'clay':'materials'; shadowsOn=!(o&&o.s===0); edgesOn=!(o&&o.e===0); save(); apply(false); }
-  function setFlag(k,on){ if(k==='shadows') shadowsOn=on; else if(k==='edges') edgesOn=on; save(); apply(false); }
+  function snapshot(){ return {mode,w:mode==='clay'?1:0,sh:shadingOn?1:0,s:shadowsOn?1:0,e:edgesOn?1:0}; }
+  function restore(o){ mode=o&&o.mode?alias(o.mode==='dark'?'clay':o.mode):o&&o.w?'clay':'materials'; shadingOn=!(o&&o.sh===0); shadowsOn=!(o&&o.s===0); edgesOn=!(o&&o.e===0); save(); apply(false); }
+  function setFlag(k,on){ if(k==='shading')shadingOn=on;else if(k==='shadows') shadowsOn=on; else if(k==='edges') edgesOn=on; save(); apply(false); }
   function ui(){
     document.querySelectorAll('button[data-look]').forEach(b=>{const on=alias(b.dataset.look)===mode;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
-    document.querySelectorAll('button[data-lk]').forEach(b=>{ const wanted=b.dataset.lk==='shadows'?shadowsOn:edgesOn; const inactive=isPerf()||mode==='xray';const on=wanted&&!inactive; b.classList.toggle('on',on); b.disabled=inactive; b.setAttribute('aria-pressed',on?'true':'false'); });
-    ['materials','day','dark','clay','xray'].forEach(k=>document.body.classList.toggle('look-'+k,k===mode));
+    document.querySelectorAll('button[data-lk]').forEach(b=>{ const wanted=b.dataset.lk==='shading'?shadingOn:b.dataset.lk==='shadows'?shadowsOn:edgesOn; const inactive=b.dataset.lk==='shadows'&&(isPerf()||mode==='xray'||!shadingOn);const on=wanted&&!inactive; b.classList.toggle('on',on); b.disabled=inactive; b.setAttribute('aria-pressed',on?'true':'false'); });
+    ['materials','day','dark','clay','xray'].forEach(k=>document.body.classList.toggle('look-'+k,k==='dark'?theme==='dark':k===mode));
     document.body.classList.toggle('look-white',mode==='clay');
-    document.body.classList.toggle('theme-dark',mode==='dark');
+    document.body.classList.toggle('theme-dark',theme==='dark');document.querySelectorAll('[data-theme]').forEach(b=>{const on=b.dataset.theme===theme;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
     document.body.dataset.look=mode;
-    const theme=document.querySelector('meta[name="theme-color"]');if(theme)theme.content=mode==='dark'?'#20242b':'#f4f5f7';
+    const themeMeta=document.querySelector('meta[name="theme-color"]');if(themeMeta)themeMeta.content=theme==='dark'?'#20242b':'#f4f5f7';
   }
-  document.addEventListener('click',ev=>{ const b=ev.target.closest('button[data-look],button[data-lk]'); if(!b||b.disabled) return; ev.stopPropagation();
-    if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
+  document.addEventListener('click',ev=>{ const b=ev.target.closest('button[data-look],button[data-lk],button[data-theme]'); if(!b||b.disabled) return; ev.stopPropagation();
+    if(b.dataset.theme)setTheme(b.dataset.theme);else if(b.dataset.look) set(b.dataset.look); else if(b.dataset.lk) setFlag(b.dataset.lk,!(b.dataset.lk==='shading'?shadingOn:b.dataset.lk==='shadows'?shadowsOn:edgesOn)); });
   apply(true);
-  return {set,snapshot,restore,render,dirty(){ opacity();dirtyShadow=true; },afterPreset:lights,setFog:fog,get lastRenderInfo(){return sceneRenderInfo;},get active(){ return true; },get edges(){ return edgesOn&&!isPerf()&&postOk!==false; },get white(){ return mode==='clay'; },get mode(){ return mode; },
-    state(){ return {mode,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()&&mode!=='xray'},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,postEffects:{...postEffects},fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
+  return {set,setTheme,snapshot,restore,render,dirty(){ opacity();dirtyShadow=true; },afterPreset:lights,setFog:fog,get lastRenderInfo(){return sceneRenderInfo;},get active(){ return true; },get edges(){ return edgesOn&&!isPerf()&&postOk!==false; },get white(){ return mode==='clay'; },get mode(){ return mode; },
+    state(){ return {mode,theme,shadingOn,white:mode==='clay',shadowsOn,edgesOn,featureLines:{...featureStats,pending:featureQueue.length,active:edgesOn&&!isPerf()},shadowMap:renderer.shadowMap.enabled,castShadow:sun.castShadow,post:postOk,postEffects:{...postEffects},fog:!!scene.fog,mono:U.mono.value,neutral:PALETTES[mode].neutral.slice(),opacityMode:mode==='xray'?'structure_0.22':'base',materialColors:mode==='materials',approximateMaterialAppearance:true,physicalColors:false}; }};
 }
 window.initLook=initLook;
 })();
@@ -4228,16 +4334,10 @@ function applyVis(){
   if(window.LOOK) window.LOOK.dirty();
   wake();
 }
-/* phones: the bottom sheet (portrait) or the side card (landscape) covers part of the canvas — the frame's centre moves to the part that stays visible by a projection offset
-   (so picking, projected labels and pins stay consistent with what is drawn); it eases in and out with the card */
+/* Properties overlay the current view without shifting its projection. */
 let inset={x:0,y:0};
-function insetWant(){
-  const el=$('info'); if(!el||!el.classList.contains('on')||!window.matchMedia||!window.matchMedia('(max-width:860px)').matches) return [0,0];
-  const vr=wrap.getBoundingClientRect(),r=el.getBoundingClientRect(); if(!vr.width||!vr.height||!r.height) return [0,0];
-  if(r.width>=vr.width*0.9&&Math.abs(r.bottom-vr.bottom)<6) return [0,Math.min(r.height,vr.height*0.7)/2];
-  if(Math.abs(r.right-vr.right)<6&&r.height>vr.height*0.4) return [Math.min(r.width,vr.width*0.6)/2,0];
-  return [0,0];
-}
+function insetWant(){return [0,0];} // Opening properties never reframes the model.
+
 function applyInset(){
   const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);
   if(Math.abs(inset.x)<0.5&&Math.abs(inset.y)<0.5){ inset.x=0; inset.y=0; if(camera.view&&camera.view.enabled) camera.clearViewOffset(); }
@@ -4348,16 +4448,16 @@ let clipYv=1000, clipXv=1000;
 
 /* ---------- selection highlight ---------- */
 let hlObjs=[], selIdx=-1, selSet=[];
-function clearHL(){ hlObjs.forEach(o=>{scene.remove(o);o.geometry.dispose();}); hlObjs=[]; wake(); }
+function clearHL(){ const disposed=new Set();hlObjs.forEach(o=>{scene.remove(o);if(!disposed.has(o.geometry)){o.geometry.dispose();disposed.add(o.geometry);}o.material.dispose();}); hlObjs=[]; wake(); }
 const HL_BLUE=0x2f7bff;   // selection = light translucent blue shading (surface pass + faint see-through pass + thin outline)
 function addHL(idxs,color=HL_BLUE,edges=true,opacity=0.36){
   idxs=idxs.filter(elVisible); if(!idxs.length) return;
   const pos=[];
-  idxs.forEach(ei=>{const rg=elRange[ei]; const G=groups[rg.gk]; const off=offOf(ei); const P=G.posArr; for(let i=rg.start*9;i<(rg.start+rg.count)*9;i+=3){pos.push(P[i],P[i+1]+off,P[i+2]);}});
+  idxs.forEach(ei=>{const detailed=LOD?.selectionPositions(ei);if(detailed){for(const v of detailed)pos.push(v);return;}const rg=elRange[ei]; const G=groups[rg.gk]; const off=offOf(ei); const P=G.posArr; for(let i=rg.start*9;i<(rg.start+rg.count)*9;i+=3){pos.push(P[i],P[i+1]+off,P[i+2]);}});
   const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
   const surf=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthTest:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3,side:THREE.DoubleSide})); surf.renderOrder=998; scene.add(surf); hlObjs.push(surf);
-  const ghost=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity:Math.min(0.12,opacity*0.4),depthTest:false,depthWrite:false,side:THREE.DoubleSide})); ghost.renderOrder=997; scene.add(ghost); hlObjs.push(ghost);
-  if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:new THREE.Color(color).multiplyScalar(.7),transparent:true,opacity:0.8,depthTest:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
+  const ghost=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity:Math.min(0.07,opacity*0.25),depthTest:false,depthWrite:false,side:THREE.DoubleSide})); ghost.renderOrder=997; scene.add(ghost); hlObjs.push(ghost);
+  if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:new THREE.Color(color),transparent:true,opacity:0.9,depthTest:color===HL_BLUE,depthWrite:false,toneMapped:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
   wake();
 }
 function highlight(idxs,color=HL_BLUE,edges=true,opacity=0.36){clearHL(); addHL(idxs,color,edges,opacity);}
@@ -4407,7 +4507,7 @@ controls.onPivot=null;
 
 /* ---------- info panel ---------- */
 function row(k,v){return `<tr><th>${esc(k)}<\/th><td>${v}<\/td><\/tr>`;}
-const DESK=window.matchMedia('(min-width:861px)'); let infoMin=false;
+const DESK=window.matchMedia('(min-width:861px)'); let infoMin=false,autoProperties=false;try{autoProperties=localStorage.getItem('c4openProperties')==='1';}catch(e){}
 function infoDocked(){return DESK.matches&&!document.body.classList.contains('dock-off');}
 /* the issue drawer (src/issues.js) shares the info dock with the element card: drawerHTML !== null while the drawer is what the dock shows */
 let drawerHTML=null, drawerBind=null;
@@ -4419,7 +4519,7 @@ function renderDrawer(){
 }
 function showDrawer(html,bind){drawerHTML=html; drawerBind=bind||null; renderDrawer();}
 function hideDrawer(){if(drawerHTML!==null) hideInfo();}
-function refreshInfo(){if(drawerHTML!==null) renderDrawer(); else if(selIdx>=0) showInfo(selIdx);}
+function refreshInfo(){if(drawerHTML!==null) renderDrawer(); else if(selIdx>=0&&(autoProperties||$('info').classList.contains('on')||$('infoDock').classList.contains('on'))) showInfo(selIdx);}
 function showInfo(ei){
   drawerHTML=null; drawerBind=null;
   const e=M.els[ei]; const T=TYPES[e.t]||{}; const c=CATS[e.c]; const lv=LVL[e.l];
@@ -4465,7 +4565,7 @@ function showInfo(ei){
 function select(ei,fit=false){
   selIdx=ei; if(ei<0){clearHL();hideInfo();selSet=[];document.querySelectorAll('.res.sel,.mrow.sel').forEach(x=>x.classList.remove('sel'));return;}
   const e=M.els[ei]; selSet=(e.grp&&grpMap[e.grp])?grpMap[e.grp]:[ei];
-  highlight(selSet); showInfo(ei); if(fit) flyToBox(bboxOf(selSet));
+  highlight(selSet,HL_BLUE,true,.22);if(autoProperties||$('info').classList.contains('on')||$('infoDock').classList.contains('on'))showInfo(ei);else syncPanelUI(); if(fit) flyToBox(bboxOf(selSet));
 }
 let lastTap={t:0,x:0,y:0}, touchDbl=0, lastClick={t:0,ei:-2};
 const cv=renderer.domElement;
@@ -4673,14 +4773,14 @@ function stepLifts(dt){lifts.forEach(L=>{
   L.Gs.forEach(G=>{G.dy=L.dy; const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+L.dy;});});}
 $('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إيقاف':'تشغيل'; $('liftBtn').classList.toggle('on',liftSim); if(liftSim){clearHL(); toast('محاكاة توضيحية: السرعة وزمن التوقف غير واردين في المستندات',4200);} else {lifts.forEach(L=>{L.dy=0;L.Gs.forEach(G=>{G.dy=0;});L.idx=Math.max(0,L.ffl.findIndex(f=>Math.abs(f-L.base)<1e-6));L.wait=0;}); applyVis();}};
 
-/* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
+/* ---------- illustrative detail fitted to source solids (src/detail.js + samples.json) ---------- */
 if(window.SampleLOD&&window.__SAMPLES__){
-  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,mono:U.mono,neutral:U.neutral,exploded:()=>explode!==0,liftRunning:()=>liftSim,
-    unitVisible:u=>!buildHidden&&U.lensOn.value<0.5&&u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});   // detailed samples keep their own colours, so they are off while a lens colours / isolates the model
-  const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod-v2');}catch(e){} chk.checked=false; LOD.setEnabled(false); // explicit sample inspection remains available, source model is the default
+  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,U,offsetOf:offOf,opacityOf:ei=>effOpacity(groups[elRange[ei].gk]),lensClass:ei=>LENS?.classOf(ei)||0,mono:U.mono,neutral:U.neutral,animating:()=>BUILD.active||liftSim,exploded:()=>explode!==0,liftRunning:()=>liftSim,
+    unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk],b=elBB.subarray(ei*6,ei*6+6);return elVisible(ei)&&(!BUILD.active||BUILD.progress(ei)>=1)&&b[4]+offOf(ei)<=buildPlanes[buildPhase(M.els[ei].c)].constant&&effOpacity(G,focusSamples)>0.01;})});
+  const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4refined-v1');}catch(e){} chk.checked=saved!=='0';LOD.setEnabled(chk.checked); // Presentation detail is fitted to the retained source solids.
     const rb=$('rebarChk'); if(rb){ let sv=null; try{sv=localStorage.getItem('c4rebar');}catch(e){} if(sv==='1'){rb.checked=true; LOD.setRebar(true);}
       rb.onchange=ev=>{LOD.setRebar(ev.target.checked); try{localStorage.setItem('c4rebar',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب من الأعمدة والجسور والجدران يظهر حديد التسليح داخل الخرسانة الشفافة':'الخرسانة تبقى مصمتة عند التقريب (حديد التسليح مخفي)');};}
-    chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod-v2',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'فُعّلت عينات توضيحية؛ لا تعتمد شكلًا أو مواصفة من المصدر':'عُطّل استبدال العينات التفصيلية');}; }
+    chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4refined-v1',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'التفاصيل المحسّنة مفعّلة؛ القياسات من المصدر':'عرض مجسمات المصدر');}; }
 }
 if(window.initThumbs) window.THUMBS=initThumbs({M,THREE,LOD,groups,elRange,elBB,esc});   // the model's own drawing of a component (src/thumbs.js)
 if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.<\/div>';
@@ -4742,7 +4842,7 @@ function panelVisible(){return DESK.matches?!document.body.classList.contains('d
 function syncPanelUI(){const visible=panelVisible(),property=document.body.classList.contains('properties-mode'),id=document.querySelector('#acc>.acc.on')?.dataset.sec;
   $('fab').setAttribute('aria-expanded',String(visible));
   [['btnModel','model'],['btnReview','review'],['btnDisplay','tools']].forEach(([bid,space])=>{const on=visible&&!property&&(bid==='btnDisplay'?id==='pDisplay':WORKSPACES[space].includes(id));$(bid).setAttribute('aria-expanded',String(on));$(bid).classList.toggle('on',on);});
-  const b=$('btnProperties'),on=selIdx>=0&&((visible&&property)||document.body.classList.contains('info-open'));b.disabled=selIdx<0;b.classList.toggle('on',on);b.setAttribute('aria-expanded',String(on));
+  const b=$('btnProperties'),on=selIdx>=0&&($('info').classList.contains('on')||$('infoDock').classList.contains('on'));b.disabled=selIdx<0;b.classList.toggle('on',on);b.setAttribute('aria-expanded',String(on));
   $('btnMeasure').setAttribute('aria-pressed',String(document.body.classList.contains('measuring')));
   if(property&&visible)$('panelContext').textContent='خصائص العنصر';
 }
@@ -4755,7 +4855,8 @@ const panelResize=()=>{refreshInfo();syncPanelUI();};DESK.addEventListener?DESK.
 $('fab').onclick=()=>openPanel();$('panelClose').onclick=closePanel;
 $('btnModel').onclick=()=>{if(panelVisible()&&!document.body.classList.contains('properties-mode')&&WORKSPACES.model.includes(document.querySelector('#acc>.acc.on')?.dataset.sec))closePanel();else openPanel(workspaceLast.model);};
 $('btnReview').onclick=()=>{if(panelVisible()&&!document.body.classList.contains('properties-mode')&&WORKSPACES.review.includes(document.querySelector('#acc>.acc.on')?.dataset.sec))closePanel();else openPanel(workspaceLast.review);};
-$('btnProperties').onclick=()=>{if(selIdx<0)return;closeMenus();infoMin=false;if(DESK.matches){document.body.classList.add('properties-mode');setDock(false);}else{closePanel();showInfo(selIdx);}syncPanelUI();};
+$('btnProperties').onclick=()=>{if(selIdx<0)return;closeMenus();if($('info').classList.contains('on')||$('infoDock').classList.contains('on'))hideInfo();else{infoMin=false;showInfo(selIdx);}syncPanelUI();};
+$('openPropsChk').checked=autoProperties;$('openPropsChk').onchange=e=>{autoProperties=e.target.checked;try{localStorage.setItem('c4openProperties',autoProperties?'1':'0');}catch(e){}if(autoProperties&&selIdx>=0)showInfo(selIdx);else if(!autoProperties)hideInfo();};
 new MutationObserver(syncPanelUI).observe(document.body,{attributes:true,attributeFilter:['class']});syncPanelUI();
 
 /* ---------- lighting: day / dusk / night presets and "lights on" (emissive fixtures + glow sprites + a few real point lights that follow the view) ---------- */

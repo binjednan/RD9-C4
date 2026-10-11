@@ -1,7 +1,7 @@
-/* ===== sample library + level-of-detail swapping =====
-   samples.json (window.__SAMPLES__) holds one detailed, realistic sample per component type of the project.
-   When the camera comes close to an element that has a sample, the plain proxy of the model is hidden (per-vertex aHide flag)
-   and the sample is drawn in its place (instanced meshes). Far away the original proxy is shown again.
+/* ===== illustrative detail fitted to retained source solids =====
+   samples.json holds a shared sample for each supported component type.
+   Compatible solids use fitted instanced details at every distance; only curve
+   tessellation changes with distance. Source paths and openings stay intact.
    Units: model cm for sample dimensions, metres in the scene. Local sample frame: x = width, y = up, z = depth (+z = front). */
 (function(){
 'use strict';
@@ -126,6 +126,7 @@ function shiftPart(p,off,v){const q=Object.assign({},p); const sh=(a)=>a?a.map((
 function mirrorPart(p,v,axis){const q=Object.assign({},p); const k=axis==='x'?0:2; const neg=(a)=>a?a.map((x,i)=>i===k?`-(${x})`:x):a; if(q.p) q.p=neg(q.p); if(q.a){q.a=neg(q.a);q.b=neg(q.b);} if(q.poly) q.poly=q.poly.map(pt=>pt.map((x,i)=>i===(axis==='x'?0:1)?`-(${x})`:x)); q.mx=false;q.mz=false;q.rep=null; return q;}
 
 /* ---------- engine ---------- */
+const cUniform=(ctx,k,fallback)=>ctx.U?.[k]||{value:fallback};
 class SampleLOD{
   constructor(ctx){
     this.c=ctx; this.lib=window.__SAMPLES__; this.enabled=true; this.active=new Map(); this.units=[]; this.dirty=true; this.lastPos=new THREE.Vector3(1e9,0,0); this.lastT=0; this.entries=new Map(); this.stat={active:0,units:0,types:0}; this.rebarOn=false; this.structSids=new Set();
@@ -139,11 +140,12 @@ class SampleLOD{
       this.mats[k]=m;}
     for(const k of Object.keys(this.lib.samples)) if(this.lib.samples[k].cat==='structure') this.structSids.add(k);
     this.index();
+    this.refinedEntries=new Map();this.refinedBatches=new Map();this.refinedActive=new Map();this.refinedUniforms={shade:{value:1},edgeColor:{value:new THREE.Color(0x465059)},lens:cUniform(ctx,'lensOn',0),pal:cUniform(ctx,'lensPal',[]),mono:ctx.mono,neutral:ctx.neutral};
   }
   /* reinforcement (structure samples: columns, walls, beams, piles) is shown only on request: concrete stays solid when the camera comes close */
   setRebar(on){this.rebarOn=!!on; this.dirty=true; this.invalidate();}
   ruleFor(e){
-    const R=this.rules; for(const r of R){ if(r.c&&r.c!==e.c) continue; if(r.t){ if(r.tp){ if(!(e.t&&e.t.startsWith(r.tp))) continue; } else if(r.t!==e.t) continue; } return r.s; }
+    const R=this.rules; for(const r of R){ if(r.c&&r.c!==e.c) continue; if(r.tp){if(!(e.t&&e.t.startsWith(r.tp)))continue;}else if(r.t&&r.t!==e.t)continue; return r.s; }
     return null;
   }
   index(){
@@ -197,7 +199,7 @@ class SampleLOD{
       if(pl.mount==='wall'){const n=this.hostNormal(u); if(n){ang=Math.atan2(n[0],-n[1])*180/Math.PI;u.n=n;}}
       if(!u.n&&(pl.orient==='side'||pl.mount==='wall')){const sd=(u.a&&u.a.side)||''; const nm={S:[0,-1],N:[0,1],E:[1,0],W:[-1,0]}[sd]; if(nm){ang=Math.atan2(nm[0],-nm[1])*180/Math.PI;u.n=nm;}}
       u.th=ang*Math.PI/180;
-      const vars={W:Math.round(u.W*2)/2,D:Math.round(u.D*2)/2,H:Math.round(H*2)/2};
+      const vars={W:u.W,D:u.D,H};
       const a=u.a||{}; if(smp.varmap){for(const k of Object.keys(smp.varmap)){const v=a[smp.varmap[k]];if(typeof v==='number') vars[k]=v;}}
       if(smp.defaults){for(const k of Object.keys(smp.defaults)) if(vars[k]===undefined) vars[k]=smp.defaults[k];}
       u.vars=vars; u.key=u.sid+'|'+Object.keys(vars).sort().map(k=>k+vars[k]).join(',');
@@ -218,7 +220,7 @@ class SampleLOD{
   }
   setEnabled(on){this.enabled=!!on; this.dirty=true; if(!on) this.clear();}
   invalidate(){this.dirty=true;}
-  clear(){for(const [i,u] of this.active) this.hide(u,false); this.active.clear(); for(const e of this.entries.values()){for(const m of Object.values(e.meshes)) m.count=0;} if(this.pathMeshes) for(const m of Object.values(this.pathMeshes)) m.visible=false; this.c.wake(); this.stat.active=0;}
+  clear(){if(this.refinedActive){for(const {u} of this.refinedActive.values())this.hide(u,false);this.refinedActive.clear();for(const b of this.refinedBatches.values()){for(const m of b.meshes)m.count=0;if(b.lines)b.lines.geometry.instanceCount=0;}}for(const [i,u] of this.active) this.hide(u,false); this.active.clear(); for(const e of this.entries.values()){for(const m of Object.values(e.meshes)) m.count=0;} if(this.pathMeshes) for(const m of Object.values(this.pathMeshes)) m.visible=false; this.c.wake(); this.stat.active=0;}
   hide(u,on){const c=this.c; for(const ei of u.eis){const rg=c.elRange[ei]; const G=c.groups[rg.gk]; if(!G||!G.hideAttr) continue; const arr=G.hideAttr.array; for(let i=rg.start*3,n=(rg.start+rg.count)*3;i<n;i++) arr[i]=(arr[i]&~1)|(on?1:0); G.hideAttr.needsUpdate=true;}}   // bit 1 = swapped for its detailed sample; bit 2 = hidden by the owner (src/notes.js) and must survive the swap
   entryFor(u){
     let e=this.entries.get(u.key); if(e) return e;
@@ -231,7 +233,99 @@ class SampleLOD{
     for(const cl of Object.keys(e.geoms)){ if(e.meshes[cl]){this.root.remove(e.meshes[cl]); e.meshes[cl].dispose&&e.meshes[cl].dispose();}
       const m=new THREE.InstancedMesh(e.geoms[cl],this.mats[cl]||this.mats.matte,cap); m.frustumCulled=false; m.count=0; m.renderOrder=cl==='glass'?7:5; this.root.add(m); e.meshes[cl]=m; }
   }
-  update(){
+
+  /* Shared illustrative shapes are fitted inside source solids. Source faces,
+     IDs and reference picking remain intact; no wall opening or route is replaced. */
+  refinedEntry(u,tier){
+    const key=u.sid+'|'+u.mode+'|'+tier;
+    if(this.refinedEntries.has(key))return this.refinedEntries.get(key);
+    const smp=this.lib.samples[u.sid],parts=smp.parts.map(p=>({...p,seg:Math.min(p.seg||16,tier?16:8),sv:Math.min(p.sv||8,tier?8:4)}));
+    const bufs=buildBufs({...smp,parts},u.vars),lo=[Infinity,Infinity,Infinity],hi=[-Infinity,-Infinity,-Infinity];
+    for(const b of Object.values(bufs))for(let i=0;i<b.pos.length;i++){const j=i%3;lo[j]=Math.min(lo[j],b.pos[i]);hi[j]=Math.max(hi[j],b.pos[i]);}
+    const size=hi.map((v,i)=>v-lo[i]);if(size.some(v=>!Number.isFinite(v)||v<1e-6)){this.refinedEntries.set(key,null);return null;}
+    const geoms={},positions=[];
+    for(const [cl,b] of Object.entries(bufs)){
+      if(!b.pos.length)continue;
+      const p=new Float32Array(b.pos.length),n=new Float32Array(b.nrm.length),col=new Float32Array(b.col.length);
+      for(let i=0;i<p.length;i+=3){
+        p[i]=(b.pos[i]-lo[0])/size[0]-.5;p[i+1]=(b.pos[i+1]-lo[1])/size[1];p[i+2]=(b.pos[i+2]-lo[2])/size[2]-.5;
+        // engine.cylinder uses a 14-sided source prism. Fit inside those faces,
+        // including its slightly narrower north/south bounds, not an outer circle.
+        if(u.mode==='cyl'){const r=Math.hypot(p[i],p[i+2]),step=2*Math.PI/14,angle=Math.atan2(p[i+2],p[i]),mid=(Math.floor(angle/step)+.5)*step,limit=.5*Math.cos(step/2)/Math.cos(angle-mid);if(r>limit){p[i]*=limit/r;p[i+2]*=limit/r;}}
+        let x=b.nrm[i]*size[0],y=b.nrm[i+1]*size[1],z=b.nrm[i+2]*size[2],d=Math.hypot(x,y,z)||1;n[i]=x/d;n[i+1]=y/d;n[i+2]=z/d;
+        const gray=b.col[i]*.299+b.col[i+1]*.587+b.col[i+2]*.114;for(let j=0;j<3;j++)col[i+j]=b.col[i+j]*.68+gray*.32;
+      }
+      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));g.setAttribute('normal',new THREE.BufferAttribute(n,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));geoms[cl]=g;positions.push(p);
+    }
+    const all=new Float32Array(positions.reduce((n,a)=>n+a.length,0));let offset=0;for(const a of positions){all.set(a,offset);offset+=a.length;}
+    const full=new THREE.BufferGeometry();full.setAttribute('position',new THREE.BufferAttribute(all,3));const edges=new THREE.EdgesGeometry(full,35);full.dispose();
+    const e={key,geoms,edges};this.refinedEntries.set(key,e);return e;
+  }
+  refinedMaterial(cl,ghost,line=false){
+    const base=this.mats[cl]||this.mats.matte;
+    const m=line?new THREE.LineBasicMaterial({color:0x465059,transparent:true,opacity:.32,depthWrite:false,toneMapped:false}):new THREE.MeshStandardMaterial({vertexColors:true,roughness:base?.roughness??.7,metalness:base?.metalness??0,side:THREE.DoubleSide,transparent:ghost||!!base?.transparent,opacity:base?.opacity??1,depthWrite:!ghost&&!base?.transparent});
+    m.onBeforeCompile=sh=>{
+      const u=this.refinedUniforms;Object.assign(sh.uniforms,{uDetailLens:u.lens,uDetailPal:u.pal,uDetailMono:u.mono,uDetailNeutral:u.neutral,uDetailShade:u.shade,uDetailEdge:u.edgeColor});
+      sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float aDetailLens;attribute float aDetailOpacity;varying float vDetailLens;varying float vDetailOpacity;'+(line?'\nattribute mat4 detailMatrix;':''))
+        .replace('#include <begin_vertex>','#include <begin_vertex>\nvDetailLens=aDetailLens;vDetailOpacity=aDetailOpacity;'+(line?'transformed=(detailMatrix*vec4(transformed,1.)).xyz;':''));
+      sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nuniform float uDetailLens;uniform vec3 uDetailPal[32];uniform float uDetailMono;uniform vec3 uDetailNeutral;uniform float uDetailShade;uniform vec3 uDetailEdge;varying float vDetailLens;varying float vDetailOpacity;')
+        .replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.a*=vDetailOpacity;'+(line?'diffuseColor.rgb=uDetailEdge;':'if(uDetailLens>.5){int k=int(clamp(vDetailLens,0.,31.)+.5);diffuseColor.rgb=vDetailLens>.5?uDetailPal[k]:mix(diffuseColor.rgb,vec3(.88,.9,.93),.76);}else if(uDetailMono>.5){diffuseColor.rgb=uDetailNeutral;}'));
+      if(!line)sh.fragmentShader=sh.fragmentShader.replace('#include <tonemapping_fragment>','gl_FragColor.rgb=mix(diffuseColor.rgb,gl_FragColor.rgb,uDetailShade);\n#include <tonemapping_fragment>');
+    };
+    m.customProgramCacheKey=()=>line?'refined-lines-v1':'refined-surfaces-v1';return m;
+  }
+  refinedBatch(e,ghost,n){
+    const key=e.key+'|'+(ghost?1:0);let b=this.refinedBatches.get(key);
+    if(b&&b.cap>=n)return b;
+    if(b){for(const m of [...b.meshes,b.lines]){this.root.remove(m);m.geometry.dispose();m.material.dispose();}}
+    const cap=Math.max(16,2**Math.ceil(Math.log2(n))),matrix=new THREE.InstancedBufferAttribute(new Float32Array(cap*16),16),lens=new THREE.InstancedBufferAttribute(new Float32Array(cap),1),opacity=new THREE.InstancedBufferAttribute(new Float32Array(cap),1),meshes=[];
+    for(const [cl,source] of Object.entries(e.geoms)){
+      const g=new THREE.BufferGeometry();for(const [k,v] of Object.entries(source.attributes))g.setAttribute(k,v);g.setAttribute('aDetailLens',lens);g.setAttribute('aDetailOpacity',opacity);
+      const m=new THREE.InstancedMesh(g,this.refinedMaterial(cl,ghost),cap);m.instanceMatrix=matrix;m.count=0;m.frustumCulled=false;m.receiveShadow=true;m.raycast=()=>{};m.userData.presentationOnly=true;this.root.add(m);meshes.push(m);
+    }
+    const g=new THREE.InstancedBufferGeometry();g.setAttribute('position',e.edges.attributes.position);g.setAttribute('detailMatrix',matrix);g.setAttribute('aDetailLens',lens);g.setAttribute('aDetailOpacity',opacity);g.instanceCount=0;
+    const lines=new THREE.LineSegments(g,this.refinedMaterial('matte',ghost,true));lines.frustumCulled=false;lines.raycast=()=>{};lines.renderOrder=2;lines.userData.presentationOnly=true;this.root.add(lines);
+    b={cap,matrix,lens,opacity,meshes,lines};this.refinedBatches.set(key,b);return b;
+  }
+  updateRefined(){
+    if(!this.enabled||!this.lib)return false;const c=this.c,now=performance.now(),cam=c.camera.position;
+    if(!this.dirty&&now-this.lastT<160)return false;
+    if(!this.dirty&&cam.distanceToSquared(this.lastPos)<.0144&&!c.animating?.())return false;
+    this.lastPos.copy(cam);this.lastT=now;this.dirty=false;
+    const look=window.LOOK?.state(),edges=look?look.edgesOn: true;this.refinedUniforms.shade.value=look?.shadingOn===false?0:1;this.refinedUniforms.edgeColor.value.setHex(look?.theme==='dark'?0xb5c5d2:0x465059).convertSRGBToLinear();
+    const next=new Map(),batches=new Map(),start=performance.now();let pending=false,high=0;
+    for(let ui=0;ui<this.units.length;ui++){
+      const u=this.units[ui],e0=c.M.els[u.eis[0]];
+      if(u.mode==='path'||u.mode==='group'||e0.a?.alt||!(u.W>0&&u.D>0&&u.H>0))continue;
+      if(this.structSids.has(u.sid)&&(!this.rebarOn||cam.distanceTo(new THREE.Vector3(u.cx,u.cy,u.cz))>u.R))continue;
+      if(this.skipSids?.has(u.sid)||!c.unitVisible(u))continue;
+      const distance=Math.max(.5,Math.hypot(cam.x-u.cx,cam.y-u.cy,cam.z-u.cz)),px=Math.max(u.W,u.D,u.H)*.01/distance*400;
+      const tier=px>90&&high<700?1:0;if(tier)high++;
+      const key=u.sid+'|'+u.mode+'|'+tier;
+      if(!this.refinedEntries.has(key)&&performance.now()-start>6){pending=true;continue;}
+      const entry=this.refinedEntry(u,tier);if(!entry)continue;
+      const opacity=c.opacityOf?.(u.eis[0])??1,ghost=opacity<.999,bkey=entry.key+'|'+(ghost?1:0);
+      if(!batches.has(bkey))batches.set(bkey,{entry,ghost,items:[]});batches.get(bkey).items.push({u,ui,opacity});next.set(ui,{u,entry});
+    }
+    for(const [ui,{u}] of this.refinedActive)if(!next.has(ui))this.hide(u,false);
+    for(const [ui,{u}] of next)if(!this.refinedActive.has(ui))this.hide(u,true);
+    for(const b of this.refinedBatches.values()){for(const m of b.meshes)m.count=0;b.lines.geometry.instanceCount=0;}
+    const matrix=new THREE.Matrix4(),quat=new THREE.Quaternion(),axis=new THREE.Vector3(0,1,0),scale=new THREE.Vector3(),pos=new THREE.Vector3();
+    for(const {entry,ghost,items} of batches.values()){
+      const b=this.refinedBatch(entry,ghost,items.length);
+      items.forEach(({u,opacity},i)=>{quat.setFromAxisAngle(axis,u.ang*Math.PI/180);pos.set(u.x*S,u.z0+(c.offsetOf?.(u.eis[0])||0),-u.y*S);scale.set(u.W*S,u.H*S,u.D*S);matrix.compose(pos,quat,scale);matrix.toArray(b.matrix.array,i*16);b.lens.array[i]=c.lensClass?.(u.eis[0])||0;b.opacity.array[i]=opacity;});
+      b.matrix.needsUpdate=b.lens.needsUpdate=b.opacity.needsUpdate=true;for(const m of b.meshes)m.count=items.length;b.lines.geometry.instanceCount=edges?items.length:0;
+    }
+    this.refinedActive=next;this.stat.active=next.size;this.stat.refinedTypes=new Set([...next.values()].map(v=>v.u.sid)).size;this.stat.pending=pending;this.stat.retainedSourcePaths=this.units.filter(u=>u.mode==='path').length;
+    if(pending){this.dirty=true;c.wake(500);}return true;
+  }
+  selectionPositions(ei){
+    const hit=[...this.refinedActive.values()].find(v=>v.u.eis.includes(ei));if(!hit)return null;
+    const {u,entry}=hit,m=new THREE.Matrix4().compose(new THREE.Vector3(u.x*S,u.z0+(this.c.offsetOf?.(ei)||0),-u.y*S),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),u.ang*Math.PI/180),new THREE.Vector3(u.W*S,u.H*S,u.D*S)),v=new THREE.Vector3(),out=[];
+    for(const g of Object.values(entry.geoms)){const a=g.attributes.position.array;for(let i=0;i<a.length;i+=3){v.fromArray(a,i).applyMatrix4(m);out.push(v.x,v.y,v.z);}}return out;
+  }
+  update(){return this.updateRefined();}
+  updateLegacy(){
     if(!this.enabled||!this.lib||!this.units.length) return false;
     const c=this.c, cam=c.camera.position, now=performance.now();
     const moved=cam.distanceTo(this.lastPos);

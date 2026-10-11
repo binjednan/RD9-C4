@@ -6,7 +6,7 @@
    - trackpad: pinch (wheel+ctrlKey, Safari gesture*) = zoom, two-finger scroll = pan; rotate = three-finger drag (macOS turns it into a
      mouse drag) or Alt + two-finger scroll.
    - touch / pen: one contact = orbit about the touched surface (or the selected drag mode).
-     Two fingers pan and pinch together about one surface anchor, sampled once per frame.
+     Two fingers perform the complementary action: pan in orbit mode, orbit in pan mode; pinch remains available in both.
      Lifting one finger never changes a pinch into an orbit; both must lift to begin a new drag.
      The saved pinchInZooms preference reverses pinch direction; the default is spread to zoom in.
    - keyboard: arrows rotate, W/A/S/D pan, Q/E down/up, + / - zoom, Home = full view, F = focus.
@@ -95,7 +95,7 @@ class CameraRig extends THREE.EventDispatcher{
   /* ---- plumbing ---- */
   _start(){if(!this._started){this._started=true;this.dispatchEvent({type:'start'});}}
   _end(){if(this._started&&!this._ptrs.size&&!this._keys.size){this._started=false;this.dispatchEvent({type:'end'});}}
-  setMode(m){this.mode=m;this.dispatchEvent({type:'mode',mode:m});}
+  setMode(m){if(m!==this.mode)this._cancel();this.mode=m;this.dispatchEvent({type:'mode',mode:m});}
   _bind(){
     const d=this.dom; d.style.touchAction='none'; d.style.userSelect='none'; d.style.webkitUserSelect='none'; d.tabIndex=0; d.style.outline='none';
     d.addEventListener('contextmenu',e=>e.preventDefault());
@@ -135,7 +135,7 @@ class CameraRig extends THREE.EventDispatcher{
   _initPinch(){
     const [a,b]=[...this._ptrs.values()],dist=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
     const anchor=this.hitTest?.(mx,my)?.clone()||this._pointOnTargetPlane(mx,my,new THREE.Vector3());
-    this._pinch={dist,mx,my,anchor,normal:this.target.clone().sub(this.camera.position).normalize(),work:new THREE.Vector3(),active:false,pending:false};
+    this._pinch={dist,mx,my,anchor,action:this.mode==='pan'?'rotate':'pan',normal:this.target.clone().sub(this.camera.position).normalize(),work:new THREE.Vector3(),active:false,pending:false};
   }
   _pinchScale(prev,cur){const r=this.pinchInZooms?cur/prev:prev/cur; return Math.pow(r,this.zoomSpeed);}   // < 1 = camera moves closer
   _flushPinch(){
@@ -151,8 +151,13 @@ class CameraRig extends THREE.EventDispatcher{
     const lo=Math.min(1,Math.max(this.minDistance/r,this.minSurface/Math.max(depth,1e-6))),hi=Math.max(1,this.maxDistance/r);
     const k=THREE.MathUtils.clamp(this._pinchScale(P.dist,dist),lo,hi);
     cam.sub(P.anchor).multiplyScalar(k).add(P.anchor); this.target.sub(P.anchor).multiplyScalar(k).add(P.anchor);
-    this._pointOnPlane(mx,my,P.anchor,P.normal,P.work); P.work.subVectors(P.anchor,P.work);
-    cam.add(P.work); this.target.add(P.work); this._clampTarget(); this.camera.lookAt(this.target);
+    if(P.action==='rotate'){
+      const speed=2*Math.PI/Math.max(this.dom.clientHeight,300)*this.rotateSpeed*.65;
+      this._rotateAbout(P.anchor,-(mx-P.mx)*speed,-(my-P.my)*speed);
+    }else{
+      this._pointOnPlane(mx,my,P.anchor,P.normal,P.work); P.work.subVectors(P.anchor,P.work);
+      cam.add(P.work); this.target.add(P.work); this._clampTarget(); this.camera.lookAt(this.target);
+    }
     P.dist=dist; P.mx=mx; P.my=my;
   }
   _slop(type){return type==='touch'?7:3;}

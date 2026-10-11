@@ -243,16 +243,10 @@ function applyVis(){
   if(window.LOOK) window.LOOK.dirty();
   wake();
 }
-/* phones: the bottom sheet (portrait) or the side card (landscape) covers part of the canvas — the frame's centre moves to the part that stays visible by a projection offset
-   (so picking, projected labels and pins stay consistent with what is drawn); it eases in and out with the card */
+/* Properties overlay the current view without shifting its projection. */
 let inset={x:0,y:0};
-function insetWant(){
-  const el=$('info'); if(!el||!el.classList.contains('on')||!window.matchMedia||!window.matchMedia('(max-width:860px)').matches) return [0,0];
-  const vr=wrap.getBoundingClientRect(),r=el.getBoundingClientRect(); if(!vr.width||!vr.height||!r.height) return [0,0];
-  if(r.width>=vr.width*0.9&&Math.abs(r.bottom-vr.bottom)<6) return [0,Math.min(r.height,vr.height*0.7)/2];
-  if(Math.abs(r.right-vr.right)<6&&r.height>vr.height*0.4) return [Math.min(r.width,vr.width*0.6)/2,0];
-  return [0,0];
-}
+function insetWant(){return [0,0];} // Opening properties never reframes the model.
+
 function applyInset(){
   const w=Math.max(1,wrap.clientWidth),h=Math.max(1,wrap.clientHeight);
   if(Math.abs(inset.x)<0.5&&Math.abs(inset.y)<0.5){ inset.x=0; inset.y=0; if(camera.view&&camera.view.enabled) camera.clearViewOffset(); }
@@ -363,16 +357,16 @@ let clipYv=1000, clipXv=1000;
 
 /* ---------- selection highlight ---------- */
 let hlObjs=[], selIdx=-1, selSet=[];
-function clearHL(){ hlObjs.forEach(o=>{scene.remove(o);o.geometry.dispose();}); hlObjs=[]; wake(); }
+function clearHL(){ const disposed=new Set();hlObjs.forEach(o=>{scene.remove(o);if(!disposed.has(o.geometry)){o.geometry.dispose();disposed.add(o.geometry);}o.material.dispose();}); hlObjs=[]; wake(); }
 const HL_BLUE=0x2f7bff;   // selection = light translucent blue shading (surface pass + faint see-through pass + thin outline)
 function addHL(idxs,color=HL_BLUE,edges=true,opacity=0.36){
   idxs=idxs.filter(elVisible); if(!idxs.length) return;
   const pos=[];
-  idxs.forEach(ei=>{const rg=elRange[ei]; const G=groups[rg.gk]; const off=offOf(ei); const P=G.posArr; for(let i=rg.start*9;i<(rg.start+rg.count)*9;i+=3){pos.push(P[i],P[i+1]+off,P[i+2]);}});
+  idxs.forEach(ei=>{const detailed=LOD?.selectionPositions(ei);if(detailed){for(const v of detailed)pos.push(v);return;}const rg=elRange[ei]; const G=groups[rg.gk]; const off=offOf(ei); const P=G.posArr; for(let i=rg.start*9;i<(rg.start+rg.count)*9;i+=3){pos.push(P[i],P[i+1]+off,P[i+2]);}});
   const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
   const surf=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthTest:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3,side:THREE.DoubleSide})); surf.renderOrder=998; scene.add(surf); hlObjs.push(surf);
-  const ghost=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity:Math.min(0.12,opacity*0.4),depthTest:false,depthWrite:false,side:THREE.DoubleSide})); ghost.renderOrder=997; scene.add(ghost); hlObjs.push(ghost);
-  if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:new THREE.Color(color).multiplyScalar(.7),transparent:true,opacity:0.8,depthTest:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
+  const ghost=new THREE.Mesh(bg,new THREE.MeshBasicMaterial({color,transparent:true,opacity:Math.min(0.07,opacity*0.25),depthTest:false,depthWrite:false,side:THREE.DoubleSide})); ghost.renderOrder=997; scene.add(ghost); hlObjs.push(ghost);
+  if(edges&&pos.length<600000){const eg=new THREE.EdgesGeometry(bg,35); const ln=new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:new THREE.Color(color),transparent:true,opacity:0.9,depthTest:color===HL_BLUE,depthWrite:false,toneMapped:false})); ln.renderOrder=1000; scene.add(ln); hlObjs.push(ln);}
   wake();
 }
 function highlight(idxs,color=HL_BLUE,edges=true,opacity=0.36){clearHL(); addHL(idxs,color,edges,opacity);}
@@ -422,7 +416,7 @@ controls.onPivot=null;
 
 /* ---------- info panel ---------- */
 function row(k,v){return `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;}
-const DESK=window.matchMedia('(min-width:861px)'); let infoMin=false;
+const DESK=window.matchMedia('(min-width:861px)'); let infoMin=false,autoProperties=false;try{autoProperties=localStorage.getItem('c4openProperties')==='1';}catch(e){}
 function infoDocked(){return DESK.matches&&!document.body.classList.contains('dock-off');}
 /* the issue drawer (src/issues.js) shares the info dock with the element card: drawerHTML !== null while the drawer is what the dock shows */
 let drawerHTML=null, drawerBind=null;
@@ -434,7 +428,7 @@ function renderDrawer(){
 }
 function showDrawer(html,bind){drawerHTML=html; drawerBind=bind||null; renderDrawer();}
 function hideDrawer(){if(drawerHTML!==null) hideInfo();}
-function refreshInfo(){if(drawerHTML!==null) renderDrawer(); else if(selIdx>=0) showInfo(selIdx);}
+function refreshInfo(){if(drawerHTML!==null) renderDrawer(); else if(selIdx>=0&&(autoProperties||$('info').classList.contains('on')||$('infoDock').classList.contains('on'))) showInfo(selIdx);}
 function showInfo(ei){
   drawerHTML=null; drawerBind=null;
   const e=M.els[ei]; const T=TYPES[e.t]||{}; const c=CATS[e.c]; const lv=LVL[e.l];
@@ -480,7 +474,7 @@ function showInfo(ei){
 function select(ei,fit=false){
   selIdx=ei; if(ei<0){clearHL();hideInfo();selSet=[];document.querySelectorAll('.res.sel,.mrow.sel').forEach(x=>x.classList.remove('sel'));return;}
   const e=M.els[ei]; selSet=(e.grp&&grpMap[e.grp])?grpMap[e.grp]:[ei];
-  highlight(selSet); showInfo(ei); if(fit) flyToBox(bboxOf(selSet));
+  highlight(selSet,HL_BLUE,true,.22);if(autoProperties||$('info').classList.contains('on')||$('infoDock').classList.contains('on'))showInfo(ei);else syncPanelUI(); if(fit) flyToBox(bboxOf(selSet));
 }
 let lastTap={t:0,x:0,y:0}, touchDbl=0, lastClick={t:0,ei:-2};
 const cv=renderer.domElement;
@@ -688,14 +682,14 @@ function stepLifts(dt){lifts.forEach(L=>{
   L.Gs.forEach(G=>{G.dy=L.dy; const lv=LVL[G.lvl]; G.mesh.position.y=explode*(lv?lv.idx:0)+L.dy;});});}
 $('liftBtn').onclick=()=>{liftSim=!liftSim; $('liftBtn').textContent=liftSim?'إيقاف':'تشغيل'; $('liftBtn').classList.toggle('on',liftSim); if(liftSim){clearHL(); toast('محاكاة توضيحية: السرعة وزمن التوقف غير واردين في المستندات',4200);} else {lifts.forEach(L=>{L.dy=0;L.Gs.forEach(G=>{G.dy=0;});L.idx=Math.max(0,L.ffl.findIndex(f=>Math.abs(f-L.base)<1e-6));L.wait=0;}); applyVis();}};
 
-/* ---------- samples: swap the plain proxy for the detailed sample when the camera is close (src/detail.js + samples.json) ---------- */
+/* ---------- illustrative detail fitted to source solids (src/detail.js + samples.json) ---------- */
 if(window.SampleLOD&&window.__SAMPLES__){
-  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,mono:U.mono,neutral:U.neutral,exploded:()=>explode!==0,liftRunning:()=>liftSim,
-    unitVisible:u=>!buildHidden&&U.lensOn.value<0.5&&u.eis.every(ei=>{const G=groups[elRange[ei].gk]; return elVisible(ei)&&effOpacity(G,focusSamples)/(G.matBase.userData.baseOpacity||1)>0.95;})});   // detailed samples keep their own colours, so they are off while a lens colours / isolates the model
-  const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4lod-v2');}catch(e){} chk.checked=false; LOD.setEnabled(false); // explicit sample inspection remains available, source model is the default
+  LOD=new SampleLOD({M,scene,camera,groups,elRange,elBB,wake,U,offsetOf:offOf,opacityOf:ei=>effOpacity(groups[elRange[ei].gk]),lensClass:ei=>LENS?.classOf(ei)||0,mono:U.mono,neutral:U.neutral,animating:()=>BUILD.active||liftSim,exploded:()=>explode!==0,liftRunning:()=>liftSim,
+    unitVisible:u=>u.eis.every(ei=>{const G=groups[elRange[ei].gk],b=elBB.subarray(ei*6,ei*6+6);return elVisible(ei)&&(!BUILD.active||BUILD.progress(ei)>=1)&&b[4]+offOf(ei)<=buildPlanes[buildPhase(M.els[ei].c)].constant&&effOpacity(G,focusSamples)>0.01;})});
+  const chk=$('lodChk'); if(chk){ let saved=null; try{saved=localStorage.getItem('c4refined-v1');}catch(e){} chk.checked=saved!=='0';LOD.setEnabled(chk.checked); // Presentation detail is fitted to the retained source solids.
     const rb=$('rebarChk'); if(rb){ let sv=null; try{sv=localStorage.getItem('c4rebar');}catch(e){} if(sv==='1'){rb.checked=true; LOD.setRebar(true);}
       rb.onchange=ev=>{LOD.setRebar(ev.target.checked); try{localStorage.setItem('c4rebar',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'عند التقريب من الأعمدة والجسور والجدران يظهر حديد التسليح داخل الخرسانة الشفافة':'الخرسانة تبقى مصمتة عند التقريب (حديد التسليح مخفي)');};}
-    chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4lod-v2',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'فُعّلت عينات توضيحية؛ لا تعتمد شكلًا أو مواصفة من المصدر':'عُطّل استبدال العينات التفصيلية');}; }
+    chk.onchange=ev=>{LOD.setEnabled(ev.target.checked); try{localStorage.setItem('c4refined-v1',ev.target.checked?'1':'0');}catch(e){} toast(ev.target.checked?'التفاصيل المحسّنة مفعّلة؛ القياسات من المصدر':'عرض مجسمات المصدر');}; }
 }
 if(window.initThumbs) window.THUMBS=initThumbs({M,THREE,LOD,groups,elRange,elBB,esc});   // the model's own drawing of a component (src/thumbs.js)
 if(window.initSamplesUI&&LOD) initSamplesUI({M,THREE,$,esc,LOD,flyTo,wake,toast,ensureVisible,camera,setGhost,elBB}); else if($('pSamp')) $('pSamp').innerHTML='<div class=muted>مكتبة العينات غير محمّلة.</div>';
@@ -757,7 +751,7 @@ function panelVisible(){return DESK.matches?!document.body.classList.contains('d
 function syncPanelUI(){const visible=panelVisible(),property=document.body.classList.contains('properties-mode'),id=document.querySelector('#acc>.acc.on')?.dataset.sec;
   $('fab').setAttribute('aria-expanded',String(visible));
   [['btnModel','model'],['btnReview','review'],['btnDisplay','tools']].forEach(([bid,space])=>{const on=visible&&!property&&(bid==='btnDisplay'?id==='pDisplay':WORKSPACES[space].includes(id));$(bid).setAttribute('aria-expanded',String(on));$(bid).classList.toggle('on',on);});
-  const b=$('btnProperties'),on=selIdx>=0&&((visible&&property)||document.body.classList.contains('info-open'));b.disabled=selIdx<0;b.classList.toggle('on',on);b.setAttribute('aria-expanded',String(on));
+  const b=$('btnProperties'),on=selIdx>=0&&($('info').classList.contains('on')||$('infoDock').classList.contains('on'));b.disabled=selIdx<0;b.classList.toggle('on',on);b.setAttribute('aria-expanded',String(on));
   $('btnMeasure').setAttribute('aria-pressed',String(document.body.classList.contains('measuring')));
   if(property&&visible)$('panelContext').textContent='خصائص العنصر';
 }
@@ -770,7 +764,8 @@ const panelResize=()=>{refreshInfo();syncPanelUI();};DESK.addEventListener?DESK.
 $('fab').onclick=()=>openPanel();$('panelClose').onclick=closePanel;
 $('btnModel').onclick=()=>{if(panelVisible()&&!document.body.classList.contains('properties-mode')&&WORKSPACES.model.includes(document.querySelector('#acc>.acc.on')?.dataset.sec))closePanel();else openPanel(workspaceLast.model);};
 $('btnReview').onclick=()=>{if(panelVisible()&&!document.body.classList.contains('properties-mode')&&WORKSPACES.review.includes(document.querySelector('#acc>.acc.on')?.dataset.sec))closePanel();else openPanel(workspaceLast.review);};
-$('btnProperties').onclick=()=>{if(selIdx<0)return;closeMenus();infoMin=false;if(DESK.matches){document.body.classList.add('properties-mode');setDock(false);}else{closePanel();showInfo(selIdx);}syncPanelUI();};
+$('btnProperties').onclick=()=>{if(selIdx<0)return;closeMenus();if($('info').classList.contains('on')||$('infoDock').classList.contains('on'))hideInfo();else{infoMin=false;showInfo(selIdx);}syncPanelUI();};
+$('openPropsChk').checked=autoProperties;$('openPropsChk').onchange=e=>{autoProperties=e.target.checked;try{localStorage.setItem('c4openProperties',autoProperties?'1':'0');}catch(e){}if(autoProperties&&selIdx>=0)showInfo(selIdx);else if(!autoProperties)hideInfo();};
 new MutationObserver(syncPanelUI).observe(document.body,{attributes:true,attributeFilter:['class']});syncPanelUI();
 
 /* ---------- lighting: day / dusk / night presets and "lights on" (emissive fixtures + glow sprites + a few real point lights that follow the view) ---------- */
