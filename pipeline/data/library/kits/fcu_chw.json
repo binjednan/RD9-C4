@@ -1,0 +1,113 @@
+{
+ "id": "fcu_chw",
+ "version": "1",
+ "name": "ربط وحدة FCU بالمياه المبردة",
+ "family": "hydronic_fcu",
+ "sample": {
+  "id": "AC-107-A.FCU-CONNECTION",
+  "sheet": "MECH1 ص8 (AC-107-A)",
+  "version": "1"
+ },
+ "sample_text": "الراجع CHWR: وصلة مرنة ← صمام هواء أوتوماتيكي بمحبس ← فتحة قياس ضغط ← PICV ← صمام بوابة. التغذية CHWS: صمام بوابة ← مصفاة Y ← فتحة قياس ضغط ← وصلة مرنة ← الوحدة. صمام تصريف NC بعد المصفاة، وصمام NC بين الراجع والتغذية",
+ "host": {
+  "type": "fcu",
+  "expected": 106
+ },
+ "slots": [
+  {
+   "slot": "s01",
+   "name": "supply: flexible connector",
+   "line": "supply",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "s02",
+   "name": "supply: pressure port",
+   "line": "supply",
+   "component": "pt_port",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "s03",
+   "name": "supply: Y strainer",
+   "line": "supply",
+   "component": "y_strainer",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "s04",
+   "name": "supply: drain valve NC (after strainer)",
+   "line": "supply",
+   "component": "drain_valve",
+   "order_from_host": 4,
+   "required": true,
+   "side_of": "s03"
+  },
+  {
+   "slot": "s05",
+   "name": "supply: gate valve",
+   "line": "supply",
+   "component": "gate_valve",
+   "order_from_host": 5,
+   "required": true
+  },
+  {
+   "slot": "r01",
+   "name": "return: flexible connector",
+   "line": "return",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "r02",
+   "name": "return: automatic air vent",
+   "line": "return",
+   "component": "aav",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "r03",
+   "name": "return: pressure port",
+   "line": "return",
+   "component": "pt_port",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "r04",
+   "name": "return: PICV",
+   "line": "return",
+   "component": "picv",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "r05",
+   "name": "return: gate valve",
+   "line": "return",
+   "component": "gate_valve",
+   "order_from_host": 5,
+   "required": true
+  },
+  {
+   "slot": "b01",
+   "name": "NC valve between return and supply",
+   "line": "between",
+   "component": "bypass_valve",
+   "order_from_host": 0,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "component lengths/bodies are catalogue-typical (components.json), not from the sheets",
+  "joint type per policy (threaded <= DN50), not stated in the sheets",
+  "position along the carrier: nearest free straight interval from the unit outward",
+  "hosts without a drawn stub get an assumed 80 cm stub from the unit end face"
+ ]
+}

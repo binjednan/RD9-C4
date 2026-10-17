@@ -161,7 +161,7 @@ function buildAll(){
       case 'cyl': cylinder(g,geo[1],geo[2],geo[3],geo[4],geo[5],u1,u2,mi); break;
       case 'b': orientedBox(g,geo[1],geo[2],geo[3],geo[4],geo[5],geo[6],geo[7],u1,u2,mi); break;
       case 'd': {const pts=geo[1]; for(let i=0;i<pts.length-1;i++) ductSeg(g,pts[i],pts[i+1],geo[2],geo[3],u1,u2,mi); break;}
-      case 't': {const pts=geo[1]; const sd=geo[2]<=3.5?5:(geo[2]<=7?6:8); for(let i=0;i<pts.length-1;i++) tubeSeg(g,pts[i],pts[i+1],geo[2]/2,u1,u2,mi,sd); break;}   // thin conduits / small pipes need fewer sides (vertex load is what the GPU pays for here)
+      case 't': {const pts=geo[1]; const sd=e.a?.assembly?5:(geo[2]<=3.5?5:(geo[2]<=7?6:8)); for(let i=0;i<pts.length-1;i++) tubeSeg(g,pts[i],pts[i+1],geo[2]/2,u1,u2,mi,sd); break;}   // thin conduits / small pipes need fewer sides (vertex load is what the GPU pays for here)
       case 'rs': rampStrip(g,geo[1],geo[2],geo[3],u1,u2,mi); break;
       case 'sph': ellipsoid(g,geo[1],geo[2],geo[3],geo[4],geo[5],u1,u2,mi,geo[6]||8,geo[7]||5); break;
       case 'tri': triPlane(g,geo[1],geo[2],u1,u2,mi); break;
@@ -218,8 +218,11 @@ const catOp={}; Object.keys(CATS).forEach(c=>catOp[c]=1);
 const stageVis={all:false}; Object.keys(stageCount).forEach(k=>stageVis[k]=true);
 let isoUnit=null, explode=0, LOD=null, focusGhost=false, focusOp=0.08, focusLevels=null, focusSamples=false, CLASH=null, ISSUES=null;
 let sourceAlternativeGroups=new Set();
-let buildHidden=null, buildViewState=null,visibleProposalSystem=null;
+let proposalPreference=true;try{proposalPreference=localStorage.getItem('c4networkProposals')!=='0';}catch(e){}
+let buildHidden=null, buildViewState=null,visibleProposalSystem=proposalPreference?'all':null;
 function showNetworkProposals(sid){visibleProposalSystem=sid;applyVis();}
+function syncProposalToggle(){const c=$('networkProposalsChk');if(c)c.checked=proposalPreference;}
+function setProposalPreference(on){proposalPreference=!!on;try{localStorage.setItem('c4networkProposals',on?'1':'0');}catch(e){}visibleProposalSystem=on?'all':null;syncProposalToggle();applyVis();}
 function setSourceAlternatives(ids=[],enabled=true){if(!enabled||!ids.length)clearHL();sourceAlternativeGroups=new Set(enabled?ids.map(id=>M.els.findIndex(e=>e.id===id)).filter(i=>i>=0&&M.els[i].a?.alt).map(i=>elRange[i]?.gk):[]);applyVis();}
 const stageOn=k=>stageVis.all&&stageVis[k]!==false;
 function groupVisible(G){
@@ -501,6 +504,7 @@ function setCatVis(c,on){catVis[c]=on; const cb=document.querySelector(`#layers 
 function setLvlVis(l,on){lvlVis[l]=on; const cb=document.querySelector(`#levels input[data-lvl="${l}"]`); if(cb) cb.checked=on;}
 function ensureVisible(ei){
   const e=M.els[ei];
+  if(e.a?.network_proposal&&!visibleProposalSystem)setProposalPreference(true);
   if(isoUnit!==null){const a=uidx(e.u),b=uidx(e.u2); if(a!==isoUnit&&b!==isoUnit) exitIso(true);}
   setCatVis(e.c,true); setLvlVis(e.l,true);
   const st=stageKind(e); if(st){stageVis.all=true;stageVis[st]=true;syncStageBox();}
@@ -510,6 +514,7 @@ function focusEl(ei){ensureVisible(ei); select(ei,true); document.body.classList
 
 /* ---------- UI: layers (visibility + per-section / per-branch opacity) ---------- */
 const lp=$('layers');
+syncProposalToggle();$('networkProposalsChk').onchange=e=>setProposalPreference(e.target.checked);
 M.layers.forEach(L=>{
   const box=document.createElement('div'); box.className='lay';
   const head=document.createElement('label'); head.className='lh'; head.innerHTML=`<input type=checkbox checked data-layer="${L.id}"><span class=dot style="background:${L.color}"></span><b>${L.name}</b>`;
@@ -869,12 +874,12 @@ $('stat').textContent=M.els.length.toLocaleString('en')+' عنصر';
 if(window.initLife) window.LIFE=initLife({M,$,esc,LVL,UNITS,TYPES,setLens,LENS,wake,flyToBox,bboxOf,highlight,clearHL,select,toast,grpMap,openSec,
   begin:()=>{window.PROJECT_BUILD?.stop();beginBuildPreview('life');revealBuildElements(M.els.map((_,i)=>i));},
   end:endBuildPreview,focus:s=>{const ids=[...new Set([...(s.src||[]),...(s.ri||[]),...(s.x||[]),...(s.o||[])])];if(ids.length)flyToBox(bboxOf(ids));if(!DESK.matches)closePanel();},
-  showProposals:showNetworkProposals,
+  showProposals:showNetworkProposals,proposalsEnabled:()=>proposalPreference,
   showPanel:()=>openPanel('pLife')});
 /* first-visit hint (src/hint.js) */
 window.HINT={shown:false}; // Help stays available on request; no first-visit overlay.
 WORKSPACES.tools.push('pBuild');
-if(window.initProjectBuild)window.PROJECT_BUILD=initProjectBuild({M,$,esc,LVL,UNITS,openSec,wake,toast,begin:beginBuildPreview,reveal:revealBuildElements,end:endBuildPreview,bounds:i=>[elBB[i*6+1],elBB[i*6+4]],canDraw:i=>!!elRange[i]?.count,canInclude:i=>!M.els[i].a?.network_proposal,fx:BUILD,hide:hideBuildElements,phase:i=>buildPhase(M.els[i].c),setHeights:setBuildHeights,frame:ids=>flyToBox(bboxOf(ids))});
+if(window.initProjectBuild)window.PROJECT_BUILD=initProjectBuild({M,$,esc,LVL,UNITS,openSec,wake,toast,begin:beginBuildPreview,reveal:revealBuildElements,end:endBuildPreview,bounds:i=>[elBB[i*6+1],elBB[i*6+4]],canDraw:i=>!!elRange[i]?.count,canInclude:i=>!M.els[i].a?.network_proposal||proposalPreference,fx:BUILD,hide:hideBuildElements,phase:i=>buildPhase(M.els[i].c),setHeights:setBuildHeights,frame:ids=>flyToBox(bboxOf(ids))});
 /* Short, consistent labels; each existing workspace keeps its own content. */
 {const labels={pHub:'ملخص المشروع',pProject:'المخططات والمصادر',pIssues:'التعارضات والمتابعة',pLife:'الشبكات',pNotes:'الملاحظات والمناظير',pDisplay:'إعدادات العرض',pBuild:'عرض البناء'};
   for(const id in labels){const h=document.querySelector('.acc[data-sec="'+id+'"] .acc-t'),b=document.querySelector('#secnav button[data-go="'+id+'"]');if(h)h.textContent=labels[id];if(b)b.textContent=labels[id];}

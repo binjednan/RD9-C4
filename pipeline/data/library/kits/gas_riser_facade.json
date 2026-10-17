@@ -1,0 +1,35 @@
+{
+ "id": "gas_riser_facade",
+ "version": "1",
+ "name": "صاعد الغاز على الواجهة",
+ "family": "gas",
+ "status": "not_instantiated",
+ "reason": "الصور BP-01..06 تثبت وجود صواعد غاز صفراء على الواجهة (3–4 خطوط رأسية مشبّكة كل 1–2 م، بإزاحة أفقية عند بطن بلاطة الدور الأول، تنتهي بعلبة غاز صفراء عند عمود الأرضي الأيمن). لكنها صور منظور لا تعطي إحداثيات؛ لا مسقط ولا ورقة غاز في المخططات، فلا تُولَّد (لا اختراع مواضع) حتى يقرر المالك التمثيل التقريبي",
+ "sample": {
+  "id": "NONE",
+  "sheet": "لا ورقة",
+  "version": "0"
+ },
+ "host": {
+  "rule": "none"
+ },
+ "slots": [],
+ "assumed": [],
+ "photo_evidence": {
+  "photos": [
+   "BP-01",
+   "BP-02",
+   "BP-03",
+   "BP-04",
+   "BP-05",
+   "BP-06"
+  ],
+  "observed": [
+   "vertical yellow risers (3-4 runs) clipped to the facade",
+   "horizontal offset under the first-floor soffit",
+   "yellow gas cabinet at the ground-floor column",
+   "small yellow branch frames at some window mullions"
+  ],
+  "limit": "qualitative: no positions"
+ }
+}

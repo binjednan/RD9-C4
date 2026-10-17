@@ -1,5 +1,5 @@
 import sys, math, collections, re
-sys.path.insert(0,"/private/tmp/claude-501/-Users-binqdair/9a1652f3-ec18-4d97-b6e3-2745ee0d2f2c/scratchpad/work")
+sys.path.insert(0,__import__("os").path.dirname(__import__("os").path.abspath(__file__)))
 import lib, geo
 
 def spans(sheet, layers):

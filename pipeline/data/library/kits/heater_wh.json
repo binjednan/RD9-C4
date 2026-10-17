@@ -1,0 +1,66 @@
+{
+ "id": "heater_wh",
+ "version": "1",
+ "name": "ربط سخان المياه",
+ "family": "sanitary",
+ "sample": {
+  "id": "MECH2.WS-106.HEATER",
+  "sheet": "MECH2 ص24 (سخان الماء)",
+  "version": "1"
+ },
+ "sample_text": "مشبك L على الجدار أو السقف؛ صمام أمان؛ صمام زاوية مخفي تحت السقف المستعار؛ تصريف لأقرب نقطة",
+ "host": {
+  "type": [
+   "heater80",
+   "heater50"
+  ],
+  "expected": 82
+ },
+ "slots": [
+  {
+   "slot": "k01",
+   "name": "L bracket (left)",
+   "line": "water",
+   "component": "l_bracket",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "k02",
+   "name": "L bracket (right)",
+   "line": "water",
+   "component": "l_bracket",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "v01",
+   "name": "relief valve",
+   "line": "water",
+   "component": "relief_valve",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "v02",
+   "name": "angle valve (hidden under the false ceiling)",
+   "line": "water",
+   "component": "angle_valve",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "d01",
+   "name": "drain to the nearest point",
+   "line": "water",
+   "component": "drain_stub",
+   "order_from_host": 3,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "all parts hang from the heater's underside/back face at assumed offsets (the sheet draws no dimensions)",
+  "'nearest drain point' is not located: a 20 cm drain stub is drawn",
+  "water-line DN15 compression fittings assumed"
+ ]
+}

@@ -1,0 +1,31 @@
+{
+ "id": "pipe_support_steel",
+ "version": "1",
+ "name": "حوامل أنابيب الفولاذ (مياه مبردة وإطفاء)",
+ "family": "supports",
+ "sample": {
+  "id": "MECH1.PIPE-SUPPORTS-STEEL",
+  "sheet": "MECH1 ص9–10 (حوامل الأنابيب) + NFPA 13 + MSS SP-58 family",
+  "version": "1"
+ },
+ "sample_text": "سرج PVC ≥ 300 مم مع clevis؛ U-bolt على دعامة خشب مطاطي؛ عوازل زنبركية في السطح؛ التباعد من المعيار (مشتق من معيار)",
+ "host": {
+  "rule": "pipe_paths",
+  "families": [
+   "chw_s",
+   "chw_r",
+   "fire"
+  ],
+  "exclude_types": [
+   "sprk_drop"
+  ]
+ },
+ "slots_dynamic": true,
+ "slots": [],
+ "assumed": [
+  "support positions: evenly spread on each straight segment so spacing never exceeds the standard maximum; ends of a path not specially supported",
+  "rod runs to the level's slab soffit (hang) or the post to the finished floor (roof pipes)",
+  "clevis/saddle length: 30 cm on insulated chilled water (sample: PVC saddle >= 300 mm), 4 cm on fire",
+  "spring isolators on the roof (sample) are not drawn"
+ ]
+}

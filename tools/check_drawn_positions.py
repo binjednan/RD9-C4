@@ -68,6 +68,19 @@ def deviation(e,p,mode='point'):
 
 def source_transform(p,tr):return [[q[0]*tr['s']+tr['ox'],-q[1]*tr['s']+tr['oy']] for q in points(p)]
 
+_BASE_DIAM=None
+def _guard_g(e):
+    """Geometry used by the 'review geometry unchanged' guards: the element's g with the tube DIAMETER taken from the frozen baseline when pipe_dimensions.py
+    re-derived it from a standard (axes and levels must still equal the reviewed ones; a diameter derived from the dimensions library is not a geometry regression)."""
+    global _BASE_DIAM
+    g=e['g']
+    if g[0]=='t' and (e.get('a')or{}).get('dim_source'):
+        if _BASE_DIAM is None:
+            _BASE_DIAM={x['id']:x['g'][2] for x in json.load(open(os.path.join(ROOT,'pipeline','data','baseline','model.base.json'),encoding='utf-8'))['els'] if x['g'][0]=='t'}
+        if e['id'] in _BASE_DIAM:
+            g=list(g);g[2]=_BASE_DIAM[e['id']]
+    return g
+
 def pdf_sheet(book,page):
     registry=os.path.join(DATA,'reg_verified.json')
     stat=os.stat(registry) if os.path.exists(registry) else None
@@ -428,7 +441,7 @@ def water_mixed_review_check(e,tolerance=TOL):
         if all(item[0]=='l'for item in actual['items'])and math.dist(raw[0],raw[-1])>.001:raw_lines.append(line(world))
     if not raw_lines:return None
     union=unary_union(raw_lines);model=line([p[:2]for p in e['g'][1]])
-    unchanged=hashlib.sha256(json.dumps(e['g'],separators=(',',':')).encode()).hexdigest()==q['whole_trace_geometry_sha256']
+    unchanged=hashlib.sha256(json.dumps(_guard_g(e),separators=(',',':')).encode()).hexdigest()==q['whole_trace_geometry_sha256']
     error=max(Point(p[:2]).distance(union)for p in e['g'][1])
     return {'method':'Original MECH2 open linear water strokes only; closed device glyphs and S curves excluded',
         'deviation_cm':error,'source_anchor_deviation_cm':anchor,'source_transform_deviation_cm':transform,
@@ -581,7 +594,9 @@ def hvac_source_check(e):
     kind=source['source_kind']
     if book!='MECH1' or a.get('source_kind')!=kind or a.get('source_page')!=ref:return None
     if a.get('source_drawing_indices')!=source['source_drawing_indices'] or a.get('source_poly_index')!=source['source_poly_index']:return None
-    sh=pdf_sheet(book,page);drawings,text=hvac_original_page(page)
+    sh=pdf_sheet(book,page)
+    if not sh.reg:return None  # sheet has no verified registration: position cannot be independently checked (reported as uncovered)
+    drawings,text=hvac_original_page(page)
     di=source['source_drawing_indices'][0];pi=source['source_poly_index'];drawing=drawings[di]
     import lib
     raw=lib.flat_path(drawing)[pi]
@@ -785,7 +800,7 @@ def drain_trace_check(e,tolerance):
     if not tr:return None
     raw_error=max(line(p).hausdorff_distance(line(v))for p,v in zip(raw,saved))*sh.reg['s']
     transform=max(math.dist(v,w)for p in raw for v,w in zip(source_transform(p,tr),source_transform(p,sh.reg)))
-    guard=hashlib.sha256(json.dumps(e['g'],separators=(',',':')).encode()).hexdigest()
+    guard=hashlib.sha256(json.dumps(_guard_g(e),separators=(',',':')).encode()).hexdigest()
     return {'method':'Complete reviewed drain XY trace inside actual PDF layer vectors; no old model as position source',
             'deviation_cm':maximum,'source_anchor_deviation_cm':raw_error,'source_transform_deviation_cm':transform,
             'reference':q['source'],'whole_trace_source_covered':outside.is_empty,
@@ -810,7 +825,7 @@ def drain_riser_generation_checks(M):
     """
     old={eid:q for eid,q in read('drain_trace_review').get('records',{}).items()
          if q.get('status')=='derived_vertical_riser'}
-    def canonical(e):return json.dumps([e['c'],e.get('t'),e['l'],e['g']],separators=(',',':'))
+    def canonical(e):return json.dumps([e['c'],e.get('t'),e['l'],_guard_g(e)],separators=(',',':'))   # the diameter slot is the baseline's when pipe_dimensions.py re-derived it
     current=[e for e in M['els']if _current_drain_riser(e)]
     historical_keys=collections.defaultdict(list);current_keys=collections.Counter(canonical(e)for e in current)
     for eid,q in old.items():

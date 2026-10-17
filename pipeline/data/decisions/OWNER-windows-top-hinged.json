@@ -1,0 +1,1760 @@
+{
+ "schema": "c4.decision.v1",
+ "id": "OWNER-windows-top-hinged",
+ "owner": "مهند بن قضير",
+ "date": "2026-10-17",
+ "statement": "النوافذ المفصلية علوية المفصلة — مؤكَّد بالصور BP-01/02/03/05",
+ "removes": [],
+ "set_attrs": {
+  "A.win-1-X2506": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2559": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2582": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2612": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2625": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2636": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2657": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2679": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2701": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2723": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2745": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2767": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2797": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2808": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2821": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2843": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2864": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2886": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2908": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2930": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2954": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X2979": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X3004": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-1-X3028": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3090": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3143": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3166": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3196": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3209": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3220": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3241": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3263": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3285": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3307": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3329": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3351": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3381": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3392": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3405": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3427": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3448": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3470": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3492": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3514": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3538": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3563": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3588": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-2-X3612": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3638": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3691": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3714": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3744": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3757": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3768": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3789": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3811": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3833": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3855": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3877": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3899": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3929": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3940": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3953": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3975": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X3996": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4018": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4040": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4062": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4086": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4111": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4136": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-3-X4160": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4186": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4239": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4262": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4292": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4305": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4316": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4337": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4359": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4381": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4403": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4425": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4447": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4477": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4488": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4501": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4523": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4544": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4566": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4588": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4610": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4634": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4659": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4684": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-4-X4708": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4734": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4787": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4810": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4840": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4853": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4864": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4885": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4907": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4929": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4951": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4973": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X4995": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5025": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5036": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5049": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5071": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5092": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5114": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5136": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5158": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5182": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5207": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5232": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  },
+  "A.win-5-X5256": {
+   "hinge": "top",
+   "hinge_source": {
+    "type": "built_photo",
+    "ref": "صور المبنى المنفَّذ BP-01..BP-06 (نسخ خاصة وبصماتها في ~/Documents/Claude/C4-archive/built-photos-2026-10-17/MANIFEST.json)",
+    "photos": [
+     "BP-01",
+     "BP-02",
+     "BP-03",
+     "BP-05"
+    ],
+    "observed": "الضلف المفتوحة تدور على المفصلة العلوية ويبرز حدّها السفلي إلى الخارج (awning)"
+   }
+  }
+ },
+ "types_asm_replace": {
+  "win_CW-07": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-08": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-09": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-10": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-11": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-13": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-14": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-15": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-16": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-17": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ],
+  "win_CW-18": [
+   [
+    "جهة المفصلة النهائية (علوي/سفلي) غير محددة في الرمز V؛ لا تمثل جهة تثبيت معتمدة",
+    "جهة المفصلة: علوية — من صور المبنى المنفَّذ (إفادة المالك 2026-10-17)؛ لم تُحسم من رمز V في المخطط"
+   ]
+  ]
+ },
+ "scope": "120 عنصر vent_glass بـoperation=«مفصلية Hinged»؛ لا تغيير في هندسة أو موضع أي عنصر",
+ "rollback": "delete this file and rerun pipeline/post_model.py"
+}

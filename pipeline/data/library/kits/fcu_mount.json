@@ -1,0 +1,122 @@
+{
+ "id": "fcu_mount",
+ "version": "1",
+ "name": "تثبيت FCU وتصريف التكثيف",
+ "family": "hydronic_fcu",
+ "sample": {
+  "id": "MECH1.AC-107-A.FCU-MOUNT",
+  "sheet": "MECH1 ص8 (AC-107-A) والملاحظة 38 وMECH2 ص9",
+  "version": "1"
+ },
+ "sample_text": "الوحدة معلّقة بقضبان مع عوازل اهتزاز؛ تصريف uPVC معزول بفوم مطاطي 6 مم؛ U-trap بوصلات unions إلى أقرب مصرف؛ ميل 1% أدنى",
+ "host": {
+  "type": "fcu",
+  "expected": 106
+ },
+ "slots": [
+  {
+   "slot": "r01",
+   "name": "hanger rod 1",
+   "line": "mount",
+   "component": "fcu_rod",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "r02",
+   "name": "hanger rod 2",
+   "line": "mount",
+   "component": "fcu_rod",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "r03",
+   "name": "hanger rod 3",
+   "line": "mount",
+   "component": "fcu_rod",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "r04",
+   "name": "hanger rod 4",
+   "line": "mount",
+   "component": "fcu_rod",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "i01",
+   "name": "vibration isolator 1",
+   "line": "mount",
+   "component": "vibration_isolator",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "i02",
+   "name": "vibration isolator 2",
+   "line": "mount",
+   "component": "vibration_isolator",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "i03",
+   "name": "vibration isolator 3",
+   "line": "mount",
+   "component": "vibration_isolator",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "i04",
+   "name": "vibration isolator 4",
+   "line": "mount",
+   "component": "vibration_isolator",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "c01",
+   "name": "condensate outlet stub",
+   "line": "drain",
+   "component": "cdp_stub",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "c02",
+   "name": "U-trap",
+   "line": "drain",
+   "component": "u_trap",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "c03",
+   "name": "condensate run at 1%",
+   "line": "drain",
+   "component": "cdp_run",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "c04",
+   "name": "drop into the nearest floor trap",
+   "line": "drain",
+   "component": "cdp_run",
+   "order_from_host": 4,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "rods M10 at 10 cm from the long ends; rod top = slab soffit but at least 4 cm above the unit",
+  "isolators 30 mm dia x 40 mm at mid-rod",
+  "outlet at local (+w/2-6 cm, 0) on the unit's underside (the sheet shows no position)",
+  "drain pipe uPVC OD 32 (EN 1329 size) + 6 mm rubber foam, DN25 label assumed",
+  "the run goes straight (not orthogonal) to the nearest floor trap on the same level (note 9) at a 1% fall; a unit with no trap within 15 m gets a 150 cm free run",
+  "U-trap drawn as a short fat tube (envelope only)"
+ ]
+}

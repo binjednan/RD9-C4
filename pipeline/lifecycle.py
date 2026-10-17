@@ -159,6 +159,20 @@ def _elec_load(e):
     return False
 
 
+def proposed_power_load(e):
+    """Broader opt-in population; retain the original drawing-only baseline."""
+    return (_elec_load(e) or
+            (e['c'] == 'M.equip' and _t(e) in ('fcu', 'fahu', 'chiller', 'chwp')) or
+            _t(e) in ('e_P14', 'e_P15', 'e_P16'))
+
+
+def restored_power_load(e):
+    """Recovered solid power symbols, excluding alarm symbols and literal graphics."""
+    return (bool(e.get('a', {}).get('restored_candidate')) and
+            e['g'][0] in ('b', 'r', 'cyl', 'p') and
+            _t(e).startswith(('e_L', 'e_S', 'e_P')) and _elec_load(e))
+
+
 def _smk_sys(sid, area, fam, name, icon, color, desc, src_name, term_t, term_name, sink=False):
     cond = (f"duct_{area}_{fam}", f"riser_{area}_{fam}", f"damper_{area}_{fam}", f"duct_flex_{area}_{fam}")
     d = dict(id=sid, name=name, icon=icon, color=color, desc=desc, family="إدارة الدخان",
@@ -354,17 +368,23 @@ def plan_dist_cm(e, conds):
 
 def analyse_system(M, sd, world):
     els = M["els"]
-    eligible = lambda e: not e.get("a", {}).get("network_proposal") or sd.get("include_proposals", False)
-    src = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and sd["source"](e)]
-    edge = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and sd.get("edge") and sd["edge"](e)]
-    ter = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and sd["terminal"](e)]
+    def eligible(e):
+        a = e.get('a', {})
+        if a.get('alt') or (a.get('network_proposal') and not sd.get('include_proposals')):
+            return False
+        if a.get('source_graphic'):
+            return bool(sd.get('include_proposals') and sd['id'] == 'power' and restored_power_load(e))
+        return True
+    src = [i for i, e in enumerate(els) if eligible(e) and sd["source"](e)]
+    edge = [i for i, e in enumerate(els) if eligible(e) and sd.get("edge") and sd["edge"](e)]
+    ter = [i for i, e in enumerate(els) if eligible(e) and sd["terminal"](e)]
     grp = sd.get("group")
     units = collections.OrderedDict()
     for i in ter: units.setdefault(grp(els[i]) if grp else els[i]["id"], []).append(i)
     var = []
     allcon = set()
     for vname, vpred in sd["variants"]:
-        con = [i for i, e in enumerate(els) if not e.get('a',{}).get('alt') and not e.get('a',{}).get('source_graphic') and eligible(e) and vpred(e)]
+        con = [i for i, e in enumerate(els) if eligible(e) and vpred(e)]
         kind = {}
         for i in con: kind[i] = "c"
         for i in ter: kind[i] = "t"
@@ -558,6 +578,11 @@ def pack(M, results):
 
 def proposal_definition(source_sd):
     sd = dict(source_sd, include_proposals=True)
+    if sd['id'] == 'power':
+        sd['terminal'] = proposed_power_load
+        sd['term_name'] = lambda e: ('وحدة تكييف / مضخة' if e['c'] == 'M.equip' else
+            'لوحة تحكم / مكثفات' if _t(e) in ('e_P14', 'e_P15', 'e_P16') else
+            'كشاف' if e['c'] in ('E.light', 'E.emerg') else 'مفتاح / مقبس')
     sd['variants'] = [(name, lambda e, pred=pred, vi=vi, sid=sd['id']:
         (e.get('a', {}).get('proposal_system') == sid and e.get('a', {}).get('proposal_variant') == vi)
         if e.get('a', {}).get('network_proposal') else
@@ -586,6 +611,10 @@ def add_proposals(M):
             record[key] = [M['els'][i]['id'] for i in record[key]]
         record['refs'] = 'ids'
         record['desc'] = 'اتصال هندسي مع مسارات افتراضية مقترحة؛ نتيجة المخططات الأصلية محفوظة منفصلة. لا يثبت السعة أو التنسيق أو اعتماد التنفيذ.'
+        if record['id'] == 'power':
+            original = next((s for s in M['lifecycle']['systems'] if s['id'] == 'power'), None)
+            extra = record['cnt']['ter'] - (original['cnt']['ter'] if original else 0)
+            record['population_note'] = f'يشمل الاختبار المقترح {extra} حملاً إضافيًا: وحدات التكييف والمضخات ولوحات التحكم والرموز المستعادة.'
         record['route_ids'] = [e['id'] for e in M['els'] if e.get('a', {}).get('proposal_system') == record['id']]
     M['lifecycle']['proposals'] = {r['id']: r for r in records}
     return records

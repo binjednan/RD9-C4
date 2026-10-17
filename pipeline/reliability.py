@@ -39,9 +39,22 @@ def _by_prefix(table, c):
     return table.get(best, "d")
 
 
+SAMPLE_Z_ASSUMED_KITS = ("sanitary_wc", "sanitary_basin", "sanitary_tub", "heater_wh", "fcu_mount")   # heights read from numbers printed beside the sample / assumed offsets
+
+def sample_grade(e, a):
+    """Elements generated from a drawing SAMPLE (a.sample): the sample fixes WHAT the part is and its place in the arrangement -> spec 'v'; position follows the
+    drawn carrier/host by rule -> xy 'v' (z 'v' unless the height itself is an assumed offset).  An ASSUMED STUB (no drawn pipe) stays 'a' on every axis.
+    Returns None when the element has no sample."""
+    if not (a.get("sample") and a.get("assembly")): return None
+    if a.get("component") == "assumed_stub": return "aaa"
+    kit = a["assembly"].get("kit"); z = "a" if kit in SAMPLE_Z_ASSUMED_KITS else "v"
+    return "v" + z + "v"
+
 def grade(e, T):
     """returns the three-letter code of one element"""
     a = e.get("a") or {}; c = e["c"]; t = T.get(e.get("t"), {})
+    sg = sample_grade(e, a)
+    if sg: return sg
     if a.get('core_stairs_source_surfaces'):
         # Raw nosings; interpolated flight surface levels; physical solid spec pending.
         return 'dva'
@@ -62,6 +75,9 @@ def grade(e, T):
     z = Z_TYPE.get(e.get("t")) or _by_prefix(Z_BY_CAT, c)
     if a.get("buried") or a.get("unsupported") or a.get("guess_from"): z = "a"
     if a.get("mount_note") and "افتراض" in str(a.get("mount_note")): z = "a" if ORDER[z] < 2 else z
+    # existing elements whose size / height was replaced by a drawing sample (frame sections A803/A1502, rail A605, thermostat 1500 mm)
+    if a.get("section_sample") and spec == "a": spec = "v"
+    if a.get("height_sample") and z == "a": z = "v"
     return xy + z + spec
 
 

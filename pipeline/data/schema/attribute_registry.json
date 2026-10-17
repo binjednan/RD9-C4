@@ -1,0 +1,2899 @@
+{
+ "version": 1,
+ "note": "Every element.a key that exists. role is assigned by a mechanical rule (role_basis) and is NOT a semantic claim; 'label' = free text/enum, 'measure' = numeric. New keys must be added here deliberately.",
+ "role_basis": "relation=in relation_registry; source=name has 'source'; assumption=name has 'assum'; measure=int/float only; flag=bool; label=str/None; else structure",
+ "keys": {
+  "FD_pair_local_traces": {
+   "types": [
+    "list"
+   ],
+   "count": 333,
+   "role": "structure"
+  },
+  "above_local_ffl_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 3,
+   "role": "measure"
+  },
+  "above_roof_ffl_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 12,
+   "role": "measure"
+  },
+  "accessible": {
+   "types": [
+    "str"
+   ],
+   "count": 26,
+   "role": "label"
+  },
+  "air_lps": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "alt": {
+   "types": [
+    "int"
+   ],
+   "count": 263,
+   "role": "measure"
+  },
+  "alt_conflict": {
+   "types": [
+    "NoneType",
+    "str"
+   ],
+   "count": 263,
+   "role": "label"
+  },
+  "alt_display_only": {
+   "types": [
+    "bool"
+   ],
+   "count": 27,
+   "role": "flag"
+  },
+  "alt_evidence_ref": {
+   "types": [
+    "str"
+   ],
+   "count": 27,
+   "role": "relation"
+  },
+  "alt_inventory": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "alt_owner": {
+   "types": [
+    "str"
+   ],
+   "count": 211,
+   "role": "relation"
+  },
+  "alt_related_conflicts": {
+   "types": [
+    "list"
+   ],
+   "count": 2,
+   "role": "structure"
+  },
+  "alt_source": {
+   "types": [
+    "dict",
+    "str"
+   ],
+   "count": 263,
+   "role": "source"
+  },
+  "amps": {
+   "types": [
+    "int"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "anchor_count": {
+   "types": [
+    "int"
+   ],
+   "count": 782,
+   "role": "measure"
+  },
+  "anchor_points_cm_m": {
+   "types": [
+    "list"
+   ],
+   "count": 39,
+   "role": "structure"
+  },
+  "anchors": {
+   "types": [
+    "list"
+   ],
+   "count": 782,
+   "role": "structure"
+  },
+  "archive_candidate": {
+   "types": [
+    "str"
+   ],
+   "count": 108,
+   "role": "label"
+  },
+  "archive_record": {
+   "types": [
+    "str"
+   ],
+   "count": 108,
+   "role": "label"
+  },
+  "area_m2": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "assembly": {
+   "types": [
+    "dict"
+   ],
+   "count": 11045,
+   "role": "structure"
+  },
+  "assumed": {
+   "types": [
+    "str"
+   ],
+   "count": 26138,
+   "role": "assumption"
+  },
+  "assumed_fields": {
+   "types": [
+    "list"
+   ],
+   "count": 2,
+   "role": "assumption"
+  },
+  "assumed_h": {
+   "types": [
+    "float"
+   ],
+   "count": 1767,
+   "role": "assumption"
+  },
+  "bar_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 76,
+   "role": "measure"
+  },
+  "base_z_m": {
+   "types": [
+    "float"
+   ],
+   "count": 1168,
+   "role": "measure"
+  },
+  "basis": {
+   "types": [
+    "str"
+   ],
+   "count": 11045,
+   "role": "label"
+  },
+  "bay": {
+   "types": [
+    "str"
+   ],
+   "count": 26,
+   "role": "label"
+  },
+  "bays": {
+   "types": [
+    "int",
+    "str"
+   ],
+   "count": 76,
+   "role": "structure"
+  },
+  "bbox_drawn_cm": {
+   "types": [
+    "list"
+   ],
+   "count": 3,
+   "role": "structure"
+  },
+  "block": {
+   "types": [
+    "str"
+   ],
+   "count": 101,
+   "role": "label"
+  },
+  "body_d_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 10594,
+   "role": "measure"
+  },
+  "boundary_source_record": {
+   "types": [
+    "str"
+   ],
+   "count": 84,
+   "role": "relation"
+  },
+  "bounded_by_column_drawings": {
+   "types": [
+    "list"
+   ],
+   "count": 37,
+   "role": "structure"
+  },
+  "bracket_for": {
+   "types": [
+    "str"
+   ],
+   "count": 168,
+   "role": "relation"
+  },
+  "bridge": {
+   "types": [
+    "str"
+   ],
+   "count": 86,
+   "role": "label"
+  },
+  "buried": {
+   "types": [
+    "int"
+   ],
+   "count": 51,
+   "role": "measure"
+  },
+  "bypass_between": {
+   "types": [
+    "list"
+   ],
+   "count": 106,
+   "role": "relation"
+  },
+  "cab_cm": {
+   "types": [
+    "str"
+   ],
+   "count": 24,
+   "role": "label"
+  },
+  "cab_h_m": {
+   "types": [
+    "float"
+   ],
+   "count": 24,
+   "role": "measure"
+  },
+  "canopy_diam_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 487,
+   "role": "measure"
+  },
+  "cap_known": {
+   "types": [
+    "bool"
+   ],
+   "count": 82,
+   "role": "flag"
+  },
+  "cap_l": {
+   "types": [
+    "int"
+   ],
+   "count": 82,
+   "role": "measure"
+  },
+  "cap_sens_kw": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "cap_total_kw": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "car": {
+   "types": [
+    "str"
+   ],
+   "count": 150,
+   "role": "label"
+  },
+  "ceil_dz": {
+   "types": [
+    "float"
+   ],
+   "count": 1988,
+   "role": "measure"
+  },
+  "ceiling_encoding_z_rollback": {
+   "types": [
+    "str"
+   ],
+   "count": 10,
+   "role": "label"
+  },
+  "ceiling_location_shape_conflict": {
+   "types": [
+    "str"
+   ],
+   "count": 281,
+   "role": "label"
+  },
+  "ceiling_location_shape_fully_verified": {
+   "types": [
+    "bool"
+   ],
+   "count": 281,
+   "role": "flag"
+  },
+  "ceiling_lower_face_retained": {
+   "types": [
+    "bool"
+   ],
+   "count": 281,
+   "role": "flag"
+  },
+  "ceiling_match_scope": {
+   "types": [
+    "str"
+   ],
+   "count": 281,
+   "role": "label"
+  },
+  "ceiling_shape_data_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 281,
+   "role": "label"
+  },
+  "ceiling_shape_match": {
+   "types": [
+    "bool"
+   ],
+   "count": 281,
+   "role": "flag"
+  },
+  "ceiling_source_thickness_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 281,
+   "role": "source"
+  },
+  "ceiling_source_thickness_page": {
+   "types": [
+    "str"
+   ],
+   "count": 281,
+   "role": "source"
+  },
+  "ceiling_source_thickness_pdf_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 281,
+   "role": "source"
+  },
+  "ceiling_source_thickness_verified": {
+   "types": [
+    "bool"
+   ],
+   "count": 281,
+   "role": "source"
+  },
+  "ceiling_xy_rings_retained": {
+   "types": [
+    "bool"
+   ],
+   "count": 281,
+   "role": "flag"
+  },
+  "chain": {
+   "types": [
+    "int"
+   ],
+   "count": 435,
+   "role": "measure"
+  },
+  "chamber_depth_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "chw_gpm": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "chw_pipe": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "clear_h_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 126,
+   "role": "measure"
+  },
+  "clear_h_m": {
+   "types": [
+    "float"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "clear_w_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 126,
+   "role": "measure"
+  },
+  "clip_for": {
+   "types": [
+    "str"
+   ],
+   "count": 782,
+   "role": "relation"
+  },
+  "clipped_source_voidrings": {
+   "types": [
+    "list"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "cls": {
+   "types": [
+    "str"
+   ],
+   "count": 3190,
+   "role": "label"
+  },
+  "coil_off": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "coil_on": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "component": {
+   "types": [
+    "str"
+   ],
+   "count": 11045,
+   "role": "label"
+  },
+  "component_key": {
+   "types": [
+    "str"
+   ],
+   "count": 5,
+   "role": "label"
+  },
+  "component_name": {
+   "types": [
+    "str"
+   ],
+   "count": 10989,
+   "role": "label"
+  },
+  "connector": {
+   "types": [
+    "bool",
+    "str"
+   ],
+   "count": 1461,
+   "role": "relation"
+  },
+  "core_stairs_source_surfaces": {
+   "types": [
+    "bool"
+   ],
+   "count": 29,
+   "role": "source"
+  },
+  "cross_section_cm": {
+   "types": [
+    "int",
+    "list"
+   ],
+   "count": 950,
+   "role": "structure"
+  },
+  "curve_tessellation_tolerance_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 159,
+   "role": "measure"
+  },
+  "d16_source_data_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 4,
+   "role": "source"
+  },
+  "d16_source_remaining": {
+   "types": [
+    "bool"
+   ],
+   "count": 4,
+   "role": "source"
+  },
+  "d_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 91,
+   "role": "measure"
+  },
+  "damper": {
+   "types": [
+    "str"
+   ],
+   "count": 345,
+   "role": "label"
+  },
+  "default_display_provisional": {
+   "types": [
+    "int"
+   ],
+   "count": 5,
+   "role": "measure"
+  },
+  "derived": {
+   "types": [
+    "bool"
+   ],
+   "count": 72,
+   "role": "flag"
+  },
+  "derived_source_tolerance_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 31,
+   "role": "source"
+  },
+  "derived_type": {
+   "types": [
+    "bool"
+   ],
+   "count": 484,
+   "role": "flag"
+  },
+  "dest": {
+   "types": [
+    "str"
+   ],
+   "count": 216,
+   "role": "label"
+  },
+  "detail_registration": {
+   "types": [
+    "dict"
+   ],
+   "count": 200,
+   "role": "structure"
+  },
+  "dia_cm": {
+   "types": [
+    "float",
+    "int"
+   ],
+   "count": 103,
+   "role": "measure"
+  },
+  "dia_mm": {
+   "types": [
+    "NoneType",
+    "int"
+   ],
+   "count": 7285,
+   "role": "structure"
+  },
+  "dia_note": {
+   "types": [
+    "str"
+   ],
+   "count": 1327,
+   "role": "label"
+  },
+  "diameter_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 41,
+   "role": "measure"
+  },
+  "diameter_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 12,
+   "role": "measure"
+  },
+  "dim_note": {
+   "types": [
+    "str"
+   ],
+   "count": 20,
+   "role": "label"
+  },
+  "dim_source": {
+   "types": [
+    "dict"
+   ],
+   "count": 9634,
+   "role": "source"
+  },
+  "dim_spec": {
+   "types": [
+    "str"
+   ],
+   "count": 4561,
+   "role": "label"
+  },
+  "dimension_status": {
+   "types": [
+    "str"
+   ],
+   "count": 1173,
+   "role": "label"
+  },
+  "dimensions_cm": {
+   "types": [
+    "list"
+   ],
+   "count": 2,
+   "role": "structure"
+  },
+  "dims_cm": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "dims_mm": {
+   "types": [
+    "str"
+   ],
+   "count": 6,
+   "role": "label"
+  },
+  "dims_note": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "display_Z_kept_from_old_proxy": {
+   "types": [
+    "bool"
+   ],
+   "count": 1,
+   "role": "flag"
+  },
+  "display_Z_m": {
+   "types": [
+    "float"
+   ],
+   "count": 19,
+   "role": "measure"
+  },
+  "display_note": {
+   "types": [
+    "str"
+   ],
+   "count": 89,
+   "role": "label"
+  },
+  "display_role_ar": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "distinct_symbol_slot": {
+   "types": [
+    "int"
+   ],
+   "count": 333,
+   "role": "measure"
+  },
+  "dn_label_kind": {
+   "types": [
+    "str"
+   ],
+   "count": 4561,
+   "role": "label"
+  },
+  "dn_label_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 11585,
+   "role": "measure"
+  },
+  "door_clear_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 24,
+   "role": "measure"
+  },
+  "drain_to": {
+   "types": [
+    "str"
+   ],
+   "count": 212,
+   "role": "relation"
+  },
+  "drawing": {
+   "types": [
+    "str"
+   ],
+   "count": 457,
+   "role": "label"
+  },
+  "drawing_conflict": {
+   "types": [
+    "str"
+   ],
+   "count": 18,
+   "role": "label"
+  },
+  "drawing_scope": {
+   "types": [
+    "str"
+   ],
+   "count": 5,
+   "role": "label"
+  },
+  "drawn_extent_issue": {
+   "types": [
+    "str"
+   ],
+   "count": 96,
+   "role": "label"
+  },
+  "drawn_extent_note": {
+   "types": [
+    "str"
+   ],
+   "count": 96,
+   "role": "label"
+  },
+  "drawn_ffl_m": {
+   "types": [
+    "float"
+   ],
+   "count": 272,
+   "role": "measure"
+  },
+  "drawn_floating": {
+   "types": [
+    "int"
+   ],
+   "count": 1501,
+   "role": "measure"
+  },
+  "drawn_floating_reason": {
+   "types": [
+    "str"
+   ],
+   "count": 1501,
+   "role": "label"
+  },
+  "drawn_line": {
+   "types": [
+    "str"
+   ],
+   "count": 6,
+   "role": "label"
+  },
+  "duty": {
+   "types": [
+    "str"
+   ],
+   "count": 5,
+   "role": "label"
+  },
+  "elec_kw": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "electrical_room_source_correction": {
+   "types": [
+    "bool"
+   ],
+   "count": 6,
+   "role": "source"
+  },
+  "elevation_status": {
+   "types": [
+    "str"
+   ],
+   "count": 1227,
+   "role": "label"
+  },
+  "equipment_completion": {
+   "types": [
+    "bool"
+   ],
+   "count": 2,
+   "role": "flag"
+  },
+  "esp_pa": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "evidence": {
+   "types": [
+    "str"
+   ],
+   "count": 150,
+   "role": "label"
+  },
+  "extends_existing_id": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "relation"
+  },
+  "face_axis": {
+   "types": [
+    "str"
+   ],
+   "count": 200,
+   "role": "label"
+  },
+  "face_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 202,
+   "role": "measure"
+  },
+  "face_note": {
+   "types": [
+    "str"
+   ],
+   "count": 8,
+   "role": "label"
+  },
+  "fall": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "fcl_m": {
+   "types": [
+    "float"
+   ],
+   "count": 283,
+   "role": "measure"
+  },
+  "fcu_kind": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "ffl_derived_m": {
+   "types": [
+    "float"
+   ],
+   "count": 6,
+   "role": "measure"
+  },
+  "ffl_m": {
+   "types": [
+    "float"
+   ],
+   "count": 333,
+   "role": "measure"
+  },
+  "file": {
+   "types": [
+    "str"
+   ],
+   "count": 457,
+   "role": "label"
+  },
+  "fill_note": {
+   "types": [
+    "str"
+   ],
+   "count": 5,
+   "role": "label"
+  },
+  "fin": {
+   "types": [
+    "list"
+   ],
+   "count": 5979,
+   "role": "structure"
+  },
+  "fin_guess": {
+   "types": [
+    "str"
+   ],
+   "count": 2023,
+   "role": "label"
+  },
+  "finfix_proof": {
+   "types": [
+    "dict"
+   ],
+   "count": 255,
+   "role": "structure"
+  },
+  "finish_note": {
+   "types": [
+    "str"
+   ],
+   "count": 12,
+   "role": "label"
+  },
+  "finish_status": {
+   "types": [
+    "str"
+   ],
+   "count": 1185,
+   "role": "label"
+  },
+  "firestop": {
+   "types": [
+    "dict"
+   ],
+   "count": 395,
+   "role": "structure"
+  },
+  "fixing_pdf_y": {
+   "types": [
+    "float"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "fixing_scale_cm_per_pt": {
+   "types": [
+    "float"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "fl_m": {
+   "types": [
+    "float"
+   ],
+   "count": 5,
+   "role": "measure"
+  },
+  "flight": {
+   "types": [
+    "str"
+   ],
+   "count": 1137,
+   "role": "label"
+  },
+  "flight_ordinal": {
+   "types": [
+    "int"
+   ],
+   "count": 25,
+   "role": "measure"
+  },
+  "floor_host": {
+   "types": [
+    "str"
+   ],
+   "count": 123,
+   "role": "relation"
+  },
+  "floor_note": {
+   "types": [
+    "str"
+   ],
+   "count": 16,
+   "role": "label"
+  },
+  "floor_number": {
+   "types": [
+    "str"
+   ],
+   "count": 5,
+   "role": "label"
+  },
+  "flow_gpm": {
+   "types": [
+    "int"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "flow_ls": {
+   "types": [
+    "NoneType",
+    "int"
+   ],
+   "count": 236,
+   "role": "structure"
+  },
+  "flow_medium": {
+   "types": [
+    "str"
+   ],
+   "count": 34,
+   "role": "label"
+  },
+  "flow_modes_ls": {
+   "types": [
+    "str"
+   ],
+   "count": 28,
+   "role": "label"
+  },
+  "from": {
+   "types": [
+    "str"
+   ],
+   "count": 3249,
+   "role": "relation"
+  },
+  "from_id": {
+   "types": [
+    "str"
+   ],
+   "count": 3493,
+   "role": "relation"
+  },
+  "from_level": {
+   "types": [
+    "str"
+   ],
+   "count": 16,
+   "role": "label"
+  },
+  "geometry_encoding_correction": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "geometry_role": {
+   "types": [
+    "str"
+   ],
+   "count": 1238,
+   "role": "label"
+  },
+  "glazing_build_up_mm": {
+   "types": [
+    "list"
+   ],
+   "count": 306,
+   "role": "structure"
+  },
+  "guess_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "guess_conf": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "guess_dz_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 45,
+   "role": "measure"
+  },
+  "guess_host": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "relation"
+  },
+  "guess_intent": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "guess_kind": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "h_cm": {
+   "types": [
+    "float",
+    "int"
+   ],
+   "count": 4634,
+   "role": "measure"
+  },
+  "h_m": {
+   "types": [
+    "float"
+   ],
+   "count": 25,
+   "role": "measure"
+  },
+  "hang_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 1317,
+   "role": "measure"
+  },
+  "head": {
+   "types": [
+    "str"
+   ],
+   "count": 391,
+   "role": "relation"
+  },
+  "height_above_ffl_cm": {
+   "types": [
+    "int",
+    "list"
+   ],
+   "count": 114,
+   "role": "structure"
+  },
+  "height_basis": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "height_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 231,
+   "role": "measure"
+  },
+  "height_m": {
+   "types": [
+    "str"
+   ],
+   "count": 208,
+   "role": "label"
+  },
+  "height_mm_above_ffl": {
+   "types": [
+    "int"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "height_note": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "height_reading": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "height_sample": {
+   "types": [
+    "dict"
+   ],
+   "count": 106,
+   "role": "structure"
+  },
+  "hinge": {
+   "types": [
+    "str"
+   ],
+   "count": 120,
+   "role": "label"
+  },
+  "hinge_source": {
+   "types": [
+    "dict"
+   ],
+   "count": 120,
+   "role": "source"
+  },
+  "historical_material_code": {
+   "types": [
+    "str"
+   ],
+   "count": 8,
+   "role": "label"
+  },
+  "host": {
+   "types": [
+    "str"
+   ],
+   "count": 16,
+   "role": "relation"
+  },
+  "host_id": {
+   "types": [
+    "str"
+   ],
+   "count": 168,
+   "role": "relation"
+  },
+  "host_ids": {
+   "types": [
+    "list"
+   ],
+   "count": 205,
+   "role": "relation"
+  },
+  "host_stair_group": {
+   "types": [
+    "str"
+   ],
+   "count": 947,
+   "role": "label"
+  },
+  "hv_kv": {
+   "types": [
+    "int"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "hvac_previous_placement": {
+   "types": [
+    "dict"
+   ],
+   "count": 107,
+   "role": "structure"
+  },
+  "hvac_source_record": {
+   "types": [
+    "str"
+   ],
+   "count": 107,
+   "role": "relation"
+  },
+  "hvac_source_record_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 107,
+   "role": "source"
+  },
+  "insul_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 4561,
+   "role": "measure"
+  },
+  "jacket_od_mm": {
+   "types": [
+    "NoneType",
+    "float",
+    "int"
+   ],
+   "count": 4561,
+   "role": "structure"
+  },
+  "kind": {
+   "types": [
+    "NoneType",
+    "str"
+   ],
+   "count": 25155,
+   "role": "label"
+  },
+  "kit_ports": {
+   "types": [
+    "list"
+   ],
+   "count": 3626,
+   "role": "structure"
+  },
+  "kva": {
+   "types": [
+    "int"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "label": {
+   "types": [
+    "NoneType",
+    "dict",
+    "str"
+   ],
+   "count": 166,
+   "role": "structure"
+  },
+  "landing_ffl_correction_m": {
+   "types": [
+    "float"
+   ],
+   "count": 20,
+   "role": "measure"
+  },
+  "landing_ffl_m": {
+   "types": [
+    "float"
+   ],
+   "count": 140,
+   "role": "measure"
+  },
+  "landing_ordinal": {
+   "types": [
+    "int"
+   ],
+   "count": 14,
+   "role": "measure"
+  },
+  "legacy_class_match": {
+   "types": [
+    "float"
+   ],
+   "count": 35,
+   "role": "measure"
+  },
+  "legacy_source_indices": {
+   "types": [
+    "list"
+   ],
+   "count": 597,
+   "role": "source"
+  },
+  "len_m": {
+   "types": [
+    "float"
+   ],
+   "count": 89,
+   "role": "measure"
+  },
+  "length_basis": {
+   "types": [
+    "str"
+   ],
+   "count": 10594,
+   "role": "label"
+  },
+  "length_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 10488,
+   "role": "measure"
+  },
+  "length_m": {
+   "types": [
+    "float"
+   ],
+   "count": 7057,
+   "role": "measure"
+  },
+  "level": {
+   "types": [
+    "str"
+   ],
+   "count": 140,
+   "role": "label"
+  },
+  "level_m": {
+   "types": [
+    "float"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "level_note": {
+   "types": [
+    "str"
+   ],
+   "count": 27,
+   "role": "label"
+  },
+  "level_reference_column": {
+   "types": [
+    "str"
+   ],
+   "count": 79,
+   "role": "relation"
+  },
+  "levels": {
+   "types": [
+    "str"
+   ],
+   "count": 150,
+   "role": "label"
+  },
+  "lift_head_support_record": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "relation"
+  },
+  "loc": {
+   "types": [
+    "str"
+   ],
+   "count": 3012,
+   "role": "label"
+  },
+  "lv_kv": {
+   "types": [
+    "float"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "match": {
+   "types": [
+    "float"
+   ],
+   "count": 3121,
+   "role": "measure"
+  },
+  "material_note": {
+   "types": [
+    "str"
+   ],
+   "count": 597,
+   "role": "label"
+  },
+  "material_status": {
+   "types": [
+    "str"
+   ],
+   "count": 1240,
+   "role": "label"
+  },
+  "model": {
+   "types": [
+    "str"
+   ],
+   "count": 145,
+   "role": "label"
+  },
+  "model_correction": {
+   "types": [
+    "str"
+   ],
+   "count": 33,
+   "role": "label"
+  },
+  "mount_gap": {
+   "types": [
+    "str"
+   ],
+   "count": 257,
+   "role": "label"
+  },
+  "mount_h_m": {
+   "types": [
+    "float"
+   ],
+   "count": 46,
+   "role": "measure"
+  },
+  "mount_note": {
+   "types": [
+    "str"
+   ],
+   "count": 871,
+   "role": "label"
+  },
+  "n": {
+   "types": [
+    "int"
+   ],
+   "count": 20,
+   "role": "measure"
+  },
+  "name": {
+   "types": [
+    "str"
+   ],
+   "count": 12,
+   "role": "label"
+  },
+  "name_ar": {
+   "types": [
+    "str"
+   ],
+   "count": 1088,
+   "role": "label"
+  },
+  "neck_mm": {
+   "types": [
+    "str"
+   ],
+   "count": 122,
+   "role": "label"
+  },
+  "net_capacity_igal": {
+   "types": [
+    "int"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "network_gap": {
+   "types": [
+    "str"
+   ],
+   "count": 232,
+   "role": "label"
+  },
+  "network_proposal": {
+   "types": [
+    "int"
+   ],
+   "count": 3495,
+   "role": "measure"
+  },
+  "no_connectors": {
+   "types": [
+    "bool"
+   ],
+   "count": 984,
+   "role": "flag"
+  },
+  "no_hangers": {
+   "types": [
+    "bool"
+   ],
+   "count": 500,
+   "role": "flag"
+  },
+  "no_inferred_interfloor_connection": {
+   "types": [
+    "bool"
+   ],
+   "count": 17,
+   "role": "flag"
+  },
+  "no_manufacturer_body_inferred": {
+   "types": [
+    "bool"
+   ],
+   "count": 2,
+   "role": "flag"
+  },
+  "nominal_diameter_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 6,
+   "role": "measure"
+  },
+  "not_a_host": {
+   "types": [
+    "int"
+   ],
+   "count": 950,
+   "role": "measure"
+  },
+  "note": {
+   "types": [
+    "str"
+   ],
+   "count": 1274,
+   "role": "label"
+  },
+  "od_mm": {
+   "types": [
+    "float",
+    "int"
+   ],
+   "count": 4561,
+   "role": "measure"
+  },
+  "operation": {
+   "types": [
+    "str"
+   ],
+   "count": 300,
+   "role": "label"
+  },
+  "original_cluster_ordinal": {
+   "types": [
+    "int"
+   ],
+   "count": 333,
+   "role": "measure"
+  },
+  "original_symbol_class": {
+   "types": [
+    "str"
+   ],
+   "count": 35,
+   "role": "label"
+  },
+  "owner_limit_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 40,
+   "role": "measure"
+  },
+  "page": {
+   "types": [
+    "int"
+   ],
+   "count": 457,
+   "role": "measure"
+  },
+  "parent_conductor_id": {
+   "types": [
+    "str"
+   ],
+   "count": 12,
+   "role": "relation"
+  },
+  "part": {
+   "types": [
+    "str"
+   ],
+   "count": 7018,
+   "role": "label"
+  },
+  "partial_support": {
+   "types": [
+    "int"
+   ],
+   "count": 782,
+   "role": "measure"
+  },
+  "pdf_drawing_index": {
+   "types": [
+    "int"
+   ],
+   "count": 229,
+   "role": "measure"
+  },
+  "pdf_drawing_indices": {
+   "types": [
+    "list"
+   ],
+   "count": 10,
+   "role": "structure"
+  },
+  "pdf_operator_index": {
+   "types": [
+    "int"
+   ],
+   "count": 159,
+   "role": "measure"
+  },
+  "pdf_path_index": {
+   "types": [
+    "int"
+   ],
+   "count": 70,
+   "role": "measure"
+  },
+  "perimeter_face": {
+   "types": [
+    "str"
+   ],
+   "count": 43,
+   "role": "label"
+  },
+  "physical_geometry_status": {
+   "types": [
+    "str"
+   ],
+   "count": 1239,
+   "role": "label"
+  },
+  "physical_joint_width_pending": {
+   "types": [
+    "bool"
+   ],
+   "count": 84,
+   "role": "flag"
+  },
+  "plan_m": {
+   "types": [
+    "float"
+   ],
+   "count": 175,
+   "role": "measure"
+  },
+  "plan_riser_gap_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "plan_rod_id": {
+   "types": [
+    "str"
+   ],
+   "count": 33,
+   "role": "relation"
+  },
+  "plan_source": {
+   "types": [
+    "str"
+   ],
+   "count": 9,
+   "role": "source"
+  },
+  "pole_h_m": {
+   "types": [
+    "float"
+   ],
+   "count": 80,
+   "role": "measure"
+  },
+  "ports": {
+   "types": [
+    "int"
+   ],
+   "count": 232,
+   "role": "measure"
+  },
+  "power_completion": {
+   "types": [
+    "str"
+   ],
+   "count": 144,
+   "role": "label"
+  },
+  "power_kw": {
+   "types": [
+    "float"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "power_w": {
+   "types": [
+    "int"
+   ],
+   "count": 46,
+   "role": "measure"
+  },
+  "pressure_bar": {
+   "types": [
+    "int"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "proposal_system": {
+   "types": [
+    "str"
+   ],
+   "count": 3495,
+   "role": "label"
+  },
+  "proposal_variant": {
+   "types": [
+    "int"
+   ],
+   "count": 3495,
+   "role": "measure"
+  },
+  "proposed_fcu": {
+   "types": [
+    "str"
+   ],
+   "count": 1010,
+   "role": "relation"
+  },
+  "qty_floors": {
+   "types": [
+    "int"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "raft_source_restore_record": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "relation"
+  },
+  "registration": {
+   "types": [
+    "str"
+   ],
+   "count": 192,
+   "role": "label"
+  },
+  "restored_candidate": {
+   "types": [
+    "int"
+   ],
+   "count": 1587,
+   "role": "measure"
+  },
+  "retained_CAD_duplicate_count": {
+   "types": [
+    "int"
+   ],
+   "count": 333,
+   "role": "measure"
+  },
+  "retired_from": {
+   "types": [
+    "str"
+   ],
+   "count": 13,
+   "role": "label"
+  },
+  "retired_from_id": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "retired_source_group_ids": {
+   "types": [
+    "list"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "retired_source_group_reason": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "retired_to_id": {
+   "types": [
+    "str"
+   ],
+   "count": 6,
+   "role": "label"
+  },
+  "ribs": {
+   "types": [
+    "int"
+   ],
+   "count": 75,
+   "role": "measure"
+  },
+  "rise_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 40,
+   "role": "measure"
+  },
+  "riser": {
+   "types": [
+    "bool"
+   ],
+   "count": 150,
+   "role": "flag"
+  },
+  "riser_intervals": {
+   "types": [
+    "int"
+   ],
+   "count": 39,
+   "role": "measure"
+  },
+  "riser_note": {
+   "types": [
+    "str"
+   ],
+   "count": 16,
+   "role": "label"
+  },
+  "rod_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 61,
+   "role": "measure"
+  },
+  "roof_lift_source_record": {
+   "types": [
+    "int"
+   ],
+   "count": 5,
+   "role": "source"
+  },
+  "room": {
+   "types": [
+    "list",
+    "str"
+   ],
+   "count": 6882,
+   "role": "relation"
+  },
+  "run_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 106,
+   "role": "measure"
+  },
+  "rung": {
+   "types": [
+    "int"
+   ],
+   "count": 12,
+   "role": "measure"
+  },
+  "sample": {
+   "types": [
+    "dict"
+   ],
+   "count": 11045,
+   "role": "structure"
+  },
+  "sand_top_m": {
+   "types": [
+    "float"
+   ],
+   "count": 5,
+   "role": "measure"
+  },
+  "sched_note": {
+   "types": [
+    "str"
+   ],
+   "count": 59,
+   "role": "label"
+  },
+  "sched_unit": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "scope": {
+   "types": [
+    "str"
+   ],
+   "count": 333,
+   "role": "label"
+  },
+  "scope_above_grade_only": {
+   "types": [
+    "bool"
+   ],
+   "count": 84,
+   "role": "flag"
+  },
+  "section_assumed": {
+   "types": [
+    "str"
+   ],
+   "count": 889,
+   "role": "assumption"
+  },
+  "section_basis": {
+   "types": [
+    "str"
+   ],
+   "count": 1966,
+   "role": "label"
+  },
+  "section_calibration": {
+   "types": [
+    "dict"
+   ],
+   "count": 15,
+   "role": "structure"
+  },
+  "section_check": {
+   "types": [
+    "str"
+   ],
+   "count": 1077,
+   "role": "label"
+  },
+  "section_dims_mm": {
+   "types": [
+    "dict"
+   ],
+   "count": 889,
+   "role": "structure"
+  },
+  "section_face_applied": {
+   "types": [
+    "bool"
+   ],
+   "count": 889,
+   "role": "flag"
+  },
+  "section_mm": {
+   "types": [
+    "str"
+   ],
+   "count": 34,
+   "role": "label"
+  },
+  "section_mm2": {
+   "types": [
+    "int"
+   ],
+   "count": 12,
+   "role": "measure"
+  },
+  "section_number": {
+   "types": [
+    "int"
+   ],
+   "count": 33,
+   "role": "measure"
+  },
+  "section_sample": {
+   "types": [
+    "dict"
+   ],
+   "count": 1966,
+   "role": "structure"
+  },
+  "serving": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "shaft": {
+   "types": [
+    "bool",
+    "int"
+   ],
+   "count": 81,
+   "role": "structure"
+  },
+  "sheet_thickness_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 6,
+   "role": "measure"
+  },
+  "side": {
+   "types": [
+    "str"
+   ],
+   "count": 3052,
+   "role": "label"
+  },
+  "size_cm": {
+   "types": [
+    "str"
+   ],
+   "count": 5051,
+   "role": "label"
+  },
+  "size_mm": {
+   "types": [
+    "str"
+   ],
+   "count": 57,
+   "role": "label"
+  },
+  "size_note": {
+   "types": [
+    "str"
+   ],
+   "count": 1788,
+   "role": "label"
+  },
+  "slab_between": {
+   "types": [
+    "list"
+   ],
+   "count": 395,
+   "role": "structure"
+  },
+  "sleeve_dn": {
+   "types": [
+    "int"
+   ],
+   "count": 395,
+   "role": "measure"
+  },
+  "sleeve_id": {
+   "types": [
+    "str"
+   ],
+   "count": 12,
+   "role": "relation"
+  },
+  "sleeve_od_mm": {
+   "types": [
+    "float"
+   ],
+   "count": 395,
+   "role": "measure"
+  },
+  "sleeve_wall_mm": {
+   "types": [
+    "float"
+   ],
+   "count": 395,
+   "role": "measure"
+  },
+  "slope_dr106": {
+   "types": [
+    "str"
+   ],
+   "count": 196,
+   "role": "label"
+  },
+  "slope_pct": {
+   "types": [
+    "float"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "slope_source": {
+   "types": [
+    "dict"
+   ],
+   "count": 196,
+   "role": "source"
+  },
+  "snap_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 1,
+   "role": "measure"
+  },
+  "snap_note": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "source": {
+   "types": [
+    "dict"
+   ],
+   "count": 11,
+   "role": "source"
+  },
+  "source_completion": {
+   "types": [
+    "int"
+   ],
+   "count": 14,
+   "role": "source"
+  },
+  "source_detail": {
+   "types": [
+    "str"
+   ],
+   "count": 6560,
+   "role": "source"
+  },
+  "source_drawing_index": {
+   "types": [
+    "int"
+   ],
+   "count": 26,
+   "role": "source"
+  },
+  "source_drawing_indices": {
+   "types": [
+    "list"
+   ],
+   "count": 9,
+   "role": "source"
+  },
+  "source_evidence": {
+   "types": [
+    "str"
+   ],
+   "count": 51,
+   "role": "source"
+  },
+  "source_graphic": {
+   "types": [
+    "int"
+   ],
+   "count": 12632,
+   "role": "source"
+  },
+  "source_group": {
+   "types": [
+    "str"
+   ],
+   "count": 16,
+   "role": "relation"
+  },
+  "source_group_ids": {
+   "types": [
+    "list"
+   ],
+   "count": 68,
+   "role": "relation"
+  },
+  "source_item_index": {
+   "types": [
+    "int"
+   ],
+   "count": 26,
+   "role": "source"
+  },
+  "source_operator_count": {
+   "types": [
+    "int"
+   ],
+   "count": 16,
+   "role": "source"
+  },
+  "source_page": {
+   "types": [
+    "int",
+    "str"
+   ],
+   "count": 9977,
+   "role": "source"
+  },
+  "source_reference": {
+   "types": [
+    "str"
+   ],
+   "count": 1100,
+   "role": "source"
+  },
+  "source_review": {
+   "types": [
+    "str"
+   ],
+   "count": 40,
+   "role": "source"
+  },
+  "source_segment_count": {
+   "types": [
+    "int"
+   ],
+   "count": 16,
+   "role": "source"
+  },
+  "source_set": {
+   "types": [
+    "str"
+   ],
+   "count": 331,
+   "role": "source"
+  },
+  "source_sheet": {
+   "types": [
+    "str"
+   ],
+   "count": 3872,
+   "role": "source"
+  },
+  "source_surface_thickness_m": {
+   "types": [
+    "float"
+   ],
+   "count": 41,
+   "role": "source"
+  },
+  "source_texttrace_index": {
+   "types": [
+    "int"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "source_z_reference": {
+   "types": [
+    "str"
+   ],
+   "count": 113,
+   "role": "source"
+  },
+  "spacing_basis": {
+   "types": [
+    "str"
+   ],
+   "count": 7024,
+   "role": "label"
+  },
+  "spacing_limit_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 782,
+   "role": "measure"
+  },
+  "spacing_m": {
+   "types": [
+    "float"
+   ],
+   "count": 7024,
+   "role": "measure"
+  },
+  "span_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 75,
+   "role": "measure"
+  },
+  "span_source_texttrace_indices": {
+   "types": [
+    "list"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "species": {
+   "types": [
+    "str"
+   ],
+   "count": 695,
+   "role": "label"
+  },
+  "stair01_roof_correction_note": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "stair01_roof_source_correction": {
+   "types": [
+    "bool"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "stair01_roof_source_data_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "stair_completion": {
+   "types": [
+    "bool"
+   ],
+   "count": 10,
+   "role": "flag"
+  },
+  "stair_completion_data_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 10,
+   "role": "label"
+  },
+  "stand_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 222,
+   "role": "measure"
+  },
+  "state": {
+   "types": [
+    "str"
+   ],
+   "count": 222,
+   "role": "label"
+  },
+  "step": {
+   "types": [
+    "int"
+   ],
+   "count": 40,
+   "role": "measure"
+  },
+  "stops": {
+   "types": [
+    "str"
+   ],
+   "count": 24,
+   "role": "label"
+  },
+  "structural_details_pending": {
+   "types": [
+    "bool"
+   ],
+   "count": 2,
+   "role": "flag"
+  },
+  "stub_assumed": {
+   "types": [
+    "str"
+   ],
+   "count": 56,
+   "role": "assumption"
+  },
+  "support_assumption": {
+   "types": [
+    "str"
+   ],
+   "count": 3,
+   "role": "assumption"
+  },
+  "support_bracket_host": {
+   "types": [
+    "str"
+   ],
+   "count": 168,
+   "role": "relation"
+  },
+  "support_bracket_id": {
+   "types": [
+    "str"
+   ],
+   "count": 168,
+   "role": "relation"
+  },
+  "support_clip_complete": {
+   "types": [
+    "int"
+   ],
+   "count": 782,
+   "role": "measure"
+  },
+  "support_clip_id": {
+   "types": [
+    "str"
+   ],
+   "count": 782,
+   "role": "relation"
+  },
+  "support_note": {
+   "types": [
+    "str"
+   ],
+   "count": 9,
+   "role": "label"
+  },
+  "surface_datums_m": {
+   "types": [
+    "list"
+   ],
+   "count": 39,
+   "role": "structure"
+  },
+  "symbol_parts": {
+   "types": [
+    "int"
+   ],
+   "count": 2,
+   "role": "measure"
+  },
+  "sys": {
+   "types": [
+    "str"
+   ],
+   "count": 6571,
+   "role": "relation"
+  },
+  "tag": {
+   "types": [
+    "str"
+   ],
+   "count": 217,
+   "role": "label"
+  },
+  "tag_floor": {
+   "types": [
+    "str"
+   ],
+   "count": 106,
+   "role": "label"
+  },
+  "thick_cm": {
+   "types": [
+    "float",
+    "int"
+   ],
+   "count": 82,
+   "role": "measure"
+  },
+  "thickness_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 208,
+   "role": "measure"
+  },
+  "thk_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 1754,
+   "role": "measure"
+  },
+  "to": {
+   "types": [
+    "str"
+   ],
+   "count": 3227,
+   "role": "relation"
+  },
+  "to_id": {
+   "types": [
+    "str"
+   ],
+   "count": 3489,
+   "role": "relation"
+  },
+  "to_level": {
+   "types": [
+    "str"
+   ],
+   "count": 16,
+   "role": "label"
+  },
+  "top": {
+   "types": [
+    "str"
+   ],
+   "count": 15,
+   "role": "label"
+  },
+  "top_m": {
+   "types": [
+    "float"
+   ],
+   "count": 34,
+   "role": "measure"
+  },
+  "top_of_beam_m": {
+   "types": [
+    "float"
+   ],
+   "count": 75,
+   "role": "measure"
+  },
+  "top_of_seat_m": {
+   "types": [
+    "float"
+   ],
+   "count": 8,
+   "role": "measure"
+  },
+  "top_roof_shaft_after_geometry_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "top_roof_shaft_openings_source": {
+   "types": [
+    "bool"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "top_roof_shaft_source_data_sha256": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "source"
+  },
+  "top_roof_shaft_source_record": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "relation"
+  },
+  "topology_domain_preserved": {
+   "types": [
+    "bool"
+   ],
+   "count": 6,
+   "role": "flag"
+  },
+  "topology_repair": {
+   "types": [
+    "str"
+   ],
+   "count": 6,
+   "role": "label"
+  },
+  "topology_repair_note": {
+   "types": [
+    "str"
+   ],
+   "count": 6,
+   "role": "label"
+  },
+  "topology_repair_record": {
+   "types": [
+    "str"
+   ],
+   "count": 6,
+   "role": "relation"
+  },
+  "topology_source_placement_verified": {
+   "types": [
+    "bool"
+   ],
+   "count": 6,
+   "role": "source"
+  },
+  "total_h_m": {
+   "types": [
+    "float"
+   ],
+   "count": 487,
+   "role": "measure"
+  },
+  "trace_cm": {
+   "types": [
+    "list"
+   ],
+   "count": 191,
+   "role": "structure"
+  },
+  "transition_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "transition_pct": {
+   "types": [
+    "int"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "tread_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 40,
+   "role": "measure"
+  },
+  "tread_intervals": {
+   "types": [
+    "int"
+   ],
+   "count": 39,
+   "role": "measure"
+  },
+  "trim_note": {
+   "types": [
+    "str"
+   ],
+   "count": 1,
+   "role": "label"
+  },
+  "trimmed": {
+   "types": [
+    "str"
+   ],
+   "count": 5,
+   "role": "label"
+  },
+  "unit": {
+   "types": [
+    "str"
+   ],
+   "count": 113,
+   "role": "label"
+  },
+  "unknown_assembly_gap_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 5,
+   "role": "measure"
+  },
+  "unlabelled": {
+   "types": [
+    "bool"
+   ],
+   "count": 7,
+   "role": "flag"
+  },
+  "usg": {
+   "types": [
+    "int"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "vol_m3": {
+   "types": [
+    "float"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "w_cm": {
+   "types": [
+    "float",
+    "int"
+   ],
+   "count": 5173,
+   "role": "measure"
+  },
+  "wall_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 29,
+   "role": "measure"
+  },
+  "wall_mm": {
+   "types": [
+    "NoneType",
+    "float"
+   ],
+   "count": 4561,
+   "role": "structure"
+  },
+  "water_level_m": {
+   "types": [
+    "float"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "where": {
+   "types": [
+    "str"
+   ],
+   "count": 14,
+   "role": "label"
+  },
+  "width_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 4,
+   "role": "measure"
+  },
+  "window_assembly_id": {
+   "types": [
+    "str"
+   ],
+   "count": 57,
+   "role": "label"
+  },
+  "window_type": {
+   "types": [
+    "str"
+   ],
+   "count": 77,
+   "role": "label"
+  },
+  "wire_clip_unserved_stations_cm": {
+   "types": [
+    "list"
+   ],
+   "count": 28,
+   "role": "structure"
+  },
+  "x_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 16,
+   "role": "measure"
+  },
+  "y_cm": {
+   "types": [
+    "int"
+   ],
+   "count": 16,
+   "role": "measure"
+  },
+  "z_note": {
+   "types": [
+    "str"
+   ],
+   "count": 2,
+   "role": "label"
+  },
+  "zone": {
+   "types": [
+    "str"
+   ],
+   "count": 283,
+   "role": "label"
+  }
+ }
+}

@@ -6,7 +6,7 @@ DL = "/Users/binqdair/Downloads/"
 FILES = {"ARCH1":"Arch. Drawings Part I (1).pdf","ARCH2":"Arch. Drawings Part II.pdf","STR":"Structure Drawings (1).pdf",
          "MECH1":"Mechanical Drawings Part I (1).pdf","MECH2":"Mechanical Drawings Part II (1).pdf",
          "ELEC1":"Electrical Drawings Part I (1).pdf","ELEC2":"Electrical Drawings Part II (1).pdf","BOQ":"2849- Bill of Quantities.pdf"}
-CACHE = "/private/tmp/claude-501/-Users-binqdair/9a1652f3-ec18-4d97-b6e3-2745ee0d2f2c/scratchpad/work/cache/"
+CACHE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".cache", "")
 os.makedirs(CACHE, exist_ok=True)
 S100 = 100*0.3527777778/10   # cm per pt at 1:100
 S50  = S100/2

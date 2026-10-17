@@ -1,0 +1,86 @@
+{
+ "id": "fire_acv",
+ "version": "1",
+ "name": "صمام الإنذار ACV",
+ "family": "fire",
+ "sample": {
+  "id": "MECH2.FF-106.ACV",
+  "sheet": "MECH2 ص16 (FF-106 صمام الإنذار)",
+  "version": "1"
+ },
+ "sample_text": "trim kit + غرفة تأخير + جرس مائي + مفتاح ضغط + مقياسا ضغط (قبل وبعد) + صمام تصريف رئيسي",
+ "host": {
+  "type": "riser_spr",
+  "level": [
+   "G"
+  ],
+  "expected": 1
+ },
+ "on_host": {
+  "fam": "fire",
+  "line": "alarm",
+  "start_cm": 150.0
+ },
+ "slots": [
+  {
+   "slot": "a01",
+   "name": "pressure gauge (before)",
+   "line": "alarm",
+   "component": "pressure_gauge",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "a02",
+   "name": "alarm check valve ACV",
+   "line": "alarm",
+   "component": "alarm_valve",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "a03",
+   "name": "pressure gauge (after)",
+   "line": "alarm",
+   "component": "pressure_gauge",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "a04",
+   "name": "retard (delay) chamber",
+   "line": "alarm",
+   "component": "delay_chamber",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "a05",
+   "name": "water motor gong",
+   "line": "alarm",
+   "component": "gong",
+   "order_from_host": 5,
+   "required": true
+  },
+  {
+   "slot": "a06",
+   "name": "pressure switch",
+   "line": "alarm",
+   "component": "pressure_switch",
+   "order_from_host": 6,
+   "required": true
+  },
+  {
+   "slot": "a07",
+   "name": "main drain valve",
+   "line": "alarm",
+   "component": "drain_valve",
+   "order_from_host": 7,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "placed on the ground-level sprinkler riser 150 cm above its start (the ACV location is not dimensioned)",
+  "trim piping between the side items is not drawn"
+ ]
+}

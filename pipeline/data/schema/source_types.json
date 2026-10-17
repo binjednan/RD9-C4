@@ -1,0 +1,52 @@
+{
+ "schema": "c4.source_types.v1",
+ "version": 1,
+ "note": "Kinds of evidence a model fact may rest on, strongest first for DIMENSIONS/POSITIONS; a fact keeps the type it was registered with. 'built_photo' was added by work order item 7 (2026-10-17).",
+ "types": {
+  "drawing_sheet": {
+   "name": "ورقة من مخططات المشروع (PDF)",
+   "use": "المواضع والأبعاد والجداول والملاحظات كما رُسمت",
+   "verifiable": true
+  },
+  "drawing_sample": {
+   "name": "عينة/تفصيل نموذجي من المخططات تُعمَّم على ما يماثلها",
+   "use": "أطقم الربط والتثبيت (basis=sample)",
+   "verifiable": true,
+   "requires": [
+    "sample.id",
+    "sample.sheet",
+    "sample.version"
+   ]
+  },
+  "boq": {
+   "name": "جدول الكميات 2849",
+   "use": "الأعداد والأوصاف والعزل",
+   "verifiable": true
+  },
+  "standard": {
+   "name": "معيار دولي منشور",
+   "use": "أبعاد الأنابيب والوصلات والتباعدات (يُذكر اسم المعيار مع كل قيمة)",
+   "verifiable": true,
+   "requires": [
+    "standard"
+   ]
+  },
+  "owner_decision": {
+   "name": "قرار المالك",
+   "use": "قاعدة نمذجة أو استبعاد",
+   "verifiable": false,
+   "requires": [
+    "decision_id"
+   ]
+  },
+  "built_photo": {
+   "name": "صورة المبنى المنفَّذ",
+   "use": "ما نُفِّذ فعلًا على الواقع (مثل جهة مفصلة النوافذ وغياب الأسلاك على الواجهة)؛ لا يحمل قياسًا ولا موضعًا",
+   "verifiable": false,
+   "requires": [
+    "ref"
+   ],
+   "limits": "دليل نوعي لا كمّي؛ لا يغيّر موضع عنصر مرسوم"
+  }
+ }
+}

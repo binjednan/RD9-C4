@@ -1,0 +1,539 @@
+{
+ "schema": "c4.components.v1",
+ "units": "mm",
+ "note": "Simplified shared body shapes (one tube per component). Lengths marked 'assumed' are catalogue-typical values chosen here, NOT from a standard; 'EN558' lengths are recalled (paywalled) and also assumed until checked. Joint policy (owner rule: connection by fittings, never welding): flanged at equipment and valves >= DN50, grooved on steel lines >= DN65, threaded <= DN50 (unions at equipment); PPR/PEX/uPVC/HDPE by visible sockets/compression/clamps. All 'assumed'.",
+ "joint_policy": {
+  "steel": {
+   "<=40": "threaded",
+   "50": "flanged_or_threaded_assumed_flanged",
+   "65+": "flanged_at_valves_grooved_on_runs"
+  },
+  "ppr": "socket_coupling",
+  "pex": "compression",
+  "upvc": "socket_coupling",
+  "hdpe": "clamp_coupling"
+ },
+ "kinds": {
+  "gate_valve": {
+   "name": "صمام بوابة",
+   "type": "kit_gate_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.6,
+   "length_mm": {
+    "20": 70,
+    "25": 80,
+    "32": 90,
+    "40": 100,
+    "50": 178,
+    "65": 190,
+    "80": 203,
+    "100": 229,
+    "125": 254,
+    "150": 267,
+    "200": 292
+   },
+   "length_basis": {
+    "<=40": "assumed_catalogue_typical",
+    "50+": "EN558_series15_recalled_unverified_assumed"
+   }
+  },
+  "y_strainer": {
+   "name": "مصفاة Y",
+   "type": "kit_y_strainer",
+   "mat": "kit_strainer_steel",
+   "body_k": 1.8,
+   "length_mm": {
+    "20": 95,
+    "25": 110,
+    "32": 130,
+    "40": 150,
+    "50": 230,
+    "65": 290,
+    "80": 310,
+    "100": 350,
+    "125": 400,
+    "150": 480,
+    "200": 600
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "flex_connector": {
+   "name": "وصلة مرنة",
+   "type": "kit_flex_connector",
+   "mat": "kit_flex_rubber",
+   "body_k": 1.3,
+   "length_mm": {
+    "20": 300,
+    "25": 300,
+    "32": 300,
+    "40": 300,
+    "50": 300,
+    "65": 300,
+    "80": 300,
+    "100": 300,
+    "125": 300,
+    "150": 300,
+    "200": 300
+   },
+   "length_basis": "assumed (the sheets give no length)"
+  },
+  "picv": {
+   "name": "صمام تحكم مستقل الضغط PICV",
+   "type": "kit_picv",
+   "mat": "kit_valve_brass",
+   "body_k": 1.6,
+   "length_mm": {
+    "20": 85,
+    "25": 95,
+    "32": 110,
+    "40": 125,
+    "50": 230,
+    "65": 290,
+    "80": 310,
+    "100": 350
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "pt_port": {
+   "name": "فتحة قياس ضغط/حرارة",
+   "type": "kit_pt_port",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 12,
+   "stub_len_mm": 45,
+   "length_basis": "assumed"
+  },
+  "aav": {
+   "name": "صمام هواء أوتوماتيكي بمحبس",
+   "type": "kit_aav",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 55,
+   "stub_len_mm": 130,
+   "length_basis": "assumed"
+  },
+  "drain_valve": {
+   "name": "صمام تصريف (NC)",
+   "type": "kit_drain_valve",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 28,
+   "stub_len_mm": 60,
+   "down": true,
+   "length_basis": "assumed"
+  },
+  "bypass_valve": {
+   "name": "صمام NC بين الراجع والتغذية",
+   "type": "kit_bypass_valve",
+   "mat": "kit_valve_brass",
+   "body_d_mm": 30,
+   "length_basis": "assumed"
+  },
+  "butterfly_valve": {
+   "name": "صمام فراشة",
+   "type": "kit_butterfly_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.5,
+   "length_mm": {
+    "50": 43,
+    "65": 46,
+    "80": 46,
+    "100": 52,
+    "125": 56,
+    "150": 56,
+    "200": 60
+   },
+   "length_basis": "EN558_series20_recalled_unverified_assumed"
+  },
+  "check_valve": {
+   "name": "صمام عدم رجوع",
+   "type": "kit_check_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.6,
+   "length_mm": {
+    "20": 80,
+    "25": 90,
+    "32": 100,
+    "40": 115,
+    "50": 230,
+    "65": 290,
+    "80": 310,
+    "100": 350,
+    "125": 400,
+    "150": 480,
+    "200": 600
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "angle_valve": {
+   "name": "صمام زاوية",
+   "type": "kit_angle_valve",
+   "mat": "kit_valve_chrome",
+   "body_k": 1.4,
+   "length_mm": {
+    "15": 45,
+    "20": 50,
+    "25": 55
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "pressure_gauge": {
+   "name": "مقياس ضغط",
+   "type": "kit_gauge",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 63,
+   "stub_len_mm": 90,
+   "length_basis": "assumed"
+  },
+  "reducer": {
+   "name": "مخفّض",
+   "type": "kit_reducer",
+   "mat": "kit_strainer_steel",
+   "length_basis": "ASME B16.9 H (verified_1_source)"
+  },
+  "union": {
+   "name": "وصلة unions",
+   "type": "kit_union",
+   "mat": "kit_valve_brass",
+   "body_k": 1.5,
+   "length_mm": {
+    "15": 35,
+    "20": 38,
+    "25": 42,
+    "32": 45,
+    "40": 50
+   },
+   "length_basis": "assumed"
+  },
+  "thermometer": {
+   "name": "ميزان حرارة",
+   "type": "kit_thermometer",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 45,
+   "stub_len_mm": 110,
+   "length_basis": "assumed"
+  },
+  "flow_sensor": {
+   "name": "مستشعر تدفق",
+   "type": "kit_flow_sensor",
+   "mat": "kit_strainer_steel",
+   "body_k": 1.4,
+   "length_mm": {
+    "20": 120,
+    "25": 130,
+    "32": 150,
+    "40": 160,
+    "50": 200,
+    "65": 220,
+    "80": 250,
+    "100": 300,
+    "125": 340,
+    "150": 380,
+    "200": 450
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "balancing_valve": {
+   "name": "صمام موازنة DRV",
+   "type": "kit_balancing_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.6,
+   "length_mm": {
+    "20": 80,
+    "25": 90,
+    "32": 110,
+    "40": 125,
+    "50": 230,
+    "65": 290,
+    "80": 310,
+    "100": 350,
+    "125": 400,
+    "150": 480,
+    "200": 600
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "motor_valve": {
+   "name": "صمام محرّك MV",
+   "type": "kit_motor_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.7,
+   "length_mm": {
+    "20": 90,
+    "25": 100,
+    "32": 120,
+    "40": 135,
+    "50": 230,
+    "65": 290,
+    "80": 310,
+    "100": 350,
+    "125": 400,
+    "150": 480,
+    "200": 600
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "suction_diffuser": {
+   "name": "ناشر شفط بمصفاة",
+   "type": "kit_suction_diffuser",
+   "mat": "kit_strainer_steel",
+   "body_k": 2.0,
+   "length_mm": {
+    "20": 150,
+    "25": 170,
+    "32": 200,
+    "40": 230,
+    "50": 300,
+    "65": 340,
+    "80": 380,
+    "100": 450,
+    "125": 520,
+    "150": 600,
+    "200": 720
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "measuring_station": {
+   "name": "محطة قياس",
+   "type": "kit_measuring_station",
+   "mat": "kit_strainer_steel",
+   "body_k": 1.5,
+   "length_mm": {
+    "20": 150,
+    "25": 170,
+    "32": 200,
+    "40": 230,
+    "50": 300,
+    "65": 340,
+    "80": 380,
+    "100": 450,
+    "125": 520,
+    "150": 600,
+    "200": 720
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "shower_hose": {
+   "name": "خرطوم دش",
+   "type": "kit_shower_hose",
+   "mat": "kit_flex_rubber",
+   "body_d_mm": 12,
+   "length_basis": "assumed (length = valve to bowl)"
+  },
+  "bottle_trap": {
+   "name": "مصيدة زجاجة",
+   "type": "kit_bottle_trap",
+   "mat": "kit_valve_chrome",
+   "body_d_mm": 32,
+   "length_mm_fixed": 250,
+   "length_basis": "assumed catalogue-typical (sheet gives no size)"
+  },
+  "relief_valve": {
+   "name": "صمام أمان",
+   "type": "kit_relief_valve",
+   "mat": "kit_valve_brass",
+   "body_d_mm": 28,
+   "length_mm_fixed": 80,
+   "length_basis": "assumed"
+  },
+  "l_bracket": {
+   "name": "مشبك L",
+   "type": "kit_l_bracket",
+   "mat": "kit_hanger_steel",
+   "body_d_mm": 20,
+   "length_mm_fixed": 150,
+   "length_basis": "assumed"
+  },
+  "drain_stub": {
+   "name": "تصريف لأقرب نقطة",
+   "type": "kit_drain_stub",
+   "mat": "kit_flex_rubber",
+   "body_d_mm": 16,
+   "length_mm_fixed": 200,
+   "length_basis": "assumed (nearest point not located)"
+  },
+  "nrv": {
+   "name": "صمام عدم رجوع",
+   "type": "kit_check_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.6,
+   "length_mm": {
+    "15": 70,
+    "20": 80,
+    "25": 90,
+    "32": 100,
+    "40": 115,
+    "50": 230,
+    "65": 290,
+    "80": 310
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "indicating_valve": {
+   "name": "صمام مؤشر بمفتاح إشراف",
+   "type": "kit_indicating_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.5,
+   "length_mm": {
+    "50": 43,
+    "65": 46,
+    "80": 46,
+    "100": 52,
+    "125": 56,
+    "150": 56,
+    "200": 60
+   },
+   "length_basis": "EN558_series20_recalled_unverified_assumed"
+  },
+  "flow_switch": {
+   "name": "مفتاح تدفق",
+   "type": "kit_flow_switch",
+   "mat": "kit_strainer_steel",
+   "body_k": 1.3,
+   "length_mm": {
+    "50": 120,
+    "65": 130,
+    "80": 150,
+    "100": 170,
+    "125": 190,
+    "150": 210,
+    "200": 250
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "sight_glass": {
+   "name": "زجاجة رؤية",
+   "type": "kit_sight_glass",
+   "mat": "kit_valve_brass",
+   "body_k": 1.3,
+   "length_mm": {
+    "50": 100,
+    "65": 110,
+    "80": 120,
+    "100": 140,
+    "125": 160,
+    "150": 180,
+    "200": 220
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "test_valve": {
+   "name": "صمام اختبار",
+   "type": "kit_test_valve",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 30,
+   "stub_len_mm": 90,
+   "length_basis": "assumed"
+  },
+  "alarm_valve": {
+   "name": "صمام الإنذار ACV",
+   "type": "kit_alarm_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.7,
+   "length_mm": {
+    "100": 350,
+    "125": 400,
+    "150": 450,
+    "200": 520
+   },
+   "length_basis": "assumed_catalogue_typical"
+  },
+  "delay_chamber": {
+   "name": "غرفة تأخير",
+   "type": "kit_delay_chamber",
+   "mat": "kit_strainer_steel",
+   "side": true,
+   "stub_d_mm": 150,
+   "stub_len_mm": 300,
+   "length_basis": "assumed"
+  },
+  "gong": {
+   "name": "جرس مائي",
+   "type": "kit_gong",
+   "mat": "kit_valve_brass",
+   "side": true,
+   "stub_d_mm": 120,
+   "stub_len_mm": 120,
+   "length_basis": "assumed"
+  },
+  "pressure_switch": {
+   "name": "مفتاح ضغط",
+   "type": "kit_pressure_switch",
+   "mat": "kit_strainer_steel",
+   "side": true,
+   "stub_d_mm": 50,
+   "stub_len_mm": 100,
+   "length_basis": "assumed"
+  },
+  "os_y_valve": {
+   "name": "صمام بوابة OS&Y",
+   "type": "kit_osy_valve",
+   "mat": "kit_valve_brass",
+   "body_k": 1.7,
+   "length_mm": {
+    "50": 178,
+    "65": 190,
+    "80": 203,
+    "100": 229,
+    "125": 254,
+    "150": 267,
+    "200": 292
+   },
+   "length_basis": "EN558_series15_recalled_unverified_assumed"
+  },
+  "reducer_conc": {
+   "name": "مخفّض concentric",
+   "type": "kit_reducer",
+   "mat": "kit_strainer_steel",
+   "body_k": 1.25,
+   "length_mm": {
+    "50": 76,
+    "65": 89,
+    "80": 89,
+    "100": 102,
+    "125": 127,
+    "150": 140,
+    "200": 152
+   },
+   "length_basis": "ASME B16.9 H by large end (verified_1_source)"
+  },
+  "fcu_rod": {
+   "name": "قضيب تعليق وحدة FCU",
+   "type": "kit_fcu_rod",
+   "mat": "kit_hanger_steel",
+   "body_d_mm": 10,
+   "length_basis": "M10 rod assumed (sample: suspended by rods)"
+  },
+  "vibration_isolator": {
+   "name": "عازل اهتزاز",
+   "type": "kit_vibration_isolator",
+   "mat": "kit_flex_rubber",
+   "body_d_mm": 30,
+   "length_basis": "assumed (30 mm dia x 40 mm)"
+  },
+  "cdp_stub": {
+   "name": "وصلة تصريف التكثيف",
+   "type": "kit_cdp_stub",
+   "mat": "kit_flex_rubber",
+   "body_d_mm": 44,
+   "length_basis": "uPVC OD 32 + 6 mm rubber foam (sample note 38)"
+  },
+  "u_trap": {
+   "name": "فخ U بوصلات unions",
+   "type": "kit_u_trap",
+   "mat": "kit_flex_rubber",
+   "body_d_mm": 44,
+   "length_basis": "assumed envelope (sample: U-trap with union fittings for cleaning)"
+  },
+  "cdp_run": {
+   "name": "أنبوب تصريف التكثيف بميل 1%",
+   "type": "kit_cdp_run",
+   "mat": "kit_flex_rubber",
+   "body_d_mm": 44,
+   "length_basis": "uPVC OD 32 + 6 mm foam; slope 1% (sample: minimum 1%)"
+  }
+ }
+}

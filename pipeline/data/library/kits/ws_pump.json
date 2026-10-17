@@ -1,0 +1,96 @@
+{
+ "id": "ws_pump",
+ "version": "1",
+ "name": "ربط مضخات السباكة",
+ "family": "hydronic_plant",
+ "sample": {
+  "id": "MECH2.WS-106.PUMPS",
+  "sheet": "MECH2 ص24 (مضخة التحويل ومضخات التعزيز)",
+  "version": "1"
+ },
+ "sample_text": "مجمّع الشفط ← IV ← مصفاة ← وصلة مرنة ← المضخة ← وصلة مرنة ← NRV ← IV ← مقياس ضغط",
+ "host": {
+  "type": [
+   "ws_lifting",
+   "ws_booster",
+   "ws_filtration_pump",
+   "irr_pump"
+  ],
+  "alt": false,
+  "expected": 8
+ },
+ "lines": [
+  {
+   "line": "suction",
+   "fam": "cold"
+  },
+  {
+   "line": "discharge",
+   "fam": "cold"
+  }
+ ],
+ "slots": [
+  {
+   "slot": "u01",
+   "name": "suction: flexible connector",
+   "line": "suction",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "u02",
+   "name": "suction: strainer",
+   "line": "suction",
+   "component": "y_strainer",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "u03",
+   "name": "suction: isolation valve IV",
+   "line": "suction",
+   "component": "gate_valve",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "d01",
+   "name": "discharge: flexible connector",
+   "line": "discharge",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "d02",
+   "name": "discharge: NRV",
+   "line": "discharge",
+   "component": "nrv",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "d03",
+   "name": "discharge: isolation valve IV",
+   "line": "discharge",
+   "component": "gate_valve",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "d04",
+   "name": "discharge: pressure gauge",
+   "line": "discharge",
+   "component": "pressure_gauge",
+   "order_from_host": 4,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "pump connection pipes are not drawn: assumed DN50 stubs (PPR 75x12.5) from the pump footprint edge",
+  "the order text counts 10 plumbing pumps; the model has 8 non-alternative pumps of the four kinds (2 sump pump symbols are drainage, not this sample)",
+  "flanged joints ASSUMED for pumps"
+ ],
+ "stub_dn": 50
+}

@@ -1,0 +1,60 @@
+{
+ "schema": "c4.window_sections.v1",
+ "note": "Printed dimensions read from the section drawings (text, mm). Centre planes of the existing frame parts are kept; only the profile extents change.",
+ "sections": {
+  "A803_vent": {
+   "face_mm": 52,
+   "depth_mm": 120,
+   "sample": {
+    "id": "ARCH2.A803.CW-VENT",
+    "sheet": "ARCH2 ص16 (A803 — TYPICAL CW-VENT / SILL / VENT TOP DETAIL 1:20)",
+    "version": "1"
+   },
+   "dims_read": [
+    "52 (profile face)",
+    "120 (profile depth, wall-normal)",
+    "157 (module total)",
+    "37.2",
+    "62.41",
+    "62.58"
+   ],
+   "applies_to": "frame parts of window groups that contain an opening (vent) pane"
+  },
+  "A1502_mullion": {
+   "face_mm": 60,
+   "depth_mm": 100,
+   "sample": {
+    "id": "ARCH2.A1502.MULLION",
+    "sheet": "ARCH2 ص33 (A1502 — spandrel glazing with 100 mm mullion, details A/B 1:10)",
+    "version": "1"
+   },
+   "dims_read": [
+    "100 (mullion, title)",
+    "60 (profile face)",
+    "20",
+    "50",
+    "27.5",
+    "36.5",
+    "13.5",
+    "56.5"
+   ],
+   "applies_to": "frame parts of fixed-glazing window groups"
+  }
+ },
+ "types": [
+  "win_CW-07",
+  "win_CW-08",
+  "win_CW-09",
+  "win_CW-10",
+  "win_CW-11",
+  "win_CW-12",
+  "win_CW-13",
+  "win_CW-14",
+  "win_CW-15",
+  "win_CW-16",
+  "win_CW-17",
+  "win_CW-18",
+  "win_CW-19"
+ ],
+ "not_applied": "CW-01..CW-06 (ground-floor and basement types) come from other sheets and keep their own frame sizes"
+}

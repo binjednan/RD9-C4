@@ -1,0 +1,108 @@
+{
+ "id": "fire_pump",
+ "version": "1",
+ "name": "ربط مضخات الإطفاء",
+ "family": "fire",
+ "sample": {
+  "id": "MECH2.FF-105.PUMPS",
+  "sheet": "MECH2 ص15–16 (مجموعة مضخات الإطفاء)",
+  "version": "1"
+ },
+ "sample_text": "لكل مضخة: عدم رجوع + مخفّض concentric/eccentric + مقياس ضغط + بوابة OS&Y؛ وصلة مرنة وشفة شفط؛ خط اختبار بعداد تدفق",
+ "host": {
+  "type": [
+   "fp_electric",
+   "fp_diesel",
+   "fp_jockey"
+  ],
+  "alt": false,
+  "expected": 3
+ },
+ "lines": [
+  {
+   "line": "suction",
+   "fam": "fire"
+  },
+  {
+   "line": "discharge",
+   "fam": "fire"
+  },
+  {
+   "line": "test",
+   "fam": "fire"
+  }
+ ],
+ "slots": [
+  {
+   "slot": "u01",
+   "name": "suction: flexible connector",
+   "line": "suction",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "u02",
+   "name": "suction: OS&Y gate valve",
+   "line": "suction",
+   "component": "os_y_valve",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "d01",
+   "name": "discharge: concentric reducer",
+   "line": "discharge",
+   "component": "reducer_conc",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "d02",
+   "name": "discharge: check valve",
+   "line": "discharge",
+   "component": "check_valve",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "d03",
+   "name": "discharge: pressure gauge",
+   "line": "discharge",
+   "component": "pressure_gauge",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "d04",
+   "name": "discharge: OS&Y gate valve",
+   "line": "discharge",
+   "component": "os_y_valve",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "t01",
+   "name": "test line: measuring station (flow meter)",
+   "line": "test",
+   "component": "measuring_station",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "t02",
+   "name": "test line: OS&Y gate valve",
+   "line": "test",
+   "component": "os_y_valve",
+   "order_from_host": 2,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "pump connection pipes are largely not drawn: assumed DN100 stubs where no drawn pipe touches",
+  "the jockey pump is smaller than DN100 in reality; DN100 used for all three (assumed)",
+  "ACV and PRV of the sample are placed by other kits / not located",
+  "eccentric vs concentric reducer on suction is not stated; concentric used on discharge"
+ ],
+ "stub_dn": 100
+}

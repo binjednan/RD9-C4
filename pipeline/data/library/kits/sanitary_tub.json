@@ -1,0 +1,42 @@
+{
+ "id": "sanitary_tub",
+ "version": "1",
+ "name": "ربط البانيو/الدش",
+ "family": "sanitary",
+ "sample": {
+  "id": "MECH2.WS-106.TUB",
+  "sheet": "MECH2 ص24 (WS-106) وBOQ 10.1.5 (صمام عزل لكل جهاز)",
+  "version": "1"
+ },
+ "sample_text": "صمام عزل لكل جهاز (BOQ 10.1.5)؛ لا تفصيل للبانيو في المخطط",
+ "host": {
+  "rule": "fixture_group",
+  "group_prefix": "tub",
+  "main_part": "جسم البانيو"
+ },
+ "slots": [
+  {
+   "slot": "t01",
+   "name": "isolation angle valve (cold)",
+   "line": "cold",
+   "component": "angle_valve",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "t02",
+   "name": "isolation angle valve (hot)",
+   "line": "hot",
+   "component": "angle_valve",
+   "order_from_host": 1,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "heights are ASSUMED from the numbers printed beside the sample (150/75/200/400 for the toilet, 850/600/100/100 for the basin): valve 15 cm (toilet) or 60 cm (others) above the finished floor",
+  "the valve sits on the nearest wall face (<= 150 cm from the fixture); otherwise on the fixture's back edge",
+  "water-line DN15, connection by compression fittings (no welding), ASSUMED",
+  "the wall drop pipes (PEX in walls, WS note 4) are not drawn, so the valve's supply port stays open by design",
+  "no tub detail is drawn: the BOQ rule 'isolating valve for each sanitary ware' is applied"
+ ]
+}

@@ -1,0 +1,716 @@
+{
+ "schema": "c4.decision.v1",
+ "id": "OWNER-no-facade-wires",
+ "owner": "مهند بن قضير",
+ "date": "2026-10-17",
+ "statement": "لا أسلاك على الواجهة (من صور المبنى المنفَّذ)",
+ "rule_version": "any_part (owner 2026-10-17, second instruction)",
+ "photos": [
+  "BP-01",
+  "BP-02",
+  "BP-03",
+  "BP-04",
+  "BP-05",
+  "BP-06"
+ ],
+ "evidence_note_current": "BP-01..06: لا أسلاك كهربائية على الواجهة؛ الظاهر صواعد غاز صفراء وعلبة غاز وكشافات جدارية بلا أسلاك ظاهرة",
+ "evidence_note": "الصور الست المذكورة في أمر العمل لم تصل للجلسة؛ نُفِّذ القرار نصًّا بالقاعدة أدناه.",
+ "rule": "Builds pipeline/data/decisions/OWNER-no-facade-wires.json  (owner decision: no wires on the facade, from photos of the built building).\n\n  python3 tools/build_facade_decision.py [--write]     # run on a model WITHOUT the decision applied (remove the decision file first)\n\nRule (work order item 6), applied to E.tray conductors and proposed routes at levels G,1,2,3,4,5,R,T (basement excluded: no facade):\n  envelope(l) = outer ring of the union of A.wall, S.wall, S.col, A.win, A.door, A.clad footprints at level l (closed by 10 cm); for G the envelope of level 1\n                is used because the ground floor shell is open (assumed - awaiting owner confirmation)\n  a path is a FACADE wire when the MAJORITY (>= 50%) of its length lies outside the envelope buffered by 0.2 cm or within 0.2 cm of its exterior ring\n  (a wire that merely crosses the face to reach a facade device keeps its inside part: whole elements are never trimmed -> kept, listed as partial)\n  closure: a facade candidate that another REMAINING wire names as an end (from/to/from_id/to_id) is kept, iterated to a fixed point\n  -> no remaining wire is left pointing at a removed one (no new orphan ends by reference)\n  kept although outside: E.tray that are not conductors/routes (earthing_pvc_sleeve, elr_* ducts/fiber/trays, site boxes)\n  carried items removed with them: owner_wire_clip whose clip_for is a removed wire (owner_box_bracket / owner_flexible_bracket carry DEVICES, never wires -> kept)",
+ "assumed": [
+  "envelope(G)=envelope(1)",
+  "basement excluded",
+  "box/flexible brackets carry devices so are kept",
+  "earthing and lightning proposed routes are spared (owner); telephone/fibre routes are NOT spared any more",
+  "a remaining wire that named a removed wire as an end keeps no reference (moved to retired_<field>) and may become an orphan end"
+ ],
+ "retire_refs": {
+  "E.tray-G-PROP-060a42dbd392-0-SRC": {
+   "from_id": "E.tray-G-W0291"
+  },
+  "E.tray-G-PROP-a908b7504613-0-SRC": {
+   "to_id": "E.tray-G-W0299"
+  },
+  "E.tray-G-W0287": {
+   "from": "E.tray-G-W0165"
+  },
+  "E.tray-G-W0288": {
+   "from": "E.tray-G-W0165"
+  },
+  "E.tray-G-W0289": {
+   "from": "E.tray-G-W0165"
+  },
+  "E.tray-G-W0290": {
+   "from": "E.tray-G-W0165"
+  },
+  "E.tray-G-W0292": {
+   "from": "E.tray-G-W0164"
+  },
+  "E.tray-G-W0293": {
+   "from": "E.tray-G-W0164"
+  },
+  "E.tray-G-W0294": {
+   "from": "E.tray-G-W0164"
+  },
+  "E.tray-G-W0295": {
+   "from": "E.tray-G-W0164"
+  },
+  "E.tray-R-PROP-152a154f2c48-0-SRC": {
+   "to_id": "E.tray-T-W2294"
+  },
+  "E.tray-R-PROP-6708ac84140c-0-SRC": {
+   "to_id": "E.tray-T-W1481"
+  },
+  "E.tray-R-PROP-6fee18eb15e3-0-SRC": {
+   "to_id": "E.tray-T-W2294"
+  },
+  "E.tray-R-PROP-b0fda92fcaca-0-SRC": {
+   "to_id": "E.tray-T-W2299"
+  },
+  "E.tray-R-PROP-ea48bfd69c42-0-SRC": {
+   "to_id": "E.tray-T-W2294"
+  },
+  "E.tray-T-PROP-7eedb98ff570-0-SRC": {
+   "from_id": "E.tray-T-W2294"
+  },
+  "E.tray-T-W1482": {
+   "from": "E.tray-T-W1481"
+  },
+  "E.tray-T-W2295": {
+   "from": "E.tray-T-W2294"
+  },
+  "E.tray-T-W2296": {
+   "from": "E.tray-T-W2294"
+  },
+  "E.tray-T-W2297": {
+   "from": "E.tray-T-W2294"
+  },
+  "E.tray-T-W2298": {
+   "from": "E.tray-T-W2294"
+  }
+ },
+ "removes": [
+  "E.tray-G-PROP-03bab736b1fc-0-SRC",
+  "E.tray-G-PROP-0a15a9ba2367-0-SRC",
+  "E.tray-G-PROP-110f9d89e67f-0-SRC",
+  "E.tray-G-PROP-26912e0c475d-0-SRC",
+  "E.tray-G-PROP-2afd81e83033-0-SRC",
+  "E.tray-G-PROP-2c450918442d-0-SRC",
+  "E.tray-G-PROP-2f92409f17c2-0-SRC",
+  "E.tray-G-PROP-312646ab8691-0-SRC",
+  "E.tray-G-PROP-32cec7980559-0-SRC",
+  "E.tray-G-PROP-349e910f00f7-0-SRC",
+  "E.tray-G-PROP-36f78c36e41c-0-SRC",
+  "E.tray-G-PROP-3e2827db03ee-0-SRC",
+  "E.tray-G-PROP-42e679a51342-0-SRC",
+  "E.tray-G-PROP-48f3067ba6fd-0-SRC",
+  "E.tray-G-PROP-4f1eaf814126-0-SRC",
+  "E.tray-G-PROP-5018f2dac29d-0-SRC",
+  "E.tray-G-PROP-547a3f12cb8b-0-SRC",
+  "E.tray-G-PROP-55c293fd9502-0-SRC",
+  "E.tray-G-PROP-5df0f7b272e1-0-SRC",
+  "E.tray-G-PROP-5e69e4d8292a-0-SRC",
+  "E.tray-G-PROP-5ff9b9d70e91-0-SRC",
+  "E.tray-G-PROP-602c75049b6c-0-SRC",
+  "E.tray-G-PROP-7c1f85cf863d-0-SRC",
+  "E.tray-G-PROP-7e00da8dfec4-0-SRC",
+  "E.tray-G-PROP-80870a6c055f-0-SRC",
+  "E.tray-G-PROP-825898f85454-0-SRC",
+  "E.tray-G-PROP-86a4dd488696-0-SRC",
+  "E.tray-G-PROP-8831932119e5-0-SRC",
+  "E.tray-G-PROP-8845b8ee17a4-0-SRC",
+  "E.tray-G-PROP-8943645a14ff-0-SRC",
+  "E.tray-G-PROP-8a0cc921ce45-0-SRC",
+  "E.tray-G-PROP-POWER-f3e2326bcdcd-SRC",
+  "E.tray-G-PROP-a7d7cc3010d0-0-SRC",
+  "E.tray-G-PROP-aac2b8b21873-0-SRC",
+  "E.tray-G-PROP-ae98aad00b22-0-SRC",
+  "E.tray-G-PROP-b67b8be83d3f-0-SRC",
+  "E.tray-G-PROP-ba4d426d396b-0-SRC",
+  "E.tray-G-PROP-c1b31d3cd2be-0-SRC",
+  "E.tray-G-PROP-dd3de1f3bdfb-0-SRC",
+  "E.tray-G-PROP-de98df63ef37-0-SRC",
+  "E.tray-G-PROP-ea96171f155b-0-SRC",
+  "E.tray-G-W0164",
+  "E.tray-G-W0164-CLP",
+  "E.tray-G-W0165",
+  "E.tray-G-W0165-CLP",
+  "E.tray-G-W0185",
+  "E.tray-G-W0186",
+  "E.tray-G-W0186-CLP",
+  "E.tray-G-W0191",
+  "E.tray-G-W0191-CLP",
+  "E.tray-G-W0192",
+  "E.tray-G-W0192-CLP",
+  "E.tray-G-W0291",
+  "E.tray-G-W0296",
+  "E.tray-G-W0297",
+  "E.tray-G-W0298",
+  "E.tray-G-W0298-CLP",
+  "E.tray-G-W0299",
+  "E.tray-G-W0299-CLP",
+  "E.tray-G-W0300",
+  "E.tray-G-W0300-CLP",
+  "E.tray-G-W0325",
+  "E.tray-G-W0326",
+  "E.tray-G-W0335",
+  "E.tray-G-W0335-CLP",
+  "E.tray-T-W1480",
+  "E.tray-T-W1480-CLP",
+  "E.tray-T-W1481",
+  "E.tray-T-W1481-CLP",
+  "E.tray-T-W2294",
+  "E.tray-T-W2294-CLP",
+  "E.tray-T-W2299"
+ ],
+ "removed_wires": [
+  {
+   "id": "E.tray-G-W0164",
+   "type": "wire_light",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.405
+  },
+  {
+   "id": "E.tray-G-W0165",
+   "type": "wire_light",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.95
+  },
+  {
+   "id": "E.tray-G-W0185",
+   "type": "wire_light",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-W0186",
+   "type": "wire_light",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-W0191",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-W0192",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-W0291",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.935
+  },
+  {
+   "id": "E.tray-G-W0296",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.935
+  },
+  {
+   "id": "E.tray-G-W0297",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.935
+  },
+  {
+   "id": "E.tray-G-W0298",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.847
+  },
+  {
+   "id": "E.tray-G-W0299",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.847
+  },
+  {
+   "id": "E.tray-G-W0300",
+   "type": "wire_drop",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.847
+  },
+  {
+   "id": "E.tray-G-W0325",
+   "type": "wire_circuit_end",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-W0326",
+   "type": "wire_circuit_end",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-W0335",
+   "type": "wire_circuit_end",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-T-W1480",
+   "type": "wire_light",
+   "level": "T",
+   "why": "outside_envelope",
+   "fraction_outside": 0.376
+  },
+  {
+   "id": "E.tray-T-W1481",
+   "type": "wire_light",
+   "level": "T",
+   "why": "outside_envelope",
+   "fraction_outside": 0.097
+  },
+  {
+   "id": "E.tray-T-W2294",
+   "type": "wire_power",
+   "level": "T",
+   "why": "outside_envelope",
+   "fraction_outside": 0.052
+  },
+  {
+   "id": "E.tray-T-W2299",
+   "type": "wire_homerun_open",
+   "level": "T",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-ea96171f155b-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-26912e0c475d-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-3e2827db03ee-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-8a0cc921ce45-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-8943645a14ff-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-602c75049b6c-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-03bab736b1fc-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-110f9d89e67f-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-8845b8ee17a4-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-2afd81e83033-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-42e679a51342-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-86a4dd488696-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-825898f85454-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-2f92409f17c2-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-4f1eaf814126-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-ae98aad00b22-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-55c293fd9502-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-7e00da8dfec4-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-32cec7980559-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-547a3f12cb8b-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-2c450918442d-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-de98df63ef37-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-5018f2dac29d-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-8831932119e5-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-a7d7cc3010d0-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-b67b8be83d3f-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-dd3de1f3bdfb-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-80870a6c055f-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-ba4d426d396b-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-5df0f7b272e1-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-5e69e4d8292a-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-36f78c36e41c-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-5ff9b9d70e91-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-0a15a9ba2367-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-7c1f85cf863d-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-48f3067ba6fd-0-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-349e910f00f7-0-SRC",
+   "type": "proposed_route_telephone",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.298
+  },
+  {
+   "id": "E.tray-G-PROP-c1b31d3cd2be-0-SRC",
+   "type": "proposed_route_telephone",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-312646ab8691-0-SRC",
+   "type": "proposed_route_telephone",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-aac2b8b21873-0-SRC",
+   "type": "proposed_route_telephone",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 1.0
+  },
+  {
+   "id": "E.tray-G-PROP-POWER-f3e2326bcdcd-SRC",
+   "type": "proposed_route_power",
+   "level": "G",
+   "why": "outside_envelope",
+   "fraction_outside": 0.695
+  }
+ ],
+ "removed_clips": [
+  "E.tray-G-W0164-CLP",
+  "E.tray-G-W0165-CLP",
+  "E.tray-G-W0186-CLP",
+  "E.tray-G-W0191-CLP",
+  "E.tray-G-W0192-CLP",
+  "E.tray-G-W0298-CLP",
+  "E.tray-G-W0299-CLP",
+  "E.tray-G-W0300-CLP",
+  "E.tray-G-W0335-CLP",
+  "E.tray-T-W1480-CLP",
+  "E.tray-T-W1481-CLP",
+  "E.tray-T-W2294-CLP"
+ ],
+ "kept_outside_not_wires": [
+  {
+   "id": "E.tray-G-ELR0001",
+   "type": "elr_power_duct",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0002",
+   "type": "elr_power_duct",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0003",
+   "type": "elr_power_duct",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0004",
+   "type": "elr_power_duct",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0094",
+   "type": "elr_fiber",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0095",
+   "type": "elr_fiber",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0096",
+   "type": "elr_fiber",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-ELR0097",
+   "type": "elr_fiber",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.ltg-G-ELR0006-SLEEVE-SRC",
+   "type": "earthing_pvc_sleeve",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.ltg-G-ELR0008-SLEEVE-SRC",
+   "type": "earthing_pvc_sleeve",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.ltg-G-ELR0010-SLEEVE-SRC",
+   "type": "earthing_pvc_sleeve",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "not a conductor/route"
+  },
+  {
+   "id": "E.tray-G-PROP-dfaa9158f9dd-0-SRC",
+   "type": "proposed_route_lightning",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "protected: earthing/lightning/telephone service route (removal would orphan earth rods / tape / fibre)"
+  },
+  {
+   "id": "E.tray-G-PROP-802168d76731-0-SRC",
+   "type": "proposed_route_earthing",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "protected: earthing/lightning/telephone service route (removal would orphan earth rods / tape / fibre)"
+  },
+  {
+   "id": "E.tray-G-PROP-50d0cd3eff99-0-SRC",
+   "type": "proposed_route_earthing",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "protected: earthing/lightning/telephone service route (removal would orphan earth rods / tape / fibre)"
+  },
+  {
+   "id": "E.tray-G-PROP-033e9eb5ae5c-0-SRC",
+   "type": "proposed_route_earthing",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "protected: earthing/lightning/telephone service route (removal would orphan earth rods / tape / fibre)"
+  },
+  {
+   "id": "E.tray-G-PROP-SOURCE-EARTH32-SRC",
+   "type": "proposed_route_earthing",
+   "level": "G",
+   "why": "outside_envelope",
+   "kept_because": "protected: earthing/lightning/telephone service route (removal would orphan earth rods / tape / fibre)"
+  }
+ ],
+ "rollback": "delete this file and rerun pipeline/post_model.py"
+}

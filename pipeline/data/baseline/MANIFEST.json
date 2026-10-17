@@ -1,0 +1,18 @@
+{
+ "sha256": "8775cc76ab4ae74e870908a98f5023b8a34262e72c65361e4a1164c591fc6b5c",
+ "bytes": 51416268,
+ "elements": 38460,
+ "frozen_at": "2026-10-17T16:48:33+04:00",
+ "reason": "m001 (work order 3b-1): close schema exceptions A.shaft layer, fin_CSP-2/3/4 mats, retire 2 dangling source_group_ids",
+ "note": "post-processed model frozen as input; the original raw generator is not recoverable (temp session folders)",
+ "history": [
+  {
+   "sha256": "651b04dbd7b89b37478319274fa70e05c91272c8d9f68da0cdccf80ead25bc7d",
+   "bytes": 51411816,
+   "elements": 38460,
+   "frozen_at": "2026-10-17T16:08:07+04:00",
+   "reason": "Step 2 of migration: freeze current post-processed model (38,460 elements, md5 47df24cf) as immutable input",
+   "note": "post-processed model frozen as input; the original raw generator is not recoverable (temp session folders)"
+  }
+ ]
+}

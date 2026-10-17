@@ -1,0 +1,41 @@
+{
+ "id": "sanitary_wc",
+ "version": "1",
+ "name": "ربط المرحاض",
+ "family": "sanitary",
+ "sample": {
+  "id": "MECH2.WS-106.WC",
+  "sheet": "MECH2 ص24 (WS-106) وA1200–A1203 (المرحاض)",
+  "version": "1"
+ },
+ "sample_text": "المرحاض: صمام زاوية وخرطوم دش",
+ "host": {
+  "rule": "fixture_group",
+  "group_prefix": "wc",
+  "main_part": "الحوض والمقعد"
+ },
+ "slots": [
+  {
+   "slot": "w01",
+   "name": "angle valve",
+   "line": "water",
+   "component": "angle_valve",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "w02",
+   "name": "shower hose (bidet spray)",
+   "line": "water",
+   "component": "shower_hose",
+   "order_from_host": 2,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "heights are ASSUMED from the numbers printed beside the sample (150/75/200/400 for the toilet, 850/600/100/100 for the basin): valve 15 cm (toilet) or 60 cm (others) above the finished floor",
+  "the valve sits on the nearest wall face (<= 150 cm from the fixture); otherwise on the fixture's back edge",
+  "water-line DN15, connection by compression fittings (no welding), ASSUMED",
+  "the wall drop pipes (PEX in walls, WS note 4) are not drawn, so the valve's supply port stays open by design"
+ ]
+}

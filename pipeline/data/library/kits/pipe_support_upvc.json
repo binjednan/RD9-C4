@@ -1,0 +1,29 @@
+{
+ "id": "pipe_support_upvc",
+ "version": "1",
+ "name": "حوامل أنابيب الصرف uPVC",
+ "family": "supports",
+ "sample": {
+  "id": "MECH2.DR-106.SUPPORT-SPACING",
+  "sheet": "MECH2 ص9 (DR-106 تباعد الدعم)",
+  "version": "1"
+ },
+ "sample_text": "تباعد دعم uPVC (أفقي/رأسي م): 50 مم 1.10/1.20؛ 82 مم 1.40/1.50؛ 110 مم 1.50/1.70؛ 160 مم 1.80/2.10",
+ "host": {
+  "rule": "pipe_paths",
+  "families": [
+   "drain",
+   "storm"
+  ],
+  "exclude_types": [
+   "pipe_site"
+  ]
+ },
+ "slots_dynamic": true,
+ "slots": [],
+ "assumed": [
+  "support positions: evenly spread on each straight segment (horizontal) or at vertical spacing on risers",
+  "rod M10 and 4 cm clamp are assumed (the sheet gives spacing only)",
+  "buried pipes (a.buried) and site pipes get no supports"
+ ]
+}

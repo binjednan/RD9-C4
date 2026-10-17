@@ -1,0 +1,35 @@
+{
+ "id": "slab_sleeve",
+ "version": "1",
+ "name": "كُمّ Sch 40 مع مانع حريق عند اختراق البلاطات",
+ "family": "penetrations",
+ "sample": {
+  "id": "MECH1.PENETRATION-SLEEVE",
+  "sheet": "MECH1 ص9–10 وMECH2 ص16 وS-N4 (اختراقات)",
+  "version": "1"
+ },
+ "sample_text": "كُمّ Sch 40 مع مانع حريق ساعتين وصوف معدني وغطاء معدني عند كل اختراق",
+ "host": {
+  "rule": "slab_crossing_paths",
+  "families": [
+   "chw_s",
+   "chw_r",
+   "fire",
+   "drain",
+   "storm",
+   "cold",
+   "hot",
+   "irrigation"
+  ],
+  "exclude_types": [
+   "sprk_drop"
+  ]
+ },
+ "slots_dynamic": true,
+ "slots": [],
+ "assumed": [
+  "sleeve ID = pipe jacket OD + 10 mm (clearance not stated), smallest Sch 40 size",
+  "only SLAB penetrations: which walls are fire-rated is not located in the data",
+  "firestop product/rating stated by the sheets (2 h); mineral wool and metal cover not drawn separately"
+ ]
+}

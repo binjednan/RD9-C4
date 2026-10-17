@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """electrical symbol extraction (raster-matched against each sheet's own legend) -> data/elec_inst.json"""
 import sys, json, collections, math, re, pickle, os
-sys.path.insert(0,"/private/tmp/claude-501/-Users-binqdair/9a1652f3-ec18-4d97-b6e3-2745ee0d2f2c/scratchpad/work")
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import lib, symbols as SY, ras, kb_elec as K, mep_common as MC
 
-OUT="/private/tmp/claude-501/-Users-binqdair/9a1652f3-ec18-4d97-b6e3-2745ee0d2f2c/scratchpad/work/data/elec_inst.json"
+OUT=os.path.join(os.path.dirname(os.path.abspath(__file__)),"data","elec_inst.json")
 LIGHT_LAYERS=("E.LIGHT","ELE.LIGHT")
 POWER_LAYERS=("E.POWER","POWER")
 FA_LAYERS=("FIRE ALARM",)

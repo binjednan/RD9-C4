@@ -1,0 +1,77 @@
+{
+ "id": "fire_zcv",
+ "version": "1",
+ "name": "صمام تحكم منطقة الإطفاء",
+ "family": "fire",
+ "sample": {
+  "id": "MECH2.FF-106.ZCV",
+  "sheet": "MECH2 ص16 (FF-106 صمام تحكم المنطقة)",
+  "version": "1"
+ },
+ "sample_text": "صمام مؤشر بمفتاح إشراف ← مقياس ضغط ← مفتاح تدفق ← صمام اختبار ← زجاجة رؤية ← unions ← تصريف",
+ "host": {
+  "type": "riser_spr",
+  "expected": 7
+ },
+ "on_host": {
+  "fam": "fire",
+  "line": "zone",
+  "start_cm": 50.0
+ },
+ "slots": [
+  {
+   "slot": "z01",
+   "name": "supervised indicating valve",
+   "line": "zone",
+   "component": "indicating_valve",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "z02",
+   "name": "pressure gauge",
+   "line": "zone",
+   "component": "pressure_gauge",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "z03",
+   "name": "flow switch",
+   "line": "zone",
+   "component": "flow_switch",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "z04",
+   "name": "test valve",
+   "line": "zone",
+   "component": "test_valve",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "z05",
+   "name": "sight glass",
+   "line": "zone",
+   "component": "sight_glass",
+   "order_from_host": 5,
+   "required": true
+  },
+  {
+   "slot": "z06",
+   "name": "drain valve",
+   "line": "zone",
+   "component": "drain_valve",
+   "order_from_host": 6,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "one valve set per sprinkler-riser segment (7 in the model; the sheet counts 9 zones: levels without a drawn riser segment are not invented)",
+  "the set is placed on the riser itself from 50 cm above the segment start",
+  "'unions with corrosion-resistant orifice' and the 250 drain size are not drawn",
+  "joint type: flanged (DN150), assumed"
+ ]
+}

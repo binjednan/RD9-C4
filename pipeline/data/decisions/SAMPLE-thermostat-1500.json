@@ -1,0 +1,1498 @@
+{
+ "schema": "c4.decision.v1",
+ "id": "SAMPLE-thermostat-1500",
+ "owner": "عينة MECH1 ص8",
+ "date": "2026-10-17",
+ "statement": "الثرموستات على 1500 مم (العينة) بدل 1.40 م الافتراضية",
+ "removes": [],
+ "set_attrs": {
+  "M.equip-1-0018": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0019": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0020": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0021": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0022": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0023": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0024": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0025": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0026": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0027": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0028": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0029": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0030": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0031": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0032": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0033": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-1-0034": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0052": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0053": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0054": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0055": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0056": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0057": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0058": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0059": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0060": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0061": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0062": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0063": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0064": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0065": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0066": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0067": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-2-0068": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0086": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0087": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0088": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0089": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0090": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0091": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0092": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0093": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0094": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0095": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0096": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0097": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0098": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0099": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0100": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0101": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-3-0102": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0120": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0121": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0122": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0123": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0124": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0125": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0126": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0127": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0128": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0129": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0130": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0131": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0132": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0133": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0134": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0135": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-4-0136": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0154": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0155": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0156": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0157": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0158": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0159": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0160": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0161": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0162": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0163": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0164": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0165": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0166": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0167": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0168": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0169": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-5-0170": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-R-S0258": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-R-S0259": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-R-S0260": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-R-S0261": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-R-S0262": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-B-M0006": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-B-M0007": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-B-M0008": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-B-M0009": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-B-M0010": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0012": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0013": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0014": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0015": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0016": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0017": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0018": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0019": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0020": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0021": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  },
+  "M.equip-G-M0022": {
+   "height_basis": "sample",
+   "height_sample": {
+    "id": "MECH1.AC-107-A.THERMOSTAT",
+    "sheet": "MECH1 ص8 (AC-107-A: الثرموستات على 1500 مم)",
+    "version": "1"
+   },
+   "height_mm_above_ffl": 1500,
+   "height_reading": "1500 mm read as the centre of the 10 cm body (assumed reading); the model had 1.40-1.50 m"
+  }
+ },
+ "set_g": {
+  "M.equip-1-0018": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0019": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0020": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0021": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0022": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0023": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0024": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0025": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0026": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0027": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0028": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0029": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0030": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0031": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0032": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0033": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-1-0034": {
+   "6": 7.2,
+   "7": 7.3
+  },
+  "M.equip-2-0052": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0053": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0054": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0055": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0056": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0057": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0058": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0059": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0060": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0061": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0062": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0063": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0064": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0065": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0066": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0067": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-2-0068": {
+   "6": 10.7,
+   "7": 10.8
+  },
+  "M.equip-3-0086": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0087": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0088": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0089": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0090": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0091": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0092": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0093": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0094": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0095": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0096": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0097": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0098": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0099": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0100": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0101": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-3-0102": {
+   "6": 14.2,
+   "7": 14.3
+  },
+  "M.equip-4-0120": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0121": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0122": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0123": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0124": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0125": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0126": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0127": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0128": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0129": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0130": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0131": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0132": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0133": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0134": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0135": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-4-0136": {
+   "6": 17.7,
+   "7": 17.8
+  },
+  "M.equip-5-0154": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0155": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0156": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0157": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0158": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0159": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0160": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0161": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0162": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0163": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0164": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0165": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0166": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0167": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0168": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0169": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-5-0170": {
+   "6": 21.2,
+   "7": 21.3
+  },
+  "M.equip-R-S0258": {
+   "6": 24.8,
+   "7": 24.9
+  },
+  "M.equip-R-S0259": {
+   "6": 24.8,
+   "7": 24.9
+  },
+  "M.equip-R-S0260": {
+   "6": 24.8,
+   "7": 24.9
+  },
+  "M.equip-R-S0261": {
+   "6": 24.8,
+   "7": 24.9
+  },
+  "M.equip-R-S0262": {
+   "6": 24.8,
+   "7": 24.9
+  },
+  "M.equip-B-M0006": {
+   "6": -2.25,
+   "7": -2.15
+  },
+  "M.equip-B-M0007": {
+   "6": -2.25,
+   "7": -2.15
+  },
+  "M.equip-B-M0008": {
+   "6": -2.25,
+   "7": -2.15
+  },
+  "M.equip-B-M0009": {
+   "6": -2.25,
+   "7": -2.15
+  },
+  "M.equip-B-M0010": {
+   "6": -2.25,
+   "7": -2.15
+  },
+  "M.equip-G-M0012": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0013": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0014": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0015": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0016": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0017": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0018": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0019": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0020": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0021": {
+   "6": 1.8,
+   "7": 1.9
+  },
+  "M.equip-G-M0022": {
+   "6": 1.8,
+   "7": 1.9
+  }
+ },
+ "scope": "106 ثرموستات؛ Z فقط (XY ثابت)",
+ "rollback": "delete this file and rerun pipeline/post_model.py"
+}

@@ -1,0 +1,113 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "C4 model element",
+ "type": "object",
+ "required": [
+  "id",
+  "c",
+  "l",
+  "g",
+  "t",
+  "m",
+  "a",
+  "s"
+ ],
+ "properties": {
+  "id": {
+   "type": "string"
+  },
+  "c": {
+   "type": "string",
+   "description": "category = layers[].subs[][0]"
+  },
+  "l": {
+   "type": "string",
+   "description": "level id = levels[].id"
+  },
+  "t": {
+   "type": "string"
+  },
+  "m": {
+   "type": "string",
+   "description": "material = mats key"
+  },
+  "mark": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "a": {
+   "type": "object",
+   "description": "free attributes; keys governed by attribute_registry.json"
+  },
+  "s": {
+   "type": "array",
+   "description": "source index references"
+  },
+  "u": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "u2": {
+   "type": "string"
+  },
+  "grp": {
+   "type": "string"
+  },
+  "stage": {
+   "type": "string"
+  },
+  "g": {
+   "type": "array",
+   "description": "[kind, ...]; arity per kind in x-geometry-arity"
+  }
+ },
+ "additionalProperties": false,
+ "x-geometry-arity": {
+  "b": [
+   8
+  ],
+  "cur": [
+   9
+  ],
+  "cyl": [
+   6
+  ],
+  "d": [
+   4
+  ],
+  "leaf": [
+   10
+  ],
+  "mesh": [
+   3
+  ],
+  "p": [
+   4,
+   5
+  ],
+  "r": [
+   7
+  ],
+  "rs": [
+   4
+  ],
+  "sph": [
+   8
+  ],
+  "t": [
+   3
+  ],
+  "tri": [
+   3
+  ]
+ },
+ "x-pinned-exceptions": {
+  "categories_not_in_layers": [],
+  "materials_not_in_mats": [],
+  "note": "closed by migration m001 (2026-10-17); any new violation now fails the gate"
+ }
+}

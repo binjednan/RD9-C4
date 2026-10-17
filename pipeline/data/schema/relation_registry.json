@@ -1,0 +1,252 @@
+{
+ "version": 1,
+ "note": "Maps the existing free attribute fields (element.a.<field>) to ONE normalized relation vocabulary. Semantics were read from sampled elements; basis 'confirmed' = seen on sampled pairs, 'assumed' = the field itself is a guess. Directions are subject(element holding the field) -> object(referenced id). IFC4.3 analogues in 'ifc'.",
+ "relation_types": {
+  "hosted_by": {
+   "ifc": "IfcRelFillsElement / IfcRelVoidsElement (host)",
+   "meaning": "subject sits in/on an object host (wall, ceiling, slab, floor)"
+  },
+  "supported_by": {
+   "ifc": "IfcRelConnectsElements (support)",
+   "meaning": "subject is held by a support detail (bracket, clip, rod)"
+  },
+  "connects": {
+   "ifc": "IfcRelConnectsPorts / IfcRelConnectsElements",
+   "meaning": "link element runs from one element to another; stored once per link with from/to; a link may be open at one end (wire_homerun_open, wire_circuit_end) -> the missing end is null and open=from|to"
+  },
+  "serves": {
+   "ifc": "IfcRelServicesBuildings (loose)",
+   "meaning": "subject delivers to / is fed by the object"
+  },
+  "member_of_source_group": {
+   "ifc": "IfcRelAssignsToGroup",
+   "meaning": "subject was drawn from a group of source elements"
+  },
+  "level_reference": {
+   "ifc": "IfcRelReferencedInSpatialStructure",
+   "meaning": "subject takes its level/height from the object"
+  },
+  "sleeve_of": {
+   "ifc": "IfcRelVoidsElement",
+   "meaning": "subject is the sleeve around the object conductor"
+  },
+  "extends": {
+   "ifc": "IfcRelAggregates (loose)",
+   "meaning": "subject extends an existing element (e.g. lift-head wall extends the wall below)"
+  },
+  "joins": {
+   "ifc": "IfcRelConnectsPorts",
+   "meaning": "two pipe paths touch end-to-end (ports within 0.2 cm, same system family); derived by pipeline/ports.py, never across systems"
+  },
+  "branches_from": {
+   "ifc": "IfcRelConnectsPorts (branch)",
+   "meaning": "the end of a pipe lies on the interior of another path of the same system (a tee is needed); derived by pipeline/ports.py"
+  },
+  "inserted_in": {
+   "ifc": "IfcRelNests (inline fitting)",
+   "meaning": "a generated component sits inside a run (its carrier pipe); the run's axis is untouched, so the component overlays it"
+  },
+  "part_of_assembly": {
+   "ifc": "IfcRelAggregates",
+   "meaning": "element belongs to an assembly generated from a drawing sample; object is an assembly id (assemblies[] in the model)"
+  },
+  "assembled_on": {
+   "ifc": "IfcRelAssignsToProduct",
+   "meaning": "assembly (subject, an assembly id) was applied to a host element (object) following a sample"
+  },
+  "member_of_system": {
+   "ifc": "IfcRelAssignsToGroup (IfcDistributionSystem)",
+   "meaning": "element carries a.sys; object is a system node (tables.systems)"
+  },
+  "in_space": {
+   "ifc": "IfcRelContainedInSpatialStructure / IfcRelSpaceBoundary (loose)",
+   "meaning": "element carries a.room; object is a space node keyed by (level,label) (tables.spaces); labels are raw drawing labels, not verified room identities"
+  },
+  "bridges": {
+   "ifc": "IfcRelConnectsElements (valve between two runs)",
+   "meaning": "a generated valve sits between two runs of DIFFERENT systems (e.g. FCU return<->supply NC valve) without joining them"
+  },
+  "drains_to": {
+   "ifc": "IfcRelFlowControlElements (loose)",
+   "meaning": "a generated condensate run discharges into this floor trap"
+  }
+ },
+ "fields": {
+  "host_id": {
+   "type": "hosted_by",
+   "basis": "confirmed",
+   "object_cats": [
+    "A.wall",
+    "A.ceil",
+    "S.wall",
+    "S.col",
+    "M.equip"
+   ]
+  },
+  "host_ids": {
+   "type": "hosted_by",
+   "basis": "confirmed",
+   "many": true,
+   "object_cats": [
+    "A.wall",
+    "S.col",
+    "S.wall"
+   ]
+  },
+  "host": {
+   "type": "hosted_by",
+   "basis": "confirmed",
+   "object_cats": [
+    "S.slab",
+    "S.ramp"
+   ]
+  },
+  "floor_host": {
+   "type": "hosted_by",
+   "basis": "confirmed",
+   "object_cats": [
+    "A.floor"
+   ]
+  },
+  "support_bracket_host": {
+   "type": "hosted_by",
+   "basis": "confirmed",
+   "object_cats": [
+    "A.wall",
+    "A.ceil",
+    "S.wall",
+    "S.col",
+    "M.equip"
+   ]
+  },
+  "guess_host": {
+   "type": "hosted_by",
+   "basis": "assumed",
+   "object_cats": [
+    "S.slab"
+   ]
+  },
+  "support_bracket_id": {
+   "type": "supported_by",
+   "basis": "confirmed",
+   "inverse": "bracket_for",
+   "object_cats": [
+    "A.detail"
+   ]
+  },
+  "bracket_for": {
+   "type": "supported_by",
+   "basis": "confirmed",
+   "reverse": true,
+   "inverse": "support_bracket_id"
+  },
+  "support_clip_id": {
+   "type": "supported_by",
+   "basis": "confirmed",
+   "inverse": "clip_for",
+   "object_cats": [
+    "A.detail"
+   ]
+  },
+  "clip_for": {
+   "type": "supported_by",
+   "basis": "confirmed",
+   "reverse": true,
+   "inverse": "support_clip_id"
+  },
+  "plan_rod_id": {
+   "type": "supported_by",
+   "basis": "confirmed"
+  },
+  "sleeve_id": {
+   "type": "sleeve_of",
+   "basis": "confirmed",
+   "reverse": true,
+   "inverse": "parent_conductor_id",
+   "note": "subject holds the sleeve id; relation is sleeve(subject=sleeve) -> conductor"
+  },
+  "parent_conductor_id": {
+   "type": "sleeve_of",
+   "basis": "confirmed",
+   "inverse": "sleeve_id"
+  },
+  "from_id": {
+   "type": "connects",
+   "role": "from",
+   "basis": "confirmed"
+  },
+  "to_id": {
+   "type": "connects",
+   "role": "to",
+   "basis": "confirmed"
+  },
+  "from": {
+   "type": "connects",
+   "role": "from",
+   "basis": "confirmed"
+  },
+  "to": {
+   "type": "connects",
+   "role": "to",
+   "basis": "confirmed"
+  },
+  "head": {
+   "type": "serves",
+   "basis": "confirmed",
+   "note": "sprinkler drop -> its head"
+  },
+  "proposed_fcu": {
+   "type": "serves",
+   "basis": "confirmed",
+   "note": "proposed duct route -> fcu"
+  },
+  "source_group_ids": {
+   "type": "member_of_source_group",
+   "basis": "confirmed",
+   "many": true
+  },
+  "level_reference_column": {
+   "type": "level_reference",
+   "basis": "confirmed"
+  },
+  "extends_existing_id": {
+   "type": "extends",
+   "basis": "confirmed"
+  },
+  "bypass_between": {
+   "type": "bridges",
+   "basis": "confirmed",
+   "many": true
+  },
+  "drain_to": {
+   "type": "drains_to",
+   "basis": "confirmed"
+  }
+ },
+ "self_reference_fields": [
+  "hvac_source_record",
+  "boundary_source_record",
+  "source_group",
+  "alt_evidence_ref",
+  "topology_repair_record",
+  "raft_source_restore_record",
+  "top_roof_shaft_source_record",
+  "lift_head_support_record"
+ ],
+ "label_fields_not_relations": [
+  "alt_owner",
+  "room",
+  "sys",
+  "connector"
+ ],
+ "known_dangling": {},
+ "derived_relation_sources": {
+  "joins": "pipeline/ports.py",
+  "branches_from": "pipeline/ports.py",
+  "inserted_in": "pipeline/ports.py",
+  "part_of_assembly": "a.assembly on generated elements",
+  "assembled_on": "M.assemblies[]",
+  "member_of_system": "a.sys",
+  "in_space": "a.room"
+ }
+}

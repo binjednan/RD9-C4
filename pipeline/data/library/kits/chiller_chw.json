@@ -1,0 +1,158 @@
+{
+ "id": "chiller_chw",
+ "version": "1",
+ "name": "ربط المبرّد بالمياه المبردة",
+ "family": "hydronic_plant",
+ "sample": {
+  "id": "MECH1.CHILLER-CONNECTION",
+  "sheet": "MECH1 ص8 (تفصيل ربط المبرّد)",
+  "version": "1"
+ },
+ "sample_text": "وصلات مرنة؛ على الخارج: ميزان حرارة + مقياس ضغط + مستشعر تدفق + DRV + تجاوز + صمام عزل؛ على الداخل: ميزان حرارة + مقياس ضغط + MV + مصفاة + DRV + صمام عزل؛ AV وDC",
+ "host": {
+  "type": "chiller",
+  "level": [
+   "R"
+  ],
+  "expected": 2
+ },
+ "lines": [
+  {
+   "line": "leaving",
+   "fam": "chw_s"
+  },
+  {
+   "line": "entering",
+   "fam": "chw_r"
+  }
+ ],
+ "slots": [
+  {
+   "slot": "o01",
+   "name": "leaving: flexible connector",
+   "line": "leaving",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "o02",
+   "name": "leaving: thermometer",
+   "line": "leaving",
+   "component": "thermometer",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "o03",
+   "name": "leaving: pressure gauge",
+   "line": "leaving",
+   "component": "pressure_gauge",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "o04",
+   "name": "leaving: flow sensor",
+   "line": "leaving",
+   "component": "flow_sensor",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "o05",
+   "name": "leaving: DRV",
+   "line": "leaving",
+   "component": "balancing_valve",
+   "order_from_host": 5,
+   "required": true
+  },
+  {
+   "slot": "o06",
+   "name": "leaving: isolation valve",
+   "line": "leaving",
+   "component": "butterfly_valve",
+   "order_from_host": 6,
+   "required": true
+  },
+  {
+   "slot": "i01",
+   "name": "entering: flexible connector",
+   "line": "entering",
+   "component": "flex_connector",
+   "order_from_host": 1,
+   "required": true
+  },
+  {
+   "slot": "i02",
+   "name": "entering: thermometer",
+   "line": "entering",
+   "component": "thermometer",
+   "order_from_host": 2,
+   "required": true
+  },
+  {
+   "slot": "i03",
+   "name": "entering: pressure gauge",
+   "line": "entering",
+   "component": "pressure_gauge",
+   "order_from_host": 3,
+   "required": true
+  },
+  {
+   "slot": "i04",
+   "name": "entering: motorised valve MV",
+   "line": "entering",
+   "component": "motor_valve",
+   "order_from_host": 4,
+   "required": true
+  },
+  {
+   "slot": "i05",
+   "name": "entering: strainer",
+   "line": "entering",
+   "component": "y_strainer",
+   "order_from_host": 5,
+   "required": true
+  },
+  {
+   "slot": "i06",
+   "name": "entering: DRV",
+   "line": "entering",
+   "component": "balancing_valve",
+   "order_from_host": 6,
+   "required": true
+  },
+  {
+   "slot": "i07",
+   "name": "entering: isolation valve",
+   "line": "entering",
+   "component": "butterfly_valve",
+   "order_from_host": 7,
+   "required": true
+  },
+  {
+   "slot": "i08",
+   "name": "entering: automatic air vent AV",
+   "line": "entering",
+   "component": "aav",
+   "order_from_host": 8,
+   "required": true
+  },
+  {
+   "slot": "i09",
+   "name": "entering: drain DC",
+   "line": "entering",
+   "component": "drain_valve",
+   "order_from_host": 9,
+   "required": true
+  }
+ ],
+ "assumed": [
+  "component lengths/bodies are catalogue-typical (components.json), not from the sheets",
+  "joint type per policy (threaded <= DN40, flanged above), not stated in the sheets",
+  "position along the carrier: nearest free straight interval from the unit outward",
+  "a unit with no drawn pipe touching a connection gets an assumed 80 cm stub from its footprint edge",
+  "the bypass of the leaving side (sample lists it) is not placed: it needs a second run that is not drawn"
+ ]
+}

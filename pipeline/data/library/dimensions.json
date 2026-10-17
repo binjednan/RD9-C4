@@ -1,0 +1,535 @@
+{
+ "schema": "c4.dimensions.v1",
+ "units": "mm",
+ "date": "2026-10-17",
+ "note": "Every value names its standard. 'status' says how it was checked in THIS session: verified_2_sources = two independent web tables agree; verified_1_source = one table; derived_rule = computed by a rule of the standard (stated); recalled_unverified = from engineering memory, no table could be opened (paywalled standard) -> treat as ASSUMED until checked; not_available = no value (never invented).",
+ "standards": {
+  "ASME B36.10M": "Welded and seamless wrought steel pipe",
+  "ASME B16.5": "Pipe flanges and flanged fittings",
+  "ASME B16.9": "Factory-made wrought buttwelding fittings",
+  "EN 558": "Industrial valves - face-to-face and centre-to-face dimensions (paywalled; values below are recalled)",
+  "ISO 15874": "PP-R plastic piping systems for hot and cold water",
+  "EN 1329": "PVC-U soil and waste inside buildings",
+  "EN 1519": "PE soil and waste inside buildings",
+  "EN 1057": "Copper tubes for water and gas",
+  "ISO 1452": "PVC-U pressure piping",
+  "NFPA 13": "Sprinkler systems",
+  "MSS SP-58": "Pipe hangers and supports"
+ },
+ "steel_pipe_sch40": {
+  "standard": "ASME B36.10M (Sch 40)",
+  "status": {
+   "15-100": "verified_2_sources",
+   "125-200": "recalled_unverified"
+  },
+  "sources": [
+   "https://www.engineeringtoolbox.com/ (via search)",
+   "projectmaterials.com ASME B36.10 chart (via search)"
+  ],
+  "rows": {
+   "15": {
+    "nps": "1/2",
+    "od": 21.3,
+    "wall": 2.77
+   },
+   "20": {
+    "nps": "3/4",
+    "od": 26.7,
+    "wall": 2.87
+   },
+   "25": {
+    "nps": "1",
+    "od": 33.4,
+    "wall": 3.38
+   },
+   "32": {
+    "nps": "1-1/4",
+    "od": 42.2,
+    "wall": 3.56
+   },
+   "40": {
+    "nps": "1-1/2",
+    "od": 48.3,
+    "wall": 3.68
+   },
+   "50": {
+    "nps": "2",
+    "od": 60.3,
+    "wall": 3.91
+   },
+   "65": {
+    "nps": "2-1/2",
+    "od": 73.0,
+    "wall": 5.16
+   },
+   "80": {
+    "nps": "3",
+    "od": 88.9,
+    "wall": 5.49
+   },
+   "100": {
+    "nps": "4",
+    "od": 114.3,
+    "wall": 6.02
+   },
+   "125": {
+    "nps": "5",
+    "od": 141.3,
+    "wall": 6.55
+   },
+   "150": {
+    "nps": "6",
+    "od": 168.3,
+    "wall": 7.11
+   },
+   "200": {
+    "nps": "8",
+    "od": 219.1,
+    "wall": 8.18
+   }
+  },
+  "dn_alias": {
+   "75": 80,
+   "note": "BOQ lists 75 (NPS 3 = DN80); nominal alias, assumed"
+  }
+ },
+ "flange_class150": {
+  "standard": "ASME B16.5 Class 150 (weld neck, raised face)",
+  "status": "verified_2_sources",
+  "raised_face_height": 1.6,
+  "note": "RF height 1.6 mm is included in the thickness; slip-on thickness differs and is not tabulated here",
+  "rows": {
+   "15": {
+    "od": 89.0,
+    "t": 11.2,
+    "bc": 60.5,
+    "bolts": 4,
+    "bolt_d": 12.7,
+    "hole": 15.7
+   },
+   "20": {
+    "od": 98.5,
+    "t": 12.7,
+    "bc": 69.9,
+    "bolts": 4,
+    "bolt_d": 12.7,
+    "hole": 15.7
+   },
+   "25": {
+    "od": 108.0,
+    "t": 14.2,
+    "bc": 79.2,
+    "bolts": 4,
+    "bolt_d": 12.7,
+    "hole": 15.7
+   },
+   "32": {
+    "od": 117.5,
+    "t": 15.7,
+    "bc": 88.9,
+    "bolts": 4,
+    "bolt_d": 12.7,
+    "hole": 15.7
+   },
+   "40": {
+    "od": 127.0,
+    "t": 17.5,
+    "bc": 98.6,
+    "bolts": 4,
+    "bolt_d": 12.7,
+    "hole": 15.7
+   },
+   "50": {
+    "od": 152.4,
+    "t": 19.1,
+    "bc": 120.7,
+    "bolts": 4,
+    "bolt_d": 15.9,
+    "hole": 19.1
+   },
+   "65": {
+    "od": 177.8,
+    "t": 22.4,
+    "bc": 139.7,
+    "bolts": 4,
+    "bolt_d": 15.9,
+    "hole": 19.1
+   },
+   "80": {
+    "od": 190.5,
+    "t": 23.9,
+    "bc": 152.4,
+    "bolts": 4,
+    "bolt_d": 15.9,
+    "hole": 19.1
+   },
+   "100": {
+    "od": 228.6,
+    "t": 23.9,
+    "bc": 190.5,
+    "bolts": 8,
+    "bolt_d": 15.9,
+    "hole": 19.1
+   },
+   "125": {
+    "od": 254.0,
+    "t": 23.9,
+    "bc": 215.9,
+    "bolts": 8,
+    "bolt_d": 19.1,
+    "hole": 22.4
+   },
+   "150": {
+    "od": 279.4,
+    "t": 25.4,
+    "bc": 241.3,
+    "bolts": 8,
+    "bolt_d": 19.1,
+    "hole": 22.4
+   },
+   "200": {
+    "od": 342.9,
+    "t": 28.4,
+    "bc": 298.5,
+    "bolts": 8,
+    "bolt_d": 19.1,
+    "hole": 22.4
+   }
+  }
+ },
+ "elbow_90_long_radius": {
+  "standard": "ASME B16.9",
+  "status": "verified_2_sources",
+  "rule": "A = 1.5 x NPS(in) x 25.4",
+  "A": {
+   "25": 38,
+   "32": 48,
+   "40": 57,
+   "50": 76,
+   "65": 95,
+   "80": 114,
+   "100": 152,
+   "125": 190,
+   "150": 229,
+   "200": 305
+  }
+ },
+ "tee_equal": {
+  "standard": "ASME B16.9",
+  "status": "verified_2_sources",
+  "C_equals_M": {
+   "25": 38,
+   "32": 48,
+   "40": 57,
+   "50": 64,
+   "65": 76,
+   "80": 86,
+   "100": 105,
+   "125": 124,
+   "150": 143,
+   "200": 178
+  }
+ },
+ "reducer_concentric": {
+  "standard": "ASME B16.9",
+  "status": "verified_1_source",
+  "H_by_large_dn": {
+   "25": 51,
+   "32": 51,
+   "40": 64,
+   "50": 76,
+   "65": 89,
+   "80": 89,
+   "100": 102,
+   "125": 127,
+   "150": 140,
+   "200": 152
+  },
+  "note": "H depends on the LARGE end only (pairs listed on the source page)"
+ },
+ "valve_face_to_face": {
+  "standard": "EN 558 / ISO 5752 basic series",
+  "status": "recalled_unverified",
+  "assumed": true,
+  "note": "EN 558 is paywalled and no table could be opened; values are the commonly quoted lengths of the series and must be treated as ASSUMED until checked",
+  "gate_flanged_series_15_equals_ASME_B16.10_class150": {
+   "50": 178,
+   "65": 190,
+   "80": 203,
+   "100": 229,
+   "125": 254,
+   "150": 267,
+   "200": 292
+  },
+  "butterfly_wafer_series_20": {
+   "50": 43,
+   "65": 46,
+   "80": 46,
+   "100": 52,
+   "125": 56,
+   "150": 56,
+   "200": 60
+  }
+ },
+ "ppr_pn20": {
+  "standard": "ISO 15874-2, PP-R, S 2.5 / SDR 6 (PN 20)",
+  "status": {
+   "25": "verified_1_source",
+   "40": "verified_1_source",
+   "125": "verified_1_source",
+   "others": "derived_rule"
+  },
+  "rule": "wall e = d/6 rounded to 0.1 (SDR 6); ID = d - 2e",
+  "rows": {
+   "20": {
+    "od": 20,
+    "wall": 3.4,
+    "id": 13.2
+   },
+   "25": {
+    "od": 25,
+    "wall": 4.2,
+    "id": 16.6
+   },
+   "32": {
+    "od": 32,
+    "wall": 5.4,
+    "id": 21.2
+   },
+   "40": {
+    "od": 40,
+    "wall": 6.7,
+    "id": 26.6
+   },
+   "50": {
+    "od": 50,
+    "wall": 8.3,
+    "id": 33.4
+   },
+   "63": {
+    "od": 63,
+    "wall": 10.5,
+    "id": 42.0
+   },
+   "75": {
+    "od": 75,
+    "wall": 12.5,
+    "id": 50.0
+   },
+   "90": {
+    "od": 90,
+    "wall": 15.0,
+    "id": 60.0
+   },
+   "110": {
+    "od": 110,
+    "wall": 18.3,
+    "id": 73.4
+   },
+   "125": {
+    "od": 125,
+    "wall": 20.8,
+    "id": 83.4
+   },
+   "160": {
+    "od": 160,
+    "wall": 26.6,
+    "id": 106.8
+   }
+  }
+ },
+ "upvc_soil_waste_en1329": {
+  "standard": "EN 1329-1 (nominal outside diameters)",
+  "status": {
+   "od": "verified_1_source",
+   "wall": "not_available"
+  },
+  "od_sizes": [
+   32,
+   40,
+   50,
+   63,
+   75,
+   80,
+   82,
+   90,
+   100,
+   110,
+   125,
+   140,
+   160,
+   180,
+   200,
+   250,
+   315
+  ],
+  "wall": null,
+  "note": "EN 1329 wall thickness could not be confirmed (an EN 1453 table shows 3.2 mm but that is another standard); no wall is invented"
+ },
+ "hdpe_soil_waste_en1519": {
+  "standard": "EN 1519-1",
+  "status": "not_available",
+  "od_sizes": null,
+  "wall": null,
+  "note": "no accessible table; kitchen grease drains drawn with the uPVC OD series, assumed"
+ },
+ "copper_en1057": {
+  "standard": "EN 1057 R250",
+  "status": "verified_1_source_partial",
+  "rows": {
+   "15": {
+    "od": 15,
+    "wall": 0.7
+   },
+   "22": {
+    "od": 22,
+    "wall": 0.9
+   },
+   "28": {
+    "od": 28,
+    "wall": 0.9
+   },
+   "35": {
+    "od": 35,
+    "wall": 1.2
+   },
+   "42": {
+    "od": 42,
+    "wall": 1.2
+   },
+   "54": {
+    "od": 54,
+    "wall": 1.2
+   }
+  },
+  "note": "15 and 22 from a typical-dimensions list; 28-54 derived from a retailer's ID list (OD-ID)/2; verify"
+ },
+ "upvc_pressure_iso1452": {
+  "standard": "ISO 1452",
+  "status": "not_available",
+  "note": "wall thickness per PN not confirmed; fill/overflow/riser uPVC pressure lines are drawn with their label OD, assumed"
+ },
+ "grooved_coupling": {
+  "standard": null,
+  "status": "assumed",
+  "note": "no standard; generic envelope used for kits: body OD = pipe OD + 25 mm, length = 60 mm (assumed, not from any catalogue)"
+ },
+ "insulation": {
+  "source": "BOQ 12.9.1 + MECH1 ص9–10 (chilled water: >= 25 mm indoors, >= 50 mm outdoors, aluminium cladding 20G) and MECH2 ص24 ملاحظة 7 (glass wool 0.032 W/mK: 25 mm in conditioned space, 50 mm exposed)",
+  "status": "written_in_drawings",
+  "chw_indoor": 25,
+  "chw_exposed": 50,
+  "hot_indoor": 25,
+  "hot_exposed": 50,
+  "cold_exposed": 50,
+  "exposed_levels": [
+   "R",
+   "T"
+  ],
+  "assumed": [
+   "exposed = levels R and T only (plant rooms/basement/OTS shafts are not located in the data)",
+   "cold water is insulated only when exposed (WS notes 2-3); the PN of cold-water PPR is not stated (PN20 assumed)",
+   "aluminium jacket thickness ignored",
+   "storm/condensate insulation thickness is not stated -> none drawn"
+  ]
+ },
+ "support_spacing": {
+  "steel_water_service": {
+   "standard": "MSS SP-58 family (maximum horizontal spacing, standard steel pipe, water service) as tabulated by Engineering ToolBox",
+   "status": "verified_1_source",
+   "attribution": "the source page does not name the standard (SP-58 vs SP-69 style); treated as the recommended-spacing table",
+   "m": {
+    "15": 2.13,
+    "20": 2.13,
+    "25": 2.13,
+    "32": 2.13,
+    "40": 2.74,
+    "50": 3.05,
+    "65": 3.35,
+    "80": 3.66,
+    "100": 4.27,
+    "125": 4.72,
+    "150": 5.18,
+    "200": 5.79
+   },
+   "assumed": {
+    "32": "1-1/4 in is not in the table: taken equal to 1 in",
+    "125": "NPS 5 is not in the table: midpoint of 4 in and 6 in"
+   },
+   "rod_mm": {
+    "15": 9.5,
+    "20": 9.5,
+    "25": 9.5,
+    "32": 9.5,
+    "40": 9.5,
+    "50": 9.5,
+    "65": 12.7,
+    "80": 12.7,
+    "100": 12.7,
+    "125": 15.9,
+    "150": 15.9,
+    "200": 19.1
+   },
+   "rod_status": "unverified: the source labels two rod columns without naming the pipe material; column 1 used"
+  },
+  "fire_nfpa13": {
+   "standard": "NFPA 13 Table 17.4.2.1(a) (steel pipe except threaded lightwall)",
+   "status": "verified_1_source_secondary",
+   "m": {
+    "15": 3.66,
+    "20": 3.66,
+    "25": 3.66,
+    "32": 3.66,
+    "40": 4.57,
+    "50": 4.57,
+    "65": 4.57,
+    "80": 4.57,
+    "100": 4.57,
+    "125": 4.57,
+    "150": 4.57,
+    "200": 4.57
+   },
+   "note": "12 ft (3.66 m) up to 1-1/4 in, 15 ft (4.57 m) from 1-1/2 in; reproduced by a permit form, not the code text",
+   "rod_mm": {
+    "15": 9.5,
+    "20": 9.5,
+    "25": 9.5,
+    "32": 9.5,
+    "40": 9.5,
+    "50": 9.5,
+    "65": 9.5,
+    "80": 9.5,
+    "100": 9.5,
+    "125": 12.7,
+    "150": 12.7,
+    "200": 15.9
+   },
+   "rod_status": "3/8 in up to 4 in verified (NFPA 13 Table 17.2.1.1 via report); 5 in and above assumed"
+  },
+  "upvc_drain_dr106": {
+   "standard": "drawing MECH2 ص9 (DR-106) support-spacing table, uPVC",
+   "status": "written_in_drawings",
+   "horizontal_m": {
+    "50": 1.1,
+    "82": 1.4,
+    "110": 1.5,
+    "160": 1.8
+   },
+   "vertical_m": {
+    "50": 1.2,
+    "82": 1.5,
+    "110": 1.7,
+    "160": 2.1
+   },
+   "nearest_size_rule": "sizes not listed use the nearest listed size (a tie goes to the smaller spacing)",
+   "rod": "M10 threaded rod, assumed (not stated)",
+   "rod_mm": 10.0
+  }
+ },
+ "sleeve": {
+  "standard": "MECH1 ص9–10 / MECH2 ص16 / S-N4: Sch 40 steel sleeve with 2-hour firestop at every slab or fire-wall penetration",
+  "rule": "sleeve inside diameter >= pipe jacket OD + 10 mm, smallest ASME B36.10M Sch 40 size; length = slab zone (level top to next finished floor)",
+  "status": "rule assumed (clearance 10 mm not stated)",
+  "wall_penetrations": "not generated: which walls are fire-rated is not located in the data"
+ }
+}
