@@ -53,6 +53,8 @@ if M.get('meta',{}).get('owner_render_only'):
     _WS.apply(M)   # frame sections from A803 / A1502 (centre planes unchanged)
     import decisions as _DEC
     _DEC.apply(M, force_lifecycle=bool(_PDR['diameter_changed']))   # owner decisions (pipeline/data/decisions): applied after all layers, rollback = delete the file
+    import progress as _PROG
+    _PROG.apply(M)   # progress log shown in the viewer (docs/RESUME_STATE.md)
     # Recompute opt-in route results after loading proposal data. The original
     # drawing-only results and their populations remain separate and unchanged.
     if any(e.get('a', {}).get('network_proposal') for e in M['els']):

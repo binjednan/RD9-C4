@@ -1,0 +1,24 @@
+{
+ "id": "pipe_fittings",
+ "version": "1",
+ "name": "قطع وصل الأنابيب (أكواع وتيهات وقارنات وشفاه) بلا لحام",
+ "family": "fittings",
+ "sample": {
+  "id": "OWNER.NO-WELD-FITTINGS",
+  "sheet": "إفادة المالك 2026-10-17 (ربط سليم لا لحام) + أبعاد ASME B16.9/B16.5",
+  "version": "1"
+ },
+ "sample_text": "كل وصلة بقطعة ربط ظاهرة: كوع عند كل انحناء، تيه عند كل تفرّع، قارنة/شفة/union عند كل وصل بين مسارين، ومخفّض عند اختلاف القطر؛ ولا لحام",
+ "host": {
+  "rule": "fitting_hosts"
+ },
+ "slots_dynamic": true,
+ "slots": [],
+ "assumed": [
+  "steel: elbow leg = ASME B16.9 long-radius A and tee C=M by DN (verified); plastics (PPR/uPVC): 1.2 x OD (assumed)",
+  "joint policy (assumed): steel <=DN40 union, DN50 flange pair (ASME B16.5), >=DN65 grooved coupling (OD+25 mm x 60 mm, generic); plastics socket coupling 1.25 x OD x 5 cm",
+  "insulated pipes get insulated fittings (jacket x 1.04)",
+  "the fitting sits on the existing axes (legs along the drawn segments); nothing moves; legs are limited to 45% of the adjacent segment",
+  "a join where more than two pipes meet gets one piece per pair (they overlap)"
+ ]
+}

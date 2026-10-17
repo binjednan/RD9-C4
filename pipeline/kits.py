@@ -272,6 +272,13 @@ def slab_crossings(M, pts):
 def host_selector(kit, M):
     hs = kit.get("host") or {}
     if kit.get("status") == "not_instantiated" or hs.get("rule") == "none" or not hs: return []
+    if hs.get("rule") == "valve_hosts": return valve_hosts_from_disk()
+    if hs.get("rule") == "duct_paths":
+        return sorted((e for e in M["els"] if e["c"] == "M.duct" and e["g"][0] == "d" and not (e.get("t") or "").startswith(("proposed_route", "duct_return_source_candidate", "duct_flex"))
+                       and not (e.get("a") or {}).get("alt") and not (e.get("a") or {}).get("assembly") and not (e.get("a") or {}).get("source_graphic")), key=lambda e: e["id"])
+    if hs.get("rule") == "fitting_hosts":
+        plan = fitting_plan(M); by = {e["id"]: e for e in M["els"]}
+        return sorted((by[i] for i in plan), key=lambda e: e["id"])
     if hs.get("rule") in ("pipe_paths", "slab_crossing_paths"):
         by = {e["id"]: e for e in M["els"]}; out = []
         for e in M["els"]:
@@ -433,7 +440,7 @@ def gen_sleeves(kit_id):
     return run
 # ---------- family: sanitary fixtures and water heaters ----------
 TYPE_NAMES = {"kit_shower_hose": "خرطوم دش", "kit_bottle_trap": "مصيدة زجاجة", "kit_relief_valve": "صمام أمان", "kit_l_bracket": "مشبك L", "kit_drain_stub": "تصريف لأقرب نقطة",
-              "kit_angle_valve": "صمام زاوية", "kit_fcu_rod": "قضيب تعليق FCU", "kit_vibration_isolator": "عازل اهتزاز", "kit_cdp_stub": "وصلة تصريف التكثيف", "kit_u_trap": "فخ U", "kit_cdp_run": "أنبوب تصريف التكثيف", "kit_osy_valve": "صمام بوابة OS&Y", "kit_saddle": "سرج/حلقة تثبيت أنبوب", "kit_riser_clamp": "مشبك صاعد", "kit_hanger_rod": "قضيب تعليق", "kit_post": "دعامة قائمة", "kit_fire_sleeve": "كُمّ Sch 40 مع مانع حريق ساعتين"}
+              "kit_angle_valve": "صمام زاوية", "kit_duct_rods": "قضيبا تعليق مجرى", "kit_duct_shelf": "زاوية رف مجرى", "kit_pump_base": "قاعدة مضخة", "kit_pump_casing": "غلاف مضخة", "kit_pump_guard": "غطاء وصلة المحور", "kit_pump_motor": "محرك مضخة", "kit_flange": "شفة", "kit_valve_stem": "ساق صمام", "kit_handwheel": "عجلة صمام", "kit_valve_lever": "ذراع صمام", "kit_actuator": "محرك صمام", "kit_strainer_cap": "غطاء تصريف المصفاة", "kit_elbow": "كوع", "kit_coupling": "قارنة/شفة/union", "kit_tee_run": "تيه — مجرى", "kit_tee_branch": "تيه — فرع", "kit_fcu_rod": "قضيب تعليق FCU", "kit_vibration_isolator": "عازل اهتزاز", "kit_cdp_stub": "وصلة تصريف التكثيف", "kit_u_trap": "فخ U", "kit_cdp_run": "أنبوب تصريف التكثيف", "kit_osy_valve": "صمام بوابة OS&Y", "kit_saddle": "سرج/حلقة تثبيت أنبوب", "kit_riser_clamp": "مشبك صاعد", "kit_hanger_rod": "قضيب تعليق", "kit_post": "دعامة قائمة", "kit_fire_sleeve": "كُمّ Sch 40 مع مانع حريق ساعتين"}
 
 def _tube(b, kit, h, slot, kind, comps, cat, level, p0, p1, dia_mm, ports, src, extra=None):
     c = comps["kinds"][kind]
@@ -553,7 +560,204 @@ def by_id(M, i):
     for e in M["els"]:
         if e["id"] == i: return e
 
-FAMILIES = {"fcu_chw": gen_fcu, "chiller_chw": gen_generic("chiller_chw"), "chwp_chw": gen_generic("chwp_chw"), "fahu_chw": gen_generic("fahu_chw"), "chw_aux": gen_generic("chw_aux"), "pipe_support_steel": gen_supports("pipe_support_steel"), "pipe_support_upvc": gen_supports("pipe_support_upvc"), "slab_sleeve": gen_sleeves("slab_sleeve"), "sanitary_wc": gen_fixtures("sanitary_wc"), "sanitary_basin": gen_fixtures("sanitary_basin"), "sanitary_tub": gen_fixtures("sanitary_tub"), "heater_wh": gen_heaters("heater_wh"), "ws_pump": gen_generic("ws_pump"), "fire_zcv": gen_on_host("fire_zcv"), "fire_acv": gen_on_host("fire_acv"), "fire_pump": gen_generic("fire_pump"), "fcu_mount": gen_fcu_mount("fcu_mount")}
+# ---------- family: pipe fittings (elbows, couplings, tees) on every joint ----------
+def _unit(a, b):
+    d = [b[0] - a[0], b[1] - a[1], (b[2] - a[2]) * 100.0]; n = math.sqrt(sum(x * x for x in d)) or 1.0
+    return [x / n for x in d], n
+def _step(p, u, cm):
+    return [p[0] + u[0] * cm, p[1] + u[1] * cm, p[2] + u[2] * cm / 100.0]
+def _tbl(tb, dn):
+    ks = sorted(int(k) for k in tb); k = min(ks, key=lambda x: (abs(x - dn), x)); return tb[str(k)]
+
+def fit_dims(lib, fam, dn, od, jk):
+    """(leg_cm, tee_c_cm, body_cm, coupling) for a pipe: standard sizes for steel, 1.2 x OD for plastics (assumed)."""
+    steel = fam in ("chw_s", "chw_r", "fire"); ins = jk is not None and jk > od
+    if steel:
+        A = _tbl(lib["elbow_90_long_radius"]["A"], dn) / 10.0; C = _tbl(lib["tee_equal"]["C_equals_M"], dn) / 10.0
+        body = (jk * 1.04 if ins else od * 1.2) / 10.0
+        if dn <= 40: cp = {"type": "union", "body": od * 1.45 / 10.0, "len": 4.0, "joint": "threaded"}
+        elif dn <= 50:
+            fl = _tbl(lib["flange_class150"]["rows"], dn); cp = {"type": "flange_pair", "body": fl["od"] / 10.0, "len": (2 * fl["t"] + 3.0) / 10.0, "joint": "flanged"}
+        else: cp = {"type": "grooved", "body": (od + 25.0) / 10.0, "len": 6.0, "joint": "grooved"}
+    else:
+        A = C = 1.2 * od / 10.0; body = (jk * 1.04 if ins else od * 1.2) / 10.0
+        cp = {"type": "socket", "body": (jk * 1.04 if ins else od * 1.25) / 10.0, "len": 5.0, "joint": "socket_coupling"}
+    return A, C, body, cp
+
+def fitting_plan(M):
+    """{host path id: [descriptor, ...]}  the single place that decides which fittings exist (used by the generator and by the gate)."""
+    lib = PD.load(); by = {e["id"]: e for e in M["els"]}; pd = P.derive(M); pp = {p["id"]: p for p in pd["ports"]}
+    paths = {e["id"]: e for e in M["els"] if P.is_pipe_path(e) and not (e.get("t") or "").startswith("proposed_route") and e["a"].get("od_mm")}
+    info = {}
+    for i, e in paths.items():
+        fam = P.family_of(e, by)[0]; a = e["a"]; dn = int(a["dn_label_mm"]); od = float(a["od_mm"]); jk = a.get("jacket_od_mm")
+        info[i] = (fam, dn, od, jk) + fit_dims(lib, fam, dn, od, jk)
+    plan = collections.defaultdict(list)
+    for i, e in sorted(paths.items()):
+        fam, dn, od, jk, A, C, body, cp = info[i]; pts = e["g"][1]
+        for v in range(1, len(pts) - 1):                                   # elbows at bends
+            u1, l1 = _unit(pts[v], pts[v - 1]); u2, l2 = _unit(pts[v], pts[v + 1])
+            if l1 < 1.0 or l2 < 1.0: continue
+            cosang = -(u1[0] * u2[0] + u1[1] * u2[1] + u1[2] * u2[2])
+            if cosang > 0.9962: continue                                   # < 5 degrees: not a bend
+            L = min(A, 0.45 * l1, 0.45 * l2)
+            plan[i].append({"slot": "v%02d" % v, "type": "kit_elbow", "pts": [_step(pts[v], u1, L), list(pts[v]), _step(pts[v], u2, L)], "dia": body, "carrier": i, "dn": dn, "fam": fam, "joint": cp["joint"], "what": "elbow"})
+    for j in pd["joins"]:
+        if j["kind"] == "joined":
+            pa, pb = pp[j["a"]], pp[j["b"]]
+            if pa["el"] not in info or pb["el"] not in info or pa["el"] == pb["el"]: continue
+            ea, eb = paths[pa["el"]], paths[pb["el"]]
+            ptsa = ea["g"][1] if pa["end"] == "S" else ea["g"][1][::-1]; ptsb = eb["g"][1] if pb["end"] == "S" else eb["g"][1][::-1]
+            ua, la = _unit(ptsa[0], ptsa[1]); ub, lb = _unit(ptsb[0], ptsb[1]); P0 = ptsa[0]
+            fam, dn, od, jk, A, C, body, cp = info[pa["el"]]; fam2, dn2, od2, jk2, A2, C2, body2, cp2 = info[pb["el"]]
+            key = "j%s%d" % (pa["end"], len([x for x in plan[pa["el"]] if x["slot"].startswith("j" + pa["end"])]))
+            straight = -(ua[0] * ub[0] + ua[1] * ub[1] + ua[2] * ub[2]) < -0.9962 or (ua[0] * ub[0] + ua[1] * ub[1] + ua[2] * ub[2]) < -0.9962
+            if dn != dn2:
+                big = max((dn, body, od), (dn2, body2, od2)); H = _tbl(lib["reducer_concentric"]["H_by_large_dn"], big[0]) / 10.0 if fam in ("chw_s", "chw_r", "fire") else 1.2 * big[2] / 10.0
+                H = min(H, 0.45 * la, 0.45 * lb)
+                plan[pa["el"]].append({"slot": key, "type": "kit_reducer", "pts": [_step(P0, ua, H / 2), _step(P0, ub, H / 2)] if not straight else [_step(P0, ua, H / 2), _step(P0, ub, H / 2)], "dia": (body + body2) / 2.0, "carrier": pa["el"], "dn": dn, "fam": fam, "joint": cp["joint"], "what": "reducer", "also": pb["el"]})
+            elif straight:
+                Lh = min(cp["len"], 0.9 * la, 0.9 * lb) / 2.0
+                plan[pa["el"]].append({"slot": key, "type": "kit_coupling", "pts": [_step(P0, ua, Lh), _step(P0, ub, Lh)], "dia": cp["body"], "carrier": pa["el"], "dn": dn, "fam": fam, "joint": cp["joint"], "what": cp["type"], "also": pb["el"]})
+            else:
+                L = min(A, 0.45 * la, 0.45 * lb)
+                plan[pa["el"]].append({"slot": key, "type": "kit_elbow", "pts": [_step(P0, ua, L), list(P0), _step(P0, ub, L)], "dia": body, "carrier": pa["el"], "dn": dn, "fam": fam, "joint": cp["joint"], "what": "elbow", "also": pb["el"]})
+        elif j["kind"] == "branch":
+            pa = pp[j["a"]]; run = paths.get(j["b"])
+            if pa["el"] not in info or run is None: continue
+            eb = paths[pa["el"]]; ptsb = eb["g"][1] if pa["end"] == "S" else eb["g"][1][::-1]; ub, lb = _unit(ptsb[0], ptsb[1]); J = ptsb[0]
+            best = None
+            for k in range(len(run["g"][1]) - 1):
+                dist, t = P.seg_dist3(J, run["g"][1][k], run["g"][1][k + 1])
+                if best is None or dist < best[0]: best = (dist, k)
+            k = best[1]; ur, lr = _unit(run["g"][1][k], run["g"][1][k + 1])
+            fam, dn, od, jk, A, C, body, cp = info[pa["el"]]; rfam, rdn, rod, rjk, rA, rC, rbody, rcp = info[run["id"]]
+            Cc = min(rC, 0.45 * lr); M_ = min(C, 0.45 * lb)
+            n = len([x for x in plan[pa["el"]] if x["slot"].startswith("t" + pa["end"])])
+            plan[pa["el"]].append({"slot": "t%s%d_run" % (pa["end"], n), "type": "kit_tee_run", "pts": [_step(J, ur, -Cc), _step(J, ur, Cc)], "dia": rbody, "carrier": run["id"], "dn": rdn, "fam": rfam, "joint": rcp["joint"], "what": "tee run", "also": run["id"]})
+            plan[pa["el"]].append({"slot": "t%s%d_br" % (pa["end"], n), "type": "kit_tee_branch", "pts": [list(J), _step(J, ub, M_)], "dia": body, "carrier": pa["el"], "dn": dn, "fam": fam, "joint": cp["joint"], "what": "tee branch", "also": run["id"]})
+    return plan
+
+def gen_fittings(kit_id):
+    def run(M, comps):
+        kit = kit_def(kit_id); by = {e["id"]: e for e in M["els"]}; plan = fitting_plan(M); src = [kit["sample"]["sheet"]]; out_el = []; asms = []; stats = collections.Counter()
+        for hid in sorted(plan):
+            h = by[hid]; b = Builder(kit, comps, h, None); mat = h["m"]
+            for d in plan[hid]:
+                pts = [[round(v, 3) for v in q] for q in d["pts"]]
+                ends = (pts[0], pts[-1]) if d["type"] != "kit_elbow" else (pts[0], pts[2])
+                a = b.base_attrs(d["slot"], d["carrier"], {"component": d["what"], "component_name": d["what"], "body_d_cm": round(d["dia"], 2), "length_basis": "ASME B16.9/B16.5 for steel; 1.2 x OD assumed for plastics",
+                                                          "kit_ports": [port("A", ends[0], d["fam"], d["dn"], d["joint"]), port("B", ends[1], d["fam"], d["dn"], d["joint"])]})
+                if d.get("also"): a["joins_also"] = d["also"]
+                cmat = mat if d["type"] in ("kit_elbow", "kit_tee_run", "kit_tee_branch") else "kit_coupling_steel"
+                b.add(d["slot"], mk_element(h["c"], h["l"], kit["id"], h["id"], d["slot"], d["type"], cmat, ["t", pts, round(d["dia"], 3)], a, src)); stats[d["type"]] += 1
+            out_el += b.els; asms.append(b.assembly([hid])); stats["hosts"] += 1
+        return {"elements": out_el, "assemblies": asms, "stats": dict(stats), "notes": [], "kit": kit}
+    return run
+
+# ---------- family: valve details (flanges, stem, handwheel / lever / actuator) on the generated valves ----------
+VALVE_STYLE = {"gate_valve": "wheel", "os_y_valve": "wheel_tall", "balancing_valve": "wheel", "picv": "wheel", "butterfly_valve": "lever", "indicating_valve": "lever",
+               "motor_valve": "actuator", "check_valve": "flanges", "alarm_valve": "flanges", "suction_diffuser": "flanges", "measuring_station": "flanges", "y_strainer": "strainer"}
+
+def valve_hosts_from_disk():
+    out = []
+    for f in sorted(os.listdir(OUTDIR)) if os.path.isdir(OUTDIR) else []:
+        if f == "valve_details.json": continue
+        for e in json.load(open(os.path.join(OUTDIR, f), encoding="utf-8"))["elements"]:
+            a = e.get("a") or {}
+            if e["g"][0] == "t" and len(e["g"][1]) == 2 and a.get("component") in VALVE_STYLE: out.append(e)
+    return sorted(out, key=lambda e: e["id"])
+
+def _cross(a, b): return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+def _norm(v):
+    n = math.sqrt(sum(x * x for x in v)) or 1.0; return [x / n for x in v]
+
+def gen_valve_details(kit_id):
+    def run(M, comps):
+        kit = kit_def(kit_id); lib = PD.load(); hosts = host_selector(kit, M); src = [kit["sample"]["sheet"]]; out_el = []; asms = []; stats = collections.Counter()
+        rows = lib["flange_class150"]["rows"]
+        for h in hosts:
+            a0 = h["a"]; kind = a0["component"]; style = VALVE_STYLE[kind]; p0, p1 = h["g"][1]; D = float(h["g"][2]); dn = int(a0["kit_ports"][0]["dn_mm"])
+            u, L = _unit(p0, p1); b = Builder(kit, comps, h, None); mid = [(p0[i] + p1[i]) / 2.0 for i in range(3)]
+            def add(slot, typ, mat, pts, dia, what):
+                a = b.base_attrs(slot, h["id"], {"component": what, "component_name": what, "body_d_cm": round(dia, 2), "length_basis": "ASME B16.5 (flanges) / generic proportions (assumed)"})
+                b.add(slot, mk_element(h["c"], h["l"], kit["id"], h["id"], slot, typ, mat, ["t", [[round(v, 3) for v in q] for q in pts], round(dia, 3)], a, src)); stats[typ] += 1
+            if dn >= 50:
+                fl = _tbl(rows, dn); t = fl["t"] / 10.0; od = fl["od"] / 10.0
+                if t * 2 < L - 0.5:
+                    add("fa", "kit_flange", "kit_strainer_steel", [p0, _step(p0, u, t)], od, "flange"); add("fb", "kit_flange", "kit_strainer_steel", [_step(p1, u, -t), p1], od, "flange")
+            up = [0.0, 0.0, 1.0]; s = up if abs(u[2]) < 0.7 else _norm(_cross(u, [0.0, 1.0, 0.0]))
+            base = _step(mid, s, D / 2.0)
+            if style in ("wheel", "wheel_tall"):
+                hgt = (0.8 if style == "wheel" else 1.4) * D + 3.0; top = _step(base, s, hgt)
+                add("st", "kit_valve_stem", "kit_hanger_steel", [base, top], 1.6 if dn >= 50 else 1.0, "stem"); add("wh", "kit_handwheel", "kit_valve_brass", [top, _step(top, s, 1.0)], max(6.0, 0.9 * D if style == "wheel" else 1.1 * D), "handwheel")
+            elif style == "lever":
+                top = _step(base, s, 0.4 * D + 2.0); w = _norm(_cross(s, u))
+                add("st", "kit_valve_stem", "kit_hanger_steel", [base, top], 1.6, "stem"); add("lv", "kit_valve_lever", "kit_valve_brass", [_step(top, w, -4.0), _step(top, w, 16.0)], 1.4, "lever")
+            elif style == "actuator":
+                top = _step(base, s, 6.0); add("st", "kit_valve_stem", "kit_hanger_steel", [base, top], 2.0, "stem"); add("ac", "kit_actuator", "kit_strainer_steel", [top, _step(top, s, 14.0)], 12.0, "actuator")
+            elif style == "strainer":
+                dn_ = [0.0, 0.0, -1.0] if abs(u[2]) < 0.7 else _norm(_cross(u, [0.0, 1.0, 0.0])); lo = _step(mid, dn_, D / 2.0)
+                add("cp", "kit_strainer_cap", "kit_strainer_steel", [lo, _step(lo, dn_, 6.0)], max(3.5, 0.45 * D), "blow-off cap")
+            if not b.els: stats["host_without_detail"] += 1
+            out_el += b.els; asms.append(b.assembly([])); stats["hosts"] += 1
+        return {"elements": out_el, "assemblies": asms, "stats": dict(stats), "notes": [], "kit": kit}
+    return run
+
+# ---------- family: pump bodies inside the drawn footprint ----------
+def gen_pump_bodies(kit_id):
+    def run(M, comps):
+        kit = kit_def(kit_id); hosts = host_selector(kit, M); src = [kit["sample"]["sheet"]]; out_el = []; asms = []; stats = collections.Counter()
+        for h in hosts:
+            g = h["g"]
+            if g[0] != "r": stats["host_not_box"] += 1; continue
+            x0, y0, x1, y1, z0, z1 = g[1:7]; dx, dy = abs(x1 - x0), abs(y1 - y0); cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+            along_x = dx >= dy; Lg, W = (dx, dy) if along_x else (dy, dx); H = z1 - z0
+            zc = z0 + 0.12 + (H - 0.12) / 2.0; avail = (H - 0.12) * 100.0; b = Builder(kit, comps, h, None)
+            def ax(t, zz=None):                                                       # point on the pump axis at fraction t of the long side (t in -0.5..0.5)
+                return [cx + (t * Lg if along_x else 0.0), cy + (0.0 if along_x else t * Lg), zz if zz is not None else zc]
+            def add(slot, typ, mat, pts, dia, what):
+                a = b.base_attrs(slot, h["id"], {"component": what, "component_name": what, "body_d_cm": round(dia, 2), "length_basis": "generic proportions of the footprint (assumed)"})
+                b.add(slot, mk_element(h["c"], h["l"], kit["id"], h["id"], slot, typ, mat, ["t", [[round(v, 3) for v in q] for q in pts], round(dia, 3)], a, src)); stats[typ] += 1
+            ins = 0.03; bx = ["r", round(min(x0, x1) + ins * dx, 3), round(min(y0, y1) + ins * dy, 3), round(max(x0, x1) - ins * dx, 3), round(max(y0, y1) - ins * dy, 3), round(z0, 4), round(z0 + 0.12, 4)]
+            ab = b.base_attrs("bs", h["id"], {"component": "base plate", "component_name": "base plate", "body_d_cm": 0.0, "length_basis": "generic proportions of the footprint (assumed)"})
+            b.add("bs", mk_element(h["c"], h["l"], kit["id"], h["id"], "bs", "kit_pump_base", "kit_strainer_steel", bx, ab, src)); stats["kit_pump_base"] += 1
+            add("cs", "kit_pump_casing", h["m"] if h.get("m") else "kit_valve_brass", [ax(-0.42), ax(-0.08)], min(0.8 * W, 0.9 * avail), "pump casing")
+            add("cg", "kit_pump_guard", "kit_strainer_steel", [ax(-0.08), ax(0.04)], min(0.35 * W, 0.4 * avail), "coupling guard")
+            add("mt", "kit_pump_motor", "kit_strainer_steel", [ax(0.04), ax(0.44)], min(0.75 * W, 0.9 * avail), "motor")
+            out_el += b.els; asms.append(b.assembly([])); stats["hosts"] += 1
+        return {"elements": out_el, "assemblies": asms, "stats": dict(stats), "notes": [], "kit": kit}
+    return run
+
+# ---------- family: duct hangers (table of MECH1 p9-10) ----------
+DUCT_HANGER = [(750, 10, 4.0, 2400), (1065, 10, 4.0, 1800), (1370, 13, 5.0, 1800), (2130, 13, 5.0, 1200), (3050, 13, 7.5, 1200)]   # up to mm: rod dia, angle leg cm, max spacing mm
+
+def gen_duct_hangers(kit_id):
+    def run(M, comps):
+        kit = kit_def(kit_id); hosts = host_selector(kit, M); src = [kit["sample"]["sheet"]]; lv = {l["id"]: l for l in M["levels"]}; out_el = []; asms = []; stats = collections.Counter()
+        for h in hosts:
+            pts = h["g"][1]; w, hh = float(h["g"][2]), float(h["g"][3]); big = max(w, hh) * 10.0
+            row = next((r for r in DUCT_HANGER if big <= r[0]), DUCT_HANGER[-1]); rod_mm, leg, sp = row[1], row[2], row[3]
+            b = Builder(kit, comps, h, None); n = 0; lvl = lv[h["l"]]
+            for i in range(len(pts) - 1):
+                A, B_ = pts[i], pts[i + 1]; u, L = _unit(A, B_)
+                if L < 5.0 or abs(u[2]) > 0.5: continue
+                if A[2] - hh / 200.0 - lvl["ffl"] < 0.9: continue
+                nx, ny = -u[1], u[0]; nn = math.hypot(nx, ny) or 1.0; nx, ny = nx / nn, ny / nn
+                cnt = max(1, math.ceil(L / (sp / 10.0)))
+                for k in range(cnt):
+                    t = (k + 0.5) / cnt; q = _step(A, u, t * L); zb = q[2] - hh / 200.0 - leg / 100.0 / 2.0; zt = max(lvl["top"], q[2] + hh / 200.0 + 0.04); off = w / 2.0 + 4.0
+                    L1 = [q[0] + nx * off, q[1] + ny * off]; R1 = [q[0] - nx * off, q[1] - ny * off]; n += 1; tag = "h%03d" % n
+                    ra = b.base_attrs(tag + "r", h["id"], {"component": "hanger_rods", "component_name": "قضيبا تعليق", "rod_mm": rod_mm, "body_d_cm": round(rod_mm / 10.0, 2), "length_basis": "MECH1 p9-10 table (stated)", "spacing_max_mm": sp})
+                    b.add(tag + "r", mk_element(h["c"], h["l"], kit["id"], h["id"], tag + "r", "kit_duct_rods", "kit_hanger_steel", ["t", [[round(L1[0], 3), round(L1[1], 3), round(zt, 4)], [round(L1[0], 3), round(L1[1], 3), round(zb, 4)], [round(R1[0], 3), round(R1[1], 3), round(zb, 4)], [round(R1[0], 3), round(R1[1], 3), round(zt, 4)]], round(rod_mm / 10.0, 3)], ra, src))
+                    sa = b.base_attrs(tag + "s", h["id"], {"component": "shelf_angle", "component_name": "زاوية الرف", "angle_leg_cm": leg, "body_d_cm": round(leg, 2), "length_basis": "MECH1 p9-10 table (stated)"})
+                    b.add(tag + "s", mk_element(h["c"], h["l"], kit["id"], h["id"], tag + "s", "kit_duct_shelf", "kit_hanger_steel", ["t", [[round(L1[0], 3), round(L1[1], 3), round(zb, 4)], [round(R1[0], 3), round(R1[1], 3), round(zb, 4)]], round(leg, 3)], sa, src)); stats["hangers"] += 1
+            if not b.els: stats["host_without_hanger"] += 1
+            out_el += b.els; asms.append(b.assembly([h["id"]])); stats["hosts"] += 1
+        return {"elements": out_el, "assemblies": asms, "stats": dict(stats), "notes": [], "kit": kit}
+    return run
+
+FAMILIES = {"fcu_chw": gen_fcu, "chiller_chw": gen_generic("chiller_chw"), "chwp_chw": gen_generic("chwp_chw"), "fahu_chw": gen_generic("fahu_chw"), "chw_aux": gen_generic("chw_aux"), "pipe_support_steel": gen_supports("pipe_support_steel"), "pipe_support_upvc": gen_supports("pipe_support_upvc"), "slab_sleeve": gen_sleeves("slab_sleeve"), "sanitary_wc": gen_fixtures("sanitary_wc"), "sanitary_basin": gen_fixtures("sanitary_basin"), "sanitary_tub": gen_fixtures("sanitary_tub"), "heater_wh": gen_heaters("heater_wh"), "ws_pump": gen_generic("ws_pump"), "fire_zcv": gen_on_host("fire_zcv"), "fire_acv": gen_on_host("fire_acv"), "fire_pump": gen_generic("fire_pump"), "fcu_mount": gen_fcu_mount("fcu_mount"), "pipe_fittings": gen_fittings("pipe_fittings"), "valve_details": gen_valve_details("valve_details"), "pump_bodies": gen_pump_bodies("pump_bodies"), "duct_hangers": gen_duct_hangers("duct_hangers")}
 
 def write_family(name, res, comps):
     types = {}; mats = {}

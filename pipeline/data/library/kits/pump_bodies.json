@@ -1,0 +1,29 @@
+{
+ "id": "pump_bodies",
+ "version": "1",
+ "name": "أجسام المضخات (محرك وغلاف ومحور وقاعدة) داخل بصمة المضخة المرسومة",
+ "family": "detail",
+ "sample": {
+  "id": "PUMP.BODY.GENERIC",
+  "sheet": "MECH1 ص8–9 وMECH2 ص15–16 (مواضع المضخات) + نسب عامة لمضخة طرد مركزي",
+  "version": "1"
+ },
+ "sample_text": "المضخة مرسومة بصندوق بصمتها؛ يوضع داخله محرك وغلاف المضخة ووصلة المحور على قاعدة، بمحور على الضلع الأطول",
+ "host": {
+  "type": [
+   "chwp",
+   "fp_electric",
+   "fp_diesel",
+   "fp_jockey"
+  ],
+  "alt": false,
+  "expected": 6
+ },
+ "slots": [],
+ "slots_dynamic": true,
+ "assumed": [
+  "the sheets give the pump FOOTPRINT only (no body dimensions): motor, casing, coupling guard and base are generic proportions of the footprint (assumed)",
+  "axis along the longer side, motor at the +axis end",
+  "small display-only water-pump symbols (3 cm cylinders) are NOT given bodies: their size is unknown"
+ ]
+}

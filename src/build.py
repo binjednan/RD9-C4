@@ -5,7 +5,7 @@ WWW=os.path.dirname(os.path.abspath(__file__))
 OUT_DIR=os.path.dirname(WWW)
 def rd(n): return open(os.path.join(WWW,n),encoding="utf-8").read()
 # libraries / modules loaded before app.js, in order (each one registers itself on window)
-MODS=["three.min.js","engine.js","controls.js","detail.js","lens.js","planmap.js","thumbs.js","clash.js","issues.js","project-review.js","tours.js","notes.js","look.js","measure.js","sections.js","views.js","hub.js","life.js","hint.js","samples-ui.js"]
+MODS=["three.min.js","engine.js","controls.js","detail.js","lens.js","planmap.js","thumbs.js","clash.js","issues.js","project-review.js","tours.js","notes.js","look.js","measure.js","sections.js","views.js","hub.js","progress.js","life.js","hint.js","samples-ui.js"]
 MODS=[m for m in MODS if os.path.exists(os.path.join(WWW,m))]
 palette=json.load(open(os.path.join(OUT_DIR,"pipeline","data","display_palette.json"),encoding="utf-8"))
 paltag="<script>window.C4_PALETTE="+json.dumps(palette,ensure_ascii=False,separators=(",",":"))+";</script>"

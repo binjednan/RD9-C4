@@ -1,0 +1,23 @@
+{
+ "id": "valve_details",
+ "version": "1",
+ "name": "تفاصيل الصمامات (شفاه وساق ومقبض/ذراع/محرك)",
+ "family": "detail",
+ "sample": {
+  "id": "VALVE.DETAILS.ASME-B16.5",
+  "sheet": "أبعاد الشفاه ASME B16.5 Class 150 + أشكال الصمامات من مفتاح المخططات (MECH1 ص8–10 وMECH2 ص15–16 وص24)",
+  "version": "1"
+ },
+ "sample_text": "كل صمام مرسوم بشفتيه (DN50 فما فوق) وساق ومقبض: عجلة لبوابة وOS&Y وPICV والموازنة، وذراع للفراشة والمؤشر، ومحرك لـMV؛ والمصفاة بغطاء تصريف",
+ "host": {
+  "rule": "valve_hosts"
+ },
+ "slots_dynamic": true,
+ "slots": [],
+ "assumed": [
+  "flange OD/thickness from ASME B16.5 Class 150 (verified); stem height, wheel size and lever length are generic proportions of the body (assumed)",
+  "stem points up; on vertical pipes it points sideways",
+  "valves <= DN40 are threaded: no flange discs",
+  "angle valves (DN15), sight glasses and switches are not detailed"
+ ]
+}

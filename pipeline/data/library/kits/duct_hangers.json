@@ -1,0 +1,24 @@
+{
+ "id": "duct_hangers",
+ "version": "1",
+ "name": "معلّقات المجاري (قضبان وزوايا رف)",
+ "family": "supports",
+ "sample": {
+  "id": "MECH1.DUCT-HANGERS",
+  "sheet": "MECH1 ص9–10 (جدول معلّقات المجاري: القطر والزاوية والتباعد الأقصى)",
+  "version": "1"
+ },
+ "sample_text": "حتى 750 مم: قضيب 10 وزاوية 40×40×3 وتباعد 2400؛ 775–1065: 10 و40×40×3 و1800؛ 1090–1370: 13 و50×50×3 و1800؛ 1400–2130: 13 و50×50×5 و1200؛ 2160–3050: 13 و75×75×6 و1200",
+ "host": {
+  "rule": "duct_paths"
+ },
+ "slots_dynamic": true,
+ "slots": [],
+ "assumed": [
+  "the table is read as a function of the LARGER duct side (assumed reading of 'duct dim.')",
+  "hangers are spread evenly on each straight segment so spacing never exceeds the table maximum",
+  "rods rise to the slab soffit of the level (at least 4 cm); ducts resting on the roof (< 0.9 m above the floor) and vertical segments get no hanger",
+  "the shelf angle is drawn as a short tube of the angle leg size; rods and the shelf are separate pieces (U-shaped rod path + angle)",
+  "proposed (assumed-route) ducts and restored-candidate strokes get no hangers"
+ ]
+}

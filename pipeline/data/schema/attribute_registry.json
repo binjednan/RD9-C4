@@ -124,6 +124,13 @@
    "count": 782,
    "role": "structure"
   },
+  "angle_leg_cm": {
+   "types": [
+    "float"
+   ],
+   "count": 1663,
+   "role": "measure"
+  },
   "archive_candidate": {
    "types": [
     "str"
@@ -149,14 +156,14 @@
    "types": [
     "dict"
    ],
-   "count": 11045,
+   "count": 23391,
    "role": "structure"
   },
   "assumed": {
    "types": [
     "str"
    ],
-   "count": 26138,
+   "count": 38484,
    "role": "assumption"
   },
   "assumed_fields": {
@@ -191,7 +198,7 @@
    "types": [
     "str"
    ],
-   "count": 11045,
+   "count": 23391,
    "role": "label"
   },
   "bay": {
@@ -227,7 +234,7 @@
    "types": [
     "float"
    ],
-   "count": 10594,
+   "count": 22940,
    "role": "measure"
   },
   "boundary_source_record": {
@@ -507,7 +514,7 @@
    "types": [
     "str"
    ],
-   "count": 11045,
+   "count": 23391,
    "role": "label"
   },
   "component_key": {
@@ -521,7 +528,7 @@
    "types": [
     "str"
    ],
-   "count": 10989,
+   "count": 23335,
    "role": "label"
   },
   "connector": {
@@ -1359,6 +1366,13 @@
    "count": 4561,
    "role": "structure"
   },
+  "joins_also": {
+   "types": [
+    "str"
+   ],
+   "count": 4816,
+   "role": "relation"
+  },
   "kind": {
    "types": [
     "NoneType",
@@ -1371,7 +1385,7 @@
    "types": [
     "list"
    ],
-   "count": 3626,
+   "count": 11619,
    "role": "structure"
   },
   "kva": {
@@ -1436,7 +1450,7 @@
    "types": [
     "str"
    ],
-   "count": 10594,
+   "count": 22940,
    "role": "label"
   },
   "length_cm": {
@@ -1979,6 +1993,13 @@
    "count": 61,
    "role": "measure"
   },
+  "rod_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 1663,
+   "role": "measure"
+  },
   "roof_lift_source_record": {
    "types": [
     "int"
@@ -2012,7 +2033,7 @@
    "types": [
     "dict"
    ],
-   "count": 11045,
+   "count": 23391,
    "role": "structure"
   },
   "sand_top_m": {
@@ -2286,7 +2307,7 @@
    "types": [
     "int"
    ],
-   "count": 12632,
+   "count": 24978,
    "role": "source"
   },
   "source_group": {
@@ -2400,6 +2421,13 @@
     "float"
    ],
    "count": 7024,
+   "role": "measure"
+  },
+  "spacing_max_mm": {
+   "types": [
+    "int"
+   ],
+   "count": 1663,
    "role": "measure"
   },
   "span_cm": {

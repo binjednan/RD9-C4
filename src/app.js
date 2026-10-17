@@ -854,6 +854,7 @@ function showAllLevels(){ M.levels.forEach(l=>setLvlVis(l.id,true)); applyVis();
 /* guided tours (src/tours.js): a stop = visibility + lens + highlight + camera + caption */
 if(window.initTours) window.TOURS=initTours({M,THREE,camera,controls,$,esc,UNITS,CATS,wake,flyTo,flyToBox,bboxOf,highlight,clearHL,setLens,LENS,viewPreset,isolate,exitIso,isoActive:()=>isoUnit!==null,isoUnitId:()=>isoUnit===null?null:UNITS[isoUnit]?.id,applyVis,setLvlVis,setCatVis,lvlVis,catVis,setGhost,select,toast,closeMenus});
 if(window.initHub) initHub({M,$,esc,LVL,setLens,openSec,onlyLevel,showAllLevels,PAL:window.LENS_PAL,toast});
+if(window.initProgress) initProgress({M,$,esc,openSec});
 /* issue centre (src/issues.js): clashes and best-guess decisions with one shared design */
 if(window.initIssues){ ISSUES=initIssues({M,THREE,scene,camera,controls,renderer,$,esc,normAr,LVL,LAYER,CATS,TYPES,UNITS,wake,flyTo,flyToBox,ensureVisible,select,highlight,addHL,clearHL,toast,setGhost,focusEl,bboxOf,setLens,openSec,onlyLevel,showAllLevels,elVisible,levelVisible:l=>lvlVis[l]!==false,exploded:()=>explode!==0,showDrawer,hideDrawer,CLASH,LENS,PAL:issuePalette(window.LENS_PAL),elementDisplayName,PlanMap:window.PlanMap}); window.ISSUES=ISSUES; }
 if(window.initProjectReview) window.PROJECT_REVIEW=initProjectReview({M,setSourceAlternatives,$,esc,LVL,setLens,openSec,bboxOf,flyToBox,ensureVisible,highlight,addHL,clearHL,setGhost,showDrawer,hideDrawer,toast,wake});

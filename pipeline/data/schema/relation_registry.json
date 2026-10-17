@@ -221,6 +221,11 @@
   "drain_to": {
    "type": "drains_to",
    "basis": "confirmed"
+  },
+  "joins_also": {
+   "type": "inserted_in",
+   "basis": "confirmed",
+   "note": "a fitting at a pipe-to-pipe joint sits on both paths: the second path is recorded here"
   }
  },
  "self_reference_fields": [
